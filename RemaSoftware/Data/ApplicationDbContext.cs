@@ -15,6 +15,15 @@ namespace RemaSoftware.Data
 
         public DbSet<MyUser> MyUsers { get; set; }
 
+        public DbSet<Client> Clients { get; set; }
+
+        public DbSet<Order> Orders { get; set; }
+
+        public DbSet<Operation> Operations { get; set; }
+
+        public DbSet<Order_Operation> Order_Operations { get; set; }
+
+        public DbSet<Warehouse_Stock> Warehouse_Stocks { get; set; }
         #region Required
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -34,7 +43,9 @@ namespace RemaSoftware.Data
 
             modelBuilder.Entity<MyUser>().HasData(user);
 
+            modelBuilder.Entity<Order_Operation>().HasKey(a => new { a.OrderID, a.OperationID });
         }
+
         #endregion
 
     }
