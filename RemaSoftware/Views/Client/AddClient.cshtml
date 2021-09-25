@@ -1,5 +1,7 @@
-﻿@model RemaSoftware.Models.HomeViewModel.HomeViewModel
-
+﻿@model RemaSoftware.Models.ClientViewModel.ClientViewModel
+@{
+    ViewData["Title"] = "Rema Web-App";
+}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -15,12 +17,12 @@
     <title>Rema Software - Dashboard</title>
 
     <!-- Custom fonts for this template-->
-    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="~/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
           rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="~/css/sb-admin-2.min.css" rel="stylesheet">
 
 </head>
 
@@ -74,7 +76,7 @@
                 </a>
                 <form method="post">
                     <i class="fas fa-fw fa-cog"></i>
-                    <input type="submit" value="Aggiungi Cliente" />  
+                    <input type="submit" value="Aggiungi Cliente" />
                 </form>
             </li>
 
@@ -86,7 +88,7 @@
                 Magazzino
             </div>
 
-            
+
             <!-- Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" href="tables.html">
@@ -158,7 +160,7 @@
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                 aria-labelledby="userDropdown">                                
+                                 aria-labelledby="userDropdown">
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
@@ -522,7 +524,7 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Rema s.r.l.s. | <a href="https://www.enigma-tech.it">ΣnigmΔ Tech</a> </span>
+                        <span>Copyright &copy; Your Website 2021</span>
                     </div>
                 </div>
             </footer>
@@ -559,22 +561,23 @@
     </div>
 
     <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/vendor/jquery/jquery.min.js"></script>
+    <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="~/vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+    <script src="~/js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
+    <script src="~/vendor/chart.js/Chart.min.js"></script>
 
     <!-- Page level custom scripts -->
-    <script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script>
+    <script src="~/js/demo/chart-area-demo.js"></script>
+    <script src="~/js/demo/chart-pie-demo.js"></script>
 
 </body>
 
 </html>
+

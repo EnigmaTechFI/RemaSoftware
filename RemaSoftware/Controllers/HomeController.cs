@@ -1,15 +1,11 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using RemaSoftware.ContextModels;
 using RemaSoftware.Data;
 using RemaSoftware.Models;
 using RemaSoftware.Models.HomeViewModel;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace RemaSoftware.Controllers
@@ -38,9 +34,10 @@ namespace RemaSoftware.Controllers
         }
 
         [HttpPost]                                  //controllata
-        public async Task<IActionResult> Index(HomeViewModel model)
+        public IActionResult Index(HomeViewModel model)
         {
-            return View(model);
+
+            return RedirectToAction("AddClient", "Client");
         }
 
         public IActionResult Privacy()
