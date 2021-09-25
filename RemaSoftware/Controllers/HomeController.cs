@@ -1,6 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using RemaSoftware.ContextModels;
+using RemaSoftware.Data;
 using RemaSoftware.Models;
+using RemaSoftware.Models.HomeViewModel;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,16 +16,31 @@ namespace RemaSoftware.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly SignInManager<MyUser> _signInManager;
+        private readonly UserManager<MyUser> _userManager;
+        private readonly ApplicationDbContext _applicationDbContext;
+        private readonly IWebHostEnvironment _hostEnvironment;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(UserManager<MyUser> userManager, SignInManager<MyUser> signInManager, ApplicationDbContext applicationDbContext, IWebHostEnvironment hostEnvironment)
         {
-            _logger = logger;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            this._applicationDbContext = applicationDbContext;
+            this._hostEnvironment = hostEnvironment;
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        public async Task<IActionResult> Index()
         {
-            return View();
+            HomeViewModel model = new HomeViewModel();
+            
+            return View(model);
+        }
+
+        [HttpPost]                                  //controllata
+        public async Task<IActionResult> Index(HomeViewModel model)
+        {
+            return View(model);
         }
 
         public IActionResult Privacy()
