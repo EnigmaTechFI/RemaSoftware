@@ -42,33 +42,26 @@
                                         <div class="text-center">
                                             <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
                                         </div>
-                                        <form class="user">
+                                        <form id="Login" method="post" asp-action="Login" asp-controller="Login" class="user">
                                             <div class="form-group">
-                                                <input type="email" class="form-control form-control-user"
+                                                <input asp-for="Input.Email" type="email" class="form-control form-control-user"
                                                        id="exampleInputEmail" aria-describedby="emailHelp"
                                                        placeholder="Enter Email Address...">
+                                                <span asp-validation-for="Input.Email" class="text-danger"></span>
                                             </div>
                                             <div class="form-group">
-                                                <input type="password" class="form-control form-control-user"
+                                                <input asp-for="Input.Password" type="password" class="form-control form-control-user"
                                                        id="exampleInputPassword" placeholder="Password">
+                                                <span asp-validation-for="Input.Password" class="text-danger"></span>
                                             </div>
-                                            <div class="form-group">
-                                                <div class="custom-control custom-checkbox small">
-                                                    <input type="checkbox" class="custom-control-input" id="customCheck">
-                                                    <label class="custom-control-label" for="customCheck">
-                                                        Remember
-                                                        Me
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <a href="index.html" class="btn btn-primary btn-user btn-block">
-                                                Login
-                                            </a>
+                                            <input type="submit" class="btn btn-primary btn-user btn-block" value="Login">
                                         </form>
                                         <hr>
-                                        <div class="text-center">
-                                            <a class="small" href="forgot-password.html">Forgot Password?</a>
-                                        </div>
+                                        <form id="ForgotPassword" method="get" asp-action="ForgotPassword" asp-controller="Login" class="user">
+                                            <div class="text-center">
+                                                <input type="submit" class="small" href="forgot-password.html" value="Password Dimenticata?">
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>

@@ -37,10 +37,68 @@ namespace RemaSoftware.Controllers
             return View(viewModel);
         }
 
-        [HttpPost]                                  //controllata
+        [HttpPost]                                 
         public async Task<IActionResult> Login(LoginViewModel model)
         {
+
+            if (ModelState.IsValid)
+            {
+                MyUser user;
+
+                user = await _userManager.FindByEmailAsync(model.Input.Email);
+
+                if (user == null)
+                {
+                    return View(model);
+                }
+
+                var result = await _signInManager.PasswordSignInAsync(user, model.Input.Password, true, lockoutOnFailure: false);
+
+                if (result.Succeeded)
+                {
+
+                    return RedirectToAction("Index", "Home", new { user_id = user.Id });
+
+                }
+
+            }
+
             return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ForgotPassword()
+        {
+            ForgotPasswordViewModel viewModel = new ForgotPasswordViewModel();
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+
+            if (ModelState.IsValid)
+            {
+                MyUser user;
+
+                user = await _userManager.FindByEmailAsync(model.ForgotModel.Email);
+
+                if (user == null)
+                {
+                    return View(model);
+                }
+
+            }
+
+            return View(model);
+        }
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Login", "Login");
+
         }
     }
 }

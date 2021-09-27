@@ -15,12 +15,12 @@
     <title>Rema Software - Dashboard</title>
 
     <!-- Custom fonts for this template-->
-    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="~/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
           rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="~/css/sb-admin-2.min.css" rel="stylesheet">
 
 </head>
 
@@ -42,10 +42,11 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="index.html">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
-                </a>
+                <form id="Home" method="post" asp-action="Index" asp-controller="Home">
+                    @Html.HiddenFor(model => Model.UserId)
+                    <i class="fas fa-fw fa-cog"></i>
+                    <input type="submit" value="Dashboard" />
+                </form>
             </li>
 
             <!-- Divider -->
@@ -58,20 +59,17 @@
 
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-                   aria-expanded="true" aria-controls="collapseTwo">
+                <form id="Resoconto" method="get" asp-action="OrderSummary" asp-controller="Client">
                     <i class="fas fa-fw fa-cog"></i>
-                    <span>Resoconto</span>
-                </a>
-
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-                   aria-expanded="true" aria-controls="collapseTwo">
+                    <input type="submit" value="Resoconto" />
+                </form>
+                <form id="NewOrder" method="get" asp-action="NewOrder" asp-controller="Client">
                     <i class="fas fa-fw fa-cog"></i>
-                    <span>Registra Ordine</span>
-                </a>
-                <form method="post">
+                    <input type="submit" value="Registra Ordine" />
+                </form>
+                <form id="AddClient" method="get" asp-action="AddClient" asp-controller="Client">
                     <i class="fas fa-fw fa-cog"></i>
-                    <input type="submit" value="Aggiungi Cliente" />  
+                    <input type="submit" value="Aggiungi Cliente" />
                 </form>
             </li>
 
@@ -86,10 +84,10 @@
             
             <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link" href="tables.html">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Giacenze</span>
-                </a>
+                <form id="Stock" method="get" asp-action="Stock" asp-controller="Stock">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <input type="submit" value="Giacenze" />
+                </form>
             </li>
 
             <!-- Divider -->
@@ -149,9 +147,7 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Utente Abilitato </span>
-                                <img class="img-profile rounded-circle"
-                                     src="img/undraw_profile.svg">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">@Model.Username</span>
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -556,21 +552,21 @@
     </div>
 
     <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/vendor/jquery/jquery.min.js"></script>
+    <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="~/vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+    <script src="~/js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
+    <script src="~/vendor/chart.js/Chart.min.js"></script>
 
     <!-- Page level custom scripts -->
-    <script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script>
+    <script src="~/js/demo/chart-area-demo.js"></script>
+    <script src="~/js/demo/chart-pie-demo.js"></script>
 
 </body>
 

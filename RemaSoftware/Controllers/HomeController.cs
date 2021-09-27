@@ -6,6 +6,7 @@ using RemaSoftware.Data;
 using RemaSoftware.Models;
 using RemaSoftware.Models.HomeViewModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace RemaSoftware.Controllers
@@ -26,9 +27,13 @@ namespace RemaSoftware.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string user_id)
         {
+            var user = _applicationDbContext.MyUsers.SingleOrDefault(i => i.Id == user_id);
             HomeViewModel model = new HomeViewModel();
+
+            model.Username = user.UserName;
+            model.UserId = user_id;
             
             return View(model);
         }
@@ -36,8 +41,12 @@ namespace RemaSoftware.Controllers
         [HttpPost]                                  //controllata
         public IActionResult Index(HomeViewModel model)
         {
+            var user = _applicationDbContext.MyUsers.SingleOrDefault(i => i.Id == model.UserId);
 
-            return RedirectToAction("AddClient", "Client");
+            model.Username = user.UserName;
+            model.UserId = model.UserId;
+            
+            return View(model);
         }
 
         public IActionResult Privacy()

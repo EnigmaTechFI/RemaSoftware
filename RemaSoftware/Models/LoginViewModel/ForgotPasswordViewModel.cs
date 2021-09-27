@@ -7,21 +7,17 @@ using System.Threading.Tasks;
 
 namespace RemaSoftware.Models.LoginViewModel
 {
-    public class LoginViewModel
+    public class ForgotPasswordViewModel
     {
         [BindProperty]
-        public InputModel Input { get; set; }
+        public Forgot ForgotModel {get; set; }
 
-        public class InputModel
+        public class Forgot
         {
             [Required(ErrorMessage = "Il campo è obbligatorio")]
             [Display(Name = "Username/Email")]
+            [RegularExpression(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$", ErrorMessage = "Formato E-mail non valido")]
             public string Email { get; set; }
-
-            [Required(ErrorMessage = "Il campo è obbligatorio")]
-            [DataType(DataType.Password)]
-            [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,15}$", ErrorMessage = "Password errata")]
-            public string Password { get; set; }
         }
 
     }

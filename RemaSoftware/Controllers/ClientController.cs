@@ -34,6 +34,46 @@ namespace RemaSoftware.Controllers
             return View(vm);
         }
 
-       
+        [HttpPost]
+        public IActionResult AddClient(ClientViewModel model)
+        {
+           
+            return View(model);
+        }
+
+
+        [HttpGet]
+        public IActionResult NewOrder()
+        {
+            var vm = new NewOrderViewModel();
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        public IActionResult NewOrder(NewOrderViewModel model)
+        {
+
+            return View(model);
+        }
+
+
+
+        [HttpGet]
+        public IActionResult OrderSummary()
+        {
+            var vm = new OrderSummaryViewModel();
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        public IActionResult OrderSummary(OrderSummaryViewModel model)
+        {
+            return View(model);
+        }
+
+
+
     }
 }
