@@ -28,9 +28,15 @@ namespace RemaSoftware.Controllers
         }
 
         [HttpGet]
-        public IActionResult Stock()
+        public async Task<IActionResult> Stock()
         {
             var vm = new StockViewModel();
+
+            var a = User.Identity.Name;
+
+            var user = await _userManager.FindByNameAsync(a);
+
+            vm.Username = user.UserName;
             return View(vm);
         }
 

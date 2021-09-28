@@ -27,10 +27,17 @@ namespace RemaSoftware.Controllers
         }
 
         [HttpGet]
-        public IActionResult AddClient()
+        public async Task<IActionResult> AddClient()
         {
+
+
             var vm = new ClientViewModel();
 
+            var a = User.Identity.Name;
+
+            var user = await _userManager.FindByNameAsync(a);
+
+            vm.Username = user.UserName;
             return View(vm);
         }
 
@@ -43,9 +50,15 @@ namespace RemaSoftware.Controllers
 
 
         [HttpGet]
-        public IActionResult NewOrder()
+        public async Task<IActionResult> NewOrder()
         {
             var vm = new NewOrderViewModel();
+
+            var a = User.Identity.Name;
+
+            var user = await _userManager.FindByNameAsync(a);
+
+            vm.Username = user.UserName;
 
             return View(vm);
         }
@@ -60,9 +73,15 @@ namespace RemaSoftware.Controllers
 
 
         [HttpGet]
-        public IActionResult OrderSummary()
+        public async Task<IActionResult> OrderSummary()
         {
             var vm = new OrderSummaryViewModel();
+
+            var a = User.Identity.Name;
+
+            var user = await _userManager.FindByNameAsync(a);
+
+            vm.Username = user.UserName;
 
             return View(vm);
         }

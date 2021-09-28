@@ -7,6 +7,7 @@ namespace RemaSoftware.Models.ClientViewModel
 {
     public class ClientViewModel
     {
+        public string Username { get; set; }
 
     }
 }

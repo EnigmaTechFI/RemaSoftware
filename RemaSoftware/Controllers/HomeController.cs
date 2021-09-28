@@ -7,6 +7,7 @@ using RemaSoftware.Models;
 using RemaSoftware.Models.HomeViewModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace RemaSoftware.Controllers
@@ -27,13 +28,22 @@ namespace RemaSoftware.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string user_id)
+        public async Task<IActionResult> Index()
         {
-            var user = _applicationDbContext.MyUsers.SingleOrDefault(i => i.Id == user_id);
+            //Recupero User
+            //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            //var user2 = _applicationDbContext.MyUsers.SingleOrDefault(i => i.Id == userId);
+
+            //Recupero User2
+            var a = User.Identity.Name;
+
+            var user = await _userManager.FindByNameAsync(a);
+
             HomeViewModel model = new HomeViewModel();
 
             model.Username = user.UserName;
-            model.UserId = user_id;
+            model.UserId = user.Id;
             
             return View(model);
         }

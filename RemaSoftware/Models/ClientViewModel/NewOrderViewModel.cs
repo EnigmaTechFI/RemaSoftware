@@ -7,5 +7,6 @@ namespace RemaSoftware.Models.ClientViewModel
 {
     public class NewOrderViewModel
     {
+        public string Username { get; set; }
     }
 }

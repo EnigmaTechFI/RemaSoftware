@@ -42,11 +42,10 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <form id="Home" method="post" asp-action="Index" asp-controller="Home">
-                    @Html.HiddenFor(model => Model.UserId)
-                    <i class="fas fa-fw fa-cog"></i>
-                    <input type="submit" value="Dashboard" />
-                </form>
+                <a asp-controller="Home" asp-action="Index" class="nav-link">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
             </li>
 
             <!-- Divider -->
@@ -59,18 +58,18 @@
 
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
-                <form id="Resoconto" method="get" asp-action="OrderSummary" asp-controller="Client">
-                    <i class="fas fa-fw fa-cog"></i>
-                    <input type="submit" value="Resoconto" />
-                </form>
-                <form id="NewOrder" method="get" asp-action="NewOrder" asp-controller="Client">
-                    <i class="fas fa-fw fa-cog"></i>
-                    <input type="submit" value="Registra Ordine" />
-                </form>
-                <form id="AddClient" method="get" asp-action="AddClient" asp-controller="Client">
-                    <i class="fas fa-fw fa-cog"></i>
-                    <input type="submit" value="Aggiungi Cliente" />
-                </form>
+                <a class="nav-link" asp-action="OrderSummary" asp-controller="Client">
+                    <i class="fas fa-fw fa-chart-area"></i>
+                    <span>Resoconto</span>
+                </a>
+                <a class="nav-link" asp-action="NewOrder" asp-controller="Client">
+                    <i class="fas fa-fw fa-chart-area"></i>
+                    <span>Registra Ordine</span>
+                </a>
+                <a class="nav-link" asp-action="AddClient" asp-controller="Client">
+                    <i class="fas fa-fw fa-chart-area"></i>
+                    <span>Aggiungi Cliente</span>
+                </a>
             </li>
 
             <!-- Divider -->
@@ -84,10 +83,10 @@
             
             <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <form id="Stock" method="get" asp-action="Stock" asp-controller="Stock">
-                    <i class="fas fa-fw fa-cog"></i>
-                    <input type="submit" value="Giacenze" />
-                </form>
+                <a class="nav-link" asp-action="Stock" asp-controller="Stock">
+                    <i class="fas fa-fw fa-table"></i>
+                    <span>Giacenze</span>
+                </a>
             </li>
 
             <!-- Divider -->
