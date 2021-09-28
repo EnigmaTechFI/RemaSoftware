@@ -14,7 +14,7 @@ namespace RemaSoftware.ContextModels
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]
         public string Name { get; set; }
 
-        public string? Description { get; set; }
+        public string Description { get; set; }
 
         public virtual ICollection<Order_Operation> Order_Operation { get; set; }
     }

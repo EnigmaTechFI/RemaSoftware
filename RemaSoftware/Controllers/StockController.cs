@@ -4,9 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using RemaSoftware.ContextModels;
 using RemaSoftware.Data;
 using RemaSoftware.Models.StockViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace RemaSoftware.Controllers

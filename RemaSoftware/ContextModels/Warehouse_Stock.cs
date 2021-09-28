@@ -1,9 +1,4 @@
-﻿using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace RemaSoftware.ContextModels
 {
@@ -19,9 +14,9 @@ namespace RemaSoftware.ContextModels
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]
         public int Number_Piece { get; set; }
 
-        public float Price_Tot { get; set; }
+        public double Price_Tot { get; set; }
 
-        public float Price_Uni { get; set; }
+        public double Price_Uni { get; set; }
 
         public string Size { get; set; }
     }

@@ -30,20 +30,20 @@ namespace RemaSoftware.ContextModels
         public DateTime DataOut { get; set; }
 
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]
-        public int SKU { get; set; }
+        public string SKU { get; set; }
 
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]
         public string Image_URL { get; set; }
 
         public string Pdf_URL { get; set; }
 
-        public string? Description { get; set; }
+        public string Description { get; set; }
 
         public bool Flag_Fattureincloud { get; set; }
 
-        public float Price_Tot { get; set; }
+        public double Price_Tot { get; set; }
 
-        public float Price_Uni { get; set; }
+        public double Price_Uni { get; set; }
 
         public virtual ICollection<Order_Operation> Order_Operation { get; set; }
     }
