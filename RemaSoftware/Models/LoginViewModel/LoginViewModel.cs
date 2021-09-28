@@ -22,6 +22,8 @@ namespace RemaSoftware.Models.LoginViewModel
             [DataType(DataType.Password)]
             [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,15}$", ErrorMessage = "Password errata")]
             public string Password { get; set; }
+
+            public bool RememberMe { get; set; }
         }
 
     }

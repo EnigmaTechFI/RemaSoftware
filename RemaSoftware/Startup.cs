@@ -11,7 +11,9 @@ using RemaSoftware.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace RemaSoftware
 {
@@ -46,6 +48,22 @@ namespace RemaSoftware
             })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+            
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Login/Login";
+                options.LogoutPath = "/Login/Logout";
+                
+                // se si toglie l'events fa redirect a login portandosi dietro l'url al quale si è tentato di accedere senza autenticazione, decidere che fare
+                options.Events = new CookieAuthenticationEvents
+                {
+                    OnRedirectToLogin = ctx => {
+                        
+                        ctx.Response.Redirect(options.LoginPath);
+                        return Task.FromResult(0);
+                    }
+                };
+            });
             //services.AddAuthorization(options =>
             //{
             //    options.AddPolicy("RequireAdministratorRole",
@@ -89,7 +107,7 @@ namespace RemaSoftware
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Login}/{action=Login}");
+                    pattern: "{controller=Home}/{action=Index}");
             });
         }
     }

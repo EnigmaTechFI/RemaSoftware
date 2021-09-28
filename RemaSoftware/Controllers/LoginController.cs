@@ -13,25 +13,21 @@ namespace RemaSoftware.Controllers
         private readonly SignInManager<MyUser> _signInManager;
         private readonly UserManager<MyUser> _userManager;
         private readonly ApplicationDbContext _applicationDbContext;
-        private readonly IWebHostEnvironment _hostEnvironment;
         public LoginViewModel SignUp_Model { get; set; }
 
 
-        public LoginController(UserManager<MyUser> userManager, SignInManager<MyUser> signInManager, ApplicationDbContext applicationDbContext, IWebHostEnvironment hostEnvironment)
+        public LoginController(UserManager<MyUser> userManager, SignInManager<MyUser> signInManager, ApplicationDbContext applicationDbContext)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             this._applicationDbContext = applicationDbContext;
-            this._hostEnvironment = hostEnvironment;
 
         }
 
         [HttpGet]
-        public async Task<IActionResult> Login()
+        public IActionResult Login()
         {
-            LoginViewModel viewModel = new LoginViewModel();
-
-            return View(viewModel);
+            return View();
         }
 
         [HttpPost]                                 
@@ -49,7 +45,7 @@ namespace RemaSoftware.Controllers
                     return View(model);
                 }
 
-                var result = await _signInManager.PasswordSignInAsync(user, model.Input.Password, true, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(user, model.Input.Password, model.Input.RememberMe, lockoutOnFailure: false);
 
                 if (result.Succeeded)
                 {
@@ -64,11 +60,9 @@ namespace RemaSoftware.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ForgotPassword()
+        public IActionResult ForgotPassword()
         {
-            ForgotPasswordViewModel viewModel = new ForgotPasswordViewModel();
-
-            return View(viewModel);
+            return View();
         }
 
         [HttpPost]

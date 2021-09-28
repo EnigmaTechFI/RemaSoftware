@@ -5,9 +5,11 @@ using RemaSoftware.ContextModels;
 using RemaSoftware.Data;
 using RemaSoftware.Models.StockViewModel;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RemaSoftware.Controllers
 {
+    [Authorize]
     public class StockController : Controller
     {
 
@@ -41,6 +43,12 @@ namespace RemaSoftware.Controllers
         public IActionResult Stock(StockViewModel model)
         {
             return View(model);
+        }
+        
+        [HttpGet]
+        public IActionResult AddProduct()
+        {
+            return View();
         }
     }
 }
