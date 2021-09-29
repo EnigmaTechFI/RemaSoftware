@@ -51,10 +51,11 @@ namespace RemaSoftware
             
             services.ConfigureApplicationCookie(options =>
             {
-                options.LoginPath = "/Login/Login";
-                options.LogoutPath = "/Login/Logout";
+                options.LoginPath = "/Account/Login";
+                options.LogoutPath = "/Account/Logout";
                 
                 // se si toglie l'events fa redirect a login portandosi dietro l'url al quale si è tentato di accedere senza autenticazione, decidere che fare
+                // per adesso senza return url
                 options.Events = new CookieAuthenticationEvents
                 {
                     OnRedirectToLogin = ctx => {

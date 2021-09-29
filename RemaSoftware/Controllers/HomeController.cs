@@ -16,17 +16,13 @@ namespace RemaSoftware.Controllers
     [Authorize]
     public class HomeController : Controller
     {
-        private readonly SignInManager<MyUser> _signInManager;
         private readonly UserManager<MyUser> _userManager;
         private readonly ApplicationDbContext _applicationDbContext;
-        private readonly IWebHostEnvironment _hostEnvironment;
 
-        public HomeController(UserManager<MyUser> userManager, SignInManager<MyUser> signInManager, ApplicationDbContext applicationDbContext, IWebHostEnvironment hostEnvironment)
+        public HomeController(UserManager<MyUser> userManager, ApplicationDbContext applicationDbContext)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
             this._applicationDbContext = applicationDbContext;
-            this._hostEnvironment = hostEnvironment;
         }
 
         [HttpGet]

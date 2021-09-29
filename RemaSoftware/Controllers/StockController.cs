@@ -12,18 +12,13 @@ namespace RemaSoftware.Controllers
     [Authorize]
     public class StockController : Controller
     {
-
-        private readonly SignInManager<MyUser> _signInManager;
         private readonly UserManager<MyUser> _userManager;
         private readonly ApplicationDbContext _applicationDbContext;
-        private readonly IWebHostEnvironment _hostEnvironment;
 
-        public StockController(UserManager<MyUser> userManager, SignInManager<MyUser> signInManager, ApplicationDbContext applicationDbContext, IWebHostEnvironment hostEnvironment)
+        public StockController(UserManager<MyUser> userManager, ApplicationDbContext applicationDbContext)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
             this._applicationDbContext = applicationDbContext;
-            this._hostEnvironment = hostEnvironment;
         }
 
         [HttpGet]

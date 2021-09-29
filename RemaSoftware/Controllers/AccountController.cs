@@ -8,20 +8,17 @@ using System.Threading.Tasks;
 
 namespace RemaSoftware.Controllers
 {
-    public class LoginController : Controller
+    public class AccountController : Controller
     {
         private readonly SignInManager<MyUser> _signInManager;
         private readonly UserManager<MyUser> _userManager;
-        private readonly ApplicationDbContext _applicationDbContext;
         public LoginViewModel SignUp_Model { get; set; }
 
 
-        public LoginController(UserManager<MyUser> userManager, SignInManager<MyUser> signInManager, ApplicationDbContext applicationDbContext)
+        public AccountController(UserManager<MyUser> userManager, SignInManager<MyUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            this._applicationDbContext = applicationDbContext;
-
         }
 
         [HttpGet]
@@ -88,7 +85,7 @@ namespace RemaSoftware.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            return RedirectToAction("Login", "Login");
+            return RedirectToAction("Login", "Account");
 
         }
     }
