@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using EmailService;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace RemaSoftware
@@ -76,6 +77,8 @@ namespace RemaSoftware
 #if DEBUG
             mvcBuilder.AddRazorRuntimeCompilation();
 #endif
+            services.AddTransient<IEmailService, EmailService.EmailService>();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

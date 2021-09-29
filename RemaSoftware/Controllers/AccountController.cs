@@ -5,20 +5,23 @@ using RemaSoftware.ContextModels;
 using RemaSoftware.Data;
 using RemaSoftware.Models.LoginViewModel;
 using System.Threading.Tasks;
+using EmailService;
 
 namespace RemaSoftware.Controllers
 {
     public class AccountController : Controller
     {
         private readonly SignInManager<MyUser> _signInManager;
+        private readonly IEmailService _emailService;
         private readonly UserManager<MyUser> _userManager;
         public LoginViewModel SignUp_Model { get; set; }
 
 
-        public AccountController(UserManager<MyUser> userManager, SignInManager<MyUser> signInManager)
+        public AccountController(UserManager<MyUser> userManager, SignInManager<MyUser> signInManager, IEmailService emailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _emailService = emailService;
         }
 
         [HttpGet]
@@ -63,30 +66,42 @@ namespace RemaSoftware.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        public async Task<IActionResult> ForgotPassword(string email)
         {
-
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return null; // todo sistema per mostrate toast errore
+ 
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return null; // // todo sistema per mostrate toast errore
+            
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var returnUrl = Url.Action("ResetPassword", "Account", new { token, email = user.Email }, Request.Scheme);
+ 
+            bool emailResponse = _emailService.SendEmailForPasswordReset(returnUrl, email);
+ 
+            if (emailResponse)
+                return RedirectToAction("Login"); // todo tast con avviso che è stata mandata la mail
+            else
             {
-                MyUser user;
-
-                user = await _userManager.FindByEmailAsync(model.ForgotModel.Email);
-
-                if (user == null)
-                {
-                    return View(model);
-                }
-
+                // log email failed 
             }
-
-            return View(model);
+            return View(email);
+            
         }
+        
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Login", "Account");
 
+        }
+
+        [HttpGet]
+        public IActionResult ResetPassword()
+        {
+            return null; // todo
         }
     }
 }
