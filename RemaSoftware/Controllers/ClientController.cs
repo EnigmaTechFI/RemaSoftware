@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RemaSoftware.ContextModels;
 using RemaSoftware.Data;
 using RemaSoftware.Models.ClientViewModel;
@@ -37,13 +38,30 @@ namespace RemaSoftware.Controllers
 
             var user = await _userManager.FindByNameAsync(a);
 
-            vm.Username = user.UserName;
             return View(vm);
         }
 
         [HttpPost]
         public IActionResult AddClient(ClientViewModel model)
         {
+
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var add_client = new Client { Name = model.Client.Name, StreetNumber = model.Client.StreetNumber, Street = model.Client.Street, Cap = model.Client.Cap, City = model.Client.City, State = model.Client.State, P_Iva = model.Client.P_Iva };
+                    _applicationDbContext.Add(add_client);
+                    _applicationDbContext.SaveChanges();
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+            catch (DbUpdateException /* ex */)
+            {
+                //Log the error (uncomment ex variable name and write a log.
+                ModelState.AddModelError("", "Unable to save changes. " +
+                    "Try again, and if the problem persists " +
+                    "see your system administrator.");
+            }
            
             return View(model);
         }
@@ -58,7 +76,9 @@ namespace RemaSoftware.Controllers
 
             var user = await _userManager.FindByNameAsync(a);
 
-            vm.Username = user.UserName;
+            vm.Clients = _applicationDbContext.Clients.ToList();
+
+            vm.Operation = _applicationDbContext.Operations.ToList();
 
             return View(vm);
         }
@@ -67,7 +87,7 @@ namespace RemaSoftware.Controllers
         public IActionResult NewOrder(NewOrderViewModel model)
         {
 
-            return View(model);
+            return RedirectToAction("Index", "Home");
         }
 
 
