@@ -29,9 +29,9 @@
     <div class="form-group">
         <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Seleziona Cliente</label>
         <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="Order.ClientID">
-            @for(int i = 0; i < Model.Clients.Count; i++)
+            @foreach(var clients in Model.Clients)
             {
-                <option asp- value="@Model.Clients[i].ClientID">@Model.Clients[i].Name</option>
+                <option value="@clients.ClientID">@clients.Name</option>
             }
         </select>
     </div>
