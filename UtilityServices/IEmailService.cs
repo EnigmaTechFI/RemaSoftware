@@ -1,4 +1,4 @@
-namespace EmailService
+namespace UtilityServices
 {
     public interface IEmailService
     {

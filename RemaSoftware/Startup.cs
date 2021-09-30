@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -8,12 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RemaSoftware.ContextModels;
 using RemaSoftware.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
-using EmailService;
+using UtilityServices;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace RemaSoftware
@@ -77,7 +72,7 @@ namespace RemaSoftware
 #if DEBUG
             mvcBuilder.AddRazorRuntimeCompilation();
 #endif
-            services.AddTransient<IEmailService, EmailService.EmailService>();
+            services.AddTransient<IEmailService, EmailService>();
             
         }
 

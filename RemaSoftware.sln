@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.31105.61
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RemaSoftware", "RemaSoftware\RemaSoftware.csproj", "{00BA2473-54EA-4405-A011-D46767E7D25E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailService", "EmailService\EmailService.csproj", "{3C0AD47E-01E2-479F-B2BD-02CC7A6D7469}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UtilityServices", "UtilityServices\UtilityServices.csproj", "{3C0AD47E-01E2-479F-B2BD-02CC7A6D7469}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

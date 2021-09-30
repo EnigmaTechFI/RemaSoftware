@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RemaSoftware.ContextModels;
-using RemaSoftware.Data;
 using RemaSoftware.Models.LoginViewModel;
 using System.Threading.Tasks;
-using EmailService;
+using UtilityServices;
 
 namespace RemaSoftware.Controllers
 {
@@ -14,8 +12,6 @@ namespace RemaSoftware.Controllers
         private readonly SignInManager<MyUser> _signInManager;
         private readonly IEmailService _emailService;
         private readonly UserManager<MyUser> _userManager;
-        public LoginViewModel SignUp_Model { get; set; }
-
 
         public AccountController(UserManager<MyUser> userManager, SignInManager<MyUser> signInManager, IEmailService emailService)
         {
@@ -42,6 +38,7 @@ namespace RemaSoftware.Controllers
 
                 if (user == null)
                 {
+                    // todo toast errore user not found
                     return View(model);
                 }
 
@@ -57,12 +54,6 @@ namespace RemaSoftware.Controllers
             }
 
             return View(model);
-        }
-
-        [HttpGet]
-        public IActionResult ForgotPassword()
-        {
-            return View();
         }
 
         [HttpPost]
@@ -84,7 +75,7 @@ namespace RemaSoftware.Controllers
                 return RedirectToAction("Login"); // todo tast con avviso che è stata mandata la mail
             else
             {
-                // log email failed 
+                // todo toast errore
             }
             return View(email);
             
@@ -95,13 +86,53 @@ namespace RemaSoftware.Controllers
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Login", "Account");
-
         }
 
         [HttpGet]
-        public IActionResult ResetPassword()
+        public IActionResult ResetPassword(string token, string email)
         {
-            return null; // todo
+            if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(email))
+                // todo LOG
+                // todo toast errore
+                return RedirectToAction("Login");
+            
+            var model = new ResetPasswordViewModel
+            {
+                Token = token,
+                Email = email
+            };
+            return View(model);
+        }
+        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+            
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+                // todo LOG
+                // todo toast errore
+                RedirectToAction("ResetPassword");
+            
+            var resetResult = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+            if(!resetResult.Succeeded)
+            {
+                foreach (var error in resetResult.Errors)
+                {
+                    ModelState.TryAddModelError(error.Code, error.Description);
+                }
+                return View(model);
+            }
+            return RedirectToAction("ResetPasswordConfirmed");
+        }
+
+        [HttpGet]
+        public IActionResult ResetPasswordConfirmed()
+        {
+            return View();
         }
     }
 }
