@@ -5,26 +5,27 @@
     <div class="row">
         <div class="col-md-6" style="padding-top:50px;">
             <div class="panel panel-default">
-                <div class="panel-heading">Live Web Camera</div>
+                <div class="panel-heading">Vista Telecamera</div>
                 <div class="panel-body">
                     <div id="LiveCamera" style="margin-bottom:50px;"></div>
-                    <input id="Photo_base64" asp-for="Photo" type="button" class="btn btn-primary" value="Capture Snapshot" onClick="CaptureSnapshot()">
+                    <input id="Photo_base64" asp-for="Photo" type="button" class="btn btn-primary" value="Fotografa Prodotto" onClick="CaptureSnapshot()">
 
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row">
         <div class="col-md-6" style="padding-top:50px;">
             <div class="panel panel-default">
-                <div class="panel-heading">Captured Snapshot/Image</div>
+                <div class="panel-heading">Immagine Fotografata</div>
                 <div class="panel-body">
-                    <div id="results">Your snapshot will appear here...</div>
+                    <div id="results">L'immagine apparirà qui.</div>
                 </div>
                 <br />
                 <br />
             </div>
         </div>
+    </div>
+    <div class="row">
+        
     </div>
     <div class="form-group">
         <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Seleziona Cliente</label>
@@ -88,6 +89,34 @@
 </form>
 
 
+<div class="modal" tabindex="-1" role="dialog" style="background-color: rgba(255,255,255,0.7);">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Acquisizione Immagine</h5>
+                <button type="button" class="close" onclick="closeModal()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>L'immagine è stata acquisita correttamente.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="closeModal()">Chiudi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script language="JavaScript">
+    function openModal() {
+        document.querySelector(".modal").style.display = "block"
+    }
+    function closeModal() {
+        document.querySelector(".modal").style.display = "none"
+    }
+</script>
+
 <script src="~/webcamjs/webcam.js"></script>
 
 <!-- Javascript code to capture the snapshot and displaying it in the screen -->
@@ -109,7 +138,8 @@
             Webcam.upload(data,
                 '/WebCam/CaptureImage',
                 function (code, text) {
-                    alert('Snapshot/Image captured successfully...');
+                    //alert('Snapshot/Image captured successfully...');
+                    openModal();
                 });
         });
     }
