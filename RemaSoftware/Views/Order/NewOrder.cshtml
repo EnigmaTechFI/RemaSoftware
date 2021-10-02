@@ -1,5 +1,6 @@
 ﻿@model RemaSoftware.Models.ClientViewModel.NewOrderViewModel
 <!-- WEBCAM -->
+
 <form method="post">
     @Html.HiddenFor(model => model.Photo, new { @id = "Photo_base64" })
     <div class="row">
@@ -49,21 +50,27 @@
         <label for="formGroupExampleInput">Numero di pezzi</label>
         <input asp-for="Order.Number_Piece" type="number" class="form-control" id="formGroupExampleInput" placeholder="Numero di pezzi">
     </div>
+            <div class="form-group">
+                <label for="validationTooltip04">Prezzo Unitario (IVA Inclusa) *</label>
+                <div class="input-group-append">
+                    <input asp-for="Order.Price_Uni" type="text" pattern="^[\d,]+$" class="form-control" id="validationTooltip04" placeholder="Prezzo Unitario ">
+                    <span class="input-group-text">€</span>
+                </div>
+                <div class="valid-tooltip">
+                    Looks good!
+                </div>
+            </div>
     <div class="form-group">
 
         <label for="exampleFormControlTextarea1">Seleziona data di consegna</label>
-        <div class='input-group date' id='datetimepicker1'>
-            <input placeholder="Seleziona data di consegna" type='text' class="form-control" />
+        <div class='input-group date'>
+            <input placeholder="Seleziona data di consegna" type='text' class="form-control bg-white" id='datetimepicker1' asp-for="Order.DataOut" />
             <span class="input-group-addon">
                 <span class="glyphicon glyphicon-calendar"></span>
             </span>
         </div>
         <!-- MANCA l'installazione del jQuery-->
-        <script type="text/javascript">
-            $(function () {
-                $('#datetimepicker1').datetimepicker();
-            });
-        </script>
+
     </div>
 
     <div class="form-group">
@@ -72,13 +79,13 @@
     </div>
 
 
-    @foreach (var operation in Model.Operation)
+    @for (var i = 0; i<Model.Operation.Count; i++)
     {
         <div class="form-check">
-
-            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-            <label class="form-check-label" for="flexCheckDefault">
-                @operation.Name
+            <input type="hidden" asp-for="Operation[i].Operation.OperationID">
+            <input class="form-check-input" type="checkbox" id="flexCheckDefault-@(i)" asp-for="Operation[i].Flag">
+            <label class="form-check-label" for="flexCheckDefault-@(i)">
+                @Model.Operation[i].Operation.Name
             </label>
         </div>
 
@@ -108,39 +115,50 @@
     </div>
 </div>
 
-<script language="JavaScript">
-    function openModal() {
-        document.querySelector(".modal").style.display = "block"
-    }
-    function closeModal() {
-        document.querySelector(".modal").style.display = "none"
-    }
-</script>
-
-<script src="~/webcamjs/webcam.js"></script>
-
-<!-- Javascript code to capture the snapshot and displaying it in the screen -->
-<script language="JavaScript">
-    Webcam.set({
-        width: 500,
-        height: 375,
-        image_format: 'png',
-        jpeg_quality: 100
-    });
-    Webcam.attach('#LiveCamera');
-
-    function CaptureSnapshot() {
-        Webcam.snap(function (data) {
-            // display results in page
-            document.getElementById('results').innerHTML = '<img src="' + data + '"/>';
-            document.getElementById("Photo_base64").value = data;
-            // Send image data to the controller to store locally or in database
-            Webcam.upload(data,
-                '/WebCam/CaptureImage',
-                function (code, text) {
-                    //alert('Snapshot/Image captured successfully...');
-                    openModal();
+@section Scripts
+{
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <script src="~/webcamjs/webcam.js"></script>
+        <script language="JavaScript">
+            function openModal() {
+                document.querySelector(".modal").style.display = "block"
+            }
+            function closeModal() {
+                document.querySelector(".modal").style.display = "none"
+            }
+            
+            <!-- Javascript code to capture the snapshot and displaying it in the screen -->
+            Webcam.set({
+                width: 500,
+                height: 375,
+                image_format: 'png',
+                jpeg_quality: 100
+            });
+            Webcam.attach('#LiveCamera');
+        
+            function CaptureSnapshot() {
+                Webcam.snap(function (data) {
+                    // display results in page
+                    document.getElementById('results').innerHTML = '<img src="' + data + '"/>';
+                    document.getElementById("Photo_base64").value = data;
+                    // Send image data to the controller to store locally or in database
+                    Webcam.upload(data,
+                        '/WebCam/CaptureImage',
+                        function (code, text) {
+                            //alert('Snapshot/Image captured successfully...');
+                            openModal();
+                        });
                 });
-        });
-    }
-</script>
+            }
+            
+            $("#datetimepicker1").flatpickr({
+                dateFormat: "d/m/Y",
+                minDate: "today"
+            });
+        </script>
+}
+
+
+
+

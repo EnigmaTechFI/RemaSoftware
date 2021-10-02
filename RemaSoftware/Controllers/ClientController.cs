@@ -64,44 +64,6 @@ namespace RemaSoftware.Controllers
         }
 
 
-        [HttpGet]
-        public async Task<IActionResult> NewOrder()
-        {
-            var vm = new NewOrderViewModel();
 
-            var a = User.Identity.Name;
-
-            var user = await _userManager.FindByNameAsync(a);
-
-            vm.Clients = _applicationDbContext.Clients.ToList();
-
-            vm.Operation = _applicationDbContext.Operations.ToList();
-
-            return View(vm);
-        }
-
-        [HttpPost]
-        public IActionResult NewOrder(NewOrderViewModel model)
-        {
-            string source = model.Photo;
-            string base64 = source.Substring(source.IndexOf(',') + 1);
-            byte[] data = Convert.FromBase64String(base64);
-            var guid = Guid.NewGuid().ToString();
-            var file = "wwwroot/img/" + guid +".png";
-
-            System.IO.File.WriteAllBytes(file, data);
-
-            model.Order.DataIn = DateTime.Now;
-            model.Order.DataOut = DateTime.Now;
-
-            model.Order.Image_URL = file;
-
-            //TODO API, PDF, DATA_OUT, READ_OERATION
-
-            _applicationDbContext.Add(model.Order);
-            _applicationDbContext.SaveChanges();
-
-            return RedirectToAction("Index", "Home");
-        }
     }
 }
