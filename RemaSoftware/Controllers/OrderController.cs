@@ -34,19 +34,8 @@ namespace RemaSoftware.Controllers
         public FileResult DownloadPdfOrder(int orderId)
         {
             var order = _orderService.GetOrderById(orderId);
-            var fileBytes = _pdfService.GenerateOrderPdf(new OrderDto
-            {
-                Cliente = order.Client.Name,
-                Name = order.Name,
-                Description = order.Description,
-                DataIn = order.DataIn,
-                DataOut = order.DataOut,
-                SKU = order.SKU,
-                Image_URL = order.Image_URL,
-                Number_Piece = order.Number_Piece,
-                Price_Uni = order.Price_Uni,
-                Price_Tot = order.Price_Tot
-            });
+            // todo crea vista ordinePdf
+            var fileBytes = _pdfService.GeneratePdf("");
             return File(fileBytes, "application/pdf");
         }
     }

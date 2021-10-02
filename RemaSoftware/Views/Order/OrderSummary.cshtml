@@ -44,7 +44,7 @@
                             <td>@order.Number_Piece</td>
                             <td>&euro; @order.Price_Uni.ToString("0.00")</td>
                             <td>&euro; @order.Price_Tot.ToString("0.00")</td>
-                            <td class="text-center"><i class="fas fa-file-download" title="Scarica ordine in PDF" style="cursor: pointer; color: #4e73df" onclick="DownloadPdf(@order.OrderID)"></i></td>
+                            <td class="text-center"><a href='@Url.Action("DownloadPdfOrder","Order", new {orderId = order.OrderID})'><i class="fas fa-file-download" title="Scarica ordine in PDF" style="cursor: pointer; color: #4e73df"></i></a></td>
                         </tr>
                     }
                     </tbody>

@@ -1,18 +1,29 @@
 using System.IO;
+using PdfSharp;
 using UtilityServices.Dtos;
 
 namespace UtilityServices
 {
     public class PdfService : IPdfService
     {
-        public byte[] GenerateOrderPdf(OrderDto order)
+        public byte[] GeneratePdf(string pdfAsHtml)
         {
-            IronPdf.HtmlToPdf Renderer = new IronPdf.HtmlToPdf();
-            
-            var pdf = Renderer.RenderHtmlAsPdf(GetOrderAsHtml(order)).SaveAs("C:\\Users\\zaron\\Desktop\\html-string.pdf");
-            var pdfBytes = pdf.BinaryData;
+            var pdfDoc = TheArtOfDev.HtmlRenderer.PdfSharp.PdfGenerator.GeneratePdf(pdfAsHtml, PageSize.A4);
+            // IronPdf.HtmlToPdf Renderer = new IronPdf.HtmlToPdf();
+            //
+            // var pdf = Renderer.RenderHtmlAsPdf(GetOrderAsHtml(order)).SaveAs("C:\\Users\\zaron\\Desktop\\html-string.pdf");
+            // var pdfBytes = pdf.BinaryData;
             //File.Delete();
-            return pdfBytes;
+            
+            
+            byte[] bytes = null;
+            using (MemoryStream stream = new MemoryStream())
+            {
+                pdfDoc.Save(stream, true);
+                bytes = stream.ToArray();
+            }
+
+            return bytes;
         }
 
         private string GetOrderAsHtml(OrderDto order)
@@ -41,6 +52,7 @@ namespace UtilityServices
                                             <td><img src='C:\\Users\zaron\Pictures\Zeta.jpg' style='width: 40%; height: auto'></td>
                                             <td>{order.SKU}</td>
                                             <td>{order.Description}</td>
+                                            <td>{order.Number_Piece}</td>
                                             <td>&euro; {order.Price_Uni.ToString("0.00")}</td>
                                             <td>&euro; {order.Price_Tot.ToString("0.00")}</td>
                                             <td></td>

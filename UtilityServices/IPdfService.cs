@@ -4,6 +4,6 @@ namespace UtilityServices
 {
     public interface IPdfService
     {
-        byte[] GenerateOrderPdf(OrderDto order);
+        byte[] GeneratePdf(string pdfAsHtml);
     }
 }
