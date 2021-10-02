@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,8 +9,6 @@ using RemaSoftware.ContextModels;
 using RemaSoftware.Data;
 using RemaSoftware.Models.ClientViewModel;
 using Convert = System.Convert;
-using MemoryStream = System.IO.MemoryStream;
-using Image = System.Drawing;
 
 namespace RemaSoftware.Controllers
 {
@@ -108,30 +103,5 @@ namespace RemaSoftware.Controllers
 
             return RedirectToAction("Index", "Home");
         }
-
-
-
-        [HttpGet]
-        public async Task<IActionResult> OrderSummary()
-        {
-            var vm = new OrderSummaryViewModel();
-
-            var a = User.Identity.Name;
-
-            var user = await _userManager.FindByNameAsync(a);
-
-            vm.Username = user.UserName;
-
-            return View(vm);
-        }
-
-        [HttpPost]
-        public IActionResult OrderSummary(OrderSummaryViewModel model)
-        {
-            return View(model);
-        }
-
-
-
     }
 }

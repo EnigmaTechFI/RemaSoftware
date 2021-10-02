@@ -10,6 +10,8 @@ using RemaSoftware.Data;
 using System.Threading.Tasks;
 using UtilityServices;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using RemaSoftware.DALServices;
+using RemaSoftware.DALServices.Impl;
 
 namespace RemaSoftware
 {
@@ -69,10 +71,15 @@ namespace RemaSoftware
 
 
             var mvcBuilder = services.AddControllersWithViews();
-#if DEBUG
+            
+            #if DEBUG
             mvcBuilder.AddRazorRuntimeCompilation();
-#endif
+            #endif
+            
             services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<IPdfService, PdfService>();
+            services.AddTransient<IOrderService, OrderService>();
+            
             
         }
 

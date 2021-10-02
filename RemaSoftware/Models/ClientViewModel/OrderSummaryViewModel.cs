@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using RemaSoftware.ContextModels;
 
 namespace RemaSoftware.Models.ClientViewModel
 {
     public class OrderSummaryViewModel
     {
-        public string Username { get; set; }
+        public List<Order> Orders { get; set; }
     }
 }

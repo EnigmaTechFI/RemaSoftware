@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="IronPdf" Version="2021.9.3737" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.11" />
   </ItemGroup>
 
