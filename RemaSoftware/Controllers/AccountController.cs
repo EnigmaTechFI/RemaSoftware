@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RemaSoftware.ContextModels;
 using RemaSoftware.Models.LoginViewModel;
 using System.Threading.Tasks;
+using NLog;
 using UtilityServices;
 
 namespace RemaSoftware.Controllers
@@ -12,6 +13,8 @@ namespace RemaSoftware.Controllers
         private readonly SignInManager<MyUser> _signInManager;
         private readonly IEmailService _emailService;
         private readonly UserManager<MyUser> _userManager;
+        
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public AccountController(UserManager<MyUser> userManager, SignInManager<MyUser> signInManager, IEmailService emailService)
         {
@@ -72,7 +75,7 @@ namespace RemaSoftware.Controllers
             bool emailResponse = _emailService.SendEmailForPasswordReset(returnUrl, email);
  
             if (emailResponse)
-                return RedirectToAction("Login"); // todo tast con avviso che è stata mandata la mail
+                return RedirectToAction("Login"); // todo toast con avviso che è stata mandata la mail
             else
             {
                 // todo toast errore
@@ -92,9 +95,11 @@ namespace RemaSoftware.Controllers
         public IActionResult ResetPassword(string token, string email)
         {
             if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(email))
-                // todo LOG
+            {
+                Logger.Error($"Richiesta reset password (GET), nessun utente trovato con email: {email}");
                 // todo toast errore
                 return RedirectToAction("Login");
+            }
             
             var model = new ResetPasswordViewModel
             {
@@ -113,9 +118,11 @@ namespace RemaSoftware.Controllers
             
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
-                // todo LOG
+            {
+                Logger.Error($"Richiesta reset password (POST), nessun utente trovato con email: {model.Email}");
                 // todo toast errore
                 RedirectToAction("ResetPassword");
+            }
             
             var resetResult = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
             if(!resetResult.Succeeded)
@@ -132,6 +139,7 @@ namespace RemaSoftware.Controllers
         [HttpGet]
         public IActionResult ResetPasswordConfirmed()
         {
+            Logger.Info($"Password resettata per l'utente: {User.Identity.Name}.");
             return View();
         }
     }

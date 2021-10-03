@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using NLog;
 using RemaSoftware.ContextModels;
 using RemaSoftware.Data;
 
@@ -10,6 +11,7 @@ namespace RemaSoftware.DALServices.Impl
     public class OrderService : IOrderService
     {
         private readonly ApplicationDbContext _dbContext;
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public OrderService(ApplicationDbContext dbContext)
         {
@@ -31,9 +33,15 @@ namespace RemaSoftware.DALServices.Impl
         {
             if(order == null)
                 throw new Exception("Ordine vuoto.");
-
-            _dbContext.Add(order);
-            _dbContext.SaveChanges();
+            try
+            {
+                _dbContext.Add(order);
+                _dbContext.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Errore durante l'aggiunta dell'ordine: {order.ToString()}");
+            }
         }
 
         public List<Order> GetOrdersByFilters()

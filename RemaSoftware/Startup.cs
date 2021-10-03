@@ -12,6 +12,7 @@ using UtilityServices;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using RemaSoftware.DALServices;
 using RemaSoftware.DALServices.Impl;
+using RemaSoftware.Helper;
 
 namespace RemaSoftware
 {
@@ -81,6 +82,7 @@ namespace RemaSoftware
             services.AddTransient<IOrderService, OrderService>();
             services.AddTransient<IOperationService, OperationService>();
             services.AddTransient<IClientService, ClientService>();
+            services.AddTransient<PdfHelper>();
             
             
             

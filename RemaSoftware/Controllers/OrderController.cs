@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RemaSoftware.ContextModels;
+using NLog;
 using RemaSoftware.DALServices;
+using RemaSoftware.Helper;
 using RemaSoftware.Models.ClientViewModel;
 using UtilityServices;
-using UtilityServices.Dtos;
 
 namespace RemaSoftware.Controllers
 {
@@ -18,13 +18,17 @@ namespace RemaSoftware.Controllers
         private readonly IPdfService _pdfService;
         private readonly IClientService _clientService;
         private readonly IOperationService _operationService;
+        private readonly PdfHelper _pdfHelper;
 
-        public OrderController(IOrderService orderService, IPdfService pdfService, IClientService clientService, IOperationService operationService)
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+        public OrderController(IOrderService orderService, IPdfService pdfService, IClientService clientService, IOperationService operationService, PdfHelper pdfHelper)
         {
             _orderService = orderService;
             _pdfService = pdfService;
             _clientService = clientService;
             _operationService = operationService;
+            _pdfHelper = pdfHelper;
         }
         
         [HttpGet]
@@ -39,12 +43,22 @@ namespace RemaSoftware.Controllers
             return View(vm);
         }
 
-        public FileResult DownloadPdfOrder(int orderId)
+        public async Task<FileResult> DownloadPdfOrder(int orderId)
         {
-            var order = _orderService.GetOrderById(orderId);
-            // todo crea vista ordinePdf
-            var fileBytes = _pdfService.GeneratePdf("");
-            return File(fileBytes, "application/pdf");
+            try
+            {
+                var order = _orderService.GetOrderById(orderId);
+                var vieString = await _pdfHelper.RenderViewToString("Pdf/SingleOrderSummary", order);
+                var fileBytes = _pdfService.GeneratePdf(vieString);
+                
+                return File(fileBytes, "application/pdf");
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Errore durante la generazione del pdf.");
+            }
+
+            return null;
         }
         
         

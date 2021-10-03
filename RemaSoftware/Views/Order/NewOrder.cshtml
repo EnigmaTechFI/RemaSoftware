@@ -154,7 +154,18 @@
             
             $("#datetimepicker1").flatpickr({
                 dateFormat: "d/m/Y",
-                minDate: "today"
+                minDate: "today",
+                locale: {
+                    weekdays: {
+                        shorthand: ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'],
+                        longhand: ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sábado'], 
+                    },
+                        months: {
+                            shorthand: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Оtt', 'Nov', 'Dic'],
+                            longhand: ['Gennaio', 'Febbraio', 'Мarzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'], 
+                        } 
+                }
+                
             });
         </script>
 }

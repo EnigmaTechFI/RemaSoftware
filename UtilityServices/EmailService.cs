@@ -1,12 +1,14 @@
 using System;
 using System.Net.Mail;
 using Microsoft.Extensions.Configuration;
+using NLog;
 
 namespace UtilityServices
 {
     public class EmailService : IEmailService
     {
         private readonly IConfiguration _configuration;
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public EmailService(IConfiguration configuration)
         {
@@ -40,12 +42,12 @@ namespace UtilityServices
                 }
                 catch (Exception ex)
                 {
-                    // todo log errore invio mail
+                    Logger.Error(ex, "Errore durante l'invio della mail per il recupero della password.");
                 }
             }
             catch (Exception e)
             {
-                // todo log
+                Logger.Error(e, "Errore durante il processo di invio della mail per il recupero della password.");
             }
             return false;
         }
