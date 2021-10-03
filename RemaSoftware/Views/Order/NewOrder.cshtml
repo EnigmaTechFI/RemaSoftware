@@ -1,5 +1,8 @@
 ﻿@model RemaSoftware.Models.ClientViewModel.NewOrderViewModel
-<!-- WEBCAM -->
+
+@{
+    ViewData["Title"] = "Nuovo Ordine";
+}
 
 <form method="post">
     @Html.HiddenFor(model => model.Photo, new { @id = "Photo_base64" })
