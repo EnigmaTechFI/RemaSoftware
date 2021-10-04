@@ -29,7 +29,7 @@ namespace RemaSoftware.DALServices.Impl
             return _dbContext.Orders.Include(i=>i.Client).SingleOrDefault(sd => sd.OrderID == orderId);
         }
 
-        public void AddOrder(Order order)
+        public Order AddOrder(Order order)
         {
             if(order == null)
                 throw new Exception("Ordine vuoto.");
@@ -37,16 +37,34 @@ namespace RemaSoftware.DALServices.Impl
             {
                 _dbContext.Add(order);
                 _dbContext.SaveChanges();
+
+                return order;
             }
             catch (Exception e)
             {
                 Logger.Error(e, $"Errore durante l'aggiunta dell'ordine: {order.ToString()}");
             }
+            return null;
         }
 
         public List<Order> GetOrdersByFilters()
         {
             throw new System.NotImplementedException();
+        }
+
+
+        public void AddOrderOperation(int orderId, List<int> operationId)
+        {
+            var Order_Op = new List<Order_Operation>();
+
+            foreach(var id in operationId)
+            {
+                Order_Operation op = new Order_Operation { OrderID = orderId, OperationID = id};
+                Order_Op.Add(op);
+            }
+
+            _dbContext.AddRange(Order_Op);
+            _dbContext.SaveChanges();
         }
     }
 }
