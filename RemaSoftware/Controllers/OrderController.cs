@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Net.Http;
+using System.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +12,7 @@ using RemaSoftware.DALServices;
 using RemaSoftware.Helper;
 using RemaSoftware.Models.ClientViewModel;
 using UtilityServices;
+using Microsoft.AspNetCore.Hosting;
 
 namespace RemaSoftware.Controllers
 {
@@ -26,17 +27,19 @@ namespace RemaSoftware.Controllers
         private const string URL = "https://api.fattureincloud.it/v1/prodotti/nuovo";
         private const string ApiUID = "843721";
         private const string ApiKEY = "c66e80a04e611edbcdef1bfe00833d58";
+        private IWebHostEnvironment _hostEnvironment;
 
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public OrderController(IOrderService orderService, IPdfService pdfService, IClientService clientService, IOperationService operationService, PdfHelper pdfHelper)
+        public OrderController(IOrderService orderService, IPdfService pdfService, IClientService clientService, IOperationService operationService, PdfHelper pdfHelper, IWebHostEnvironment hostEnvironment)
         {
             _orderService = orderService;
             _pdfService = pdfService;
             _clientService = clientService;
             _operationService = operationService;
             _pdfHelper = pdfHelper;
+            _hostEnvironment = hostEnvironment;
         }
         
         [HttpGet]
@@ -73,6 +76,7 @@ namespace RemaSoftware.Controllers
         [HttpGet]
         public IActionResult NewOrder()
         {
+
             var vm = new NewOrderViewModel();
             vm.Clients = _clientService.GetAllClients();
             vm.Operation = new List<OperationFlag>();
@@ -97,13 +101,15 @@ namespace RemaSoftware.Controllers
             string base64 = source.Substring(source.IndexOf(',') + 1);
             byte[] data = Convert.FromBase64String(base64);
             var guid = Guid.NewGuid().ToString();
-            var file = "wwwroot/img/" + guid + ".png";
+            var webrootpath = _hostEnvironment.WebRootPath;
 
-            System.IO.File.WriteAllBytes(file, data);
+            string file_path = Directory.GetParent(webrootpath).Parent.FullName + "/ImmaginiOrdini/" + guid + ".png";
+
+            System.IO.File.WriteAllBytes(file_path, data);
 
             model.Order.DataIn = DateTime.Now;
 
-            model.Order.Image_URL = file;
+            model.Order.Image_URL = guid + ".png";
 
             model.Order.Price_Tot = model.Order.Price_Uni * model.Order.Number_Piece;
 
@@ -117,7 +123,6 @@ namespace RemaSoftware.Controllers
                 }
             }
 
-
             //Aggiunta Ordine DB
             var order = _orderService.AddOrder(model.Order);
 
@@ -126,6 +131,7 @@ namespace RemaSoftware.Controllers
                 //Collegamento Ordine - Operazioni DB
                 _orderService.AddOrderOperation(order.OrderID, order_operationID);
 
+                //API FatturaInCloud
                 var httpWebRequest = (HttpWebRequest)WebRequest.Create(URL);
                 httpWebRequest.ContentType = "application/json";
                 httpWebRequest.Method = "POST";
