@@ -7,6 +7,7 @@ using RemaSoftware.Models.StockViewModel;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using RemaSoftware.DALServices;
 
 namespace RemaSoftware.Controllers
 {
@@ -15,30 +16,23 @@ namespace RemaSoftware.Controllers
     {
         private readonly UserManager<MyUser> _userManager;
         private readonly ApplicationDbContext _applicationDbContext;
+        private readonly IWarehouseStockService _warehouseService;
 
-        public StockController(UserManager<MyUser> userManager, ApplicationDbContext applicationDbContext)
+        public StockController(ApplicationDbContext applicationDbContext, IWarehouseStockService warehouseService)
         {
-            _userManager = userManager;
             this._applicationDbContext = applicationDbContext;
+            _warehouseService = warehouseService;
         }
-
+        
         [HttpGet]
-        public async Task<IActionResult> Stock()
+        public IActionResult Stock()
         {
-            var vm = new StockViewModel();
+            var vm = new StockListViewModel
+            {
+                WarehouseStocks = _warehouseService.GetAllWarehouseStocks()
+            };
 
-            var a = User.Identity.Name;
-
-            var user = await _userManager.FindByNameAsync(a);
-
-            vm.Username = user.UserName;
             return View(vm);
-        }
-
-        [HttpPost]
-        public IActionResult Stock(StockViewModel model)
-        {
-            return View(model);
         }
         
         [HttpGet]

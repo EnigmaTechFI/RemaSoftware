@@ -8,8 +8,6 @@ namespace RemaSoftware.Models.StockViewModel
 {
     public class StockViewModel
     {
-        public string Username { get; set; }
-
         public Warehouse_Stock Warehouse_Stock { get; set; }
     }
 }

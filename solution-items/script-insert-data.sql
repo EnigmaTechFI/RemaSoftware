@@ -29,3 +29,13 @@ INSERT INTO Orders
            (2, 'Ordine2', 2, 150, getdate(), getdate(), '002', '','','Ordine 150 pezzi', 0, 15000, 100),
            (3, 'Ordine3', 3, 200, getdate(), getdate(), '003', '','','Ordine 200 pezzi', 0, 4000, 20)
 SET IDENTITY_INSERT [dbo].[Orders] OFF
+
+-- magazzino
+SET IDENTITY_INSERT [dbo].[Warehouse_Stocks] ON
+INSERT INTO [dbo].[Warehouse_Stocks]
+           (Warehouse_StockID, Name, Brand, Number_Piece, Price_Tot, Price_Uni, Size)
+     VALUES
+           (1, 'Forbici', 'Marca n1', 1, 100, 100, 'U'),
+           (2, 'Smerigliatrice', 'Marca n2', 1, 1000, 1000, 'U'),
+           (3, 'Scotch', 'Marca n3', 10, 3, 30, 'U')
+SET IDENTITY_INSERT [dbo].[Warehouse_Stocks] OFF

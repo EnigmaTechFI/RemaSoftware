@@ -82,6 +82,7 @@ namespace RemaSoftware
             services.AddTransient<IOrderService, OrderService>();
             services.AddTransient<IOperationService, OperationService>();
             services.AddTransient<IClientService, ClientService>();
+            services.AddTransient<IWarehouseStockService, WarehouseStockService>();
             services.AddTransient<PdfHelper>();
             
             
