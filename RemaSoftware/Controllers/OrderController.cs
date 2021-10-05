@@ -110,6 +110,8 @@ namespace RemaSoftware.Controllers
 
             model.Order.Price_Tot = model.Order.Price_Uni * model.Order.Number_Piece;
 
+            model.Order.Client = _clientService.GetClient(model.Order.ClientID);
+
             var order_operationID = new List<int>();
 
             foreach (var id in model.Operation)
@@ -133,7 +135,7 @@ namespace RemaSoftware.Controllers
 
                 //Schianta nella creazione del PDF
 
-                /*try
+                try
                 {
                     var vieString = await _pdfHelper.RenderViewToString("Pdf/SingleOrderSummary", order);
                     var fileBytes = _pdfService.GeneratePdf(vieString);
@@ -143,7 +145,7 @@ namespace RemaSoftware.Controllers
                 catch (Exception e)
                 {
                     Logger.Error(e, "Errore durante la generazione del pdf.");
-                }*/
+                }
 
                 return RedirectToAction("Index", "Home");
             }
