@@ -18,5 +18,11 @@ namespace RemaSoftware.DALServices.Impl
         {
             return _dbContext.Clients.ToList();
         }
+
+        public Client GetClient(int id)
+        {
+            var client = _dbContext.Clients.SingleOrDefault(i => i.ClientID == id);
+            return client;
+        }
     }
 }

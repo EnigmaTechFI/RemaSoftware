@@ -76,7 +76,8 @@ namespace RemaSoftware
             #if DEBUG
             mvcBuilder.AddRazorRuntimeCompilation();
             #endif
-            
+
+            services.AddTransient<IImageService, ImageService>();
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<IPdfService, PdfService>();
             services.AddTransient<IOrderService, OrderService>();
@@ -84,8 +85,7 @@ namespace RemaSoftware
             services.AddTransient<IClientService, ClientService>();
             services.AddTransient<IWarehouseStockService, WarehouseStockService>();
             services.AddTransient<PdfHelper>();
-            
-            
+            services.AddTransient<IAPIFatturaInCloudService, APIFatturaInCloudService>();
             
         }
 
