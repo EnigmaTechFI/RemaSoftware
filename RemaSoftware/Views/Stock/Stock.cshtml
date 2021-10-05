@@ -31,14 +31,16 @@
                 <tbody>
                 @foreach (var article in Model.WarehouseStocks)
                 {
-                    <tr>
-                        <td>@article.Name</td>
-                        <td>@article.Brand</td>
-                        <td>@article.Number_Piece</td>
-                        <td>@article.Size</td>
-                        <td>@article.Price_Uni.ToString("0.00")</td>
-                        <td>@article.Price_Tot.ToString("0.00")</td>
-                        <td class="text-center"><i class="fas fa-edit" style="cursor: pointer; color: #4e73df"></i></td>
+                    <tr id="article-@article.Warehouse_StockID" form="form-@article.Warehouse_StockID">
+                        <td class="name-@article.Warehouse_StockID">@article.Name</td>
+                        <td class="brand-@article.Warehouse_StockID">@article.Brand</td>
+                        <td class="npieces-@article.Warehouse_StockID">@article.Number_Piece</td>
+                        <td class="size-@article.Warehouse_StockID">@article.Size</td>
+                        <td class="priceuni-@article.Warehouse_StockID">@article.Price_Uni.ToString("0.00")</td>
+                        <td class="pricetot-@article.Warehouse_StockID">@article.Price_Tot.ToString("0.00")</td>
+                        <td class="text-center editicon-@article.Warehouse_StockID">
+                            <i class="fas fa-edit fa-lg" style="cursor: pointer; color: #4e73df" title="Modifica" onclick="ShowTextBoxForEdites(@article.Warehouse_StockID)"></i>
+                        </td>
                     </tr>
                 }
                 </tbody>
@@ -80,6 +82,117 @@
               ]
         });
     } );
+    
+    function ShowTextBoxesForEdit(articleId){
+        // todo salvarsi i valori precedenti per risettarli in caso di cancel
+        var row = $('tr#article-' + articleId);
+        
+        var nameInput = $('<input>', {
+            type: 'text',
+            name: 'name',
+            class: 'form-control',
+            style: 'display: none',
+            value: row.find($('.name-' + articleId))[0].innerText,
+            id : `edit-name-${articleId}`
+        });
+        row.find($('td.name-'+ articleId)).html(nameInput)
+        
+        var brandInput = $('<input>', {
+            type: 'text',
+            name: 'brand',
+            class: 'form-control',
+            style: 'display: none',
+            value: row.find($('.brand-' + articleId))[0].innerText,
+            id : `edit-brand-${articleId}`
+        });
+        row.find($('td.brand-'+ articleId)).html(brandInput)
+        
+        var npiecesInput = $('<input>', {
+            type: 'text',
+            name: 'npieces',
+            class: 'form-control',
+            style: 'display: none',
+            value: row.find($('.npieces-' + articleId))[0].innerText,
+            id : `edit-npieces-${articleId}`
+        });
+        row.find($('td.npieces-'+ articleId)).html(npiecesInput)
+        
+        var sizeInput = $('<input>', {
+            type: 'text',
+            name: 'size',
+            class: 'form-control',
+            style: 'display: none',
+            value: row.find($('.size-' + articleId))[0].innerText,
+            id : `edit-size-${articleId}`
+        });
+        row.find($('td.size-'+ articleId)).html(sizeInput)
+        
+        var priceuniInput = $('<input>', {
+            type: 'text',
+            name: 'priceuni',
+            class: 'form-control',
+            style: 'display: none',
+            value: row.find($('.priceuni-' + articleId))[0].innerText,
+            id : `edit-priceuni-${articleId}`
+        });
+        row.find($('td.priceuni-'+ articleId)).html(priceuniInput)
+        
+        var pricetotInput = $('<input>', {
+            type: 'text',
+            name: 'pricetot',
+            class: 'form-control',
+            style: 'display: none',
+            value: row.find($('.pricetot-' + articleId))[0].innerText,
+            id : `edit-pricetot-${articleId}`
+        });
+        row.find($('td.pricetot-'+ articleId)).html(pricetotInput)
+        
+        var saveicon = $('<i>', {
+            class: 'fas fa-check fa-lg pl-2',
+            style: 'color: #1cc88a; cursor: pointer; display: none',
+            title: 'Salva',
+            onclick: `SaveStockArticleEdit(${articleId})`,
+            form : `form-${articleId}`
+        });
+        var undoicon = $('<i>', {
+            class: 'fas fa-undo fa-lg pl-2',
+            style: 'color: #f6c23e; cursor: pointer; display: none',
+            title: 'Annulla modifiche',
+            form : `form-${articleId}`
+        });
+        var editicon = $('<i>', {
+            class: 'fas fa-edit fa-lg',
+            style: 'color: #4e73df; cursor: pointer; display: none',
+            title: 'Modifica',
+            onclick: `ShowTextBoxesForEdit(${articleId})`
+        });
+        
+        row.find($('td.editicon-'+ articleId)).html(saveicon).append(undoicon).append(editicon);
+        $(nameInput).fadeIn(1500);
+        $(brandInput).fadeIn(1500);
+        $(npiecesInput).fadeIn(1500);
+        $(sizeInput).fadeIn(1500);
+        $(priceuniInput).fadeIn(1500);
+        $(pricetotInput).fadeIn(1500);
+        
+        $(saveicon).fadeIn(1500);
+        $(undoicon).fadeIn(1500);
+    }
+    
+    function SaveStockArticleEdit(articleId){
+        var model = {
+            Name: $('#edit-name-'+articleId).val(),
+            Brand: $('#edit-brand-'+articleId).val(),
+            Number_Piece: $('#edit-npieces-'+articleId).val(),
+            Price_Tot: $('#edit-pricetot-'+articleId).val(),
+            Price_Uni: $('#edit-priceuni-'+articleId).val(),
+            Size:  $('#edit-size-'+articleId).val(),
+        }
+
+        $.post('@Url.Action("SaveStockArticleEdit", "Stock")', model);
+
+        
+    }
     </script>>
 }
 

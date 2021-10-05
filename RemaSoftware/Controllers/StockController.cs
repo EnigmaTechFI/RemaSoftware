@@ -1,17 +1,13 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RemaSoftware.ContextModels;
 using RemaSoftware.Data;
 using RemaSoftware.Models.StockViewModel;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using RemaSoftware.DALServices;
 
 namespace RemaSoftware.Controllers
 {
-    [Authorize]
     public class StockController : Controller
     {
         private readonly UserManager<MyUser> _userManager;
@@ -62,5 +58,20 @@ namespace RemaSoftware.Controllers
             return View(model);
         }
 
+ 
+        [HttpPost]
+        public JsonResult SaveStockArticleEdit(Warehouse_Stock model)
+        {
+            // todo salvataggio db
+            return null;
+        }
+
+        public class antani
+        {
+            public string Email { get; set; }
+            public string Name { get; set; }
+            public string PhoneNumber { get; set; }
+            public string Message { get; set; }
+        }
     }
 }
