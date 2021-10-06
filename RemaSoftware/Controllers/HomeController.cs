@@ -7,7 +7,6 @@ using RemaSoftware.Models;
 using RemaSoftware.Models.HomeViewModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 
@@ -24,7 +23,7 @@ namespace RemaSoftware.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             return View();
         }

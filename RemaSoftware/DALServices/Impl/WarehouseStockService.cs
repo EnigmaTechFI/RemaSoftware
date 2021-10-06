@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
+using NLog;
 using RemaSoftware.ContextModels;
 using RemaSoftware.Data;
 
@@ -10,6 +11,7 @@ namespace RemaSoftware.DALServices.Impl
     public class WarehouseStockService : IWarehouseStockService
     {
         private readonly ApplicationDbContext _dbContext;
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public WarehouseStockService(ApplicationDbContext dbContext)
         {
@@ -48,6 +50,15 @@ namespace RemaSoftware.DALServices.Impl
 
             _dbContext.SaveChanges();
             return true;
+        }
+
+        public bool DeleteWarehouseStockById(int stockArticleId)
+        {
+            
+                _dbContext.Warehouse_Stocks.Remove(new Warehouse_Stock {Warehouse_StockID = stockArticleId});
+                _dbContext.SaveChanges();
+                return true;
+            
         }
     }
 }

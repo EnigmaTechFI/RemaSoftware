@@ -44,6 +44,9 @@ namespace RemaSoftware.Controllers
             try { 
                 if (ModelState.IsValid)
                 {
+                    model.Warehouse_Stock.Size = string.IsNullOrEmpty(model.Warehouse_Stock.Size)
+                        ? "Unica"
+                        : model.Warehouse_Stock.Size;
                     model.Warehouse_Stock.Price_Tot = model.Warehouse_Stock.Price_Uni * model.Warehouse_Stock.Number_Piece;
                     _warehouseService.AddOrUpdateWarehouseStock(model.Warehouse_Stock);
                     return RedirectToAction("Stock", "Stock"); //redirect to "Giacenze"
@@ -69,8 +72,24 @@ namespace RemaSoftware.Controllers
             catch (Exception e)
             {
                 Logger.Error(e, $"Errore durante l'aggiornamento dell'articolo magazzino: {model.Warehouse_StockID}");
+                return new JsonResult(new {Error = e, Messge = $"Errore durante l'aggiornamento dell'articolo magazzino: {model.Warehouse_StockID}"});
             }
             return null;
+        }
+
+        [HttpDelete]
+        public JsonResult DeleteStockArticle(int stockArticleId)
+        {
+            try
+            {
+                var deleteResult = _warehouseService.DeleteWarehouseStockById(stockArticleId);
+                return new JsonResult(deleteResult);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Error deleting stockArticle: {stockArticleId}");
+                return new JsonResult(new {Error = e, Messge = $"Error deleting stockArticle: {stockArticleId}"});
+            }
         }
     }
 }
