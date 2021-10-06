@@ -1,31 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Net;
-using System.Text;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using RemaSoftware.ContextModels;
+using UtilityServices.Dtos;
 
 
-namespace RemaSoftware.DALServices.Impl
+namespace UtilityServices
 {
     public class APIFatturaInCloudService : IAPIFatturaInCloudService
     {
+        private readonly IConfiguration _configuration;
 
-        private const string URL = "https://api.fattureincloud.it/v1/prodotti/nuovo";
-        private const string ApiUID = "843721";
-        private const string ApiKEY = "c66e80a04e611edbcdef1bfe00833d58";
-
-        public bool AddOrderCloud(Order order)
+        public APIFatturaInCloudService(IConfiguration configuration)
         {
-            var httpWebRequest = (HttpWebRequest)WebRequest.Create(URL);
+            _configuration = configuration;
+        }
+        
+        public bool AddOrderCloud(OrderDto order)
+        {
+            var apiEndpoint = _configuration["ApiFattureInCloud:ApiEndpoint"];
+            var apiUID = _configuration["ApiFattureInCloud:ApiUID"];
+            var apiKey = _configuration["ApiFattureInCloud:ApiKEY"];
+            
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create(apiEndpoint);
             httpWebRequest.ContentType = "application/json";
             httpWebRequest.Method = "POST";
-
             OrderAPI test = new OrderAPI()
             {
-                api_uid = ApiUID,
-                api_key = ApiKEY,
+                api_uid = apiUID,
+                api_key = apiKey,
                 cod = order.SKU,
                 nome = order.Name,
                 desc = order.Description,

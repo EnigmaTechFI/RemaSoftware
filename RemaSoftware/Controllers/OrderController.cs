@@ -13,6 +13,7 @@ using RemaSoftware.Helper;
 using RemaSoftware.Models.ClientViewModel;
 using UtilityServices;
 using Microsoft.AspNetCore.Hosting;
+using UtilityServices.Dtos;
 
 namespace RemaSoftware.Controllers
 {
@@ -131,9 +132,17 @@ namespace RemaSoftware.Controllers
                 _orderService.AddOrderOperation(order.OrderID, order_operationID);
 
                 //API Fattura In Cloud
-                _apiFatturaInCloud.AddOrderCloud(order);
-
-                //Schianta nella creazione del PDF
+                _apiFatturaInCloud.AddOrderCloud(new OrderDto
+                {
+                    Name = order.Name,
+                    Description = order.Description,
+                    DataIn = order.DataIn,
+                    DataOut = order.DataOut,
+                    Number_Piece = order.Number_Piece,
+                    Price_Uni = order.Price_Uni,
+                    Price_Tot = order.Price_Tot,
+                    SKU = order.SKU
+                });
 
                 try
                 {

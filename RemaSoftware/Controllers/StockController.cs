@@ -1,22 +1,22 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RemaSoftware.ContextModels;
 using RemaSoftware.Data;
 using RemaSoftware.Models.StockViewModel;
 using Microsoft.EntityFrameworkCore;
+using NLog;
 using RemaSoftware.DALServices;
 
 namespace RemaSoftware.Controllers
 {
     public class StockController : Controller
     {
-        private readonly UserManager<MyUser> _userManager;
-        private readonly ApplicationDbContext _applicationDbContext;
         private readonly IWarehouseStockService _warehouseService;
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public StockController(ApplicationDbContext applicationDbContext, IWarehouseStockService warehouseService)
+        public StockController(IWarehouseStockService warehouseService)
         {
-            this._applicationDbContext = applicationDbContext;
             _warehouseService = warehouseService;
         }
         
@@ -45,8 +45,7 @@ namespace RemaSoftware.Controllers
                 if (ModelState.IsValid)
                 {
                     model.Warehouse_Stock.Price_Tot = model.Warehouse_Stock.Price_Uni * model.Warehouse_Stock.Number_Piece;
-                    _applicationDbContext.Add(model.Warehouse_Stock);
-                    _applicationDbContext.SaveChanges();
+                    _warehouseService.AddOrUpdateWarehouseStock(model.Warehouse_Stock);
                     return RedirectToAction("Stock", "Stock"); //redirect to "Giacenze"
                 }
             }
@@ -62,16 +61,16 @@ namespace RemaSoftware.Controllers
         [HttpPost]
         public JsonResult SaveStockArticleEdit(Warehouse_Stock model)
         {
-            // todo salvataggio db
+            try
+            {
+                var result = _warehouseService.AddOrUpdateWarehouseStock(model);
+                return new JsonResult(new {result});
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Errore durante l'aggiornamento dell'articolo magazzino: {model.Warehouse_StockID}");
+            }
             return null;
-        }
-
-        public class antani
-        {
-            public string Email { get; set; }
-            public string Name { get; set; }
-            public string PhoneNumber { get; set; }
-            public string Message { get; set; }
         }
     }
 }

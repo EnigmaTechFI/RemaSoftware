@@ -35,10 +35,10 @@ namespace RemaSoftware.DALServices.Impl
                 throw new Exception("Ordine vuoto.");
             try
             {
-                _dbContext.Add(order);
+                var addedOrder = _dbContext.Add(order);
                 _dbContext.SaveChanges();
 
-                return order;
+                return addedOrder.Entity;
             }
             catch (Exception e)
             {

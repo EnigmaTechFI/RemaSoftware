@@ -5,6 +5,7 @@ namespace RemaSoftware.DALServices
 {
     public interface IClientService
     {
+        void AddClient(Client customer);
         List<Client> GetAllClients();
         Client GetClient(int id);
     }

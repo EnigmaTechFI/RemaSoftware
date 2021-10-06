@@ -16,34 +16,17 @@ namespace RemaSoftware.Controllers
     [Authorize]
     public class HomeController : Controller
     {
-        private readonly UserManager<MyUser> _userManager;
         private readonly ApplicationDbContext _applicationDbContext;
 
-        public HomeController(UserManager<MyUser> userManager, ApplicationDbContext applicationDbContext)
+        public HomeController(ApplicationDbContext applicationDbContext)
         {
-            _userManager = userManager;
             this._applicationDbContext = applicationDbContext;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            //Recupero User
-            //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            //var user2 = _applicationDbContext.MyUsers.SingleOrDefault(i => i.Id == userId);
-
-            //Recupero User2
-            var a = User.Identity.Name;
-
-            var user = await _userManager.FindByNameAsync(a);
-
-            HomeViewModel model = new HomeViewModel();
-
-            model.Username = user.UserName;
-            model.UserId = user.Id;
-            
-            return View(model);
+            return View();
         }
 
         [HttpPost]                                  //controllata

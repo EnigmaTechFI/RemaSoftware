@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using NLog;
 using RemaSoftware.ContextModels;
 using RemaSoftware.Data;
 
@@ -13,7 +15,13 @@ namespace RemaSoftware.DALServices.Impl
         {
             _dbContext = dbContext;
         }
-        
+
+        public void AddClient(Client customer)
+        {
+            _dbContext.Add(customer);
+            _dbContext.SaveChanges();
+        }
+
         public List<Client> GetAllClients()
         {
             return _dbContext.Clients.ToList();

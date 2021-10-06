@@ -137,15 +137,15 @@
         });
         row.find($('td.priceuni-'+ articleId)).html(priceuniInput)
         
-        var pricetotInput = $('<input>', {
-            type: 'text',
-            name: 'pricetot',
-            class: 'form-control',
-            style: 'display: none',
-            value: row.find($('.pricetot-' + articleId))[0].innerText,
-            id : `edit-pricetot-${articleId}`
-        });
-        row.find($('td.pricetot-'+ articleId)).html(pricetotInput)
+        // var pricetotInput = $('<input>', {
+        //     type: 'text',
+        //     name: 'pricetot',
+        //     class: 'form-control',
+        //     style: 'display: none',
+        //     value: row.find($('.pricetot-' + articleId))[0].innerText,
+        //     id : `edit-pricetot-${articleId}`
+        // });
+        // row.find($('td.pricetot-'+ articleId)).html(pricetotInput)
         
         var saveicon = $('<i>', {
             class: 'fas fa-check fa-lg pl-2',
@@ -173,7 +173,7 @@
         $(npiecesInput).fadeIn(1500);
         $(sizeInput).fadeIn(1500);
         $(priceuniInput).fadeIn(1500);
-        $(pricetotInput).fadeIn(1500);
+        //$(pricetotInput).fadeIn(1500);
         
         $(saveicon).fadeIn(1500);
         $(undoicon).fadeIn(1500);
@@ -181,6 +181,7 @@
     
     function SaveStockArticleEdit(articleId){
         var model = {
+            Warehouse_StockID: articleId,
             Name: $('#edit-name-'+articleId).val(),
             Brand: $('#edit-brand-'+articleId).val(),
             Number_Piece: $('#edit-npieces-'+articleId).val(),
@@ -189,7 +190,11 @@
             Size:  $('#edit-size-'+articleId).val(),
         }
 
-        $.post('@Url.Action("SaveStockArticleEdit", "Stock")', model);
+        $.post('@Url.Action("SaveStockArticleEdit", "Stock")', model, function (data){
+            if (data.result == true){
+                alert("success")
+            }
+        });
 
         
     }

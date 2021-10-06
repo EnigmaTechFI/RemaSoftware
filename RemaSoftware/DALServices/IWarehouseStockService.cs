@@ -6,5 +6,6 @@ namespace RemaSoftware.DALServices
     public interface IWarehouseStockService
     {
         List<Warehouse_Stock> GetAllWarehouseStocks();
+        bool AddOrUpdateWarehouseStock(Warehouse_Stock stockArticle);
     }
 }
