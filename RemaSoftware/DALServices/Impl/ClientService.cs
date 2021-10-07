@@ -32,5 +32,10 @@ namespace RemaSoftware.DALServices.Impl
             var client = _dbContext.Clients.SingleOrDefault(i => i.ClientID == id);
             return client;
         }
+
+        public int GetTotalCustomerCount()
+        {
+            return _dbContext.Clients.Count();
+        }
     }
 }

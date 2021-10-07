@@ -8,7 +8,8 @@ namespace RemaSoftware.Models.HomeViewModel
 {
     public class HomeViewModel
     {
-        public string Username { get; set; }
-        public string UserId { get; set; }
+        public int TotalCustomerCount { get; set; }
+        public int TotalProcessedPieces { get; set; }
+        public int TotalCountOrdersNotExtinguished { get; set; }
     }
 }

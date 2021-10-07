@@ -9,36 +9,34 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using RemaSoftware.DALServices;
 
 namespace RemaSoftware.Controllers
 {
     [Authorize]
     public class HomeController : Controller
     {
-        private readonly ApplicationDbContext _applicationDbContext;
+        private readonly IClientService _clientService;
+        private readonly IOrderService _orderService;
 
-        public HomeController(ApplicationDbContext applicationDbContext)
+        public HomeController(IClientService clientService, IOrderService orderService)
         {
-            this._applicationDbContext = applicationDbContext;
+            _clientService = clientService;
+            _orderService = orderService;
         }
 
         [HttpGet]
         public IActionResult Index()
         {
-            return View();
+            var vm = new HomeViewModel
+            {
+                TotalCustomerCount = _clientService.GetTotalCustomerCount(),
+                TotalProcessedPieces = _orderService.GetTotalProcessedPiecese(),
+                TotalCountOrdersNotExtinguished = _orderService.GetCountOrdersNotExtinguished()
+            };
+            return View(vm);
         }
-
-        [HttpPost]                                  //controllata
-        public IActionResult Index(HomeViewModel model)
-        {
-            var user = _applicationDbContext.MyUsers.SingleOrDefault(i => i.Id == model.UserId);
-
-            model.Username = user.UserName;
-            model.UserId = model.UserId;
-            
-            return View(model);
-        }
-
+        
         public IActionResult Privacy()
         {
             return View();

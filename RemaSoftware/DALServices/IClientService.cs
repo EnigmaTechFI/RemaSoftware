@@ -8,5 +8,6 @@ namespace RemaSoftware.DALServices
         void AddClient(Client customer);
         List<Client> GetAllClients();
         Client GetClient(int id);
+        int GetTotalCustomerCount();
     }
 }

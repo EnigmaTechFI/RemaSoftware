@@ -10,5 +10,7 @@ namespace RemaSoftware.DALServices
         Order AddOrder(Order order);
         List<Order> GetOrdersByFilters();
         void AddOrderOperation(int orderId, List<int> operationId);
+        int GetTotalProcessedPiecese();
+        int GetCountOrdersNotExtinguished();
     }
 }

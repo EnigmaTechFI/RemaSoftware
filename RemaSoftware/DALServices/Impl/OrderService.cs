@@ -51,8 +51,7 @@ namespace RemaSoftware.DALServices.Impl
         {
             throw new System.NotImplementedException();
         }
-
-
+        
         public void AddOrderOperation(int orderId, List<int> operationId)
         {
             var Order_Op = new List<Order_Operation>();
@@ -65,6 +64,16 @@ namespace RemaSoftware.DALServices.Impl
 
             _dbContext.AddRange(Order_Op);
             _dbContext.SaveChanges();
+        }
+
+        public int GetTotalProcessedPiecese()
+        {
+            return _dbContext.Orders.Where(w => w.DataOut < DateTime.Now).Sum(s => s.Number_Piece);
+        }
+
+        public int GetCountOrdersNotExtinguished()
+        {
+            return _dbContext.Orders.Count(ord => ord.DataOut > DateTime.Now);
         }
     }
 }
