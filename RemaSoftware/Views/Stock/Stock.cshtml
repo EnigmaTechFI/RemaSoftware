@@ -40,6 +40,7 @@
                         <td class="pricetot-@article.Warehouse_StockID">@article.Price_Tot.ToString("0.00")</td>
                         <td class="text-center editicon-@article.Warehouse_StockID">
                             <i class="fas fa-edit fa-lg" style="cursor: pointer; color: #4e73df" title="Modifica" onclick="ShowTextBoxesForEdit(@article.Warehouse_StockID)"></i>
+                            <i class="fas fa-trash fa-lg" style="cursor: pointer; color: #4e73df" title="Elimina" onclick="DeleteStockArticle(@article.Warehouse_StockID)"></i>
                         </td>
                     </tr>
                 }
@@ -82,6 +83,19 @@
               ]
         });
     } );
+    
+    function DeleteStockArticle(articleId){
+        $.ajax({
+            url: '@Url.Action("DeleteStockArticle", "Stock")?' + $.param({"stockArticleId": articleId}),
+            type: 'DELETE',
+            success: function (data) {
+                if (data.result == true){
+                    alert("eliminato");
+                    window.location.reload();
+                }
+            }
+        });
+    }
     
     function ShowTextBoxesForEdit(articleId){
         // todo salvarsi i valori precedenti per risettarli in caso di cancel

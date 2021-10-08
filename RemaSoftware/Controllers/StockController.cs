@@ -83,7 +83,7 @@ namespace RemaSoftware.Controllers
             try
             {
                 var deleteResult = _warehouseService.DeleteWarehouseStockById(stockArticleId);
-                return new JsonResult(deleteResult);
+                return new JsonResult(new { Result = deleteResult});
             }
             catch (Exception e)
             {
