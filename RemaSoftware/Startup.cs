@@ -8,6 +8,8 @@ using Microsoft.Extensions.Hosting;
 using RemaSoftware.ContextModels;
 using RemaSoftware.Data;
 using System.Threading.Tasks;
+using AspNetCoreHero.ToastNotification;
+using AspNetCoreHero.ToastNotification.Extensions;
 using UtilityServices;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using RemaSoftware.DALServices;
@@ -77,6 +79,13 @@ namespace RemaSoftware
             mvcBuilder.AddRazorRuntimeCompilation();
             #endif
 
+            services.AddNotyf(config =>
+            {
+                config.DurationInSeconds = 10;
+                config.IsDismissable = true;
+                config.Position = NotyfPosition.TopRight;
+            });
+
             services.AddTransient<IImageService, ImageService>();
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<IPdfService, PdfService>();
@@ -114,6 +123,7 @@ namespace RemaSoftware
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseNotyf();
 
             app.UseEndpoints(endpoints =>
             {

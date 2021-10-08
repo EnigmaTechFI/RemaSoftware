@@ -56,8 +56,9 @@
     <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
 
     <script>
+    var table;
     $(document).ready( function () {
-        $('#table-stock').DataTable({
+        table = $('#table-stock').DataTable({
             "language": {
                 "lengthMenu": "Mostra _MENU_ risultati per pagina",
                 "zeroRecords": "Nessun risultato trovato",
@@ -90,9 +91,14 @@
             type: 'DELETE',
             success: function (data) {
                 if (data.result == true){
-                    alert("eliminato");
-                    window.location.reload();
+                    table.row($("tr#article-"+articleId)).remove().draw();
+                    toastNotifySuccess(data.toastMessage);
+                }else{
+                    toastNotifyError(data.toastMessage);
                 }
+            },
+            error: function (data){
+                toastNotifyError("Errore durante l\'eliminazione dell\'articolo di magazzino.");
             }
         });
     }
