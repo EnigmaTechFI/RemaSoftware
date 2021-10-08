@@ -11,5 +11,6 @@ namespace RemaSoftware.Models.HomeViewModel
         public int TotalCustomerCount { get; set; }
         public int TotalProcessedPieces { get; set; }
         public int TotalCountOrdersNotExtinguished { get; set; }
+        public decimal LastMonthEarnings { get; set; }
     }
 }

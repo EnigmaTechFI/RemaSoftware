@@ -12,5 +12,6 @@ namespace RemaSoftware.DALServices
         void AddOrderOperation(int orderId, List<int> operationId);
         int GetTotalProcessedPiecese();
         int GetCountOrdersNotExtinguished();
+        decimal GetLastMonthEarnings();
     }
 }

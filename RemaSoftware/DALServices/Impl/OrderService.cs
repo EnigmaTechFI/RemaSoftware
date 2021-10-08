@@ -75,5 +75,12 @@ namespace RemaSoftware.DALServices.Impl
         {
             return _dbContext.Orders.Count(ord => ord.DataOut > DateTime.Now);
         }
+
+        public decimal GetLastMonthEarnings()
+        {
+            var a = _dbContext.Orders.Where(w => w.DataOut.Month == DateTime.Now.Month)
+                .Sum(ord => ord.Price_Uni * ord.Number_Piece);
+            return (decimal) a;
+        }
     }
 }

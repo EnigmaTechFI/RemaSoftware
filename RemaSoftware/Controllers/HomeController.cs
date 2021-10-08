@@ -32,7 +32,8 @@ namespace RemaSoftware.Controllers
             {
                 TotalCustomerCount = _clientService.GetTotalCustomerCount(),
                 TotalProcessedPieces = _orderService.GetTotalProcessedPiecese(),
-                TotalCountOrdersNotExtinguished = _orderService.GetCountOrdersNotExtinguished()
+                TotalCountOrdersNotExtinguished = _orderService.GetCountOrdersNotExtinguished(),
+                LastMonthEarnings = _orderService.GetLastMonthEarnings()
             };
             return View(vm);
         }
