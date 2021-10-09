@@ -10,5 +10,6 @@ namespace RemaSoftware.DALServices
         bool DeleteWarehouseStockById(int stockArticleId);
         Warehouse_Stock GetStockArticleById(int stockArticleId);
         bool UpdateStockArticle(Warehouse_Stock stockArticle);
+        bool UpdateQtyByArticleId(int articleId, int qtyToAdd);
     }
 }

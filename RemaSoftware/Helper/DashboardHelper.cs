@@ -4,6 +4,8 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
+using RemaSoftware.ContextModels;
 using RemaSoftware.Data;
 using RemaSoftware.Models.HomeViewModel;
 
@@ -75,6 +77,16 @@ namespace RemaSoftware.Helper
                 Colors.Remove(ranCol);
             }
         }
-        
+
+        public List<Warehouse_Stock> GetAllWarehouseStocksForDashboard()
+        {
+            var articlesInStock = _dbContext.Warehouse_Stocks
+                .Where(w => w.Number_Piece > 0)
+                .ToList()
+                .GroupBy(gb=> new{gb.Name, gb.Brand, gb.Size})
+                .Select(s=>s.First()).ToList();
+            
+            return articlesInStock;
+        }
     }
 }

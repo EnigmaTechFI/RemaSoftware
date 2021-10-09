@@ -70,5 +70,16 @@ namespace RemaSoftware.DALServices.Impl
             _dbContext.SaveChanges();
             return true;
         }
+
+        public bool UpdateQtyByArticleId(int articleId, int qtyToAdd)
+        {
+            var article = _dbContext.Warehouse_Stocks.SingleOrDefault(sd => sd.Warehouse_StockID == articleId);
+            if(article == null)
+                throw new Exception($"Articolo non trovato. Id: {articleId}");
+            article.Number_Piece += qtyToAdd;
+            _dbContext.Warehouse_Stocks.Update(article);
+            _dbContext.SaveChanges();
+            return true; 
+        }
     }
 }

@@ -291,22 +291,28 @@
         <!-- Illustrations -->
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Illustrations</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Aggiungi / sottrai quantità</h6>
             </div>
             <div class="card-body">
-                <div class="text-center">
-                    <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;"
-                         src="img/undraw_posting_photo.svg" alt="...">
+                <div class="row">
+                    <div class="col-6">
+                        <select class="form-control" id="dd-articles">
+                            @foreach (var article in Model.StockArticleAddRemQty)
+                            {
+                                var value = $"{article.Name} - {article.Brand} - {article.Size}";
+                                <option value="@article.Warehouse_StockID">@value</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-6">
+                        <a class="btn btn-primary" style="color: #1cc88a" onclick="AddRemoveSingleQty(true)">
+                            +1
+                        </a>
+                        <a class="btn btn-primary" style="color: #e74a3b" onclick="AddRemoveSingleQty(false)">
+                            -1
+                        </a>
+                    </div>
                 </div>
-                <p>
-                    Add some quality, svg illustrations to your project courtesy of <a target="_blank" rel="nofollow" href="https://undraw.co/">unDraw</a>, a
-                    constantly updated collection of beautiful svg images that you can use
-                    completely free and without attribution!
-                </p>
-                <a target="_blank" rel="nofollow" href="https://undraw.co/">
-                    Browse Illustrations on
-                    unDraw &rarr;
-                </a>
             </div>
         </div>
 
@@ -335,6 +341,22 @@
 
 <script>
 
+    function AddRemoveSingleQty(isAdd) {
+        var model = {
+            articleId: $("#dd-articles").val(),
+            qtyToAddRemove: 1,
+            qtyToAddRemoveRadio: isAdd ? "1" : "0" 
+        }
+                
+        $.post('@Url.Action("AddOrRemoveQuantity", "Stock")', model, function (data){
+            if (data.result == true){
+               toastNotifySuccess(data.toastMessage);
+            }else{
+                toastNotifyError(data.toastMessage);
+            }
+        });
+    }
+    
     var ctx = document.getElementById("dashboardPieChart");
     var myPieChart = new Chart(ctx, {
       type: 'doughnut',
