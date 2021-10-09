@@ -54,11 +54,21 @@ namespace RemaSoftware.DALServices.Impl
 
         public bool DeleteWarehouseStockById(int stockArticleId)
         {
-            
-                _dbContext.Warehouse_Stocks.Remove(new Warehouse_Stock {Warehouse_StockID = stockArticleId});
-                _dbContext.SaveChanges();
-                return true;
-            
+            _dbContext.Warehouse_Stocks.Remove(new Warehouse_Stock {Warehouse_StockID = stockArticleId});
+            _dbContext.SaveChanges();
+            return true;
+        }
+
+        public Warehouse_Stock GetStockArticleById(int stockArticleId)
+        {
+            return _dbContext.Warehouse_Stocks.SingleOrDefault(sd => sd.Warehouse_StockID == stockArticleId);
+        }
+
+        public bool UpdateStockArticle(Warehouse_Stock stockArticle)
+        {
+            _dbContext.Warehouse_Stocks.Update(stockArticle);
+            _dbContext.SaveChanges();
+            return true;
         }
     }
 }

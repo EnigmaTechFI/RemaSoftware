@@ -1,0 +1,42 @@
+<div class="modal fade" id="add-remove-qty-modal" tabindex="-1" role="dialog" aria-labelledby="modal-head" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-head">Aggiungi/Sottrai pezzi</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="pb-2 font-italic h6">Inserire la quantità da aggiungere o sottrarre e specificare il tipo di operazione:</p>
+                <input type="hidden" id="modal-addrem-articleId">
+                <div class="row">
+                    <div class="col-6">
+                        <label class="form-check-label"><b>Quantità</b></label>
+                        <input class="form-control" type="number" min="0" id="qtyToAddRemove" value="1"/>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-check-label"><b>Seleziona operazione</b></label>
+                        <div class="form-check">
+                            <input class="form-check-input qtyAddRemRadio" type="radio" name="qtyToAddRemoveRadio" value="1" id="qtyAddRadio" checked>
+                            <label class="form-check-label" for="qtyAddRadio">
+                                Aggiungi
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input qtyAddRemRadio" type="radio" name="qtyToAddRemoveRadio" value="0" id="qtyRemoveRadio">
+                            <label class="form-check-label" for="qtyRemoveRadio">
+                                Sottrai
+                            </label>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <button  class="btn btn-primary" onclick="AddOrRemoveQuantity($('#modal-addrem-articleId').val())">Conferma</button>
+            </div>
+        </div>
+    </div>
+</div>

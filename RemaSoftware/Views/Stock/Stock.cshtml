@@ -39,8 +39,9 @@
                         <td class="priceuni-@article.Warehouse_StockID">@article.Price_Uni.ToString("0.00")</td>
                         <td class="pricetot-@article.Warehouse_StockID">@article.Price_Tot.ToString("0.00")</td>
                         <td class="text-center editicon-@article.Warehouse_StockID">
-                            <i class="fas fa-edit fa-lg" style="cursor: pointer; color: #4e73df" title="Modifica" onclick="ShowTextBoxesForEdit(@article.Warehouse_StockID)"></i>
-                            <i class="fas fa-trash fa-lg" style="cursor: pointer; color: #4e73df" title="Elimina" onclick="DeleteStockArticle(@article.Warehouse_StockID)"></i>
+                            @* <i class="fas fa-edit fa-lg" style="cursor: pointer; color: #4e73df" title="Modifica" onclick="ShowTextBoxesForEdit(@article.Warehouse_StockID)"></i> *@
+                            <i class="fas fa-sort fa-lg add-rem-qty" style="cursor: pointer; color: #4e73df" title="Aggingi/Sottrai pezzi" data-toggle="modal" data-target="#add-remove-qty-modal" id="@article.Warehouse_StockID"></i>
+                            <i class="fas fa-trash fa-lg pl-2" style="cursor: pointer; color: #e74a3b" title="Elimina" onclick="DeleteStockArticle(@article.Warehouse_StockID)"></i>
                         </td>
                     </tr>
                 }
@@ -49,6 +50,9 @@
         </div>
     </div>
 </div>
+@{
+    await Html.RenderPartialAsync("../Stock/_AddOrRemoveQuantityModal");   
+}
 
 @section Scripts
 {
@@ -85,6 +89,11 @@
         });
     } );
     
+    $(document).on("click", ".add-rem-qty", function () {
+         var articleId = $(this).attr('id');
+         $(".modal-body #modal-addrem-articleId").val( parseInt(articleId) );
+    });
+    
     function DeleteStockArticle(articleId){
         $.ajax({
             url: '@Url.Action("DeleteStockArticle", "Stock")?' + $.param({"stockArticleId": articleId}),
@@ -99,6 +108,25 @@
             },
             error: function (data){
                 toastNotifyError("Errore durante l\'eliminazione dell\'articolo di magazzino.");
+            }
+        });
+    }
+    
+    // chiamata dalla modale
+    function AddOrRemoveQuantity(articleId) {
+        var model = {
+            articleId: articleId,
+            qtyToAddRemove: $('#qtyToAddRemove').val(),
+            qtyToAddRemoveRadio: $('.qtyAddRemRadio:checked').val()
+        }
+    
+        $.post('@Url.Action("AddOrRemoveQuantity", "Stock")', model, function (data){
+            if (data.result == true){
+                $("#add-remove-qty-modal").modal('toggle');
+               $(".npieces-"+articleId)[0].innerText=data.newQty;
+               toastNotifySuccess(data.toastMessage);
+            }else{
+                toastNotifyError(data.toastMessage);
             }
         });
     }

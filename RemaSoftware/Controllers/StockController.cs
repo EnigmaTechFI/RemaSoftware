@@ -94,5 +94,40 @@ namespace RemaSoftware.Controllers
                 return new JsonResult(new {Error = e, ToastMessage = $"Errore durante l\\'eliminazione dell\\'articolo di magazzino."});
             }
         }
+
+        [HttpPost]
+        public JsonResult AddOrRemoveQuantity(QtyAddRemoveJSModel model)
+        {
+            if (model.ArticleId <= default(int))
+                return new JsonResult(new {Result = false, ToastMessage = $"Id articolo mancante. Segnalare errore."});
+            if (model.QtyToAddRemove <= 0)
+                return new JsonResult(new {Result = false, ToastMessage = $"La quantità deve essere maggiore di 0."});
+            
+            try
+            {
+                var stockArticle = _warehouseService.GetStockArticleById(model.ArticleId);
+                
+                if(model.QtyToAddRemoveRadio == 0 && stockArticle.Number_Piece - model.QtyToAddRemove < 0)
+                    return new JsonResult(new {Result = false, ToastMessage = $"La quantità risulterebbe minore di 0."});
+                
+                stockArticle.Number_Piece = model.QtyToAddRemoveRadio == 1
+                    ? stockArticle.Number_Piece + model.QtyToAddRemove
+                    : stockArticle.Number_Piece - model.QtyToAddRemove;
+                var res = _warehouseService.UpdateStockArticle(stockArticle);
+                return new JsonResult(new { Result = res, ToastMessage="Quantità modificata correttamente.", NewQty=stockArticle.Number_Piece});
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Error modifing quantity of stockArticle: {model.ArticleId}");
+                return new JsonResult(new {Error = e, ToastMessage = $"Errore durante l\\'eliminazione dell\\'articolo di magazzino."});
+            }
+        }
+    }
+
+    public class QtyAddRemoveJSModel
+    {
+        public int ArticleId { get; set; }
+        public int QtyToAddRemove { get; set; }
+        public int QtyToAddRemoveRadio { get; set; }
     }
 }
