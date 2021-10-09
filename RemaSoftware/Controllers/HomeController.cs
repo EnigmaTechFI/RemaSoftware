@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using RemaSoftware.DALServices;
+using RemaSoftware.Helper;
 
 namespace RemaSoftware.Controllers
 {
@@ -18,11 +19,13 @@ namespace RemaSoftware.Controllers
     {
         private readonly IClientService _clientService;
         private readonly IOrderService _orderService;
+        private readonly DashboardHelper _dashboardHelper;
 
-        public HomeController(IClientService clientService, IOrderService orderService)
+        public HomeController(IClientService clientService, IOrderService orderService, DashboardHelper dashboardHelper)
         {
             _clientService = clientService;
             _orderService = orderService;
+            _dashboardHelper = dashboardHelper;
         }
 
         [HttpGet]
@@ -33,7 +36,10 @@ namespace RemaSoftware.Controllers
                 TotalCustomerCount = _clientService.GetTotalCustomerCount(),
                 TotalProcessedPieces = _orderService.GetTotalProcessedPiecese(),
                 TotalCountOrdersNotExtinguished = _orderService.GetCountOrdersNotExtinguished(),
-                LastMonthEarnings = _orderService.GetLastMonthEarnings()
+                LastMonthEarnings = _orderService.GetLastMonthEarnings(),
+                PieChartData = _dashboardHelper.GetDataForDashboardPieChart(),
+                AreaChartData = _dashboardHelper.GetDataForDashboardAreaChart(),
+                OrderNearToDeadline = _orderService.GetOrdersNearToDeadline(5)
             };
             return View(vm);
         }

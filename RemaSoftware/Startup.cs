@@ -94,6 +94,7 @@ namespace RemaSoftware
             services.AddTransient<IClientService, ClientService>();
             services.AddTransient<IWarehouseStockService, WarehouseStockService>();
             services.AddTransient<PdfHelper>();
+            services.AddTransient<DashboardHelper>();
             services.AddTransient<IAPIFatturaInCloudService, APIFatturaInCloudService>();
             
         }

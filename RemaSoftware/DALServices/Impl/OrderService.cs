@@ -82,5 +82,10 @@ namespace RemaSoftware.DALServices.Impl
                 .Sum(ord => ord.Price_Uni * ord.Number_Piece);
             return (decimal) a;
         }
+
+        public List<Order> GetOrdersNearToDeadline(int topSelector)
+        {
+            return _dbContext.Orders.Include(i=>i.Client).Where(w=>w.DataOut > DateTime.Now).OrderBy(ob=>ob.DataOut).Take(topSelector).ToList();
+        }
     }
 }
