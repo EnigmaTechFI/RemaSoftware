@@ -60,7 +60,7 @@ namespace RemaSoftware.Controllers
         {
             try
             {
-                var order = _orderService.GetOrderById(orderId);
+                var order = _orderService.GetOrderWithOperationsById(orderId);
                 var vieString = await _pdfHelper.RenderViewToString("Pdf/SingleOrderSummary", order);
                 var fileBytes = _pdfService.GeneratePdf(vieString);
                 

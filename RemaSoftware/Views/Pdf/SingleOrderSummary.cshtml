@@ -26,46 +26,25 @@
                     @Model.Client.Cap, @Model.Client.City, @Model.Client.State
                 </div>
             </div>
-            <br><br><br><br>
-            <div class='row'>
-                <div class='col-12'>
-                    <table class='table table-bordered' width='100%' cellspacing='0'>
-                        <thead>
-                        <tr>
-                            <th></th>
-                            <th>SKU</th>
-                            <th>Descrizione</th>
-                            <th># Pezzi</th>
-                            <th>Prz. Unitario</th>
-                            <th>Prz. Totale</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td><img src="C:\\Users\zaron\Pictures\Zeta.jpg" style='width: 100%; height: 100%'/></td>
-                            <td>@Model.SKU</td>
-                            <td>@Model.Description</td>
-                            <td>@Model.Number_Piece</td>
-                            <td>&euro; @Model.Price_Uni.ToString("0.00")</td>
-                            <td>&euro; @Model.Price_Tot.ToString("0.00")</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <br><br>oppure:<br><br>
-            <!-- Seconda disposizione grafica -->
+            <br><br><br>
             <div class="row">
                 <div class="col-12">
-                    <img src="C:\\Users\zaron\Pictures\Zeta.jpg" style='width: 20%; height: auto'/><br><br>
+                    <img src="C:\\Users\zaron\Pictures\Zeta.jpg" style='width: 20%; height: auto'/><br><br><br>
                     <b>Sku: </b>@Model.SKU<br>
                     <b>Descrizione: </b>@Model.Description <br>
                     <b>Numero pezzi: </b>@Model.Number_Piece<br>
                     <b>Prezzo unitario: </b>&euro; @Model.Price_Uni.ToString("0.00")<br>
                     <b>Prezzo totale: </b>&euro; @Model.Price_Tot.ToString("0.00")<br>
+                    <b>Operazioni sull'ordine: </b>
+                    @{
+                        var last = Model.Order_Operation.Last();
+                    }
+                    @foreach (var operation in Model.Order_Operation)
+                    {
+                        <i>@operation.Operations.Name</i>if(operation != last){<text>,</text>}
+                    }
                 </div>
             </div>
-
         </div>
     </body>
     <script src="~/vendor/jquery/jquery.min.js"></script>

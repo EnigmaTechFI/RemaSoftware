@@ -29,6 +29,15 @@ namespace RemaSoftware.DALServices.Impl
             return _dbContext.Orders.Include(i=>i.Client).SingleOrDefault(sd => sd.OrderID == orderId);
         }
 
+        public Order GetOrderWithOperationsById(int orderId)
+        {
+            return _dbContext.Orders
+                .Include(i=>i.Client)
+                .Include(i=>i.Order_Operation)
+                .ThenInclude(ti=>ti.Operations)
+                .SingleOrDefault(sd => sd.OrderID == orderId);
+        }
+
         public Order AddOrder(Order order)
         {
             if(order == null)
@@ -85,7 +94,12 @@ namespace RemaSoftware.DALServices.Impl
 
         public List<Order> GetOrdersNearToDeadline(int topSelector)
         {
-            return _dbContext.Orders.Include(i=>i.Client).Where(w=>w.DataOut > DateTime.Now).OrderBy(ob=>ob.DataOut).Take(topSelector).ToList();
+            // add days(1) così evito di prendere quelli che sono scaduti / scadono oggi
+            return _dbContext.Orders
+                .Include(i=>i.Client)
+                .Where(w=>w.DataOut > DateTime.Now.AddDays(1)).OrderBy(ob=>ob.DataOut)
+                .Take(topSelector)
+                .ToList();
         }
     }
 }

@@ -7,6 +7,7 @@ namespace RemaSoftware.DALServices
     {
         List<Order> GetAllOrders();
         Order GetOrderById(int orderId);
+        Order GetOrderWithOperationsById(int orderId);
         Order AddOrder(Order order);
         List<Order> GetOrdersByFilters();
         void AddOrderOperation(int orderId, List<int> operationId);
