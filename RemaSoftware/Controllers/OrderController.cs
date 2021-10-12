@@ -82,6 +82,7 @@ namespace RemaSoftware.Controllers
             var vm = new NewOrderViewModel();
             vm.Clients = _clientService.GetAllClients();
             vm.Operation = new List<OperationFlag>();
+            vm.OldOrders = _orderService.GetAllOrders();
             var oper = _operationService.GetAllOperations();
             foreach (var op in oper)
             {
@@ -107,7 +108,7 @@ namespace RemaSoftware.Controllers
 
             model.Order.DataIn = DateTime.Now;
 
-            model.Order.Image_URL = guid + ".png";
+            model.Order.Image_URL = guid;
 
             model.Order.Price_Tot = model.Order.Price_Uni * model.Order.Number_Piece;
 
