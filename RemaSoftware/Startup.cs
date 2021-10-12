@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using RemaSoftware.DALServices;
 using RemaSoftware.DALServices.Impl;
 using RemaSoftware.Helper;
+using Rotativa.AspNetCore;
 
 namespace RemaSoftware
 {
@@ -115,7 +116,8 @@ namespace RemaSoftware
                 app.UseDeveloperExceptionPage();
 
             }
-
+            var hostingEnvironment = app.ApplicationServices.GetService<Microsoft.AspNetCore.Hosting.IHostingEnvironment>();
+            RotativaConfiguration.Setup(hostingEnvironment);
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

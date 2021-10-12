@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.IO;
+using Microsoft.Extensions.Configuration;
 using NLog;
 
 
@@ -8,9 +8,14 @@ namespace UtilityServices
 {
     public class ImageService : IImageService
     {
+        private readonly IConfiguration _configuration;
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+        public ImageService(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
 
         public string SavingOrderImage(string photo, string path)
         {
@@ -20,8 +25,8 @@ namespace UtilityServices
                 string base64 = source.Substring(source.IndexOf(',') + 1);
                 byte[] data = Convert.FromBase64String(base64);
                 var guid = Guid.NewGuid().ToString();
-
-                string file_path = path + "/ImmaginiOrdini/" + guid + ".png";
+                Directory.CreateDirectory(path + _configuration["ImagePath"]);
+                string file_path = path + _configuration["ImagePath"] + guid + ".png";
 
                 System.IO.File.WriteAllBytes(file_path, data);
                 return guid + ".png";

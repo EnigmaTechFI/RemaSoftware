@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Web;
 using System.Threading.Tasks;
+using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -13,6 +15,7 @@ using RemaSoftware.Helper;
 using RemaSoftware.Models.ClientViewModel;
 using UtilityServices;
 using Microsoft.AspNetCore.Hosting;
+using Rotativa.AspNetCore;
 using UtilityServices.Dtos;
 
 namespace RemaSoftware.Controllers
@@ -22,26 +25,26 @@ namespace RemaSoftware.Controllers
     {
         private readonly IOrderService _orderService;
         private readonly IAPIFatturaInCloudService _apiFatturaInCloud;
+        private readonly INotyfService _notyfService;
         private readonly IPdfService _pdfService;
         private readonly IClientService _clientService;
         private readonly IOperationService _operationService;
         private readonly IImageService _imageService;
         private readonly PdfHelper _pdfHelper;
-        private IWebHostEnvironment _hostEnvironment;
 
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public OrderController(IOrderService orderService, IPdfService pdfService, IClientService clientService, IOperationService operationService, PdfHelper pdfHelper, IWebHostEnvironment hostEnvironment, IImageService imageService, IAPIFatturaInCloudService apiFatturaInCloudService)
+        public OrderController(IOrderService orderService, IPdfService pdfService, IClientService clientService, IOperationService operationService, PdfHelper pdfHelper, IImageService imageService, IAPIFatturaInCloudService apiFatturaInCloudService, INotyfService notyfService)
         {
             _orderService = orderService;
             _pdfService = pdfService;
             _clientService = clientService;
             _operationService = operationService;
             _pdfHelper = pdfHelper;
-            _hostEnvironment = hostEnvironment;
             _imageService = imageService;
             _apiFatturaInCloud = apiFatturaInCloudService;
+            _notyfService = notyfService;
         }
         
         [HttpGet]
@@ -56,15 +59,15 @@ namespace RemaSoftware.Controllers
             return View(vm);
         }
 
-        public async Task<FileResult> DownloadPdfOrder(int orderId)
+        public IActionResult DownloadPdfOrder(int orderId)
         {
             try
             {
                 var order = _orderService.GetOrderWithOperationsById(orderId);
-                var vieString = await _pdfHelper.RenderViewToString("Pdf/SingleOrderSummary", order);
-                var fileBytes = _pdfService.GeneratePdf(vieString);
+                // var vieString = await _pdfHelper.RenderViewToString("Pdf/SingleOrderSummary", order);
+                // var fileBytes = _pdfService.GeneratePdf(vieString);
                 
-                return File(fileBytes, "application/pdf");
+                return new ViewAsPdf("../Pdf/SingleOrderSummary", order);
             }
             catch (Exception e)
             {
@@ -82,7 +85,8 @@ namespace RemaSoftware.Controllers
             var vm = new NewOrderViewModel();
             vm.Clients = _clientService.GetAllClients();
             vm.Operation = new List<OperationFlag>();
-            vm.OldOrders = _orderService.GetAllOrders();
+            //vm.OldOrders = _orderService.GetAllOrders();
+            vm.OldOrders = new List<string>{"sku001", "sku001", "sku001", "sku001"};
             var oper = _operationService.GetAllOperations();
             foreach (var op in oper)
             {
@@ -100,11 +104,9 @@ namespace RemaSoftware.Controllers
         [HttpPost]
         public async Task<IActionResult> NewOrder(NewOrderViewModel model)
         {
-            var webrootpath = _hostEnvironment.WebRootPath;
+            var rootpath = Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName;
 
-            string file_path = Directory.GetParent(webrootpath).Parent.FullName;
-
-            var guid = _imageService.SavingOrderImage(model.Photo, file_path);
+            var guid = _imageService.SavingOrderImage(model.Photo, rootpath);
 
             model.Order.DataIn = DateTime.Now;
 
@@ -156,7 +158,7 @@ namespace RemaSoftware.Controllers
                 {
                     Logger.Error(e, "Errore durante la generazione del pdf.");
                 }
-
+                _notyfService.Success("Ordine creato correttamente.");
                 return RedirectToAction("Index", "Home");
             }
             else
@@ -164,6 +166,7 @@ namespace RemaSoftware.Controllers
                 //Do Something
             }
 
+            _notyfService.Error("Errore durante la creazione dell\\'ordine");
             return RedirectToAction("Index", "Home");
         }
 

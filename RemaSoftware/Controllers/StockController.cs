@@ -8,6 +8,7 @@ using RemaSoftware.Models.StockViewModel;
 using Microsoft.EntityFrameworkCore;
 using NLog;
 using RemaSoftware.DALServices;
+using Rotativa.AspNetCore;
 
 namespace RemaSoftware.Controllers
 {
