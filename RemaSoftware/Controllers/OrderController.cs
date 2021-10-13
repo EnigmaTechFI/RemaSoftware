@@ -17,6 +17,7 @@ using UtilityServices;
 using Microsoft.AspNetCore.Hosting;
 using Rotativa.AspNetCore;
 using UtilityServices.Dtos;
+using Microsoft.Extensions.Configuration;
 
 namespace RemaSoftware.Controllers
 {
@@ -31,11 +32,12 @@ namespace RemaSoftware.Controllers
         private readonly IOperationService _operationService;
         private readonly IImageService _imageService;
         private readonly PdfHelper _pdfHelper;
+        private readonly IConfiguration _configuration;
 
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public OrderController(IOrderService orderService, IPdfService pdfService, IClientService clientService, IOperationService operationService, PdfHelper pdfHelper, IImageService imageService, IAPIFatturaInCloudService apiFatturaInCloudService, INotyfService notyfService)
+        public OrderController(IOrderService orderService, IPdfService pdfService, IClientService clientService, IOperationService operationService, PdfHelper pdfHelper, IImageService imageService, IAPIFatturaInCloudService apiFatturaInCloudService, INotyfService notyfService, IConfiguration configuration)
         {
             _orderService = orderService;
             _pdfService = pdfService;
@@ -45,6 +47,7 @@ namespace RemaSoftware.Controllers
             _imageService = imageService;
             _apiFatturaInCloud = apiFatturaInCloudService;
             _notyfService = notyfService;
+            _configuration = configuration;
         }
         
         [HttpGet]
@@ -85,8 +88,7 @@ namespace RemaSoftware.Controllers
             var vm = new NewOrderViewModel();
             vm.Clients = _clientService.GetAllClients();
             vm.Operation = new List<OperationFlag>();
-            //vm.OldOrders = _orderService.GetAllOrders();
-            vm.OldOrders = new List<string>{"sku001", "sku001", "sku001", "sku001"};
+            vm.OldOrders_SKU = _orderService.GetOldOrders_SKU().Distinct().ToList();
             var oper = _operationService.GetAllOperations();
             foreach (var op in oper)
             {
@@ -149,10 +151,8 @@ namespace RemaSoftware.Controllers
 
                 try
                 {
-                    var vieString = await _pdfHelper.RenderViewToString("Pdf/SingleOrderSummary", order);
-                    var fileBytes = _pdfService.GeneratePdf(vieString);
-
-                    return File(fileBytes, "application/pdf");
+                    var order_pdf = _orderService.GetOrderWithOperationsById(order.OrderID);
+                    return new ViewAsPdf("../Pdf/SingleOrderSummary", order_pdf);
                 }
                 catch (Exception e)
                 {
@@ -168,6 +168,33 @@ namespace RemaSoftware.Controllers
 
             _notyfService.Error("Errore durante la creazione dell\\'ordine");
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpDelete]
+        public JsonResult GetOrderBySKU(string orderSKU)
+        {
+            var order = _orderService.GetOrderBySKU(orderSKU);
+
+            if (order == null || orderSKU == null)
+            {
+                return new JsonResult(new {ToastMessage = $"Errore durante il recupero dell\\'ordine." });
+            }
+
+            try
+            {
+                var path = Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName + _configuration["ImagePath"] + order.Image_URL;
+                WebClient webClient = new WebClient();
+                byte[] dataArr = webClient.DownloadData(path);
+                string base64 = "data:image/png;base64," +  Convert.ToBase64String(dataArr);
+                var client = _clientService.GetAllClients();
+                int index = client.FindIndex(a => a.ClientID == order.ClientID);
+                return new JsonResult(new {client_id = index.ToString(), path =  base64, ToastMessage = "Articolo di magazzino eliminato correttamente." });
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Error deleting stockArticle: {orderSKU}");
+                return new JsonResult(new { Error = e, ToastMessage = $"Errore durante il recupero dell\\'ordine." });
+            }
         }
 
     }
