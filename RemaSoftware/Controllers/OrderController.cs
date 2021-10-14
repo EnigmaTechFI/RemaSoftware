@@ -188,7 +188,7 @@ namespace RemaSoftware.Controllers
                 string base64 = "data:image/png;base64," +  Convert.ToBase64String(dataArr);
                 var client = _clientService.GetAllClients();
                 int index = client.FindIndex(a => a.ClientID == order.ClientID);
-                return new JsonResult(new {client_id = index.ToString(), path =  base64, ToastMessage = "Articolo di magazzino eliminato correttamente." });
+                return new JsonResult(new {client_id = index.ToString(), path =  base64, name = order.Name, ToastMessage = "Articolo di magazzino eliminato correttamente." });
             }
             catch (Exception e)
             {

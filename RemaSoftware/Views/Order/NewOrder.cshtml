@@ -14,7 +14,17 @@
     <div class="card-body">
         <form method="post">
             @Html.HiddenFor(model => model.Photo, new { @id = "Photo_base64" })
+            @*@Html.HiddenFor(model => model.Order.Image_URL, new { @id = "image_url" })*@
             @* @Html.HiddenFor(model => model.Order.SKU, new { @id = "myInput" }) *@
+            <div class="form-group">
+                <label for="formGroupExampleInput">Codice</label>
+                <select asp-for="Order.SKU" id="order_sku" class="select2 form-control">
+                    @foreach (var sku in Model.OldOrders_SKU)
+                    {
+                        <option>@sku</option>
+                    }
+                </select>
+            </div>
             <div class="row">
                 <div class="col-md-6" style="padding-top:50px;">
                     <div class="panel panel-default">
@@ -54,15 +64,7 @@
                 <label for="formGroupExampleInput">Nome</label>
                 <input asp-for="Order.Name" type="text" class="form-control" id="order_name" placeholder="Nome">
             </div>
-            <div class="form-group">
-                <label for="formGroupExampleInput">Codice</label>
-                <select asp-for="Order.SKU" id="order_sku" class="select2 form-control">
-                    @foreach (var sku in Model.OldOrders_SKU)
-                    {
-                        <option>@sku</option>
-                    }
-                </select>
-            </div>
+
             <div class="form-group">
                 <label for="formGroupExampleInput">Numero di pezzi</label>
                 <input asp-for="Order.Number_Piece" type="number" class="form-control" id="formGroupExampleInput" placeholder="Numero di pezzi">
@@ -111,9 +113,6 @@
     </div>
 </div>
 
-
-
-
 <div class="modal" tabindex="-1" role="dialog" style="background-color: rgba(255,255,255,0.7);">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -161,12 +160,16 @@
                     success: function (data) {
 
                         document.getElementById('results').innerHTML = '<img src="' + data.path + '" width="500" height="282" />';
-                        document.getElementById("Photo_base64").value = data;
-                        $("#order_name").val("test");
+                        document.getElementById("Photo_base64").value = data.path;
+                        $("#order_name").val(data.name);
                         document.getElementById("inlineFormCustomSelectPref").selectedIndex = data.client_id;
                         toastNotifySuccess("Ordine recuperato correttamente.");
                     },
-                    error: function (data){
+                    error: function (data) {
+                        document.getElementById('results').innerHTML = '<img src="" width="500" height="282" />';
+                        document.getElementById("Photo_base64").value = "";
+                        $("#order_name").val("");
+                        document.getElementById("inlineFormCustomSelectPref").selectedIndex = data.client_id;
                         toastNotifyError("Errore nel recupero dell\\'ordine.");
                     }
                 });
