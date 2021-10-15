@@ -7,5 +7,7 @@ namespace RemaSoftware.DALServices
     {
         List<Operation> GetAllOperations();
         bool EditOrderOperations(int orderId, List<int> operationToAdd, List<int> operationToRemove);
+
+        void AddOperation(Operation operation);
     }
 }

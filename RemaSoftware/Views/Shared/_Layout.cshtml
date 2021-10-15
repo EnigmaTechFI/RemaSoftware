@@ -46,20 +46,26 @@
         <!-- Nav Item - Pages Collapse Menu -->
         <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "OrderSummary" ? "active" : "")">
             <a class="nav-link" asp-action="OrderSummary" asp-controller="Order">
-                <i class="fas fa-fw fa-chart-area"></i>
+                <i class="fas fa-fw fa-tasks"></i>
                 <span>Resoconto</span>
             </a>
         </li>
         <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "NewOrder" ? "active" : "")">
             <a class="nav-link" asp-action="NewOrder" asp-controller="Order">
-                <i class="fas fa-fw fa-chart-area"></i>
+                <i class="fas fa-fw fa-dolly-flatbed"></i>
                 <span>Registra Ordine</span>
             </a>
         </li>
         <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "AddClient" ? "active" : "")">
             <a class="nav-link" asp-action="AddClient" asp-controller="Client">
-                <i class="fas fa-fw fa-chart-area"></i>
+                <i class="fas fa-fw fa-address-card"></i>
                 <span>Aggiungi Cliente</span>
+            </a>
+        </li>
+        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "AddOperation" ? "active" : "")">
+            <a class="nav-link" asp-action="AddOperation" asp-controller="Operation">
+                <i class="fas fa-fw fa-tools"></i>
+                <span>Aggiungi Operazione</span>
             </a>
         </li>
 
@@ -75,13 +81,13 @@
         <!-- Nav Item - Tables -->
         <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Stock" ? "active" : "")">
             <a class="nav-link" asp-action="Stock" asp-controller="Stock">
-                <i class="fas fa-fw fa-table"></i>
+                <i class="fas fa-fw fa-warehouse"></i>
                 <span>Giacenze</span>
             </a>
         </li>
         <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "AddProduct" ? "active" : "")">
             <a class="nav-link" asp-action="AddProduct" asp-controller="Stock">
-                <i class="fas fa-fw fa-chart-area"></i>
+                <i class="fas fa-fw fa-boxes"></i>
                 <span>Aggiungi Prodotto</span>
             </a>
         </li>
@@ -189,14 +195,14 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Sicuro di uscire?</h5>
                 <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
-            <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+            <div class="modal-body">Seleziona "Logout" di seguito se sei pronto per terminare la sessione corrente.</div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
                 <a class="btn btn-primary" asp-controller="Account" asp-action="Logout">Logout</a>
             </div>
         </div>

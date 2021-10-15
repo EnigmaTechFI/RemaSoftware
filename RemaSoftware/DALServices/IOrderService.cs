@@ -15,5 +15,7 @@ namespace RemaSoftware.DALServices
         int GetCountOrdersNotExtinguished();
         decimal GetLastMonthEarnings();
         List<Order> GetOrdersNearToDeadline(int topSelector);
+        List<string> GetOldOrders_SKU();
+        Order GetOrderBySKU(string sku);
     }
 }

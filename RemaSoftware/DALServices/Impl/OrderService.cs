@@ -101,5 +101,15 @@ namespace RemaSoftware.DALServices.Impl
                 .Take(topSelector)
                 .ToList();
         }
+
+        public List<string> GetOldOrders_SKU()
+        {
+            return _dbContext.Orders.Select(s => s.SKU).ToList();
+        }
+
+        public Order GetOrderBySKU(string sku)
+        {
+            return _dbContext.Orders.Include(c => c.Client).Where(s => s.SKU == sku).FirstOrDefault();
+        }
     }
 }
