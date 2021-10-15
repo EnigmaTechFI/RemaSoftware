@@ -89,7 +89,7 @@ namespace RemaSoftware
 
             services.AddTransient<IImageService, ImageService>();
             services.AddTransient<IEmailService, EmailService>();
-            services.AddTransient<IPdfService, PdfService>();
+            //services.AddTransient<IPdfService, PdfService>();
             services.AddTransient<IOrderService, OrderService>();
             services.AddTransient<IOperationService, OperationService>();
             services.AddTransient<IClientService, ClientService>();

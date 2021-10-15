@@ -15,6 +15,8 @@ using RemaSoftware.Helper;
 using RemaSoftware.Models.ClientViewModel;
 using UtilityServices;
 using Microsoft.AspNetCore.Hosting;
+using RemaSoftware.Models.Common;
+using RemaSoftware.Models.OrderViewModel;
 using Rotativa.AspNetCore;
 using UtilityServices.Dtos;
 
@@ -26,7 +28,6 @@ namespace RemaSoftware.Controllers
         private readonly IOrderService _orderService;
         private readonly IAPIFatturaInCloudService _apiFatturaInCloud;
         private readonly INotyfService _notyfService;
-        private readonly IPdfService _pdfService;
         private readonly IClientService _clientService;
         private readonly IOperationService _operationService;
         private readonly IImageService _imageService;
@@ -35,10 +36,9 @@ namespace RemaSoftware.Controllers
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public OrderController(IOrderService orderService, IPdfService pdfService, IClientService clientService, IOperationService operationService, PdfHelper pdfHelper, IImageService imageService, IAPIFatturaInCloudService apiFatturaInCloudService, INotyfService notyfService)
+        public OrderController(IOrderService orderService, IClientService clientService, IOperationService operationService, PdfHelper pdfHelper, IImageService imageService, IAPIFatturaInCloudService apiFatturaInCloudService, INotyfService notyfService)
         {
             _orderService = orderService;
-            _pdfService = pdfService;
             _clientService = clientService;
             _operationService = operationService;
             _pdfHelper = pdfHelper;
@@ -64,8 +64,6 @@ namespace RemaSoftware.Controllers
             try
             {
                 var order = _orderService.GetOrderWithOperationsById(orderId);
-                // var vieString = await _pdfHelper.RenderViewToString("Pdf/SingleOrderSummary", order);
-                // var fileBytes = _pdfService.GeneratePdf(vieString);
                 
                 return new ViewAsPdf("../Pdf/SingleOrderSummary", order);
             }
@@ -100,7 +98,6 @@ namespace RemaSoftware.Controllers
             return View(vm);
         }
 
-
         [HttpPost]
         public async Task<IActionResult> NewOrder(NewOrderViewModel model)
         {
@@ -120,7 +117,7 @@ namespace RemaSoftware.Controllers
 
             foreach (var id in model.Operation)
             {
-                if (id.Flag == true)
+                if (id.Flag)
                 {
                     order_operationID.Add(id.Operation.OperationID);
                 }
@@ -149,10 +146,7 @@ namespace RemaSoftware.Controllers
 
                 try
                 {
-                    var vieString = await _pdfHelper.RenderViewToString("Pdf/SingleOrderSummary", order);
-                    var fileBytes = _pdfService.GeneratePdf(vieString);
-
-                    return File(fileBytes, "application/pdf");
+                    return new ViewAsPdf("../Pdf/SingleOrderSummary", order);
                 }
                 catch (Exception e)
                 {
@@ -168,6 +162,66 @@ namespace RemaSoftware.Controllers
 
             _notyfService.Error("Errore durante la creazione dell\\'ordine");
             return RedirectToAction("Index", "Home");
+        }
+        
+        [HttpGet]
+        public IActionResult GetEditOrderOperationsModal(int orderId)
+        {
+            var vm = new EditOrderOperationsViewModel();
+            
+            var allAvailableOperations = _operationService.GetAllOperations();
+            var order = _orderService.GetOrderWithOperationsById(orderId);
+            if (order == null)
+            {
+                Logger.Error($"GetOperationsForEdit - order not found for id: {orderId}");
+                return new JsonResult(new { Result = false, ToastMessage="Ordine non trovato."});
+            }
+            
+            foreach (var op in allAvailableOperations)
+            {
+                vm.OrderOperations.Add(new OperationFlag
+                {
+                    Operation = op,
+                    Flag = order.Order_Operation.Any(a=>a.OperationID == op.OperationID)
+                });
+            }
+
+            vm.OrderId = orderId;
+            return PartialView("_EditOrderOperationsModal", vm);
+        }
+
+        public JsonResult EditOrderOperations(EditOrderOperationsViewModel model)
+        {
+            try
+            {
+                var order = _orderService.GetOrderWithOperationsById(model.OrderId);
+
+                var operationToAdd = new List<int>();
+                var operationToRemove = new List<int>();
+                
+                foreach (var operation in model.OrderOperations)
+                {
+                    var existingOper = order.Order_Operation.SingleOrDefault(sd => sd.OperationID == operation.Operation.OperationID);
+
+                    if (existingOper == null && operation.Flag) // se non esiste e flag è a true vuol dire che è nuova
+                    {
+                        operationToAdd.Add(operation.Operation.OperationID); continue;
+                    }
+
+                    if (existingOper != null && !operation.Flag) // se esiste ci sono 2 casi: flag=true tutto rimane uguale, flag=false si elimina
+                        operationToRemove.Add(operation.Operation.OperationID);
+                }
+                
+                var result = _operationService.EditOrderOperations(model.OrderId, operationToAdd, operationToRemove);
+                return new JsonResult(new { Result = result, ToastMessage="Operazioni modificate correttamente."});
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Errore durante la modifica delle operazioni dell'ordine: {model.OrderId}.");
+                return new JsonResult(new { Result = false, ToastMessage="Errore durante la modifica delle operazioni dell'ordine."});
+            }
+
+
         }
 
     }

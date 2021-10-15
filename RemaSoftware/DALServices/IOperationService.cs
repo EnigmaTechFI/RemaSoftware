@@ -6,5 +6,6 @@ namespace RemaSoftware.DALServices
     public interface IOperationService
     {
         List<Operation> GetAllOperations();
+        bool EditOrderOperations(int orderId, List<int> operationToAdd, List<int> operationToRemove);
     }
 }

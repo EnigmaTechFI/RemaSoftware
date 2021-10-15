@@ -1,8 +1,6 @@
 ﻿using RemaSoftware.ContextModels;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using RemaSoftware.Models.Common;
 
 namespace RemaSoftware.Models.ClientViewModel
 {
@@ -15,11 +13,5 @@ namespace RemaSoftware.Models.ClientViewModel
         public List<OperationFlag> Operation { get; set; }
         public string Photo { get; set; }
 
-    }
-
-    public class OperationFlag
-    {
-        public Operation Operation { get; set; }
-        public bool Flag { get; set; }
     }
 }
