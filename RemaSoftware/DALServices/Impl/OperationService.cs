@@ -18,5 +18,11 @@ namespace RemaSoftware.DALServices.Impl
         {
             return _dbContext.Operations.ToList();
         }
+
+        public void AddOperation(Operation operation)
+        {
+            _dbContext.Add(operation);
+            _dbContext.SaveChanges();
+        }
     }
 }

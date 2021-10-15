@@ -6,5 +6,7 @@ namespace RemaSoftware.DALServices
     public interface IOperationService
     {
         List<Operation> GetAllOperations();
+
+        void AddOperation(Operation operation);
     }
 }
