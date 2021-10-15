@@ -42,8 +42,8 @@ namespace RemaSoftware.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    // var add_client = new Client { Name = model.Client.Name, StreetNumber = model.Client.StreetNumber, Street = model.Client.Street, Cap = model.Client.Cap, City = model.Client.City, State = model.Client.State, P_Iva = model.Client.P_Iva };
-                    // _clientService.AddClient(add_client);
+                    var add_client = new Client { Name = model.Client.Name, StreetNumber = model.Client.StreetNumber, Street = model.Client.Street, Cap = model.Client.Cap, City = model.Client.City, State = model.Client.State, P_Iva = model.Client.P_Iva };
+                    _clientService.AddClient(add_client);
                     _notyfToastService.Success("Cliente aggiunto con successo.");
                     return RedirectToAction("Index", "Home");
                 }
