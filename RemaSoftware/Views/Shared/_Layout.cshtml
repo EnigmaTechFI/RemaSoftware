@@ -62,6 +62,12 @@
                 <span>Aggiungi Cliente</span>
             </a>
         </li>
+        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "AddOperation" ? "active" : "")">
+            <a class="nav-link" asp-action="AddOperation" asp-controller="Operation">
+                <i class="fas fa-fw fa-chart-area"></i>
+                <span>Aggiungi Operazione</span>
+            </a>
+        </li>
 
         <!-- Divider -->
         <hr class="sidebar-divider">
