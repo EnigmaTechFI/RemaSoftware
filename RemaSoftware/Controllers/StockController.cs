@@ -114,8 +114,9 @@ namespace RemaSoftware.Controllers
                 stockArticle.Number_Piece = model.QtyToAddRemoveRadio == 1
                     ? stockArticle.Number_Piece + model.QtyToAddRemove
                     : stockArticle.Number_Piece - model.QtyToAddRemove;
+                stockArticle.Price_Tot = stockArticle.Number_Piece * stockArticle.Price_Uni;
                 var res = _warehouseService.UpdateStockArticle(stockArticle);
-                return new JsonResult(new { Result = res, ToastMessage="Quantità modificata correttamente.", NewQty=stockArticle.Number_Piece});
+                return new JsonResult(new { Result = res, ToastMessage="Quantità modificata correttamente.", NewQty=stockArticle.Number_Piece, NewPrice = stockArticle.Price_Tot});
             }
             catch (Exception e)
             {
