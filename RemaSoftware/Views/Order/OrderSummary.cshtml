@@ -99,8 +99,9 @@
         var model = $("#form-edit-ops").serialize();
         $.post('@Url.Action("EditOrderOperations", "Order")', model, function (data){
             if (data.result == true){
-               toastNotifySuccess(data.toastMessage);
-            }else{
+                $("#edit-ops-modal").modal('toggle');
+                toastNotifySuccess(data.toastMessage);
+            } else {
                 toastNotifyError(data.toastMessage);
             }
         });
