@@ -2,25 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Web;
-using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using NLog;
 using RemaSoftware.DALServices;
 using RemaSoftware.Helper;
 using RemaSoftware.Models.ClientViewModel;
 using UtilityServices;
-using Microsoft.AspNetCore.Hosting;
 using RemaSoftware.Models.Common;
 using RemaSoftware.Models.OrderViewModel;
 using Rotativa.AspNetCore;
 using UtilityServices.Dtos;
 using Microsoft.Extensions.Configuration;
-using RemaSoftware.ContextModels;
 
 namespace RemaSoftware.Controllers
 {
@@ -35,6 +29,7 @@ namespace RemaSoftware.Controllers
         private readonly IImageService _imageService;
         private readonly PdfHelper _pdfHelper;
         private readonly IConfiguration _configuration;
+        private readonly string _basePathForImages;
 
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
@@ -49,6 +44,8 @@ namespace RemaSoftware.Controllers
             _apiFatturaInCloud = apiFatturaInCloudService;
             _notyfService = notyfService;
             _configuration = configuration;
+            _basePathForImages = 
+                Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName + _configuration["ImagePath"];
         }
         
         [HttpGet]
@@ -104,11 +101,13 @@ namespace RemaSoftware.Controllers
         [HttpPost]
         public JsonResult NewOrder(NewOrderViewModel model)
         {
-            var rootpath = Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName;
-            
+            var validationResult = this.ValidateNewOrderViewModel(model);
+            if (validationResult != "")
+                return new JsonResult(new {Result = false, ToastMessage = validationResult});
+
             if (!string.IsNullOrEmpty(model.Photo))
             {
-                var iamgeName = _imageService.SavingOrderImage(model.Photo, rootpath);
+                var iamgeName = _imageService.SavingOrderImage(model.Photo, _basePathForImages);
                 model.Order.Image_URL = iamgeName;
             }
 
@@ -125,46 +124,35 @@ namespace RemaSoftware.Controllers
 
             //Aggiunta Ordine DB
             var order = _orderService.AddOrder(model.Order);
+            
+            //Collegamento Ordine - Operazioni DB
+            _orderService.AddOrderOperation(order.OrderID, order_operationID);
 
-            if (order != null)
+            //API Fattura In Cloud
+            _apiFatturaInCloud.AddOrderCloud(new OrderDto
             {
-                //Collegamento Ordine - Operazioni DB
-                _orderService.AddOrderOperation(order.OrderID, order_operationID);
-
-                //API Fattura In Cloud
-                _apiFatturaInCloud.AddOrderCloud(new OrderDto
-                {
-                    Name = order.Name,
-                    Description = order.Description,
-                    DataIn = order.DataIn,
-                    DataOut = order.DataOut,
-                    Number_Piece = order.Number_Piece,
-                    Price_Uni = order.Price_Uni,
-                    Price_Tot = order.Price_Tot,
-                    SKU = order.SKU
-                });
-                //
-                // try
-                // {
-                //     var order_pdf = _orderService.GetOrderWithOperationsById(order.OrderID);
-                //     return new ViewAsPdf("../Pdf/SingleOrderSummary", order_pdf);
-                // }
-                // catch (Exception e)
-                // {
-                //     model.RedirectUrlAfterCreation = "";
-                //     Logger.Error(e, "Errore durante la generazione del pdf.");
-                // }
-                //_notyfService.Success("Ordine creato correttamente.");
-                return new JsonResult(new {Data = order.OrderID});
-            }
-            else
-            {
-                //Do Something
-            }
-
-            return new JsonResult(new {Data = order.OrderID});
+                Name = order.Name,
+                Description = order.Description,
+                DataIn = order.DataIn,
+                DataOut = order.DataOut,
+                Number_Piece = order.Number_Piece,
+                Price_Uni = order.Price_Uni,
+                Price_Tot = order.Price_Tot,
+                SKU = order.SKU
+            });
+            return new JsonResult(new {Result = true, Data = order.OrderID});
         }
-        
+
+        private string ValidateNewOrderViewModel(NewOrderViewModel model)
+        {
+            if (string.IsNullOrEmpty(model.Order.SKU))
+                return "SKU mancante.";
+            if (string.IsNullOrEmpty(model.Photo) && string.IsNullOrEmpty(model.Order.Image_URL))
+                return "Foto mancante.";
+            // todo validare tutti i campi obbligatori
+            return "";
+        }
+
         [HttpGet]
         public IActionResult GetEditOrderOperationsModal(int orderId)
         {
@@ -241,12 +229,10 @@ namespace RemaSoftware.Controllers
         public ActionResult GetImageByOrderId(int orderId)
         {
             var order = _orderService.GetOrderById(orderId);
-            var completeFilePath =
-                Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName + _configuration["ImagePath"] + order.Image_URL;
             
             try
             {
-                var fileByte = System.IO.File.ReadAllBytes(completeFilePath);
+                var fileByte = System.IO.File.ReadAllBytes(_basePathForImages + order.Image_URL);
                 return File(fileByte, "image/png");
             }
             catch (Exception e)

@@ -147,85 +147,88 @@
                 GetOrderBySKU();                    
             }
         });
+        
+        $(document).on('select2:open', () => {
+            document.querySelector('.select2-search__field').focus();
+        });
                 
         function PostNewOrder() {
             var model = $("#form-new-order").serialize();
             $.post('@Url.Action("NewOrder", "Order")', model, function (result){
-                if (result){
+                if (result && result.result == true){
                     window.open('@Url.Action("DownloadPdfOrder", "Order")' + "?orderId=" + result.data, "_blank");
                     
                     window.location.href='@Model.RedirectUrlAfterCreation';
                 } else {
-                    toastNotifyError(data.toastMessage);
+                    toastNotifyError(result.toastMessage);
                 }
             });
         }
 
+        function GetOrderBySKU() {
+            var selectedSKU = $('#Order_SKU').val();
 
-            function GetOrderBySKU() {
-                var selectedSKU = $('#Order_SKU').val();
-
-                $.ajax({
-                    url: '@Url.Action("GetOrderBySKU", "Order")?' + $.param({ "orderSKU": selectedSKU }),
-                    type: 'GET',
-                    success: function (result) {
-                        var src = '@Url.Action("GetImageByOrderId", "Order")' + "?orderId=" + result.data.orderID;
-                        document.getElementById('results').innerHTML = '<img src="' + src + '" width="500" height="282" />';
-                        $("#imageUrl").val(result.data.image_URL)
-                        $("#order_name").val(result.data.name);
-                        $("#Order_ClientID").val(result.data.clientID);
-                        toastNotifySuccess("Ordine recuperato correttamente.");
-                    },
-                    error: function (data) {
-                        document.getElementById('results').innerHTML = '<img src="" width="500" height="282" />';
-                        document.getElementById("Photo_base64").value = "";
-                        $("#order_name").val("");
-                        document.getElementById("inlineFormCustomSelectPref").selectedIndex = data.client_id;
-                        toastNotifyError("Errore nel recupero dell\'ordine.");
-                    }
-                });
-            }
-
-            function openModal() {
-                document.querySelector(".modal").style.display = "block"
-            }
-            function closeModal() {
-                document.querySelector(".modal").style.display = "none"
-            }
-
-            Webcam.set({
-                width: 500,
-                height: 282,
-                image_format: 'png',
-                jpeg_quality: 100
-            });
-            Webcam.attach('#LiveCamera');
-
-            function CaptureSnapshot() {
-                Webcam.snap(function (data) {
-                    // display results in page
-                    document.getElementById('results').innerHTML = '<img src="' + data + '" width="500" height="282" />';
-                    document.getElementById("Photo_base64").value = data;
-
-                    openModal();
-                });
-            }
-
-            $("#datetimepicker1").flatpickr({
-                dateFormat: "d/m/Y",
-                minDate: "today",
-                locale: {
-                    weekdays: {
-                        shorthand: ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'],
-                        longhand: ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'],
-                    },
-                        months: {
-                            shorthand: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Оtt', 'Nov', 'Dic'],
-                            longhand: ['Gennaio', 'Febbraio', 'Мarzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'],
-                        }
+            $.ajax({
+                url: '@Url.Action("GetOrderBySKU", "Order")?' + $.param({ "orderSKU": selectedSKU }),
+                type: 'GET',
+                success: function (result) {
+                    var src = '@Url.Action("GetImageByOrderId", "Order")' + "?orderId=" + result.data.orderID;
+                    document.getElementById('results').innerHTML = '<img src="' + src + '" width="500" height="282" />';
+                    $("#imageUrl").val(result.data.image_URL)
+                    $("#order_name").val(result.data.name);
+                    $("#Order_ClientID").val(result.data.clientID);
+                    toastNotifySuccess("Ordine recuperato correttamente.");
+                },
+                error: function (data) {
+                    document.getElementById('results').innerHTML = '<img src="" width="500" height="282" />';
+                    document.getElementById("Photo_base64").value = "";
+                    $("#order_name").val("");
+                    document.getElementById("inlineFormCustomSelectPref").selectedIndex = data.client_id;
+                    toastNotifyError("Errore nel recupero dell\'ordine.");
                 }
-
             });
+        }
+
+        function openModal() {
+            document.querySelector(".modal").style.display = "block"
+        }
+        function closeModal() {
+            document.querySelector(".modal").style.display = "none"
+        }
+
+        Webcam.set({
+            width: 500,
+            height: 282,
+            image_format: 'png',
+            jpeg_quality: 100
+        });
+        Webcam.attach('#LiveCamera');
+
+        function CaptureSnapshot() {
+            Webcam.snap(function (data) {
+                // display results in page
+                document.getElementById('results').innerHTML = '<img src="' + data + '" width="500" height="282" />';
+                document.getElementById("Photo_base64").value = data;
+
+                openModal();
+            });
+        }
+
+        $("#datetimepicker1").flatpickr({
+            dateFormat: "d/m/Y",
+            minDate: "today",
+            locale: {
+                weekdays: {
+                    shorthand: ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'],
+                    longhand: ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'],
+                },
+                    months: {
+                        shorthand: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Оtt', 'Nov', 'Dic'],
+                        longhand: ['Gennaio', 'Febbraio', 'Мarzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'],
+                    }
+            }
+
+        });
     </script>
 }
 
