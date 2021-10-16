@@ -40,13 +40,30 @@
                         <td class="pricetot-@article.Warehouse_StockID">@article.Price_Tot.ToString("0.00")€</td>
                         <td class="text-center editicon-@article.Warehouse_StockID">
                             @* <i class="fas fa-edit fa-lg" style="cursor: pointer; color: #4e73df" title="Modifica" onclick="ShowTextBoxesForEdit(@article.Warehouse_StockID)"></i> *@
-                            <i class="fas fa-sort fa-lg add-rem-qty" style="cursor: pointer; color: #4e73df" title="Aggingi/Sottrai pezzi" data-toggle="modal" data-target="#add-remove-qty-modal" id="@article.Warehouse_StockID"></i>
-                            <i class="fas fa-trash fa-lg pl-2" style="cursor: pointer; color: #e74a3b" title="Elimina" onclick="DeleteStockArticle(@article.Warehouse_StockID)"></i>
+                            <i class="fas fa-sort fa-lg add-rem-qty" style="cursor: pointer; color: #4e73df" title="Aggingi/Sottrai pezzi" data-toggle="modal" data-target="#add-remove-qty-modal" onclick="SetDataArticleId('#add-remove-qty-modal', @article.Warehouse_StockID)"></i>
+                            <i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer; color: #e74a3b" id="@article.Warehouse_StockID" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDataArticleId('#confirm-del-modal', @article.Warehouse_StockID)"></i>
                         </td>
                     </tr>
                 }
                 </tbody>
             </table>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="confirm-del-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Conferma eliminazione</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Sei sicuro di voler eliminare questo articolo di magazzino?</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
+                <button class="btn btn-primary" onclick="DeleteStockArticle()">Elimina</button>
+            </div>
         </div>
     </div>
 </div>
@@ -89,12 +106,17 @@
         });
     } );
     
-    $(document).on("click", ".add-rem-qty", function () {
+    $(document).on("click", ".del-stock-article", function () {
          var articleId = $(this).attr('id');
          $(".modal-body #modal-addrem-articleId").val( parseInt(articleId) );
     });
     
-    function DeleteStockArticle(articleId){
+    function SetDataArticleId(elementName, articleId){
+        $(elementName).data("articleId", articleId );
+    }
+    
+    function DeleteStockArticle(){
+        var articleId = $("#confirm-del-modal").data("articleId");
         $.ajax({
             url: '@Url.Action("DeleteStockArticle", "Stock")?' + $.param({"stockArticleId": articleId}),
             type: 'DELETE',
@@ -113,7 +135,8 @@
     }
     
     // chiamata dalla modale
-    function AddOrRemoveQuantity(articleId) {
+    function AddOrRemoveQuantity() {
+        var articleId = $("#add-remove-qty-modal").data("articleId");
         var model = {
             articleId: articleId,
             qtyToAddRemove: $('#qtyToAddRemove').val(),

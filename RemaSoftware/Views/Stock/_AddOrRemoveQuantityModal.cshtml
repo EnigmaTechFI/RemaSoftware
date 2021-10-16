@@ -9,7 +9,6 @@
             </div>
             <div class="modal-body">
                 <p class="pb-2 font-italic h6">Inserire la quantità da aggiungere o sottrarre e specificare il tipo di operazione:</p>
-                <input type="hidden" id="modal-addrem-articleId">
                 <div class="row">
                     <div class="col-6">
                         <label class="form-check-label"><b>Quantità</b></label>
@@ -35,7 +34,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                <button  class="btn btn-primary" onclick="AddOrRemoveQuantity($('#modal-addrem-articleId').val())">Conferma</button>
+                <button  class="btn btn-primary" onclick="AddOrRemoveQuantity()">Conferma</button>
             </div>
         </div>
     </div>
