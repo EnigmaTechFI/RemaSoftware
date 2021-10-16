@@ -12,18 +12,12 @@
         <h6 class="m-0 font-weight-bold text-primary">Nuovo ordine</h6>
     </div>
     <div class="card-body">
-        <form method="post">
-            @Html.HiddenFor(model => model.Photo, new { @id = "Photo_base64" })
-            @*@Html.HiddenFor(model => model.Order.Image_URL, new { @id = "image_url" })*@
-            @* @Html.HiddenFor(model => model.Order.SKU, new { @id = "myInput" }) *@
+        <form method="post" id="form-new-order" enctype="multipart/form-data">
+            @Html.HiddenFor(model => model.Photo, new {@id="Photo_base64"})
+            @Html.HiddenFor(model => model.Order.Image_URL, new {@id="imageUrl"})
             <div class="form-group">
                 <label for="formGroupExampleInput">Codice</label>
-                <select asp-for="Order.SKU" id="order_sku" class="select2 form-control">
-                    @foreach (var sku in Model.OldOrders_SKU)
-                    {
-                        <option>@sku</option>
-                    }
-                </select>
+                @Html.DropDownListFor(model=>model.Order.SKU, new SelectList(Model.OldOrders_SKU), new {@class="form-control select2-sku"})
             </div>
             <div class="row">
                 <div class="col-md-6" style="padding-top:50px;">
@@ -31,7 +25,7 @@
                         <div class="panel-heading">Vista Telecamera</div>
                         <div class="panel-body">
                             <div id="LiveCamera" style="margin-bottom:50px;"></div>
-                            <input id="Photo_base64" asp-for="Photo" type="button" class="btn btn-primary" value="Fotografa Prodotto" onClick="CaptureSnapshot()">
+                            <input type="button" class="btn btn-primary" value="Fotografa Prodotto" onClick="CaptureSnapshot()">
 
                         </div>
                     </div>
@@ -51,13 +45,8 @@
 
             </div>
             <div class="form-group">
-                <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Seleziona Cliente</label>
-                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="Order.ClientID">
-                    @foreach (var clients in Model.Clients)
-                    {
-                        <option value="@clients.ClientID">@clients.Name</option>
-                    }
-                </select>
+                <label>Seleziona Cliente</label>
+                @Html.DropDownListFor(model=>model.Order.ClientID, new SelectList(Model.Clients, "ClientID", "Name"), new {@class="form-control"})
             </div>
 
             <div class="form-group">
@@ -107,7 +96,7 @@
 
             }
             <div style="width:100px; margin-top:50px;">
-                <button class="btn btn-primary" type="submit">Aggiungi</button>
+                <button class="btn btn-primary" type="button" onclick="PostNewOrder()">Aggiungi</button>
             </div>
         </form>
     </div>
@@ -135,34 +124,56 @@
 @section Scripts
 {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="~/webcamjs/webcam.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/js/select2.min.js" integrity="sha512-9p/L4acAjbjIaaGXmZf0Q2bV42HetlCLbv8EP0z3rLbQED2TAFUlDvAezy7kumYqg5T8jHtDdlm1fgIsr5QzKg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script language="JavaScript">
 
-            $(".select2").select2({
-              tags: true
+        $(".select2-sku").select2({
+            placeholder: "Seleziona uno sku o digitane uno nuovo",
+            tags: true,
+            createTag: function (tag) {
+                return {
+                    id: tag.term,
+                    text: tag.term,
+                    isNew: true
+                };
+            }
+        });
+            
+        $('.select2-sku').on('select2:select', function (e) {
+            if (!e.params.data.isNew) {
+                GetOrderBySKU();                    
+            }
+        });
+                
+        function PostNewOrder() {
+            var model = $("#form-new-order").serialize();
+            $.post('@Url.Action("NewOrder", "Order")', model, function (result){
+                if (result){
+                    window.open('@Url.Action("DownloadPdfOrder", "Order")' + "?orderId=" + result.data, "_blank");
+                    
+                    window.location.href='@Model.RedirectUrlAfterCreation';
+                } else {
+                    toastNotifyError(data.toastMessage);
+                }
             });
-                $('.select2').on('select2:select', function (e) {
-                    GetOrderBySKU()
-            });
+        }
 
 
             function GetOrderBySKU() {
-
-                var select = document.getElementById('order_sku');
-                var option = select.options[select.selectedIndex];
+                var selectedSKU = $('#Order_SKU').val();
 
                 $.ajax({
-                    url: '@Url.Action("GetOrderBySKU", "Order")?' + $.param({ "orderSKU": option.text }),
+                    url: '@Url.Action("GetOrderBySKU", "Order")?' + $.param({ "orderSKU": selectedSKU }),
                     type: 'GET',
-                    success: function (data) {
-
-                        document.getElementById('results').innerHTML = '<img src="' + data.path + '" width="500" height="282" />';
-                        document.getElementById("Photo_base64").value = data.path;
-                        $("#order_name").val(data.name);
-                        document.getElementById("inlineFormCustomSelectPref").selectedIndex = data.client_id;
+                    success: function (result) {
+                        var src = '@Url.Action("GetImageByOrderId", "Order")' + "?orderId=" + result.data.orderID;
+                        document.getElementById('results').innerHTML = '<img src="' + src + '" width="500" height="282" />';
+                        $("#imageUrl").val(result.data.image_URL)
+                        $("#order_name").val(result.data.name);
+                        $("#Order_ClientID").val(result.data.clientID);
                         toastNotifySuccess("Ordine recuperato correttamente.");
                     },
                     error: function (data) {
@@ -195,13 +206,8 @@
                     // display results in page
                     document.getElementById('results').innerHTML = '<img src="' + data + '" width="500" height="282" />';
                     document.getElementById("Photo_base64").value = data;
-                    // Send image data to the controller to store locally or in database
-                    Webcam.upload(data,
-                        '/WebCam/CaptureImage',
-                        function (code, text) {
-                            //alert('Snapshot/Image captured successfully...');
-                            openModal();
-                        });
+
+                    openModal();
                 });
             }
 

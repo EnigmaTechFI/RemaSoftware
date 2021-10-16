@@ -12,6 +12,7 @@ namespace RemaSoftware.Models.ClientViewModel
         public List<string> OldOrders_SKU { get; set; }
         public List<OperationFlag> Operation { get; set; }
         public string Photo { get; set; }
+        public string RedirectUrlAfterCreation { get; set; }
 
     }
 }

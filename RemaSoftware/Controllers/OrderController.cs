@@ -20,6 +20,7 @@ using RemaSoftware.Models.OrderViewModel;
 using Rotativa.AspNetCore;
 using UtilityServices.Dtos;
 using Microsoft.Extensions.Configuration;
+using RemaSoftware.ContextModels;
 
 namespace RemaSoftware.Controllers
 {
@@ -82,11 +83,11 @@ namespace RemaSoftware.Controllers
         [HttpGet]
         public IActionResult NewOrder()
         {
-
             var vm = new NewOrderViewModel();
             vm.Clients = _clientService.GetAllClients();
             vm.Operation = new List<OperationFlag>();
             vm.OldOrders_SKU = _orderService.GetOldOrders_SKU().Distinct().ToList();
+            vm.OldOrders_SKU.Insert(0, "");
             var oper = _operationService.GetAllOperations();
             foreach (var op in oper)
             {
@@ -96,33 +97,30 @@ namespace RemaSoftware.Controllers
                     Flag = false
                 });
             }
-
+            vm.RedirectUrlAfterCreation = Url.Action("Index", "Home");
             return View(vm);
         }
 
         [HttpPost]
-        public async Task<IActionResult> NewOrder(NewOrderViewModel model)
+        public JsonResult NewOrder(NewOrderViewModel model)
         {
             var rootpath = Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName;
-
-            var guid = _imageService.SavingOrderImage(model.Photo, rootpath);
+            
+            if (!string.IsNullOrEmpty(model.Photo))
+            {
+                var iamgeName = _imageService.SavingOrderImage(model.Photo, rootpath);
+                model.Order.Image_URL = iamgeName;
+            }
 
             model.Order.DataIn = DateTime.Now;
-
-            model.Order.Image_URL = guid;
-
             model.Order.Price_Tot = model.Order.Price_Uni * model.Order.Number_Piece;
-
-            model.Order.Client = _clientService.GetClient(model.Order.ClientID);
 
             var order_operationID = new List<int>();
 
             foreach (var id in model.Operation)
             {
                 if (id.Flag)
-                {
                     order_operationID.Add(id.Operation.OperationID);
-                }
             }
 
             //Aggiunta Ordine DB
@@ -145,26 +143,26 @@ namespace RemaSoftware.Controllers
                     Price_Tot = order.Price_Tot,
                     SKU = order.SKU
                 });
-
-                try
-                {
-                    var order_pdf = _orderService.GetOrderWithOperationsById(order.OrderID);
-                    return new ViewAsPdf("../Pdf/SingleOrderSummary", order_pdf);
-                }
-                catch (Exception e)
-                {
-                    Logger.Error(e, "Errore durante la generazione del pdf.");
-                }
-                _notyfService.Success("Ordine creato correttamente.");
-                return RedirectToAction("Index", "Home");
+                //
+                // try
+                // {
+                //     var order_pdf = _orderService.GetOrderWithOperationsById(order.OrderID);
+                //     return new ViewAsPdf("../Pdf/SingleOrderSummary", order_pdf);
+                // }
+                // catch (Exception e)
+                // {
+                //     model.RedirectUrlAfterCreation = "";
+                //     Logger.Error(e, "Errore durante la generazione del pdf.");
+                // }
+                //_notyfService.Success("Ordine creato correttamente.");
+                return new JsonResult(new {Data = order.OrderID});
             }
             else
             {
                 //Do Something
             }
 
-            _notyfService.Error("Errore durante la creazione dell\\'ordine");
-            return RedirectToAction("Index", "Home");
+            return new JsonResult(new {Data = order.OrderID});
         }
         
         [HttpGet]
@@ -236,23 +234,25 @@ namespace RemaSoftware.Controllers
             {
                 return new JsonResult(new {ToastMessage = $"Errore durante il recupero dell\\'ordine." });
             }
+            
+            return new JsonResult(new {Result = true, Data = order});
+        }
 
+        public ActionResult GetImageByOrderId(int orderId)
+        {
+            var order = _orderService.GetOrderById(orderId);
+            var completeFilePath =
+                Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName + _configuration["ImagePath"] + order.Image_URL;
+            
             try
             {
-                var path = Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName + _configuration["ImagePath"] + order.Image_URL;
-                WebClient webClient = new WebClient();
-                byte[] dataArr = webClient.DownloadData(path);
-                string base64 = "data:image/png;base64," +  Convert.ToBase64String(dataArr);
-                var client = _clientService.GetAllClients();
-                int index = client.FindIndex(a => a.ClientID == order.ClientID);
-                return new JsonResult(new {client_id = index.ToString(), path =  base64, name = order.Name, ToastMessage = "Articolo di magazzino eliminato correttamente." });
+                var fileByte = System.IO.File.ReadAllBytes(completeFilePath);
+                return File(fileByte, "image/png");
             }
             catch (Exception e)
             {
-                Logger.Error(e, $"Error deleting stockArticle: {orderSKU}");
-                return new JsonResult(new { Error = e, ToastMessage = $"Errore durante il recupero dell\\'ordine." });
+                return NotFound();
             }
         }
-
     }
 }
