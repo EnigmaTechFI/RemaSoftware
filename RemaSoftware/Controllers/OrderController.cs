@@ -45,7 +45,7 @@ namespace RemaSoftware.Controllers
             _notyfService = notyfService;
             _configuration = configuration;
             _basePathForImages = 
-                Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName + _configuration["ImagePath"];
+                (Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName + _configuration["ImagePath"]).Replace("/", "\\");
         }
         
         [HttpGet]

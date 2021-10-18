@@ -32,10 +32,10 @@ namespace UtilityServices
                 cod = order.SKU,
                 nome = order.Name,
                 desc = order.Description,
-                prezzo_ivato = order.Price_Tot,
-                prezzo_netto = 0,
-                prezzo_lordo = 0,
-                costo = order.Price_Tot,
+                prezzo_ivato = false,
+                prezzo_netto = "0",
+                prezzo_lordo = "0",
+                costo = order.Price_Tot.ToString("0.##"),
                 cod_iva = 0,
                 um = "",
                 categoria = "",
@@ -68,10 +68,10 @@ namespace UtilityServices
         public string cod { get; set; }
         public string nome { get; set; }
         public string desc { get; set; }
-        public double prezzo_ivato { get; set; }
-        public double prezzo_netto { get; set; }
-        public double prezzo_lordo { get; set; }
-        public double costo { get; set; }
+        public bool prezzo_ivato { get; set; }
+        public string prezzo_netto { get; set; }
+        public string prezzo_lordo { get; set; }
+        public string costo { get; set; }
         public int cod_iva { get; set; }
         public string um { get; set; }
         public string categoria { get; set; }
