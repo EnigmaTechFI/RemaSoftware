@@ -103,7 +103,7 @@ namespace RemaSoftware
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationDbContext context)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationDbContext context, UserManager<MyUser> userManager)
         {
             context.Database.Migrate();
             if (env.IsDevelopment())
@@ -136,6 +136,7 @@ namespace RemaSoftware
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}");
             });
+            DbInitializer.SeedUsers(userManager);
         }
     }
 }

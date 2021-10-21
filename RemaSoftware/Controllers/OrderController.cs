@@ -149,7 +149,14 @@ namespace RemaSoftware.Controllers
                 return "SKU mancante.";
             if (string.IsNullOrEmpty(model.Photo) && string.IsNullOrEmpty(model.Order.Image_URL))
                 return "Foto mancante.";
-            // todo validare tutti i campi obbligatori
+            if (model.Order.ClientID <= default(int))
+                return "Cliente mancante.";
+            if (string.IsNullOrEmpty(model.Order.Name))
+                return "Nome mancante.";
+            if (model.Order.Price_Uni<=default(double))
+                return "Prezzo unitario mancante.";
+            if (model.Order.DataOut<=default(DateTime))
+                return "Data di scadenza mancante.";
             return "";
         }
 

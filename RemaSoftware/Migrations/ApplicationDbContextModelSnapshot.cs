@@ -387,27 +387,6 @@ namespace RemaSoftware.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("MyUser");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "f3c7161e-abf9-4b34-acd6-7db13e4e4ec1",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "2a9c6b4d-b99d-4999-9cbd-03bfddd3268f",
-                            Email = "lorenzo.vettori11@gmail.com",
-                            EmailConfirmed = false,
-                            LockoutEnabled = true,
-                            NormalizedEmail = "LORENZO.VETTORI11@GMAIL.COM",
-                            NormalizedUserName = "LORE_VETTO11",
-                            PasswordHash = "AQAAAAEAACcQAAAAEAO6GoyqXpTgsJ3tC72YWwgM842MNb+CIFxLg2v6OFYwB+HN0Wcs3srD/SRyRrSPGg==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "a1ca1006-e0c5-4f11-bc40-866d219c5ca1",
-                            TwoFactorEnabled = false,
-                            UserName = "lore_vetto11",
-                            Birthday = new DateTime(1998, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Lorenzo",
-                            Surname = "Vettori"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

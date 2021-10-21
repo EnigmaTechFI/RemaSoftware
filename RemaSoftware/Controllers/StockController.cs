@@ -100,7 +100,7 @@ namespace RemaSoftware.Controllers
         public JsonResult AddOrRemoveQuantity(QtyAddRemoveJSModel model)
         {
             if (model.ArticleId <= default(int))
-                return new JsonResult(new {Result = false, ToastMessage = $"Id articolo mancante. Segnalare errore."});
+                return new JsonResult(new {Result = false, ToastMessage = $"Articolo mancante."});
             if (model.QtyToAddRemove <= 0)
                 return new JsonResult(new {Result = false, ToastMessage = $"La quantità deve essere maggiore di 0."});
             
