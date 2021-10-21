@@ -92,13 +92,21 @@ namespace RemaSoftware.DALServices.Impl
             return (decimal) a;
         }
 
-        public List<Order> GetOrdersNearToDeadline(int topSelector)
+        public List<Order> GetOrdersNearToDeadlineTakeTop(int topSelector)
         {
             // add days(1) così evito di prendere quelli che sono scaduti / scadono oggi
             return _dbContext.Orders
                 .Include(i=>i.Client)
                 .Where(w=>w.DataOut > DateTime.Now.AddDays(1)).OrderBy(ob=>ob.DataOut)
                 .Take(topSelector)
+                .ToList();
+        }
+        
+        public List<Order> GetAllOrdersNearToDeadline()
+        {
+            return _dbContext.Orders
+                .Include(i=>i.Client)
+                .Where(w=>w.DataOut > DateTime.Now.Date).OrderBy(ob=>ob.DataOut)
                 .ToList();
         }
 

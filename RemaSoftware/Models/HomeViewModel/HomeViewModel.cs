@@ -11,6 +11,7 @@ namespace RemaSoftware.Models.HomeViewModel
         public decimal LastMonthEarnings { get; set; }
         public List<ChartDataObject> PieChartData { get; set; }
         public List<ChartDataObject> AreaChartData { get; set; }
+        public List<ChartDataObject> BarChartData { get; set; }
         public List<Order> OrderNearToDeadline { get; set; }
         public List<Warehouse_Stock> StockArticleAddRemQty { get; set; }
         

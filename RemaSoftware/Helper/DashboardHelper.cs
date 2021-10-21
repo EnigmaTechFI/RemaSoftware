@@ -6,6 +6,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using RemaSoftware.ContextModels;
+using RemaSoftware.DALServices;
 using RemaSoftware.Data;
 using RemaSoftware.Models.HomeViewModel;
 
@@ -13,15 +14,19 @@ namespace RemaSoftware.Helper
 {
     public class DashboardHelper
     {
+        
         private readonly ApplicationDbContext _dbContext;
+        private readonly IOrderService _orderService;
+
         private List<string> Colors = new List<string>
         {
             "#4e73df", "#1cc88a", "#36b9cc", "#858796", "#f6c23e"
         };
 
-        public DashboardHelper(ApplicationDbContext dbContext)
+        public DashboardHelper(ApplicationDbContext dbContext, IOrderService orderService)
         {
             _dbContext = dbContext;
+            _orderService = orderService;
         }
 
         public List<ChartDataObject> GetDataForDashboardPieChart()
@@ -87,6 +92,20 @@ namespace RemaSoftware.Helper
                 .Select(s=>s.First()).ToList();
             
             return articlesInStock;
+        }
+
+        public List<ChartDataObject> GetDataForBarChartDashboard()
+        {
+            var result = 
+                _orderService.GetAllOrdersNearToDeadline()
+                .GroupBy(gb=>gb.ClientID).ToList()
+                .Select(s=> new ChartDataObject
+                {
+                    Label = s.First().Client.Name,
+                    Value = s.Sum(sum=>sum.Number_Piece).ToString()
+                })
+                .ToList();
+            return result;
         }
     }
 }
