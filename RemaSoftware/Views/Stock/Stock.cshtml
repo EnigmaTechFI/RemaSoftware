@@ -19,9 +19,9 @@
             <table class="table table-bordered" id="table-stock" width="100%" cellspacing="0">
                 <thead>
                 <tr>
-                    <th>Name</th>
+                    <th>Nome</th>
                     <th>Marca</th>
-                    <th># Pezzi</th>
+                    <th>N° Pezzi</th>
                     <th>Taglia</th>
                     <th>Prezzo Unitario</th>
                     <th>Prezzo Totale</th>
@@ -122,7 +122,8 @@
             type: 'DELETE',
             success: function (data) {
                 if (data.result == true){
-                    table.row($("tr#article-"+articleId)).remove().draw();
+                    table.row($("tr#article-" + articleId)).remove().draw();
+                    $("#confirm-del-modal").modal('toggle');
                     toastNotifySuccess(data.toastMessage);
                 }else{
                     toastNotifyError(data.toastMessage);
