@@ -10,8 +10,8 @@ using RemaSoftware.Data;
 namespace RemaSoftware.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210923151122_Default")]
-    partial class Default
+    [Migration("20211021214235_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -230,27 +230,37 @@ namespace RemaSoftware.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("Cap")
-                        .HasColumnType("int");
+                    b.Property<string>("Cap")
+                        .HasColumnType("nvarchar(6)")
+                        .HasMaxLength(6);
 
                     b.Property<string>("City")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("P_Iva")
-                        .HasColumnType("nvarchar(1)");
+                    b.Property<string>("Nation")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
-                    b.Property<string>("State")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("P_Iva")
+                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(20);
+
+                    b.Property<string>("Province")
+                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(20);
 
                     b.Property<string>("Street")
-                        .HasColumnType("nvarchar(1)");
+                        .HasColumnType("nvarchar(200)")
+                        .HasMaxLength(200);
 
                     b.Property<string>("StreetNumber")
-                        .HasColumnType("nvarchar(1)");
+                        .HasColumnType("nvarchar(10)")
+                        .HasMaxLength(10);
 
                     b.HasKey("ClientID");
 
@@ -269,7 +279,8 @@ namespace RemaSoftware.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
 
                     b.HasKey("OperationID");
 
@@ -295,31 +306,26 @@ namespace RemaSoftware.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("Flag_Fattureincloud")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Image_URL")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(70)")
+                        .HasMaxLength(70);
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
 
                     b.Property<int>("Number_Piece")
                         .HasColumnType("int");
 
-                    b.Property<string>("Pdf_URL")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal>("Price_Uni")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<float>("Price_Tot")
-                        .HasColumnType("real");
-
-                    b.Property<float>("Price_Uni")
-                        .HasColumnType("real");
-
-                    b.Property<int>("SKU")
-                        .HasColumnType("int");
+                    b.Property<string>("SKU")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(20);
 
                     b.HasKey("OrderID");
 
@@ -351,23 +357,23 @@ namespace RemaSoftware.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Brand")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
 
                     b.Property<int>("Number_Piece")
                         .HasColumnType("int");
 
-                    b.Property<float>("Price_Tot")
-                        .HasColumnType("real");
-
-                    b.Property<float>("Price_Uni")
-                        .HasColumnType("real");
+                    b.Property<decimal>("Price_Uni")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Size")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(20);
 
                     b.HasKey("Warehouse_StockID");
 
@@ -388,27 +394,6 @@ namespace RemaSoftware.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("MyUser");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "de58865f-b56d-4845-9f91-2c900a551df2",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "fdbcc503-a687-4b21-a72c-b6f1c4f96e81",
-                            Email = "lorenzo.vettori11@gmail.com",
-                            EmailConfirmed = false,
-                            LockoutEnabled = true,
-                            NormalizedEmail = "LORENZO.VETTORI11@GMAIL.COM",
-                            NormalizedUserName = "LORE_VETTO11",
-                            PasswordHash = "AQAAAAEAACcQAAAAEB+rgvh3ehhvjUKKqt7iqrEPmP+KCpKIdSKd/i5QUAl52ns53w0wE2W+bwkBl5Lrzw==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "510af7a0-b16b-4d7f-b4da-0e36a76890c5",
-                            TwoFactorEnabled = false,
-                            UserName = "lore_vetto11",
-                            Birthday = new DateTime(1998, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Lorenzo",
-                            Surname = "Vettori"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

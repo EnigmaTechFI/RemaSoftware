@@ -51,6 +51,57 @@ namespace RemaSoftware.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Clients",
+                columns: table => new
+                {
+                    ClientID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(nullable: false),
+                    P_Iva = table.Column<string>(maxLength: 20, nullable: true),
+                    Street = table.Column<string>(maxLength: 200, nullable: true),
+                    StreetNumber = table.Column<string>(maxLength: 10, nullable: true),
+                    Cap = table.Column<string>(maxLength: 6, nullable: true),
+                    City = table.Column<string>(maxLength: 100, nullable: true),
+                    Province = table.Column<string>(maxLength: 20, nullable: true),
+                    Nation = table.Column<string>(maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Clients", x => x.ClientID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Operations",
+                columns: table => new
+                {
+                    OperationID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(maxLength: 100, nullable: false),
+                    Description = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Operations", x => x.OperationID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Warehouse_Stocks",
+                columns: table => new
+                {
+                    Warehouse_StockID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(maxLength: 100, nullable: false),
+                    Brand = table.Column<string>(maxLength: 100, nullable: true),
+                    Number_Piece = table.Column<int>(nullable: false),
+                    Price_Uni = table.Column<decimal>(nullable: false),
+                    Size = table.Column<string>(maxLength: 20, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Warehouse_Stocks", x => x.Warehouse_StockID);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -156,10 +207,56 @@ namespace RemaSoftware.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
-                table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Discriminator", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName", "Birthday", "Name", "Surname" },
-                values: new object[] { "de6944ea-bf51-47b5-acb1-58e1a1978791", 0, "ee429871-2884-41da-a5a5-d635141cb4b5", "MyUser", "lorenzo.vettori11@gmail.com", false, true, null, "LORENZO.VETTORI11@GMAIL.COM", "LORE_VETTO11", "AQAAAAEAACcQAAAAENNd1b34zR+qRvB4Xk2Pu3lrEIysCFx3ii0rVFWfz+I60UiPWZ9X2ejb+5FkWfJJ6w==", null, false, "9f883eba-e139-4da8-9529-fb903eaa660a", false, "lore_vetto11", new DateTime(1998, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Lorenzo", "Vettori" });
+            migrationBuilder.CreateTable(
+                name: "Orders",
+                columns: table => new
+                {
+                    OrderID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(maxLength: 100, nullable: false),
+                    ClientID = table.Column<int>(nullable: false),
+                    Number_Piece = table.Column<int>(nullable: false),
+                    DataIn = table.Column<DateTime>(nullable: false),
+                    DataOut = table.Column<DateTime>(nullable: false),
+                    SKU = table.Column<string>(maxLength: 20, nullable: false),
+                    Image_URL = table.Column<string>(maxLength: 70, nullable: false),
+                    Description = table.Column<string>(nullable: true),
+                    Price_Uni = table.Column<decimal>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Orders", x => x.OrderID);
+                    table.ForeignKey(
+                        name: "FK_Orders_Clients_ClientID",
+                        column: x => x.ClientID,
+                        principalTable: "Clients",
+                        principalColumn: "ClientID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Order_Operations",
+                columns: table => new
+                {
+                    OrderID = table.Column<int>(nullable: false),
+                    OperationID = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Order_Operations", x => new { x.OrderID, x.OperationID });
+                    table.ForeignKey(
+                        name: "FK_Order_Operations_Operations_OperationID",
+                        column: x => x.OperationID,
+                        principalTable: "Operations",
+                        principalColumn: "OperationID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Order_Operations_Orders_OrderID",
+                        column: x => x.OrderID,
+                        principalTable: "Orders",
+                        principalColumn: "OrderID",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -199,6 +296,16 @@ namespace RemaSoftware.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Order_Operations_OperationID",
+                table: "Order_Operations",
+                column: "OperationID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_ClientID",
+                table: "Orders",
+                column: "ClientID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -219,10 +326,25 @@ namespace RemaSoftware.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Order_Operations");
+
+            migrationBuilder.DropTable(
+                name: "Warehouse_Stocks");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Operations");
+
+            migrationBuilder.DropTable(
+                name: "Orders");
+
+            migrationBuilder.DropTable(
+                name: "Clients");
         }
     }
 }
