@@ -6,10 +6,10 @@ namespace RemaSoftware.ContextModels
 {
     public class Order
     {
-
         public int OrderID { get; set; }
 
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]
+        [MaxLength(100)]
         public string Name { get; set; }
 
         public int ClientID { get; set; }
@@ -27,20 +27,17 @@ namespace RemaSoftware.ContextModels
         public DateTime DataOut { get; set; }
 
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]
+        [MaxLength(20)]
         public string SKU { get; set; }
 
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]
+        [MaxLength(70)]
         public string Image_URL { get; set; }
-
-        public string Pdf_URL { get; set; }
 
         public string Description { get; set; }
 
-        public bool Flag_Fattureincloud { get; set; }
-
-        public double Price_Tot { get; set; }
-
-        public double Price_Uni { get; set; }
+        public decimal Price_Uni { get; set; }
+        public decimal Price_Tot => this.Price_Uni * this.Number_Piece;
 
         public virtual ICollection<Order_Operation> Order_Operation { get; set; }
     }

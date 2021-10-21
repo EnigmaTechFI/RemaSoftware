@@ -12,6 +12,7 @@ namespace RemaSoftware.ContextModels
         public int OperationID { get; set; }
 
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]
+        [MaxLength(100)]
         public string Name { get; set; }
 
         public string Description { get; set; }

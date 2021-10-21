@@ -44,7 +44,6 @@ namespace RemaSoftware.DALServices.Impl
                 articleToUpdate.Size = stockArticle.Size;
                 articleToUpdate.Number_Piece = stockArticle.Number_Piece;
                 articleToUpdate.Price_Uni = stockArticle.Price_Uni;
-                articleToUpdate.Price_Tot = stockArticle.Price_Tot;
                 _dbContext.Update(articleToUpdate);
             }
 

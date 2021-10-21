@@ -112,7 +112,6 @@ namespace RemaSoftware.Controllers
             }
 
             model.Order.DataIn = DateTime.Now;
-            model.Order.Price_Tot = model.Order.Price_Uni * model.Order.Number_Piece;
 
             var order_operationID = new List<int>();
 
@@ -137,7 +136,6 @@ namespace RemaSoftware.Controllers
                 DataOut = order.DataOut,
                 Number_Piece = order.Number_Piece,
                 Price_Uni = order.Price_Uni,
-                Price_Tot = order.Price_Tot,
                 SKU = order.SKU
             });
             return new JsonResult(new {Result = true, Data = order.OrderID});
@@ -153,7 +151,7 @@ namespace RemaSoftware.Controllers
                 return "Cliente mancante.";
             if (string.IsNullOrEmpty(model.Order.Name))
                 return "Nome mancante.";
-            if (model.Order.Price_Uni<=default(double))
+            if (model.Order.Price_Uni<=default(decimal))
                 return "Prezzo unitario mancante.";
             if (model.Order.DataOut<=default(DateTime))
                 return "Data di scadenza mancante.";

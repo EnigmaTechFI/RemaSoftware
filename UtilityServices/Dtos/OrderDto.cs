@@ -20,8 +20,8 @@ namespace UtilityServices.Dtos
 
         public string Description { get; set; }
 
-        public double Price_Tot { get; set; }
 
-        public double Price_Uni { get; set; }
+        public decimal Price_Uni { get; set; }
+        public decimal Price_Tot => this.Price_Uni * this.Number_Piece;
     }
 }

@@ -51,7 +51,6 @@ namespace RemaSoftware.Controllers
                     model.Warehouse_Stock.Size = string.IsNullOrEmpty(model.Warehouse_Stock.Size)
                         ? "Unica"
                         : model.Warehouse_Stock.Size;
-                    model.Warehouse_Stock.Price_Tot = model.Warehouse_Stock.Price_Uni * model.Warehouse_Stock.Number_Piece;
                     _warehouseService.AddOrUpdateWarehouseStock(model.Warehouse_Stock);
                     return RedirectToAction("Stock", "Stock"); //redirect to "Giacenze"
                 }
@@ -114,7 +113,6 @@ namespace RemaSoftware.Controllers
                 stockArticle.Number_Piece = model.QtyToAddRemoveRadio == 1
                     ? stockArticle.Number_Piece + model.QtyToAddRemove
                     : stockArticle.Number_Piece - model.QtyToAddRemove;
-                stockArticle.Price_Tot = stockArticle.Number_Piece * stockArticle.Price_Uni;
                 var res = _warehouseService.UpdateStockArticle(stockArticle);
                 return new JsonResult(new { Result = res, ToastMessage="Quantità modificata correttamente.", NewQty=stockArticle.Number_Piece, NewPrice = stockArticle.Price_Tot});
             }
