@@ -13,11 +13,11 @@
     </div>
     <div class="card-body">
         <form method="post" id="form-new-order" enctype="multipart/form-data">
-            @Html.HiddenFor(model => model.Photo, new {@id="Photo_base64"})
-            @Html.HiddenFor(model => model.Order.Image_URL, new {@id="imageUrl"})
+            @Html.HiddenFor(model => model.Photo, new { @id = "Photo_base64" })
+            @Html.HiddenFor(model => model.Order.Image_URL, new { @id = "imageUrl" })
             <div class="form-group">
                 <label for="formGroupExampleInput">Codice</label>
-                @Html.DropDownListFor(model=>model.Order.SKU, new SelectList(Model.OldOrders_SKU), new {@class="form-control select2-sku"})
+                @Html.DropDownListFor(model => model.Order.SKU, new SelectList(Model.OldOrders_SKU), new { @class = "form-control select2-sku" })
             </div>
             <div class="row">
                 <div class="col-md-6" style="padding-top:50px;">
@@ -41,12 +41,11 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-
-            </div>
+            &nbsp;
+            &nbsp;
             <div class="form-group">
                 <label>Seleziona Cliente</label>
-                @Html.DropDownListFor(model=>model.Order.ClientID, new SelectList(Model.Clients, "ClientID", "Name"), "-- Seleziona Cliente --", new {@class="form-control"})
+                @Html.DropDownListFor(model => model.Order.ClientID, new SelectList(Model.Clients, "ClientID", "Name"), "-- Seleziona Cliente --", new { @class = "form-control" })
             </div>
 
             <div class="form-group">
@@ -177,14 +176,14 @@
                 type: 'GET',
                 success: function (result) {
                     var src = '@Url.Action("GetImageByOrderId", "Order")' + "?orderId=" + result.data.orderID;
-                    document.getElementById('order-img-div').innerHTML = '<img src="' + src + '" width="500" height="282" />';
+                    document.getElementById('order-img-div').innerHTML = '<img src="' + src + '" width="376" height="282" />';
                     $("#imageUrl").val(result.data.image_URL)
                     $("#order_name").val(result.data.name);
                     $("#Order_ClientID").val(result.data.clientID);
                     toastNotifySuccess("Ordine recuperato correttamente.");
                 },
                 error: function (data) {
-                    document.getElementById('order-img-div').innerHTML = '<img src="" width="500" height="282" />';
+                    document.getElementById('order-img-div').innerHTML = '<img src="" width="376" height="282" />';
                     document.getElementById("Photo_base64").value = "";
                     $("#order_name").val("");
                     document.getElementById("inlineFormCustomSelectPref").selectedIndex = data.client_id;
@@ -201,7 +200,7 @@
         }
 
         Webcam.set({
-            width: 500,
+            width: 376,
             height: 282,
             image_format: 'png',
             jpeg_quality: 100
@@ -211,7 +210,7 @@
         function CaptureSnapshot() {
             Webcam.snap(function (data) {
                 // display results in page
-                document.getElementById('order-img-div').innerHTML = '<img src="' + data + '" width="500" height="282" />';
+                document.getElementById('order-img-div').innerHTML = '<img src="' + data + '" width="376" height="282" />';
                 document.getElementById("Photo_base64").value = data;
 
                 openModal();
