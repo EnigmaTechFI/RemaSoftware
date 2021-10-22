@@ -23,10 +23,21 @@
         <div class="container-fluid pt-3">
             <div class="row pb-5">
                 <div class="col-sm-6" style="font-size: large">
-                    <b>Rema S.r.l.s.</b>
-                    Via Guido Rossa, 5/D<br>
-                    50032, Borgo San Lorenzo, FI<br/>
-                    P.Iva: 06998340480
+                    <table cellpadding="5">
+                        <tr>
+                            <td>
+                                <img src="~/img/rema_sr.png" width="100" />
+                            </td>
+
+                            <td>
+                                <b>Rema S.r.l.s.</b>
+                                Via Guido Rossa, 5/D<br>
+                                50032, Borgo San Lorenzo, FI<br />
+                                P.Iva: 06998340480
+                            </td>
+                        </tr>
+                    </table>
+
                 </div>
                 <div class="col-sm-6 text-right" style="font-size: large">
                     <b>Dati cliente:</b><br>
@@ -36,33 +47,66 @@
                     P.IVA @Model.Client.P_Iva
                 </div>
             </div>
-            <br><br><br>
+            <center><hr style="width: 80%" /></center>
+
+            @{
+                if (Model.Description != "")
+                {
+                    <br>
+                    <b>Descrizione dell'ordine: </b>@Model.Description <br>
+                }
+            }
+            <br />
+            <b>Immagine del prodotto:</b>
+
+            <br />
+            <br />
+
             <div class="text-center">
                 @{
                     var path = Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName + Configuration["ImagePath"] + Model.Image_URL;
                 }
-                <img src="@path" style='width: 500px; height: 282px'/>
+                <img src="@path" style='width: 500px; height: 282px' />
             </div>
-                    
+
+            <br>
+
             <div class="row pt-5">
-                <div class="col-12" style="font-size: large">
-                    <b>Nome prodotto: </b>@Model.Name <br>
-                    <b>Sku: </b>@Model.SKU<br>
-                    <b>Data scadenza: </b>@Model.DataOut.ToString("d") <br>
-                    <b>Numero pezzi: </b>@Model.Number_Piece<br>
-                    <b>Prezzo unitario: </b>&euro; @Model.Price_Uni.ToString("0.00")<br>
-                    <b>Prezzo totale: </b>&euro; @Model.Price_Tot.ToString("0.00")<br>
-                    <b>Descrizione: </b>@Model.Description <br>
-                    <b>Operazioni sull'ordine: </b>
-                    @{
-                        var last = Model.Order_Operation?.LastOrDefault();
-                    }
-                    <ul>
-                    @foreach (var operation in Model.Order_Operation)
-                    {
-                        <li>@operation.Operations.Name</li>
-                    }
-                    </ul>
+                <div class="col-12" style="font-size: large; align-items: center;">
+                    <center>
+                        <table border="1" width="95%" cellpadding="5">
+                            <tr>
+                                <td width="60%"><b>Nome prodotto: </b></td>
+                                <td width="40%">@Model.Name</td>
+                            </tr>
+                            <tr>
+                                <td width="60%"><b>SKU: </b></td>
+                                <td width="40%">@Model.SKU</td>
+                            </tr>
+                            <tr>
+                                <td width="60%"><b>Data di consegna dell'ordine: </b></td>
+                                <td width="40%">@Model.DataOut.ToString("d")</td>
+                            </tr>
+                            <tr>
+                                <td width="60%"><b>Numero di pezzi richiesti: </b></td>
+                                <td width="40%">@Model.Number_Piece</td>
+                            </tr>
+                            <tr>
+                                <td width="60%"><b>Operazioni richiste sull'ordine: : </b></td>
+                                <td width="40%">
+                                    @{
+                                        var last = Model.Order_Operation?.LastOrDefault();
+                                    }
+                                    <ul>
+                                        @foreach (var operation in Model.Order_Operation)
+                                        {
+                                            <li>@operation.Operations.Name</li>
+                                        }
+                                    </ul>
+                                </td>
+                            </tr>
+                        </table>
+                    </center>
                 </div>
             </div>
         </div>
