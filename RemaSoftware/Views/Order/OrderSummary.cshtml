@@ -37,10 +37,10 @@
                     <tr>
                         <td>@order.Name</td>
                         <td>@order.Client.Name</td>
-                        <td>@order.DataIn</td>
+                        <td>@order.DataIn.ToString("d")</td>
                         <td>@order.DataOut.ToString("d")</td>
                         <td>@order.SKU</td>
-                        <td>@order.Description</td>
+                        <td><div style="max-height: 50px; width:200px; overflow: hidden">@order.Description</div></td>
                         <td>@order.Number_Piece</td>
                         <td>&euro; @order.Price_Uni.ToString("0.00")</td>
                         <td>&euro; @order.Price_Tot.ToString("0.00")</td>
