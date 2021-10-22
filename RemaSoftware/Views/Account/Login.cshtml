@@ -57,15 +57,19 @@
                                             <span asp-validation-for="Input.Password" class="text-danger"></span>
                                         </div>
                                         <div class="form-group">
-                                            <input type="checkbox" onclick="myFunction()">Show Password
+                                            <div class="custom-control custom-checkbox small">
+                                                <input onclick="myFunction()" type="checkbox" class="custom-control-input" id="show_psw">
+                                                <label class="custom-control-label" for="show_psw">Mostra Password</label>
+                                            </div>
                                         </div>
+                                        <input type="submit" class="btn btn-primary btn-user btn-block" value="Login">
+                                        <br />
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox small">
                                                 <input asp-for="Input.RememberMe" type="checkbox" class="custom-control-input" id="customCheck">
                                                 <label class="custom-control-label" for="customCheck">Ricordami</label>
                                             </div>
                                         </div>
-                                        <input type="submit" class="btn btn-primary btn-user btn-block" value="Login">
                                     </form>
                                     <hr>
                                     <a data-toggle="modal" data-target="#forgot-pwd-modal" href="#">Password Dimenticata?</a>
