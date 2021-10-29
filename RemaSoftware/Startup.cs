@@ -21,9 +21,15 @@ namespace RemaSoftware
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
+            var builder = new ConfigurationBuilder()
+            .SetBasePath(environment.ContentRootPath)
+            .AddConfiguration(configuration)
+            .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true)
+
+            .AddEnvironmentVariables();
         }
 
         public IConfiguration Configuration { get; }
