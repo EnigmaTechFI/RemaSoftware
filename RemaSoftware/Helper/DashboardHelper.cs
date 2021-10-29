@@ -63,7 +63,7 @@ namespace RemaSoftware.Helper
                     Value = s.Sum(sum=>sum.Totals).ToString("0.00")
                 }).ToList();
             
-            var allMonths = DateTimeFormatInfo.CurrentInfo.MonthNames.Take(12).ToList();
+            var allMonths = new CultureInfo("it-IT").DateTimeFormat.MonthNames.Take(12).ToList();
             foreach (var month in allMonths)
             {
                 if(!couples.Select(s=>s.Label).Contains(month))
