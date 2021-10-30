@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using RemaSoftware.ContextModels;
+﻿using RemaSoftware.ContextModels;
 
 namespace RemaSoftware.Models.OperationViewModel
 {
