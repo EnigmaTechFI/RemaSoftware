@@ -3,7 +3,6 @@ using System.IO;
 using Microsoft.Extensions.Configuration;
 using NLog;
 
-
 namespace UtilityServices
 {
     public class ImageService : IImageService

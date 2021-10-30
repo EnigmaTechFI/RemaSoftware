@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace RemaSoftware.ContextModels
+﻿namespace RemaSoftware.ContextModels
 {
     public class Order_Operation
     {

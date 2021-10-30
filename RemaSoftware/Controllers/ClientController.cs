@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using NLog;
 using RemaSoftware.ContextModels;
 using RemaSoftware.DALServices;
 using RemaSoftware.Data;
 using RemaSoftware.Models.ClientViewModel;
-using Convert = System.Convert;
 
 namespace RemaSoftware.Controllers
 {

@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RemaSoftware.Models.OperationViewModel;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using RemaSoftware.ContextModels;
 using RemaSoftware.DALServices;
 using RemaSoftware.Data;

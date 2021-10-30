@@ -1,14 +1,11 @@
 ﻿using System;
 using AspNetCoreHero.ToastNotification.Abstractions;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RemaSoftware.ContextModels;
-using RemaSoftware.Data;
 using RemaSoftware.Models.StockViewModel;
 using Microsoft.EntityFrameworkCore;
 using NLog;
 using RemaSoftware.DALServices;
-using Rotativa.AspNetCore;
 
 namespace RemaSoftware.Controllers
 {
