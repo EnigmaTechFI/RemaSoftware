@@ -126,7 +126,9 @@ namespace RemaSoftware
             }
             var hostingEnvironment = app.ApplicationServices.GetService<Microsoft.AspNetCore.Hosting.IHostingEnvironment>();
             RotativaConfiguration.Setup(hostingEnvironment);
-            //app.UseHttpsRedirection();
+            if(!env.IsEnvironment("Test"))
+                app.UseHttpsRedirection();
+            
             app.UseStaticFiles();
 
             app.UseSession();
