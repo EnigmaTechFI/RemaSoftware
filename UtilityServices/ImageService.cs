@@ -24,7 +24,7 @@ namespace UtilityServices
                 string base64 = source.Substring(source.IndexOf(',') + 1);
                 byte[] data = Convert.FromBase64String(base64);
                 var guid = Guid.NewGuid().ToString();
-                Directory.CreateDirectory(path + _configuration["ImagePath"]);
+                Directory.CreateDirectory(path);
                 string file_path = path + guid + ".png";
 
                 System.IO.File.WriteAllBytes(file_path, data);
