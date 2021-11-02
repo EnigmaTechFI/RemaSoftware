@@ -128,7 +128,7 @@ namespace RemaSoftware.Controllers
             _orderService.AddOrderOperation(order.OrderID, order_operationID);
 
             //API Fattura In Cloud
-            try
+            /*try
             {
                 _apiFatturaInCloud.AddOrderCloud(new OrderDto
                 {
@@ -144,7 +144,7 @@ namespace RemaSoftware.Controllers
             catch (Exception e)
             {
                 Logger.Error(e, "Errore salvataggio fatture in cloud.");
-            }
+            }*/ 
             return new JsonResult(new {Result = true, Data = order.OrderID});
         }
 
