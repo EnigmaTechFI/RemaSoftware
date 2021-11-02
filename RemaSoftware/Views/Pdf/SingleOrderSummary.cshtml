@@ -39,21 +39,21 @@
                     </table>
 
                 </div>
-                @*<div class="col-sm-6 text-right" style="font-size: large">
+                <div class="col-sm-6 text-right" style="font-size: large">
                     <b>Dati cliente:</b><br>
                     @Model.Client.Name,<br>
                     @Model.Client.Street, @Model.Client.StreetNumber<br>
                     @Model.Client.Cap, @Model.Client.City, @Model.Client.Province, @Model.Client.Nation<br>
                     P.IVA @Model.Client.P_Iva
-                </div>*@
+                </div>
             </div>
             <center><hr style="width: 80%" /></center>
 
-            @*@if (!string.IsNullOrEmpty(Model.Description))
+            @if (!string.IsNullOrEmpty(Model.Description))
             {
                 <br>
                 <b>Descrizione dell'ordine: </b>@Model.Description <br>
-            }*@
+            }
 
             <br />
             <b>Immagine del prodotto:</b>
@@ -61,12 +61,12 @@
             <br />
             <br />
 
-            @*<div class="text-center">
+            <div class="text-center">
             @{
                 var path = Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName + Configuration["ImagePath"] + Model.Image_URL;
             }
             <img src="@path" style='width: 376px; height: 282px' />
-        </div>*@
+            </div>
 
             <br>
 
@@ -76,23 +76,23 @@
                         <table border="1" width="95%" cellpadding="5">
                             <tr>
                                 <td width="60%"><b>Nome prodotto: </b></td>
-                                @*<td width="40%">@Model.Name</td>*@
+                                <td width="40%">@Model.Name</td>
                             </tr>
                             <tr>
                                 <td width="60%"><b>SKU: </b></td>
-                                @*<td width="40%">@Model.SKU</td>*@
+                                <td width="40%">@Model.SKU</td>
                             </tr>
                             <tr>
                                 <td width="60%"><b>Data di consegna dell'ordine: </b></td>
-                                @*<td width="40%">@Model.DataOut.ToString("d")</td>*@
+                                <td width="40%">@Model.DataOut.ToString("d")</td>
                             </tr>
                             <tr>
                                 <td width="60%"><b>Numero di pezzi richiesti: </b></td>
-                                @*<td width="40%">@Model.Number_Piece</td>*@
+                                <td width="40%">@Model.Number_Piece</td>
                             </tr>
                             <tr>
                                 <td width="60%"><b>Operazioni richiste sull'ordine: : </b></td>
-                                @*<td width="40%">
+                                <td width="40%">
                                     @{
                                         var last = Model.Order_Operation?.LastOrDefault();
                                     }
@@ -102,7 +102,7 @@
                                             <li>@operation.Operations.Name</li>
                                         }
                                     </ul>
-                                </td>*@
+                                </td>
                             </tr>
                         </table>
                     </center>
