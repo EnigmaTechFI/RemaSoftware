@@ -128,7 +128,7 @@ namespace RemaSoftware.Controllers
             _orderService.AddOrderOperation(order.OrderID, order_operationID);
 
             //API Fattura In Cloud
-            _apiFatturaInCloud.AddOrderCloud(new OrderDto
+            /*_apiFatturaInCloud.AddOrderCloud(new OrderDto
             {
                 Name = order.Name,
                 Description = order.Description,
@@ -137,7 +137,7 @@ namespace RemaSoftware.Controllers
                 Number_Piece = order.Number_Piece,
                 Price_Uni = order.Price_Uni,
                 SKU = order.SKU
-            });
+            });*/
             return new JsonResult(new {Result = true, Data = order.OrderID});
         }
 

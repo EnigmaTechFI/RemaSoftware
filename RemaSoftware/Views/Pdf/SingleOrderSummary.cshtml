@@ -49,24 +49,24 @@
             </div>
             <center><hr style="width: 80%" /></center>
 
-                @if (!string.IsNullOrEmpty(Model.Description))
-                {
-                    <br>
-                    <b>Descrizione dell'ordine: </b>@Model.Description <br>
-                }
-            
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                <br>
+                <b>Descrizione dell'ordine: </b>@Model.Description <br>
+            }
+
             <br />
             <b>Immagine del prodotto:</b>
 
             <br />
             <br />
 
-            <div class="text-center">
-                @{
-                    var path = Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName + Configuration["ImagePath"] + Model.Image_URL;
-                }
-                <img src="@path" style='width: 376px; height: 282px' />
-            </div>
+            @*<div class="text-center">
+            @{
+                var path = Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName + Configuration["ImagePath"] + Model.Image_URL;
+            }
+            <img src="@path" style='width: 376px; height: 282px' />
+        </div>*@
 
             <br>
 
