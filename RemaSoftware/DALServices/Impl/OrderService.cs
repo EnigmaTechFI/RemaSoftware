@@ -94,10 +94,9 @@ namespace RemaSoftware.DALServices.Impl
 
         public List<Order> GetOrdersNearToDeadlineTakeTop(int topSelector)
         {
-            // add days(1) così evito di prendere quelli che sono scaduti / scadono oggi
             return _dbContext.Orders
                 .Include(i=>i.Client)
-                .Where(w=>w.DataOut > DateTime.Now.AddDays(1)).OrderBy(ob=>ob.DataOut)
+                .Where(w=>w.DataOut > DateTime.Now).OrderBy(ob=>ob.DataOut)
                 .Take(topSelector)
                 .ToList();
         }

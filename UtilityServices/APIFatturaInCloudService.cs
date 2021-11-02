@@ -2,6 +2,8 @@
 using System.Net;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using NLog;
+using NLog.Fluent;
 using UtilityServices.Dtos;
 
 
@@ -10,6 +12,8 @@ namespace UtilityServices
     public class APIFatturaInCloudService : IAPIFatturaInCloudService
     {
         private readonly IConfiguration _configuration;
+
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public APIFatturaInCloudService(IConfiguration configuration)
         {
@@ -52,11 +56,13 @@ namespace UtilityServices
             }
 
             var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+            string result;
             using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
             {
-                var result = streamReader.ReadToEnd();
+                result = streamReader.ReadToEnd();
             }
 
+            Logger.Info($"Risposta da FattureInCloud: {result}");
             return true; 
         }
     }

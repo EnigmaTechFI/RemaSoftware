@@ -46,10 +46,11 @@ namespace RemaSoftware.Helper
         
         public List<ChartDataObject> GetDataForDashboardAreaChart()
         {
+            CultureInfo cultureInfo = new CultureInfo("it-IT");
             var ordersPrices = _dbContext.Orders
                 .Where(w=>w.DataOut.Year == DateTime.Now.Year)
                 .OrderBy(ob=>ob.DataOut.Month)
-                .Select(s=>new {Month=s.DataOut.ToString("MMMM"), Totals = s.Price_Uni*s.Number_Piece})
+                .Select(s=>new {Month=s.DataOut.ToString("MMMM", cultureInfo), Totals = s.Price_Uni*s.Number_Piece})
                 .ToList();
             
             var couples = ordersPrices
@@ -61,13 +62,13 @@ namespace RemaSoftware.Helper
                     Value = s.Sum(sum=>sum.Totals).ToString("0.00")
                 }).ToList();
             
-            var allMonths = new CultureInfo("it-IT").DateTimeFormat.MonthNames.Take(12).ToList();
+            var allMonths = cultureInfo.DateTimeFormat.MonthNames.Take(12).ToList();
             foreach (var month in allMonths)
             {
                 if(!couples.Select(s=>s.Label).Contains(month))
                     couples.Add(new ChartDataObject { Label = month, Value = "0.00"});
             }
-            return couples.OrderBy(ob=>DateTime.ParseExact(ob.Label, "MMMM", new CultureInfo("it-IT"))).ToList();
+            return couples.OrderBy(ob=>DateTime.ParseExact(ob.Label, "MMMM", cultureInfo)).ToList();
 
         }
 
