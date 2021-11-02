@@ -65,7 +65,7 @@ namespace RemaSoftware.Controllers
             {
                 var order = _orderService.GetOrderWithOperationsById(orderId);
                 string a = $"Sku:{order.SKU}";
-                //return new ViewAsPdf("../Pdf/SingleOrderSummary", order);
+                return View("../Pdf/SingleOrderSummary", order);
             }
             catch (Exception e)
             {
