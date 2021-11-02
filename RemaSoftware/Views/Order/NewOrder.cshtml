@@ -156,6 +156,9 @@
         });
                 
         function PostNewOrder() {
+            var date = new Date($("#datetimepicker1").val());
+            var newDate = date.toString('MM-dd-yyyy');
+            $("#datetimepicker1").val(newDate);
             var model = $("#form-new-order").serialize();
             $.post('@Url.Action("NewOrder", "Order")', model, function (result){
                 if (result && result.result == true){

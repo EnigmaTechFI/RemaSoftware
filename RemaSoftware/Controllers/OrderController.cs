@@ -100,7 +100,6 @@ namespace RemaSoftware.Controllers
         [HttpPost]
         public JsonResult NewOrder(NewOrderViewModel model)
         {
-            model.Order.DataOut = DateTime.Parse(model.Order.DataOut.ToString(), new CultureInfo("it-IT"));
             var validationResult = this.ValidateNewOrderViewModel(model);
             if (validationResult != "")
                 return new JsonResult(new {Result = false, ToastMessage = validationResult});
@@ -161,7 +160,7 @@ namespace RemaSoftware.Controllers
             if (model.Order.Price_Uni<=default(decimal))
                 return "Prezzo unitario mancante.";
             if (model.Order.DataOut<=default(DateTime))
-                return "Data di scadenza mancante.";
+                return "Data di scadenza non valida.";
             return "";
         }
 
