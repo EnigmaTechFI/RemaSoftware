@@ -12,8 +12,6 @@ using RemaSoftware.Models.ClientViewModel;
 using UtilityServices;
 using RemaSoftware.Models.Common;
 using RemaSoftware.Models.OrderViewModel;
-using Rotativa.AspNetCore;
-using UtilityServices.Dtos;
 using Microsoft.Extensions.Configuration;
 
 namespace RemaSoftware.Controllers
@@ -65,8 +63,8 @@ namespace RemaSoftware.Controllers
             try
             {
                 var order = _orderService.GetOrderWithOperationsById(orderId);
-                
-                return new ViewAsPdf("../Pdf/SingleOrderSummary", order);
+                string a = $"Sku:{order.SKU}";
+                //return new ViewAsPdf("../Pdf/SingleOrderSummary", order);
             }
             catch (Exception e)
             {
