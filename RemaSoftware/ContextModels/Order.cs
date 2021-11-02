@@ -19,11 +19,11 @@ namespace RemaSoftware.ContextModels
         public int Number_Piece { get; set; }
 
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{dd/MM/yyyy}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime DataIn { get; set; }
 
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{dd/MM/yyyy}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime DataOut { get; set; }
 
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]

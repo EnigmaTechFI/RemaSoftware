@@ -1,4 +1,5 @@
-﻿@model RemaSoftware.Models.ClientViewModel.OrderSummaryViewModel
+﻿@using System.Globalization
+@model RemaSoftware.Models.ClientViewModel.OrderSummaryViewModel
 
 @{
     ViewData["Title"] = "Resoconto";
@@ -37,8 +38,8 @@
                     <tr>
                         <td>@order.Name</td>
                         <td>@order.Client.Name</td>
-                        <td>@order.DataIn.ToString("d")</td>
-                        <td>@order.DataOut.ToString("d")</td>
+                        <td>@order.DataIn.ToString("d", new CultureInfo("it-IT"))</td>
+                        <td>@order.DataOut.ToString("d", new CultureInfo("it-IT"))</td>
                         <td>@order.SKU</td>
                         <td><div style="max-width:200px; white-space: nowrap; overflow: hidden; text-overflow:ellipsis;">@order.Description</div></td>
                         <td>@order.Number_Piece</td>

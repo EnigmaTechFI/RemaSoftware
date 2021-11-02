@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using AspNetCoreHero.ToastNotification.Abstractions;
@@ -99,6 +100,7 @@ namespace RemaSoftware.Controllers
         [HttpPost]
         public JsonResult NewOrder(NewOrderViewModel model)
         {
+            model.Order.DataOut = DateTime.Parse(model.Order.DataOut.ToString(), new CultureInfo("it-IT"));
             var validationResult = this.ValidateNewOrderViewModel(model);
             if (validationResult != "")
                 return new JsonResult(new {Result = false, ToastMessage = validationResult});
