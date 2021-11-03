@@ -60,7 +60,7 @@
             <div class="form-group">
                 <label for="validationTooltip04">Prezzo Unitario (IVA Inclusa) *</label>
                 <div class="input-group-append">
-                    <input asp-for="Order.Price_Uni" type="text" pattern="^[\d,]+$" class="form-control" id="validationTooltip04" placeholder="Prezzo Unitario ">
+                    <input asp-for="Order.Price_Uni" type="number" pattern="^[\d,]+$" class="form-control" id="priceUnit" placeholder="Prezzo Unitario">
                     <span class="input-group-text">€</span>
                 </div>
                 <div class="valid-tooltip">
@@ -129,6 +129,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/js/select2.min.js" integrity="sha512-9p/L4acAjbjIaaGXmZf0Q2bV42HetlCLbv8EP0z3rLbQED2TAFUlDvAezy7kumYqg5T8jHtDdlm1fgIsr5QzKg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script language="JavaScript">
 
+        $('#priceUnit').keypress(function (e) {
+            if (e.which == 46) {
+                e.preventDefault();
+            }
+        });
+
+
         $(".select2-sku").select2({
             placeholder: "Seleziona uno sku o digitane uno nuovo",
             tags: true,
@@ -140,7 +147,7 @@
                 };
             }
         });
-            
+
         $('.select2-sku').on('select2:select', function (e) {
             if (!e.params.data.isNew) {
                 GetOrderBySKU();
@@ -150,17 +157,22 @@
                 $("#order-img-div").html("");
             }
         });
-        
+
         $(document).on('select2:open', () => {
             document.querySelector('.select2-search__field').focus();
         });
-                
+
         function PostNewOrder() {
             var model = $("#form-new-order").serialize();
             $.post('@Url.Action("NewOrder", "Order")', model, function (result){
-                if (result && result.result == true){
-                    window.open('@Url.Action("DownloadPdfOrder", "Order")' + "?orderId=" + result.data, "_blank");
-                    
+                if (result && result.result == true) {
+                    var aElement = document.createElement("a");
+                    aElement.setAttribute("type", "hidden");
+                    aElement.href = '@Url.Action("DownloadPdfOrder", "Order")' + "?orderId=" + result.data;
+                    aElement.target = "_blank";
+                    document.getElementsByTagName("body")
+                    aElement.click();
+
                     window.location.href='@Model.RedirectUrlAfterCreation';
                 } else {
                     toastNotifyError(result.toastMessage);

@@ -22,6 +22,8 @@ namespace UtilityServices
         
         public bool AddOrderCloud(OrderDto order)
         {
+            Logger.Info("Inizio invio a ApiFattureInCloud");
+            
             var apiEndpoint = _configuration["ApiFattureInCloud:ApiEndpoint"];
             var apiUID = _configuration["ApiFattureInCloud:ApiUID"];
             var apiKey = _configuration["ApiFattureInCloud:ApiKEY"];
@@ -29,6 +31,9 @@ namespace UtilityServices
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(apiEndpoint);
             httpWebRequest.ContentType = "application/json";
             httpWebRequest.Method = "POST";
+            var myProxy = new WebProxy("http://winproxy.server.lan:3128/",true);
+            httpWebRequest.Proxy = myProxy;
+            
             OrderAPI test = new OrderAPI()
             {
                 api_uid = apiUID,

@@ -69,13 +69,15 @@ namespace RemaSoftware.Controllers
                 
                 var order = _orderService.GetOrderWithOperationsById(orderId);
                 vm.Order = order;
+                if (!string.IsNullOrEmpty(order.Image_URL))
+                {
+                    var path = Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName + _configuration["ImagePath"] + order.Image_URL;
+                    var photo = System.IO.File.ReadAllBytes(path);
+                    var base64 = Convert.ToBase64String(photo);
+                    var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
+                    vm.Photo = imgSrc;
+                }               
 
-                var path = Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName + _configuration["ImagePath"] + order.Image_URL;
-                var photo = System.IO.File.ReadAllBytes(path);
-                var base64 = Convert.ToBase64String(photo);
-                var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
-                vm.Photo = imgSrc;
-                string a = $"Sku:{order.SKU}";
                 return View("../Pdf/SingleOrderSummary", vm);
             }
             catch (Exception e)
@@ -112,8 +114,7 @@ namespace RemaSoftware.Controllers
         public JsonResult NewOrder(NewOrderViewModel model)
         {
             DateTime parsedDateTime;
-            DateTime.TryParseExact(model.DataOutStr, "dd/MM/yyyy", null,
-                                       DateTimeStyles.None, out parsedDateTime);
+            DateTime.TryParseExact(model.DataOutStr, "dd/MM/yyyy", null, DateTimeStyles.None, out parsedDateTime);
             model.Order.DataOut = parsedDateTime;
 
             var validationResult = this.ValidateNewOrderViewModel(model);

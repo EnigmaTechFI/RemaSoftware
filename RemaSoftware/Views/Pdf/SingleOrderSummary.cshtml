@@ -1,7 +1,5 @@
-@using Microsoft.Extensions.Configuration
-@using System.IO
+@using System.Globalization
 @model RemaSoftware.Models.PDFViewModel.PDFViewModel
-@inject IConfiguration Configuration
 
 @{
     Layout = null;
@@ -10,106 +8,113 @@
 <!DOCTYPE html>
 
 <html>
-    <head>
-            <link href="~/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-            <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-                  rel="stylesheet">
-            <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
-            
-            <link rel="stylesheet" href="~/css/site.css"/>
-            <link href="~/css/sb-admin-2.min.css" rel="stylesheet">
-    </head>
-    <body>
-        <div class="container-fluid pt-3">
-            <div class="row pb-5">
-                <div class="col-sm-6" style="font-size: large">
-                    <table cellpadding="5">
-                        <tr>
-                            <td>
-                                <img src="~/img/rema_sr.png" width="100" />
-                            </td>
+<head>
+    <link href="~/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+          rel="stylesheet">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
-                            <td>
-                                <b>Rema S.r.l.s.</b>
-                                Via Guido Rossa, 5/D<br>
-                                50032, Borgo San Lorenzo, FI<br />
-                                P.Iva: 06998340480
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link href="~/css/sb-admin-2.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid pt-3">
+        <div class="row pb-5">
+            <div class="col-sm-6" style="font-size: large">
+                <table cellpadding="5">
+                    <tr>
+                        <td>
+                            <img src="~/img/rema_sr.png" width="100" />
+                        </td>
+
+                        <td>
+                            <b>Rema S.r.l.s.</b>
+                            Via Guido Rossa, 5/D<br>
+                            50032, Borgo San Lorenzo, FI<br />
+                            P.Iva: 06998340480
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+            <div class="col-sm-6 text-right" style="font-size: large">
+                <b>Dati cliente:</b><br>
+                @Model.Order.Client.Name,<br>
+                @Model.Order.Client.Street, @Model.Order.Client.StreetNumber<br>
+                @Model.Order.Client.Cap, @Model.Order.Client.City, @Model.Order.Client.Province, @Model.Order.Client.Nation<br>
+                P.IVA @Model.Order.Client.P_Iva
+            </div>
+        </div>
+        <center><hr style="width: 80%" /></center>
+
+        @if (!string.IsNullOrEmpty(Model.Order.Description))
+            {
+        <br>
+        <b>Descrizione dell'ordine: </b>@Model.Order.Description  <br>
+            }
+
+        <br />
+        <b>Immagine del prodotto:</b>
+
+        <br />
+        <br />
+
+        <div class="text-center">
+            <img src="@Model.Photo" style='width: 376px; height: 282px' />
+        </div>
+
+        <br>
+
+        <div class="row pt-5">
+            <div class="col-12" style="font-size: large; align-items: center;">
+                <center>
+                    <table border="1" width="95%" cellpadding="5">
+                        <tr>
+                            <td width="60%"><b>Nome prodotto: </b></td>
+                            <td width="40%">@Model.Order.Name</td>
+                        </tr>
+                        <tr>
+                            <td width="60%"><b>SKU: </b></td>
+                            <td width="40%">@Model.Order.SKU</td>
+                        </tr>
+                        <tr>
+                            <td width="60%"><b>Data di consegna dell'ordine: </b></td>
+                            <td width="40%">@Model.Order.DataOut.ToString("d", new CultureInfo("it-IT"))</td>
+                        </tr>
+                        <tr>
+                            <td width="60%"><b>Numero di pezzi richiesti: </b></td>
+                            <td width="40%">@Model.Order.Number_Piece</td>
+                        </tr>
+                        <tr>
+                            <td width="60%"><b>Operazioni richiste sull'ordine: : </b></td>
+                            <td width="40%">
+                                @{
+                                        var last = Model.Order.Order_Operation?.LastOrDefault();
+                                }
+                                <ul>
+                                    @foreach (var operation in Model.Order.Order_Operation)
+                                        {
+                                    <li>@operation.Operations.Name</li>
+                                        }
+                                </ul>
                             </td>
                         </tr>
                     </table>
-
-                </div>
-                <div class="col-sm-6 text-right" style="font-size: large">
-                    <b>Dati cliente:</b><br>
-                    @Model.Order.Client.Name,<br>
-                    @Model.Order.Client.Street, @Model.Order.Client.StreetNumber<br>
-                    @Model.Order.Client.Cap, @Model.Order.Client.City, @Model.Order.Client.Province, @Model.Order.Client.Nation<br>
-                    P.IVA @Model.Order.Client.P_Iva
-                </div>
-            </div>
-            <center><hr style="width: 80%" /></center>
-
-            @if (!string.IsNullOrEmpty(Model.Order.Description))
-            {
-                <br>
-                <b>Descrizione dell'ordine: </b>@Model.Order.Description <br>
-            }
-
-            <br />
-            <b>Immagine del prodotto:</b>
-
-            <br />
-            <br />
-
-            <div class="text-center">
-            <img src="@Model.Photo" style='width: 376px; height: 282px' />
-            </div>
-
-            <br>
-
-            <div class="row pt-5">
-                <div class="col-12" style="font-size: large; align-items: center;">
-                    <center>
-                        <table border="1" width="95%" cellpadding="5">
-                            <tr>
-                                <td width="60%"><b>Nome prodotto: </b></td>
-                                <td width="40%">@Model.Order.Name</td>
-                            </tr>
-                            <tr>
-                                <td width="60%"><b>SKU: </b></td>
-                                <td width="40%">@Model.Order.SKU</td>
-                            </tr>
-                            <tr>
-                                <td width="60%"><b>Data di consegna dell'ordine: </b></td>
-                                <td width="40%">@Model.Order.DataOut.ToString("d")</td>
-                            </tr>
-                            <tr>
-                                <td width="60%"><b>Numero di pezzi richiesti: </b></td>
-                                <td width="40%">@Model.Order.Number_Piece</td>
-                            </tr>
-                            <tr>
-                                <td width="60%"><b>Operazioni richiste sull'ordine: : </b></td>
-                                <td width="40%">
-                                    @{
-                                        var last = Model.Order.Order_Operation?.LastOrDefault();
-                                    }
-                                    <ul>
-                                        @foreach (var operation in Model.Order.Order_Operation)
-                                        {
-                                            <li>@operation.Operations.Name</li>
-                                        }
-                                    </ul>
-                                </td>
-                            </tr>
-                        </table>
-                    </center>
-                </div>
+                </center>
             </div>
         </div>
-    </body>
+    </div>
     <script src="~/vendor/jquery/jquery.min.js"></script>
     <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="~/vendor/jquery-easing/jquery.easing.min.js"></script>
-    
+
     <script src="~/js/sb-admin-2.min.js"></script>
-    </html>
+
+    <script>
+        $(document).ready(function () {
+            
+            window.print();
+        })
+    </script>
+</body>
+</html>
