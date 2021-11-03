@@ -70,7 +70,7 @@
             <div class="form-group">
                 <label for="exampleFormControlTextarea1">Seleziona data di consegna</label>
                 <div class='input-group date'>
-                    <input placeholder="Seleziona data di consegna" type='text' class="form-control bg-white" id='datetimepicker1' asp-for="Order.DataOut" />
+                    <input placeholder="Seleziona data di consegna" type='text' class="form-control bg-white" id='datetimepicker1' asp-for="DataOutStr" />
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
                     </span>
@@ -156,9 +156,6 @@
         });
                 
         function PostNewOrder() {
-            var date = new Date($("#datetimepicker1").val());
-            var newDate = date.toString('MM-dd-yyyy');
-            $("#datetimepicker1").val(newDate);
             var model = $("#form-new-order").serialize();
             $.post('@Url.Action("NewOrder", "Order")', model, function (result){
                 if (result && result.result == true){

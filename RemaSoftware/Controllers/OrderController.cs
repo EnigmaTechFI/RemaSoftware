@@ -110,6 +110,11 @@ namespace RemaSoftware.Controllers
         [HttpPost]
         public JsonResult NewOrder(NewOrderViewModel model)
         {
+            DateTime parsedDateTime;
+            DateTime.TryParseExact(model.DataOutStr, "dd/MM/yyyy", null,
+                                       DateTimeStyles.None, out parsedDateTime);
+            model.Order.DataOut = parsedDateTime;
+
             var validationResult = this.ValidateNewOrderViewModel(model);
             if (validationResult != "")
                 return new JsonResult(new {Result = false, ToastMessage = validationResult});
@@ -120,7 +125,7 @@ namespace RemaSoftware.Controllers
                 model.Order.Image_URL = iamgeName;
             }
 
-            model.Order.DataIn = DateTime.Now;
+            model.Order.DataIn = DateTime.UtcNow;
 
             var order_operationID = new List<int>();
 

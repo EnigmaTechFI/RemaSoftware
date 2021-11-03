@@ -8,6 +8,7 @@ namespace RemaSoftware.Models.ClientViewModel
     {
         public List<Client> Clients { get; set; }
         public Order Order { get; set; }
+        public string DataOutStr { get; set; }
 
         public List<string> OldOrders_SKU { get; set; }
         public List<OperationFlag> Operation { get; set; }
