@@ -1,6 +1,6 @@
 @using Microsoft.Extensions.Configuration
 @using System.IO
-@model RemaSoftware.ContextModels.Order
+@model RemaSoftware.Models.PDFViewModel.PDFViewModel
 @inject IConfiguration Configuration
 
 @{
@@ -41,18 +41,18 @@
                 </div>
                 <div class="col-sm-6 text-right" style="font-size: large">
                     <b>Dati cliente:</b><br>
-                    @Model.Client.Name,<br>
-                    @Model.Client.Street, @Model.Client.StreetNumber<br>
-                    @Model.Client.Cap, @Model.Client.City, @Model.Client.Province, @Model.Client.Nation<br>
-                    P.IVA @Model.Client.P_Iva
+                    @Model.Order.Client.Name,<br>
+                    @Model.Order.Client.Street, @Model.Order.Client.StreetNumber<br>
+                    @Model.Order.Client.Cap, @Model.Order.Client.City, @Model.Order.Client.Province, @Model.Order.Client.Nation<br>
+                    P.IVA @Model.Order.Client.P_Iva
                 </div>
             </div>
             <center><hr style="width: 80%" /></center>
 
-            @if (!string.IsNullOrEmpty(Model.Description))
+            @if (!string.IsNullOrEmpty(Model.Order.Description))
             {
                 <br>
-                <b>Descrizione dell'ordine: </b>@Model.Description <br>
+                <b>Descrizione dell'ordine: </b>@Model.Order.Description <br>
             }
 
             <br />
@@ -62,10 +62,7 @@
             <br />
 
             <div class="text-center">
-            @{
-                var path = Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName + Configuration["ImagePath"] + Model.Image_URL;
-            }
-            <img src="@path" style='width: 376px; height: 282px' />
+            <img src="@Model.Photo" style='width: 376px; height: 282px' />
             </div>
 
             <br>
@@ -76,28 +73,28 @@
                         <table border="1" width="95%" cellpadding="5">
                             <tr>
                                 <td width="60%"><b>Nome prodotto: </b></td>
-                                <td width="40%">@Model.Name</td>
+                                <td width="40%">@Model.Order.Name</td>
                             </tr>
                             <tr>
                                 <td width="60%"><b>SKU: </b></td>
-                                <td width="40%">@Model.SKU</td>
+                                <td width="40%">@Model.Order.SKU</td>
                             </tr>
                             <tr>
                                 <td width="60%"><b>Data di consegna dell'ordine: </b></td>
-                                <td width="40%">@Model.DataOut.ToString("d")</td>
+                                <td width="40%">@Model.Order.DataOut.ToString("d")</td>
                             </tr>
                             <tr>
                                 <td width="60%"><b>Numero di pezzi richiesti: </b></td>
-                                <td width="40%">@Model.Number_Piece</td>
+                                <td width="40%">@Model.Order.Number_Piece</td>
                             </tr>
                             <tr>
                                 <td width="60%"><b>Operazioni richiste sull'ordine: : </b></td>
                                 <td width="40%">
                                     @{
-                                        var last = Model.Order_Operation?.LastOrDefault();
+                                        var last = Model.Order.Order_Operation?.LastOrDefault();
                                     }
                                     <ul>
-                                        @foreach (var operation in Model.Order_Operation)
+                                        @foreach (var operation in Model.Order.Order_Operation)
                                         {
                                             <li>@operation.Operations.Name</li>
                                         }

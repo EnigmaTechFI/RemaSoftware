@@ -13,6 +13,7 @@ using RemaSoftware.Models.ClientViewModel;
 using UtilityServices;
 using RemaSoftware.Models.Common;
 using RemaSoftware.Models.OrderViewModel;
+using RemaSoftware.Models.PDFViewModel;
 using Microsoft.Extensions.Configuration;
 
 namespace RemaSoftware.Controllers
@@ -63,9 +64,18 @@ namespace RemaSoftware.Controllers
         {
             try
             {
+                var vm = new PDFViewModel();
+                
                 var order = _orderService.GetOrderWithOperationsById(orderId);
+                vm.Order = order;
+
+                var path = Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName + _configuration["ImagePath"] + order.Image_URL;
+                var photo = System.IO.File.ReadAllBytes(path);
+                var base64 = Convert.ToBase64String(photo);
+                var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
+                vm.Photo = imgSrc;
                 string a = $"Sku:{order.SKU}";
-                return View("../Pdf/SingleOrderSummary", order);
+                return View("../Pdf/SingleOrderSummary", vm);
             }
             catch (Exception e)
             {
