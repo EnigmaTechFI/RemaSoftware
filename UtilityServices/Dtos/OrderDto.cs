@@ -15,6 +15,7 @@ namespace UtilityServices.Dtos
         public DateTime DataOut { get; set; }
 
         public string SKU { get; set; }
+        public string DDT { get; set; }
 
         public string Image_URL { get; set; }
 

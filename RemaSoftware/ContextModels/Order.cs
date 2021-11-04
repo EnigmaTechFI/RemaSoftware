@@ -31,6 +31,10 @@ namespace RemaSoftware.ContextModels
         public string SKU { get; set; }
 
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]
+        [MaxLength(30)]
+        public string DDT { get; set; }
+
+        [Required(ErrorMessage = "Questo campo è obbligatorio!")]
         [MaxLength(70)]
         public string Image_URL { get; set; }
 

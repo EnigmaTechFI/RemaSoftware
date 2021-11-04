@@ -31,20 +31,20 @@ namespace UtilityServices
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(apiEndpoint);
             httpWebRequest.ContentType = "application/json";
             httpWebRequest.Method = "POST";
-            var myProxy = new WebProxy("http://winproxy.server.lan:3128/",true);
-            httpWebRequest.Proxy = myProxy;
+            //var myProxy = new WebProxy("http://winproxy.server.lan:3128/",true);
+            //httpWebRequest.Proxy = myProxy;
             
             OrderAPI test = new OrderAPI()
             {
                 api_uid = apiUID,
                 api_key = apiKey,
-                cod = order.SKU,
-                nome = order.Name,
+                cod = order.DDT,
+                nome = order.SKU,
                 desc = order.Description,
                 prezzo_ivato = false,
-                prezzo_netto = "0",
+                prezzo_netto = order.Price_Uni.ToString("0.##"),
                 prezzo_lordo = "0",
-                costo = order.Price_Tot.ToString("0.##"),
+                costo = "0",
                 cod_iva = 0,
                 um = "",
                 categoria = "",

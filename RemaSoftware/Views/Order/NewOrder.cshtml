@@ -19,6 +19,10 @@
                 <label for="formGroupExampleInput">Codice</label>
                 @Html.DropDownListFor(model => model.Order.SKU, new SelectList(Model.OldOrders_SKU), new { @class = "form-control select2-sku" })
             </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput">Codice DDT</label>
+                <input asp-for="Order.DDT" type="text" class="form-control" id="DDT_cod" placeholder="Codice DDT">
+            </div>
             <div class="row">
                 <div class="col-md-6" style="padding-top:50px;">
                     <div class="panel panel-default">

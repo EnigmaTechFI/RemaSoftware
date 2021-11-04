@@ -154,7 +154,8 @@ namespace RemaSoftware.Controllers
                     DataOut = order.DataOut,
                     Number_Piece = order.Number_Piece,
                     Price_Uni = order.Price_Uni,
-                    SKU = order.SKU
+                    SKU = order.SKU,
+                    DDT = order.DDT
                 });
             }
             catch (Exception e)
@@ -168,6 +169,8 @@ namespace RemaSoftware.Controllers
         {
             if (string.IsNullOrEmpty(model.Order.SKU))
                 return "SKU mancante.";
+            if (string.IsNullOrEmpty(model.Order.DDT))
+                return "Codice DDT mancante.";
             if (string.IsNullOrEmpty(model.Photo) && string.IsNullOrEmpty(model.Order.Image_URL))
                 return "Foto mancante.";
             if (model.Order.ClientID <= default(int))
