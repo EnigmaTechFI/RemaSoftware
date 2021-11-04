@@ -163,10 +163,10 @@
                 @foreach (var order in Model.OrderNearToDeadline)
                 {
                     <div class="mb-4">
-                        @order.Client.Name, @order.Name, @order.Number_Piece pezzi - (mancano: <b>@order.DataOut.Subtract(DateTime.Now).Days giorni</b>)
+                        @order.Client.Name, @order.Name, @order.Number_Piece pezzi - (mancano: <b>@(order.DataOut.Subtract(DateTime.Now).Days+1) giorni</b>)
                     </div>
 
-                    var percent = $"{order.DataOut.Subtract(DateTime.Now).Days * 100 / order.DataOut.Subtract(order.DataIn).Days }";
+                    var percent = $"{order.DataOut.Subtract(DateTime.Now).Days * 100 / (order.DataOut.Subtract(order.DataIn).Days + 1) }";
                     var css = $"{percent}%";
                     <h4 class="small font-weight-bold">
                         @order.SKU <span class="float-right">@percent%</span>
