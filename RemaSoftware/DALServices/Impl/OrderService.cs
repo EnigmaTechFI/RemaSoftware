@@ -96,7 +96,7 @@ namespace RemaSoftware.DALServices.Impl
         {
             return _dbContext.Orders
                 .Include(i=>i.Client)
-                .Where(w=>w.DataOut > DateTime.Now).OrderBy(ob=>ob.DataOut)
+                .Where(w=>w.DataOut >= DateTime.Now.Date).OrderBy(ob=>ob.DataOut)
                 .Take(topSelector)
                 .ToList();
         }

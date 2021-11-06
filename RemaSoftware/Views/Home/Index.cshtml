@@ -162,17 +162,21 @@
             <div class="card-body">
                 @foreach (var order in Model.OrderNearToDeadline)
                 {
+
+                    var missingDays = order.DataOut.Subtract(DateTime.UtcNow.Date).Days;
+                    
                     <div class="mb-4">
-                        @order.Client.Name, @order.Name, @order.Number_Piece pezzi - (mancano: <b>@(order.DataOut.Subtract(DateTime.Now).Days+1) giorni</b>)
+                        @order.Client.Name, @order.Name, @order.Number_Piece pezzi - (mancano: <b>@missingDays giorni</b>)
                     </div>
 
-                    var percent = $"{order.DataOut.Subtract(DateTime.Now).Days * 100 / (order.DataOut.Subtract(order.DataIn).Days + 1) }";
-                    var css = $"{percent}%";
+                    var percent = missingDays == 0 
+                        ? 0 
+                        : order.DataOut.Subtract(DateTime.Now).Days * 100 / (order.DataOut.Subtract(order.DataIn).Days);
                     <h4 class="small font-weight-bold">
                         @order.SKU <span class="float-right">@percent%</span>
                     </h4>
                     <div class="progress mb-4">
-                        <div class="progress-bar bg-danger" role="progressbar" style="width: @css"
+                        <div class="progress-bar bg-danger" role="progressbar" style="width: @percent%"
                              aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                 }
@@ -202,10 +206,10 @@
                     </div>
 
                     <div class="col-6">
-                        <a class="btn btn-primary" style="color: #1cc88a" onclick="AddRemoveSingleQty(true)">
+                        <a class="btn btn-primary" style="color: #1cc88a; min-width: 3em" onclick="AddRemoveSingleQty(true)">
                             +1
                         </a>
-                        <a class="btn btn-primary" style="color: #e74a3b" onclick="AddRemoveSingleQty(false)">
+                        <a class="btn btn-primary" style="color: #e74a3b; min-width: 3em" onclick="AddRemoveSingleQty(false)">
                             -1
                         </a>
                     </div>

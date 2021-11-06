@@ -63,29 +63,28 @@ namespace RemaSoftware.Controllers
 
         public IActionResult DownloadPdfOrder(int orderId)
         {
-            try
-            {
-                var vm = new PDFViewModel();
+            var vm = new PDFViewModel();
                 
-                var order = _orderService.GetOrderWithOperationsById(orderId);
-                vm.Order = order;
-                if (!string.IsNullOrEmpty(order.Image_URL))
+            var order = _orderService.GetOrderWithOperationsById(orderId);
+            vm.Order = order;
+            if (!string.IsNullOrEmpty(order.Image_URL))
+            {
+                var path = Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName + _configuration["ImagePath"] + order.Image_URL;
+                try
                 {
-                    var path = Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName + _configuration["ImagePath"] + order.Image_URL;
                     var photo = System.IO.File.ReadAllBytes(path);
                     var base64 = Convert.ToBase64String(photo);
                     var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
                     vm.Photo = imgSrc;
-                }               
-
-                return View("../Pdf/SingleOrderSummary", vm);
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, "Errore durante la generazione del pdf.");
-            }
-
-            return null;
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e, $"Immagine non trovata. Path: {path}");
+                    _notyfService.Error("Errore durante la generazione del pdf.");
+                    return RedirectToAction("OrderSummary");
+                }
+            } 
+            return View("../Pdf/SingleOrderSummary", vm);
         }
         
         
