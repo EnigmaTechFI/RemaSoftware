@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using RemaSoftware.ContextModels;
@@ -24,9 +25,18 @@ namespace RemaSoftware.Controllers
         [HttpGet]
         public IActionResult Stock()
         {
+            var stocks = _warehouseService.GetAllWarehouseStocks();
             var vm = new StockListViewModel
             {
-                WarehouseStocks = _warehouseService.GetAllWarehouseStocks()
+                WarehouseStocks = stocks.Select(s=>new StockViewModel
+                {
+                    StockArticleId = s.Warehouse_StockID,
+                    Name = s.Name,
+                    Brand = s.Brand,
+                    Size = s.Size,
+                    Price_Uni = s.Price_Uni,
+                    Number_Piece = s.Number_Piece
+                }).ToList()
             };
 
             return View(vm);
@@ -45,10 +55,17 @@ namespace RemaSoftware.Controllers
             try { 
                 if (ModelState.IsValid)
                 {
-                    model.Warehouse_Stock.Size = string.IsNullOrEmpty(model.Warehouse_Stock.Size)
+                    model.Size = string.IsNullOrEmpty(model.Size)
                         ? "Unica"
-                        : model.Warehouse_Stock.Size;
-                    _warehouseService.AddOrUpdateWarehouseStock(model.Warehouse_Stock);
+                        : model.Size;
+                    _warehouseService.AddOrUpdateWarehouseStock(new Warehouse_Stock
+                    {
+                        Name = model.Name,
+                        Brand = model.Brand,
+                        Size = model.Size,
+                        Number_Piece = model.Number_Piece,
+                        Price_Uni = model.Price_Uni
+                    });
                     return RedirectToAction("Stock", "Stock"); //redirect to "Giacenze"
                 }
             }

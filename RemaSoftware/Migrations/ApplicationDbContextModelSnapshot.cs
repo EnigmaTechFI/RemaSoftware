@@ -319,6 +319,9 @@ namespace RemaSoftware.Migrations
                         .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
 
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Number_Piece")
                         .HasColumnType("int");
 

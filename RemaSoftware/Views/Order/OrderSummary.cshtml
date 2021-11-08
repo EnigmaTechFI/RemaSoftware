@@ -1,5 +1,5 @@
 ﻿@using System.Globalization
-@model RemaSoftware.Models.ClientViewModel.OrderSummaryViewModel
+@model RemaSoftware.Models.OrderViewModel.OrderSummaryViewModel
 
 @{
     ViewData["Title"] = "Resoconto";
@@ -29,6 +29,7 @@
                     <th>N° Pezzi</th>
                     <th>Prz. Unitario</th>
                     <th>Prz. Totale</th>
+                    <th>Note</th>
                     <th>Azioni</th>
                 </tr>
                 </thead>
@@ -45,6 +46,7 @@
                         <td>@order.Number_Piece</td>
                         <td>&euro; @order.Price_Uni.ToString("0.00")</td>
                         <td>&euro; @order.Price_Tot.ToString("0.00")</td>
+                        <td style="width:8%"><div style="width:150px; white-space: nowrap; overflow: hidden; text-overflow:ellipsis;" title="@order.Note">@order.Note</div></td>
                         <td class="text-center">
                             <i class="fas fa-users-cog fa-lg" style="color: #858796; cursor: pointer" onclick="GetOperationsAndOpenModal(@order.OrderID)" title="Visualizza / Modifica operazioni"></i>
                             <a target="_blank" href='@Url.Action("DownloadPdfOrder", "Order", new {orderId = order.OrderID})'>

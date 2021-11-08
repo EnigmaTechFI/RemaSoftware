@@ -1,9 +1,14 @@
-﻿using RemaSoftware.ContextModels;
+﻿using System.ComponentModel.DataAnnotations;
+using RemaSoftware.ContextModels;
 
 namespace RemaSoftware.Models.OperationViewModel
 {
     public class AddOperationViewModel 
     {
-        public Operation Operation { get; set; }
+        [Required(ErrorMessage = "Questo campo è obbligatorio!")]
+        [MaxLength(100)]
+        public string Name { get; set; }
+
+        public string Description { get; set; }
     }
 }

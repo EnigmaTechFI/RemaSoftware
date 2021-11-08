@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using RemaSoftware.ContextModels;
 
-namespace RemaSoftware.Models.ClientViewModel
+namespace RemaSoftware.Models.OrderViewModel
 {
     public class OrderSummaryViewModel
     {

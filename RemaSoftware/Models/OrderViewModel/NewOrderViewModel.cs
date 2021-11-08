@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using RemaSoftware.Models.Common;
 
-namespace RemaSoftware.Models.ClientViewModel
+namespace RemaSoftware.Models.OrderViewModel
 {
     public class NewOrderViewModel
     {

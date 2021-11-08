@@ -35,7 +35,11 @@ namespace RemaSoftware.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var add_operation = new Operation { Name = model.Operation.Name, Description = model.Operation.Description};
+                    var add_operation = new Operation
+                    {
+                        Name = model.Name,
+                        Description = model.Description
+                    };
                     _operationService.AddOperation(add_operation);
                     _notyfToastService.Success("Operazione aggiunta con successo.");
                     return RedirectToAction("Index", "Home");
