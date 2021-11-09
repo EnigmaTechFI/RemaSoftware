@@ -15,6 +15,7 @@ using RemaSoftware.Models.Common;
 using RemaSoftware.Models.OrderViewModel;
 using RemaSoftware.Models.PDFViewModel;
 using Microsoft.Extensions.Configuration;
+using RemaSoftware.ContextModels;
 using UtilityServices.Dtos;
 
 namespace RemaSoftware.Controllers
@@ -91,20 +92,19 @@ namespace RemaSoftware.Controllers
         [HttpGet]
         public IActionResult NewOrder()
         {
-            var vm = new NewOrderViewModel();
-            vm.Clients = _clientService.GetAllClients();
-            vm.Operation = new List<OperationFlag>();
-            vm.OldOrders_SKU = _orderService.GetOldOrders_SKU().Distinct().ToList();
-            vm.OldOrders_SKU.Insert(0, "");
-            var oper = _operationService.GetAllOperations();
-            foreach (var op in oper)
+            var availableOperations = _operationService.GetAllOperations();
+            var vm = new NewOrderViewModel
             {
-                vm.Operation.Add(new OperationFlag
+                Clients = _clientService.GetAllClients(),
+                OldOrders_SKU = _orderService.GetOldOrders_SKU().Distinct().ToList(),
+                Operations = availableOperations?.Select(s=>new OperationFlag
                 {
-                    Operation = op,
+                    Operation = s,
                     Flag = false
-                });
-            }
+                }).ToList()
+            };
+            vm.OldOrders_SKU.Insert(0, "");
+
             vm.RedirectUrlAfterCreation = Url.Action("Index", "Home");
             return View(vm);
         }
@@ -128,20 +128,15 @@ namespace RemaSoftware.Controllers
 
             model.Order.DataIn = DateTime.UtcNow;
 
-            var order_operationID = new List<int>();
-
-            foreach (var id in model.Operation)
+            // aggiungo all'ordine le operazioni selezionate
+            var operationsSelected = model.Operations.Where(w=>w.Flag).ToList();
+            model.Order.Order_Operation = operationsSelected.Select(s => new Order_Operation
             {
-                if (id.Flag)
-                    order_operationID.Add(id.Operation.OperationID);
-            }
-
-            //Aggiunta Ordine DB
+                OperationID = s.Operation.OperationID
+            }).ToList();
+            
             var order = _orderService.AddOrder(model.Order);
             
-            //Collegamento Ordine - Operazioni DB
-            _orderService.AddOrderOperation(order.OrderID, order_operationID);
-
             //API Fattura In Cloud
             try
             {

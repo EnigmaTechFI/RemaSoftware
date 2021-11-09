@@ -16,6 +16,7 @@ namespace RemaSoftware.Models.StockViewModel
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]
         public int Number_Piece { get; set; }
 
+        [Required(ErrorMessage = "Questo campo è obbligatorio!")]
         public decimal Price_Uni { get; set; }
 
         [MaxLength(20)]
