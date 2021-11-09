@@ -171,7 +171,7 @@
 
                     var percent = missingDays == 0 
                         ? 0 
-                        : order.DataOut.Subtract(DateTime.Now).Days * 100 / (order.DataOut.Subtract(order.DataIn).Days);
+                        : order.DataOut.Subtract(DateTime.Now).Days * 100 / missingDays;
                     <h4 class="small font-weight-bold">
                         @order.SKU <span class="float-right">@percent%</span>
                     </h4>

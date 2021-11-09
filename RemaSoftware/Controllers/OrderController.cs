@@ -127,6 +127,7 @@ namespace RemaSoftware.Controllers
             }
 
             model.Order.DataIn = DateTime.UtcNow;
+            model.Order.Price_Uni = (decimal)model.uni_price;
 
             // aggiungo all'ordine le operazioni selezionate
             var operationsSelected = model.Operations.Where(w=>w.Flag).ToList();
@@ -171,7 +172,7 @@ namespace RemaSoftware.Controllers
                 return "Cliente mancante.";
             if (string.IsNullOrEmpty(model.Order.Name))
                 return "Nome mancante.";
-            if (model.Order.Price_Uni<default(decimal))
+            if (model.uni_price<default(decimal) || model.uni_price == null)
                 return "Prezzo unitario mancante.";
             if (model.Order.DataOut<=default(DateTime))
                 return "Data di scadenza non valida.";
