@@ -7,7 +7,7 @@ namespace RemaSoftware.ContextModels
     public class Order
     {
         public int OrderID { get; set; }
-        [Required(ErrorMessage = "Questo campo è obbligatorio!")]
+
         [MaxLength(30)]
         public string ID_FattureInCloud { get; set; }
 
