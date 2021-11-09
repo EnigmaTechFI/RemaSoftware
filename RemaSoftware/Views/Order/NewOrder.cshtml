@@ -170,6 +170,7 @@
         });
 
         function PostNewOrder() {
+            ShowLoader();
             var model = $("#form-new-order").serialize();
             $.post('@Url.Action("NewOrder", "Order")', model, function (result){
                 if (result && result.result == true) {
@@ -184,12 +185,15 @@
                 } else {
                     toastNotifyError(result.toastMessage);
                 }
+                HideLoader();
+            }).complete(function (){
+                HideLoader();
             });
         }
 
         function GetOrderBySKU() {
             var selectedSKU = $('#Order_SKU').val();
-
+            ShowLoader();
             $.ajax({
                 url: '@Url.Action("GetOrderBySKU", "Order")?' + $.param({ "orderSKU": selectedSKU }),
                 type: 'GET',
@@ -207,6 +211,9 @@
                     $("#order_name").val("");
                     document.getElementById("inlineFormCustomSelectPref").selectedIndex = data.client_id;
                     toastNotifyError("Errore nel recupero dell\'ordine.");
+                },
+                complete: function (){
+                    HideLoader();
                 }
             });
         }

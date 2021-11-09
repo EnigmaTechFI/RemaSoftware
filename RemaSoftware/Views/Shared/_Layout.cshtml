@@ -13,6 +13,11 @@
     <link href="~/css/sb-admin-2.min.css" rel="stylesheet">
 </head>
 <body id="page-top">
+<div class="loader-cont">
+    <div class="spinner-grow" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
 <!-- Page Wrapper -->
 <div id="wrapper">
 
@@ -179,7 +184,7 @@
 
         </div>
         <!-- End of Main Content -->
-        
+
     </div>
     <!-- End of Content Wrapper -->
 
@@ -227,7 +232,7 @@
 
 
 <script src="~/js/site.js" asp-append-version="true"></script>
-@await Component.InvokeAsync("Notyf") 
+@await Component.InvokeAsync("Notyf")
 @RenderSection("Scripts", required: false)
 </body>
 </html>

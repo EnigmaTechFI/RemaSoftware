@@ -6468,8 +6468,10 @@ a.close.disabled {
 
 .spinner-grow {
   display: inline-block;
-  width: 2rem;
-  height: 2rem;
+  position: relative;
+  top: 50%;
+  width: 5rem;
+  height: 5rem;
   vertical-align: text-bottom;
   background-color: currentColor;
   border-radius: 50%;
