@@ -93,15 +93,19 @@
                             <td width="60%"><b>Operazioni richiste sull'ordine: : </b></td>
                             <td width="40%">
                                 @{
-                                        var last = Model.Order.Order_Operation?.LastOrDefault();
+                                    var last = Model.Order.Order_Operation?.LastOrDefault();
                                 }
                                 <ul>
                                     @foreach (var operation in Model.Order.Order_Operation)
-                                        {
-                                    <li>@operation.Operations.Name</li>
-                                        }
+                                    {
+                                        <li>@operation.Operations.Name</li>
+                                    }
                                 </ul>
                             </td>
+                        </tr>
+                        <tr>
+                            <td width="60%"><b>Note: </b></td>
+                            <td width="40%">@Model.Order.Note</td>
                         </tr>
                     </table>
                 </center>

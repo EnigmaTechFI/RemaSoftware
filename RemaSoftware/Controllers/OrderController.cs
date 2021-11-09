@@ -176,7 +176,7 @@ namespace RemaSoftware.Controllers
                 return "Cliente mancante.";
             if (string.IsNullOrEmpty(model.Order.Name))
                 return "Nome mancante.";
-            if (model.Order.Price_Uni<=default(decimal))
+            if (model.Order.Price_Uni<default(decimal))
                 return "Prezzo unitario mancante.";
             if (model.Order.DataOut<=default(DateTime))
                 return "Data di scadenza non valida.";
