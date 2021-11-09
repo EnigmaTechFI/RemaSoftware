@@ -118,5 +118,34 @@ namespace RemaSoftware.DALServices.Impl
         {
             return _dbContext.Orders.Include(c => c.Client).Where(s => s.SKU == sku).FirstOrDefault();
         }
+
+        public bool UpdateOrder(Order order)
+        {
+            try
+            {
+                _dbContext.Orders.Update(order);
+                _dbContext.SaveChanges();
+                return true;
+
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public void DeleteOrderByID(int OrderID)
+        {
+            try
+            {
+                var order = _dbContext.Orders.SingleOrDefault(i => i.OrderID == OrderID);
+                _dbContext.Remove(order)
+            }
+            catch
+            {
+                Logger.Error($"[Eliminazione Ordine] Ordine non presente. ID: {OrderID}");
+            }
+            
+        }
     }
 }

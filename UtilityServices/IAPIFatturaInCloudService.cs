@@ -5,6 +5,6 @@ namespace UtilityServices
 {
     public interface IAPIFatturaInCloudService
     {
-        public bool AddOrderCloud(OrderDto order);
+        public string AddOrderCloud(OrderDto order);
     }
 }

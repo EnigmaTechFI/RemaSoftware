@@ -20,7 +20,7 @@ namespace UtilityServices
             _configuration = configuration;
         }
         
-        public bool AddOrderCloud(OrderDto order)
+        public string AddOrderCloud(OrderDto order)
         {
             Logger.Info("Inizio invio a ApiFattureInCloud");
             
@@ -31,9 +31,9 @@ namespace UtilityServices
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(apiEndpoint);
             httpWebRequest.ContentType = "application/json";
             httpWebRequest.Method = "POST";
-            var myProxy = new WebProxy("http://winproxy.server.lan:3128/",true);
+            var myProxy = new WebProxy("http://winproxy.server.lan:3128/", true);
             httpWebRequest.Proxy = myProxy;
-            
+
             OrderAPI test = new OrderAPI()
             {
                 api_uid = apiUID,
@@ -68,7 +68,8 @@ namespace UtilityServices
             }
 
             Logger.Info($"Risposta da FattureInCloud: {result}");
-            return true; 
+            var obj = JsonConvert.DeserializeObject<dynamic>(result);
+            return obj.id; 
         }
     }
 

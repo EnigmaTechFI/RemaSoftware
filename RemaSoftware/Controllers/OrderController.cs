@@ -141,7 +141,7 @@ namespace RemaSoftware.Controllers
             //API Fattura In Cloud
             try
             {
-                _apiFatturaInCloud.AddOrderCloud(new OrderDto
+                var id_fatture = _apiFatturaInCloud.AddOrderCloud(new OrderDto
                 {
                     Name = order.Name,
                     Description = order.Description,
@@ -152,9 +152,14 @@ namespace RemaSoftware.Controllers
                     SKU = order.SKU,
                     DDT = order.DDT
                 });
+
+                order.ID_FattureInCloud = id_fatture;
+
+                _orderService.UpdateOrder(order);
             }
             catch (Exception e)
             {
+                _orderService.DeleteOrderByID(order.OrderID);
                 Logger.Error(e, "Errore salvataggio fatture in cloud.");
             } 
             return new JsonResult(new {Result = true, Data = order.OrderID});
