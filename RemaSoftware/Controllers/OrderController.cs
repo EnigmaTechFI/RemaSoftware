@@ -15,6 +15,7 @@ using RemaSoftware.Models.Common;
 using RemaSoftware.Models.OrderViewModel;
 using RemaSoftware.Models.PDFViewModel;
 using Microsoft.Extensions.Configuration;
+using RemaSoftware.ContextModels;
 using UtilityServices.Dtos;
 
 namespace RemaSoftware.Controllers
@@ -128,20 +129,15 @@ namespace RemaSoftware.Controllers
 
             model.Order.DataIn = DateTime.UtcNow;
 
-            var order_operationID = new List<int>();
-
-            foreach (var id in model.Operation)
+            // aggiungo all'ordine le operazioni selezionate
+            var operationsSelected = model.Operation.Where(w=>w.Flag).ToList();
+            model.Order.Order_Operation = operationsSelected.Select(s => new Order_Operation
             {
-                if (id.Flag)
-                    order_operationID.Add(id.Operation.OperationID);
-            }
-
-            //Aggiunta Ordine DB
+                OperationID = s.Operation.OperationID
+            }).ToList();
+            
             var order = _orderService.AddOrder(model.Order);
             
-            //Collegamento Ordine - Operazioni DB
-            _orderService.AddOrderOperation(order.OrderID, order_operationID);
-
             //API Fattura In Cloud
             try
             {
