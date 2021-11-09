@@ -11,7 +11,7 @@ namespace RemaSoftware.Models.OrderViewModel
         public string DataOutStr { get; set; }
 
         public List<string> OldOrders_SKU { get; set; }
-        public List<OperationFlag> Operation { get; set; }
+        public List<OperationFlag> Operations { get; set; }
         public string Photo { get; set; }
         public string RedirectUrlAfterCreation { get; set; }
 
