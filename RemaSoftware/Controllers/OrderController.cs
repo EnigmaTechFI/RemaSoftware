@@ -210,6 +210,80 @@ namespace RemaSoftware.Controllers
             return PartialView("_EditOrderOperationsModal", vm);
         }
 
+        [HttpGet]
+        public IActionResult GetCopyOrderModal(int orderId)
+        {
+            var vm = new CopyOrderViewModel();
+
+            vm.OrderId = orderId;
+            return PartialView("_CopyOrderModal", vm);
+        }
+
+        public JsonResult SaveDuplicateOrder(CopyOrderViewModel model)
+        {
+            var validationResult = this.ValidateDuplicateOrderViewModel(model);
+            var order = _orderService.GetOrderWithOperationsById(model.OrderId);
+            Order newOrder = new Order();
+            newOrder.DDT = model.Code_DDT;
+            newOrder.Number_Piece = model.NumberPiece;
+            newOrder.DataIn = DateTime.UtcNow;
+            newOrder.ClientID = order.ClientID;
+            newOrder.DataOut = order.DataOut;
+            newOrder.Description = order.Description;
+            newOrder.Image_URL = order.Image_URL;
+            newOrder.Name = order.Name;
+            newOrder.Note = order.Note;
+            newOrder.SKU = order.SKU;
+            newOrder.Price_Uni = order.Price_Uni;
+
+            // aggiungo all'ordine le operazioni selezionate
+            var operationsSelected = order.Order_Operation.ToList();
+
+            newOrder.Order_Operation = operationsSelected.Select(s => new Order_Operation
+            {
+                OperationID = s.OperationID
+            }).ToList();
+
+            var duplicateOrder = _orderService.AddOrder(newOrder);
+
+            //API Fattura In Cloud
+            try
+            {
+                var id_fatture = _apiFatturaInCloud.AddOrderCloud(new OrderDto
+                {
+                    Name = duplicateOrder.Name,
+                    Description = duplicateOrder.Description,
+                    DataIn = duplicateOrder.DataIn,
+                    DataOut = duplicateOrder.DataOut,
+                    Number_Piece = duplicateOrder.Number_Piece,
+                    Price_Uni = duplicateOrder.Price_Uni,
+                    SKU = duplicateOrder.SKU,
+                    DDT = duplicateOrder.DDT
+                });
+
+                duplicateOrder.ID_FattureInCloud = id_fatture;
+
+                _orderService.UpdateOrder(duplicateOrder);
+
+                var result = true;
+                return new JsonResult(new { Result = result, ToastMessage = "Ordine duplicato con successo" });
+            }
+            catch (Exception e)
+            {
+                _orderService.DeleteOrderByID(duplicateOrder.OrderID);
+                Logger.Error($"Errore durante la duplicazione dell'ordine: {model.OrderId}.");
+                return new JsonResult(new { Result = false, ToastMessage = "Errore durante la duplicazione dell'ordine." });
+            }
+
+        }
+
+        private string ValidateDuplicateOrderViewModel(CopyOrderViewModel model)
+        {
+            if (string.IsNullOrEmpty(model.Code_DDT))
+                return "Codice DDT mancante.";
+            return "";
+        }
+
         public JsonResult EditOrderOperations(EditOrderOperationsViewModel model)
         {
             try

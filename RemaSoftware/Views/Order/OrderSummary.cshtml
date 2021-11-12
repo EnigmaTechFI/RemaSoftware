@@ -50,6 +50,7 @@
                             <a target="_blank" href='@Url.Action("DownloadPdfOrder", "Order", new {orderId = order.OrderID})'>
                                 <i class="fas fa-file-download fa-lg pl-2" title="Scarica ordine in PDF" style="cursor: pointer; color: #4e73df"></i>
                             </a>
+                            <i class="fas fa-copy fa-lg" style="color: red; cursor: pointer" onclick="GetOrderAndOpenModal(@order.OrderID)" title="Duplica Ordine"></i>
                         </td>
                     </tr>
                 }
@@ -95,7 +96,7 @@
               ]
         });
     } );
-    
+
     function SaveEditOpertions() {
         var model = $("#form-edit-ops").serialize();
         $.post('@Url.Action("EditOrderOperations", "Order")', model, function (data){
@@ -106,8 +107,20 @@
                 toastNotifyError(data.toastMessage);
             }
         });
+        }
+
+    function SaveNewOrder() {
+        var model = $("#form-copy-ord").serialize();
+        $.post('@Url.Action("SaveDuplicateOrder", "Order")', model, function (data){
+            if (data.result == true){
+                $("#copy-ord-modal").modal('toggle');
+                toastNotifySuccess(data.toastMessage);
+            } else {
+                toastNotifyError(data.toastMessage);
+            }
+        });
     }
-    
+
     function DownloadPdf(orderId) {
         $.ajax({
             url: "@Url.Action("DownloadPdfOrder", "Order")?orderId=" + orderId,
@@ -116,7 +129,7 @@
             }
         });
     }
-    
+
     function GetOperationsAndOpenModal(orderId) {
         $.ajax({
             url: "@Url.Action("GetEditOrderOperationsModal", "Order")?orderId=" + orderId,
@@ -125,6 +138,19 @@
                 if (result != null) {
                     $("#order-summ-content").after(result);
                     $("#edit-ops-modal").modal('toggle');
+                }
+            }
+        });
+        }
+
+    function GetOrderAndOpenModal(orderId) {
+        $.ajax({
+            url: "@Url.Action("GetCopyOrderModal", "Order")?orderId=" + orderId,
+            type: "GET",
+            success: function (result) {
+                if (result != null) {
+                    $("#order-summ-content").after(result);
+                    $("#copy-ord-modal").modal('toggle');
                 }
             }
         });
