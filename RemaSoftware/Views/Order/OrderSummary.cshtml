@@ -128,7 +128,8 @@
                 aElement.target = "_blank";
                 document.getElementsByTagName("body")
                 aElement.click();
-
+                ShowLoader();
+                
                 window.location.href='@Model.RedirectUrlAfterCreation';
             } else {
                 toastNotifyError(data.toastMessage);
