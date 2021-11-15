@@ -122,6 +122,8 @@
             if (data.result == true){
                 $("#copy-ord-modal").modal('toggle');
                 toastNotifySuccess(data.toastMessage);
+                ShowLoader();
+                window.location.reload();
             } else {
                 toastNotifyError(data.toastMessage);
             }
