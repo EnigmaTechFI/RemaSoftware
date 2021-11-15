@@ -10,13 +10,19 @@
                 </button>
             </div>
             <div class="modal-body">
-                <p class="pb-2 font-italic h6">Inserisci i seguenti dati</p>
+                <p style="text-align:center;" class="pb-2 font-italic h6">Inserisci i seguenti dati</p>
                 <div class="row">
                     <div class="col-12" id="div-list-ops">
                         <form method="post" id="form-copy-ord">
-                            <input type="hidden" asp-for="OrderId">
-                            <input class="form-group" type="text" asp-for="Code_DDT" placeholder="Inserisci nuovo codice DDT">
-                            <input class="form-group" type="number" asp-for="NumberPiece" placeholder="Inserisci il numero di pezzi">
+                            <input id="id_ordine" type="hidden" asp-for="OrderId">
+                            <div class="form-group">
+                                <label for="formGroupExampleInput">Codice DDT</label>
+                                <input class="form-control" type="text" asp-for="Code_DDT" placeholder="Inserisci nuovo codice DDT">
+                            </div>
+                            <div class="form-group">
+                                <label for="formGroupExampleInput">Inserire il numero di pezzi</label>
+                                <input class="form-control" type="number" asp-for="NumberPiece" placeholder="Inserisci il numero di pezzi">
+                            </div>
                         </form>
                         
                     </div>

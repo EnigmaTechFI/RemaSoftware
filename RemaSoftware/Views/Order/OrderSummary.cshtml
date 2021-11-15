@@ -1,4 +1,5 @@
 ﻿@using System.Globalization
+@using RemaSoftware.Models.OrderViewModel
 @model RemaSoftware.Models.OrderViewModel.OrderSummaryViewModel
 
 @{
@@ -50,7 +51,7 @@
                             <a target="_blank" href='@Url.Action("DownloadPdfOrder", "Order", new {orderId = order.OrderID})'>
                                 <i class="fas fa-file-download fa-lg pl-2" title="Scarica ordine in PDF" style="cursor: pointer; color: #4e73df"></i>
                             </a>
-                            <i class="fas fa-copy fa-lg" style="color: red; cursor: pointer" onclick="GetOrderAndOpenModal(@order.OrderID)" title="Duplica Ordine"></i>
+                            <i class="fas fa-copy fa-lg" style="color: red; cursor: pointer" onclick="setOrderId(@order.OrderID)" data-toggle="modal" data-target="#copy-ord-modal" title="Duplica Ordine"></i>
                         </td>
                     </tr>
                 }
@@ -59,6 +60,8 @@
         </div>
     </div>
 </div>
+
+@{await Html.RenderPartialAsync("../Order/_CopyOrderModal", new CopyOrderViewModel());}
 
 @section Scripts
 {
@@ -95,7 +98,11 @@
                 { "searchable": false, "orderable": false, "targets": 9 }
               ]
         });
-    } );
+    });
+
+    function setOrderId(OrderIdToDuplicate) {
+        $("#id_ordine").val(OrderIdToDuplicate)
+    }
 
     function SaveEditOpertions() {
         var model = $("#form-edit-ops").serialize();
@@ -143,17 +150,5 @@
         });
         }
 
-    function GetOrderAndOpenModal(orderId) {
-        $.ajax({
-            url: "@Url.Action("GetCopyOrderModal", "Order")?orderId=" + orderId,
-            type: "GET",
-            success: function (result) {
-                if (result != null) {
-                    $("#order-summ-content").after(result);
-                    $("#copy-ord-modal").modal('toggle');
-                }
-            }
-        });
-    }
     </script>>
 }

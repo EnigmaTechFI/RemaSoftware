@@ -210,36 +210,25 @@ namespace RemaSoftware.Controllers
             return PartialView("_EditOrderOperationsModal", vm);
         }
 
-        [HttpGet]
-        public IActionResult GetCopyOrderModal(int orderId)
-        {
-            var vm = new CopyOrderViewModel();
-
-            vm.OrderId = orderId;
-            return PartialView("_CopyOrderModal", vm);
-        }
-
         public JsonResult SaveDuplicateOrder(CopyOrderViewModel model)
         {
             var validationResult = this.ValidateDuplicateOrderViewModel(model);
-            var order = _orderService.GetOrderWithOperationsById(model.OrderId);
+            var oldOrder = _orderService.GetOrderWithOperationsById(model.OrderId);
             Order newOrder = new Order();
             newOrder.DDT = model.Code_DDT;
             newOrder.Number_Piece = model.NumberPiece;
             newOrder.DataIn = DateTime.UtcNow;
-            newOrder.ClientID = order.ClientID;
-            newOrder.DataOut = order.DataOut;
-            newOrder.Description = order.Description;
-            newOrder.Image_URL = order.Image_URL;
-            newOrder.Name = order.Name;
-            newOrder.Note = order.Note;
-            newOrder.SKU = order.SKU;
-            newOrder.Price_Uni = order.Price_Uni;
+            newOrder.ClientID = oldOrder.ClientID;
+            newOrder.DataOut = oldOrder.DataOut;
+            newOrder.Description = oldOrder.Description;
+            newOrder.Image_URL = oldOrder.Image_URL;
+            newOrder.Name = oldOrder.Name;
+            newOrder.Note = oldOrder.Note;
+            newOrder.SKU = oldOrder.SKU;
+            newOrder.Price_Uni = oldOrder.Price_Uni;
 
             // aggiungo all'ordine le operazioni selezionate
-            var operationsSelected = order.Order_Operation.ToList();
-
-            newOrder.Order_Operation = operationsSelected.Select(s => new Order_Operation
+            newOrder.Order_Operation = oldOrder.Order_Operation.Select(s => new Order_Operation
             {
                 OperationID = s.OperationID
             }).ToList();
