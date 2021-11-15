@@ -122,6 +122,14 @@
             if (data.result == true){
                 $("#copy-ord-modal").modal('toggle');
                 toastNotifySuccess(data.toastMessage);
+                var aElement = document.createElement("a");
+                aElement.setAttribute("type", "hidden");
+                aElement.href = '@Url.Action("DownloadPdfOrder", "Order")' + "?orderId=" + data.orderId;
+                aElement.target = "_blank";
+                document.getElementsByTagName("body")
+                aElement.click();
+
+                window.location.href='@Model.RedirectUrlAfterCreation';
             } else {
                 toastNotifyError(data.toastMessage);
             }

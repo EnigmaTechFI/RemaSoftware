@@ -58,7 +58,8 @@ namespace RemaSoftware.Controllers
             {
                 Orders = orders
             };
-            
+            vm.RedirectUrlAfterCreation = Url.Action("OrderSummary", "Order");
+
             return View(vm);
         }
 
@@ -255,7 +256,7 @@ namespace RemaSoftware.Controllers
                 _orderService.UpdateOrder(duplicateOrder);
 
                 var result = true;
-                return new JsonResult(new { Result = result, ToastMessage = "Ordine duplicato con successo" });
+                return new JsonResult(new { Result = result, OrderId = duplicateOrder.OrderID, ToastMessage = "Ordine duplicato con successo" });
             }
             catch (Exception e)
             {
