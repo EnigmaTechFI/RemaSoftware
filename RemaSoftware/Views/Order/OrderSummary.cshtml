@@ -105,6 +105,7 @@
     }
 
     function SaveEditOpertions() {
+        ShowLoader();
         var model = $("#form-edit-ops").serialize();
         $.post('@Url.Action("EditOrderOperations", "Order")', model, function (data){
             if (data.result == true){
@@ -113,10 +114,12 @@
             } else {
                 toastNotifyError(data.toastMessage);
             }
+            HideLoader();
         });
         }
 
     function SaveNewOrder() {
+        ShowLoader();
         var model = $("#form-copy-ord").serialize();
         $.post('@Url.Action("SaveDuplicateOrder", "Order")', model, function (data){
             if (data.result == true){
@@ -128,12 +131,14 @@
                 aElement.target = "_blank";
                 document.getElementsByTagName("body")
                 aElement.click();
-                ShowLoader();
                 
                 window.location.href='@Model.RedirectUrlAfterCreation';
             } else {
                 toastNotifyError(data.toastMessage);
             }
+            HideLoader();
+        }).complete(function () {
+            HideLoader();
         });
     }
 

@@ -140,6 +140,7 @@ namespace RemaSoftware.DALServices.Impl
             {
                 var order = _dbContext.Orders.SingleOrDefault(i => i.OrderID == OrderID);
                 _dbContext.Remove(order);
+                _dbContext.SaveChanges();
             }
             catch
             {
