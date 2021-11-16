@@ -31,12 +31,15 @@ namespace RemaSoftware.Controllers
         private readonly IImageService _imageService;
         private readonly PdfHelper _pdfHelper;
         private readonly IConfiguration _configuration;
+        private readonly OrderHelper _orderHelper;
         private readonly string _basePathForImages;
 
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public OrderController(IOrderService orderService, IClientService clientService, IOperationService operationService, PdfHelper pdfHelper, IImageService imageService, IAPIFatturaInCloudService apiFatturaInCloudService, INotyfService notyfService, IConfiguration configuration)
+        public OrderController(IOrderService orderService, IClientService clientService, IOperationService operationService,
+            PdfHelper pdfHelper, IImageService imageService, IAPIFatturaInCloudService apiFatturaInCloudService,
+            INotyfService notyfService, IConfiguration configuration, OrderHelper orderHelper)
         {
             _orderService = orderService;
             _clientService = clientService;
@@ -46,6 +49,7 @@ namespace RemaSoftware.Controllers
             _apiFatturaInCloud = apiFatturaInCloudService;
             _notyfService = notyfService;
             _configuration = configuration;
+            _orderHelper = orderHelper;
             _basePathForImages = 
                 (Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName + _configuration["ImagePath"]).Replace("/", "\\");
         }
@@ -137,52 +141,16 @@ namespace RemaSoftware.Controllers
                 OperationID = s.Operation.OperationID
             }).ToList();
             
-            var order = _orderService.AddOrder(model.Order);
-            
-            //API Fattura In Cloud
             try
             {
-                var id_fatture = _apiFatturaInCloud.AddOrderCloud(new OrderDto
-                {
-                    Name = order.Name,
-                    Description = order.Description,
-                    DataIn = order.DataIn,
-                    DataOut = order.DataOut,
-                    Number_Piece = order.Number_Piece,
-                    Price_Uni = order.Price_Uni,
-                    SKU = order.SKU,
-                    DDT = order.DDT
-                });
-
-                order.ID_FattureInCloud = id_fatture;
-
-                _orderService.UpdateOrder(order);
+                var addedOrder = _orderHelper.AddOrderAndSendToFattureInCloud(model.Order);
+                return new JsonResult(new { Result = true, OrderId = addedOrder.OrderID });
             }
             catch (Exception e)
             {
-                _orderService.DeleteOrderByID(order.OrderID);
-                Logger.Error(e, "Errore salvataggio fatture in cloud.");
-            } 
-            return new JsonResult(new {Result = true, Data = order.OrderID});
-        }
-
-        private string ValidateNewOrderViewModel(NewOrderViewModel model)
-        {
-            if (string.IsNullOrEmpty(model.Order.SKU))
-                return "SKU mancante.";
-            if (string.IsNullOrEmpty(model.Order.DDT))
-                return "Codice DDT mancante.";
-            if (string.IsNullOrEmpty(model.Photo) && string.IsNullOrEmpty(model.Order.Image_URL))
-                return "Foto mancante.";
-            if (model.Order.ClientID <= default(int))
-                return "Cliente mancante.";
-            if (string.IsNullOrEmpty(model.Order.Name))
-                return "Nome mancante.";
-            if (model.uni_price<default(decimal) || model.uni_price == null)
-                return "Prezzo unitario mancante.";
-            if (model.Order.DataOut<=default(DateTime))
-                return "Data di scadenza non valida.";
-            return "";
+                Logger.Error($"Errore durante la creazione dell'ordine.");
+                return new JsonResult(new { Result = false, ToastMessage = "Errore durante la creazione dell'ordine." });
+            }
         }
 
         [HttpGet]
@@ -214,6 +182,9 @@ namespace RemaSoftware.Controllers
         public JsonResult SaveDuplicateOrder(CopyOrderViewModel model)
         {
             var validationResult = this.ValidateDuplicateOrderViewModel(model);
+            if (validationResult != "")
+                return new JsonResult(new {Result = false, ToastMessage = validationResult});
+            
             var oldOrder = _orderService.GetOrderWithOperationsById(model.OrderId);
             Order newOrder = new Order();
             newOrder.DDT = model.Code_DDT;
@@ -234,46 +205,19 @@ namespace RemaSoftware.Controllers
                 OperationID = s.OperationID
             }).ToList();
 
-            var duplicateOrder = _orderService.AddOrder(newOrder);
-
-            //API Fattura In Cloud
             try
             {
-                var id_fatture = _apiFatturaInCloud.AddOrderCloud(new OrderDto
-                {
-                    Name = duplicateOrder.Name,
-                    Description = duplicateOrder.Description,
-                    DataIn = duplicateOrder.DataIn,
-                    DataOut = duplicateOrder.DataOut,
-                    Number_Piece = duplicateOrder.Number_Piece,
-                    Price_Uni = duplicateOrder.Price_Uni,
-                    SKU = duplicateOrder.SKU,
-                    DDT = duplicateOrder.DDT
-                });
-
-                duplicateOrder.ID_FattureInCloud = id_fatture;
-
-                _orderService.UpdateOrder(duplicateOrder);
-
-                var result = true;
-                return new JsonResult(new { Result = result, OrderId = duplicateOrder.OrderID, ToastMessage = "Ordine duplicato con successo" });
+                var addedOrder = _orderHelper.AddOrderAndSendToFattureInCloud(newOrder);
+                return new JsonResult(new { Result = true, OrderId = addedOrder.OrderID, ToastMessage = "Ordine duplicato con successo" });
             }
             catch (Exception e)
             {
-                _orderService.DeleteOrderByID(duplicateOrder.OrderID);
                 Logger.Error($"Errore durante la duplicazione dell'ordine: {model.OrderId}.");
                 return new JsonResult(new { Result = false, ToastMessage = "Errore durante la duplicazione dell'ordine." });
             }
 
         }
-
-        private string ValidateDuplicateOrderViewModel(CopyOrderViewModel model)
-        {
-            if (string.IsNullOrEmpty(model.Code_DDT))
-                return "Codice DDT mancante.";
-            return "";
-        }
-
+        
         public JsonResult EditOrderOperations(EditOrderOperationsViewModel model)
         {
             try
@@ -307,7 +251,6 @@ namespace RemaSoftware.Controllers
 
 
         }
-
         
         public JsonResult GetOrderBySKU(string orderSKU)
         {
@@ -335,5 +278,35 @@ namespace RemaSoftware.Controllers
                 return NotFound();
             }
         }
+
+        #region Models validation
+
+        private string ValidateNewOrderViewModel(NewOrderViewModel model)
+        {
+            if (string.IsNullOrEmpty(model.Order.SKU))
+                return "SKU mancante.";
+            if (string.IsNullOrEmpty(model.Order.DDT))
+                return "Codice DDT mancante.";
+            if (string.IsNullOrEmpty(model.Photo) && string.IsNullOrEmpty(model.Order.Image_URL))
+                return "Foto mancante.";
+            if (model.Order.ClientID <= default(int))
+                return "Cliente mancante.";
+            if (string.IsNullOrEmpty(model.Order.Name))
+                return "Nome mancante.";
+            if (model.uni_price<default(decimal) || model.uni_price == null)
+                return "Prezzo unitario mancante.";
+            if (model.Order.DataOut<=default(DateTime))
+                return "Data di scadenza non valida.";
+            return "";
+        }
+
+        private string ValidateDuplicateOrderViewModel(CopyOrderViewModel model)
+        {
+            if (string.IsNullOrEmpty(model.Code_DDT))
+                return "Codice DDT mancante.";
+            return "";
+        }
+
+        #endregion
     }
 }

@@ -34,7 +34,7 @@ namespace UtilityServices
             var myProxy = new WebProxy("http://winproxy.server.lan:3128/", true);
             httpWebRequest.Proxy = myProxy;
 
-            OrderAPI test = new OrderAPI()
+            OrderAPI orderToSendInCloud = new OrderAPI()
             {
                 api_uid = apiUID,
                 api_key = apiKey,
@@ -53,7 +53,7 @@ namespace UtilityServices
                 giacenza_iniziale = order.Number_Piece
             };
 
-            string stringjson = JsonConvert.SerializeObject(test);
+            string stringjson = JsonConvert.SerializeObject(orderToSendInCloud);
 
             using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
             {
