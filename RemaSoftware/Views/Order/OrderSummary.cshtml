@@ -50,9 +50,12 @@
                         <td>&euro; @order.Price_Tot.ToString("0.00")</td>
                         <td class="text-center">
                             @{
-                                var statusDto = OrderStatusConstants.OrderStatuses[@order.Status];
+                                if (order.Status != 0)
+                                {
+                                    var statusDto = OrderStatusConstants.OrderStatuses[@order.Status];
+                                    <i class="fas fa-circle fa-lg" style="color: @statusDto?.StatusCssClass" title="@statusDto?.StatusDescription"></i>
+                                }
                             }
-                            <i class="fas fa-circle fa-lg" style="color: @statusDto.StatusCssClass" title="@statusDto.StatusDescription"></i>
                         </td>
                         <td class="text-center">
                             <i class="fas fa-users-cog fa-lg" style="color: #858796; cursor: pointer" onclick="GetOperationsAndOpenModal(@order.OrderID)" title="Visualizza / Modifica operazioni"></i>
