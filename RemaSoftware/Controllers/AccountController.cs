@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RemaSoftware.ContextModels;
 using RemaSoftware.Models.LoginViewModel;
 using System.Threading.Tasks;
+using AspNetCoreHero.ToastNotification.Abstractions;
 using NLog;
 using UtilityServices;
 
@@ -13,14 +14,16 @@ namespace RemaSoftware.Controllers
         private readonly SignInManager<MyUser> _signInManager;
         private readonly IEmailService _emailService;
         private readonly UserManager<MyUser> _userManager;
+        private readonly INotyfService _notyfToastService;
         
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public AccountController(UserManager<MyUser> userManager, SignInManager<MyUser> signInManager, IEmailService emailService)
+        public AccountController(UserManager<MyUser> userManager, SignInManager<MyUser> signInManager, IEmailService emailService, INotyfService notyfToastService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailService = emailService;
+            _notyfToastService = notyfToastService;
         }
 
         [HttpGet]
@@ -62,25 +65,32 @@ namespace RemaSoftware.Controllers
         [HttpPost]
         public async Task<IActionResult> ForgotPassword(string email)
         {
-            if (!ModelState.IsValid)
-                return null; // todo sistema per mostrate toast errore
+            if (string.IsNullOrEmpty(email))
+            {
+                _notyfToastService.Error("Email non valida.");
+                return RedirectToAction("Login");
+            }
  
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
-                return null; // // todo sistema per mostrate toast errore
+            {
+                _notyfToastService.Error("Nessun account trovato con questa email.");
+                return RedirectToAction("Login");
+            }
             
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             var returnUrl = Url.Action("ResetPassword", "Account", new { token, email = user.Email }, Request.Scheme);
  
             bool emailResponse = _emailService.SendEmailForPasswordReset(returnUrl, email);
- 
+
             if (emailResponse)
-                return RedirectToAction("Login"); // todo toast con avviso che è stata mandata la mail
-            else
             {
-                // todo toast errore
+                _notyfToastService.Success($"Mail inviata correttamente! (a { email })");
+                return RedirectToAction("Login"); // todo toast con avviso che è stata mandata la mail
             }
-            return View(email);
+            
+            _notyfToastService.Error("Errore durante l'invio della mail di recupero password. Segnalare il problema.");
+            return View("Login");
             
         }
         
