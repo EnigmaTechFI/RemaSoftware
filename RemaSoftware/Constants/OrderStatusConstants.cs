@@ -4,16 +4,16 @@ namespace RemaSoftware.Constants
 {
     public static class OrderStatusConstants
     {
-        public static readonly char STATUS_ARRIVED = 'A';
+        public static readonly string STATUS_ARRIVED = "A";
         public static readonly string STATUS_ARRIVED_DESC = "Arrivato in magazzino";
         
-        public static readonly char STATUS_WORKING = 'B';
+        public static readonly string STATUS_WORKING = "B";
         public static readonly string STATUS_WORKING_DESC = "In lavorazione";
         
-        public static readonly char STATUS_COMPLETED = 'C';
+        public static readonly string STATUS_COMPLETED = "C";
         public static readonly string STATUS_COMPLETED_DESC = "Completato e uscito dal magazzino";
         
-        public static readonly Dictionary<char, StatusDto> OrderStatuses = new Dictionary<char, StatusDto>
+        public static readonly Dictionary<string, StatusDto> OrderStatuses = new Dictionary<string, StatusDto>
         {
             {
                 STATUS_ARRIVED,
@@ -47,7 +47,7 @@ namespace RemaSoftware.Constants
 
     public class StatusDto
     {
-        public char Status { get; set; }
+        public string Status { get; set; }
         public string StatusDescription { get; set; }
         public string StatusCssClass { get; set; }
     }

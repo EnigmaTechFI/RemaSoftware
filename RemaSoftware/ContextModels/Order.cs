@@ -46,7 +46,8 @@ namespace RemaSoftware.ContextModels
         public decimal Price_Uni { get; set; }
         public decimal Price_Tot => this.Price_Uni * this.Number_Piece;
         public string Note { get; set; }
-        public char Status { get; set; }
+        [MaxLength(1)]
+        public string Status { get; set; }
         public virtual ICollection<Order_Operation> Order_Operation { get; set; }
     }
 }

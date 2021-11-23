@@ -151,7 +151,7 @@ namespace RemaSoftware.DALServices.Impl
             
         }
 
-        public void UpdateOrderStatus(int orderId, char newStatus)
+        public void UpdateOrderStatus(int orderId, string newStatus)
         {
             var order = _dbContext.Orders.SingleOrDefault(sd => sd.OrderID == orderId);
             if (order == null)

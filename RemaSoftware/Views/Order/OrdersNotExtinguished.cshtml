@@ -48,7 +48,7 @@
                         <td>&euro; @order.Price_Tot.ToString("0.00")</td>
                         <td class="text-center">
                             @{
-                                if (order.Status != 0)
+                                if (!string.IsNullOrEmpty(order.Status))
                                 {
                                     var statusDto = OrderStatusConstants.OrderStatuses[@order.Status];
                                     <i class="fas fa-circle fa-lg" style="color: @statusDto?.StatusCssClass" title="@statusDto?.StatusDescription"></i>

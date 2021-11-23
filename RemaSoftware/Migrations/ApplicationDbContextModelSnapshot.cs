@@ -338,8 +338,8 @@ namespace RemaSoftware.Migrations
                         .HasMaxLength(20);
 
                     b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(1)");
+                        .HasColumnType("nvarchar(1)")
+                        .HasMaxLength(1);
 
                     b.HasKey("OrderID");
 
