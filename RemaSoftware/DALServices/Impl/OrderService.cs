@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.JsonPatch.Converters;
 using Microsoft.EntityFrameworkCore;
 using NLog;
 using RemaSoftware.ContextModels;
@@ -147,6 +148,17 @@ namespace RemaSoftware.DALServices.Impl
                 Logger.Error($"[Eliminazione Ordine] Ordine non presente. ID: {OrderID}");
             }
             
+        }
+
+        public void UpdateOrderStatus(int orderId, char newStatus)
+        {
+            var order = _dbContext.Orders.SingleOrDefault(sd => sd.OrderID == orderId);
+            if (order == null)
+                throw new Exception($"Ordine non trovato con id: {orderId}.");
+            
+            order.Status = newStatus;
+            _dbContext.Orders.Update(order);
+            _dbContext.SaveChanges();
         }
     }
 }

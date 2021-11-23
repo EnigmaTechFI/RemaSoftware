@@ -133,6 +133,7 @@ namespace RemaSoftware.Controllers
 
             model.Order.DataIn = DateTime.UtcNow;
             model.Order.Price_Uni = (decimal)model.uni_price;
+            model.Order.Status = Constants.OrderStatusConstants.STATUS_ARRIVED;
 
             // aggiungo all'ordine le operazioni selezionate
             var operationsSelected = model.Operations.Where(w=>w.Flag).ToList();
@@ -198,6 +199,7 @@ namespace RemaSoftware.Controllers
             newOrder.Note = oldOrder.Note;
             newOrder.SKU = oldOrder.SKU;
             newOrder.Price_Uni = oldOrder.Price_Uni;
+            newOrder.Status = Constants.OrderStatusConstants.STATUS_ARRIVED;
 
             // aggiungo all'ordine le operazioni selezionate
             newOrder.Order_Operation = oldOrder.Order_Operation.Select(s => new Order_Operation
