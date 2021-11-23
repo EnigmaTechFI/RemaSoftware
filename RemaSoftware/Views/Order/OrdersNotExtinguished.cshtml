@@ -1,0 +1,67 @@
+@using System.Globalization
+@using RemaSoftware.Constants
+@model List<RemaSoftware.ContextModels.Order>
+
+@{
+    ViewData["Title"] = "Ordini non completati";
+}
+
+<link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Ordini non completati</h1>
+</div>
+
+<div class="card shadow mb-4" id="order-summ-content">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Ordini non ancora completati</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="table-orders" width="100%" cellspacing="0">
+                <thead>
+                <tr>
+                    <th>DDT</th>
+                    <th>SKU</th>
+                    <th>Nome</th>
+                    <th>Cliente</th>
+                    <th>Data Entrata</th>
+                    <th>Data Scadenza</th>
+                    <th>N° Pezzi</th>
+                    <th>Prz. Unitario</th>
+                    <th>Prz. Totale</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td>@order.DDT</td>
+                        <td>@order.SKU</td>
+                        <td>@order.Name</td>
+                        <td>@order.Client.Name</td>
+                        <td>@order.DataIn.ToString("d", new CultureInfo("it-IT"))</td>
+                        <td>@order.DataOut.ToString("d", new CultureInfo("it-IT"))</td>
+                        <td>@order.Number_Piece</td>
+                        <td>&euro; @order.Price_Uni.ToString("0.00")</td>
+                        <td>&euro; @order.Price_Tot.ToString("0.00")</td>
+                        <td class="text-center">
+                            @{
+                                var statusDto = OrderStatusConstants.OrderStatuses[@order.Status];
+                            }
+                            <i class="fas fa-circle fa-lg" style="color: @statusDto.StatusCssClass" title="@statusDto.StatusDescription"></i>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        
+            <div class="row">
+                <div class="col-12 h5">
+                    Totale pezzi in magazzino: <b>@Model.Sum(s=>s.Number_Piece)</b>
+                </div>
+            </div>
+    </div>
+</div>

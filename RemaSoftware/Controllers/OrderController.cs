@@ -15,6 +15,7 @@ using RemaSoftware.Models.Common;
 using RemaSoftware.Models.OrderViewModel;
 using RemaSoftware.Models.PDFViewModel;
 using Microsoft.Extensions.Configuration;
+using RemaSoftware.Constants;
 using RemaSoftware.ContextModels;
 using UtilityServices.Dtos;
 
@@ -279,6 +280,13 @@ namespace RemaSoftware.Controllers
             {
                 return NotFound();
             }
+        }
+
+        [HttpGet]
+        public IActionResult OrdersNotExtinguished()
+        {
+            var vm = _orderService.GetOrdersNotCompleted(); 
+            return View(vm);
         }
 
         #region Models validation

@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.AspNetCore.JsonPatch.Converters;
 using Microsoft.EntityFrameworkCore;
 using NLog;
+using RemaSoftware.Constants;
 using RemaSoftware.ContextModels;
 using RemaSoftware.Data;
 
@@ -159,6 +160,13 @@ namespace RemaSoftware.DALServices.Impl
             order.Status = newStatus;
             _dbContext.Orders.Update(order);
             _dbContext.SaveChanges();
+        }
+
+        public List<Order> GetOrdersNotCompleted()
+        {
+            return _dbContext.Orders
+                .Include(i=>i.Client)
+                .Where(w => w.Status != OrderStatusConstants.STATUS_COMPLETED).ToList();
         }
     }
 }
