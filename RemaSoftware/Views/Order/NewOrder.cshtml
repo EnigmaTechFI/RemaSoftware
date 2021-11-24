@@ -176,7 +176,7 @@
                 if (result && result.result == true) {
                     var aElement = document.createElement("a");
                     aElement.setAttribute("type", "hidden");
-                    aElement.href = '@Url.Action("DownloadPdfOrder", "Order")' + "?orderId=" + result.data;
+                    aElement.href = '@Url.Action("DownloadPdfOrder", "Order")' + "?orderId=" + result.orderId;
                     aElement.target = "_blank";
                     document.getElementsByTagName("body")
                     aElement.click();
