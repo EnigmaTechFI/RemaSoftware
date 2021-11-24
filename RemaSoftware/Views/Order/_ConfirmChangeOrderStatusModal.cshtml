@@ -1,4 +1,4 @@
-@model RemaSoftware.Controllers.OrderController.ChangeStatusDto
+
 <div class="modal fade" id="confirm-change-status-modal" tabindex="-1" role="dialog" aria-labelledby="modal-head" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -13,8 +13,8 @@
                 <div class="row">
                     <div class="col-12" id="div-list-ops">
                         <form method="post" id="form-confirm-chg-ord-status" asp-controller="Order" asp-action="UpdateOrderStatus">
-                            <input id="id-ordine-chg-status" type="hidden" asp-for="OrderId">
-                            <input id="current-status-chg-status" type="hidden" asp-for="CurrentStatus">
+                            <input id="id-ordine-chg-status" type="hidden" name="orderId">
+                            <input id="current-status-chg-status" type="hidden" name="currentStatus">
                         </form>
                         
                     </div>

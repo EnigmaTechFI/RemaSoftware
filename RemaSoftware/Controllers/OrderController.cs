@@ -292,18 +292,12 @@ namespace RemaSoftware.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdateOrderStatus(ChangeStatusDto chgStatusDto)
+        public IActionResult UpdateOrderStatus(int orderId, string currentStatus)
         {
-            var newStatus = OrderStatusConstants.GetNewOrderStatus(chgStatusDto.CurrentStatus);
-            _orderService.UpdateOrderStatus(chgStatusDto.OrderId, newStatus.Status);
+            var newStatus = OrderStatusConstants.GetNewOrderStatus(currentStatus);
+            _orderService.UpdateOrderStatus(orderId, newStatus.Status);
             _notyfService.Success("tutto ok");
             return RedirectToAction("OrderSummary");
-        }
-        
-        public class ChangeStatusDto
-        {
-            public int OrderId { get; set; }
-            public string CurrentStatus { get; set; }
         }
 
         #region Models validation

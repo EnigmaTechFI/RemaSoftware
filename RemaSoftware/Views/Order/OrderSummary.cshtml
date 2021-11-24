@@ -81,7 +81,7 @@
 </div>
 
 @{await Html.RenderPartialAsync("../Order/_CopyOrderModal", new CopyOrderViewModel());}
-@{ await Html.RenderPartialAsync("_ConfirmChangeOrderStatusModal", new OrderController.ChangeStatusDto());}
+@{ await Html.RenderPartialAsync("_ConfirmChangeOrderStatusModal");}
 
 @section Scripts
 {
