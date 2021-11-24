@@ -46,4 +46,8 @@
     <Folder Include="Migrations\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="Migrations\20211123182105_AddStatusInOrderTable.Designer.cs" />
+  </ItemGroup>
+
 </Project>

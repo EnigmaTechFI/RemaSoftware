@@ -2,15 +2,15 @@
 
 namespace RemaSoftware.Migrations
 {
-    public partial class AddStatusInOrderTable : Migration
+    public partial class AddStatusInTableOrder : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
                 name: "Status",
                 table: "Orders",
-                nullable: false,
-                defaultValue: "");
+                maxLength: 1,
+                nullable: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
