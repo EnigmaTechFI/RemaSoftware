@@ -1,16 +1,17 @@
+using System;
 using System.Collections.Generic;
 
 namespace RemaSoftware.Constants
 {
     public static class OrderStatusConstants
     {
-        public static readonly string STATUS_ARRIVED = "A";
+        public const string STATUS_ARRIVED = "A";
         public static readonly string STATUS_ARRIVED_DESC = "Arrivato in magazzino";
         
-        public static readonly string STATUS_WORKING = "B";
+        public const string STATUS_WORKING = "B";
         public static readonly string STATUS_WORKING_DESC = "In lavorazione";
         
-        public static readonly string STATUS_COMPLETED = "C";
+        public const string STATUS_COMPLETED = "C";
         public static readonly string STATUS_COMPLETED_DESC = "Completato e uscito dal magazzino";
         
         public static readonly Dictionary<string, StatusDto> OrderStatuses = new Dictionary<string, StatusDto>
@@ -43,6 +44,20 @@ namespace RemaSoftware.Constants
                 }
             },
         };
+
+        public static StatusDto GetNewOrderStatus(string currentStatus)
+        {
+            switch (currentStatus)
+            {
+                case STATUS_ARRIVED:
+                    return OrderStatuses[STATUS_WORKING];
+                case STATUS_WORKING:
+                    return  OrderStatuses[STATUS_COMPLETED];
+                default:
+                    throw new Exception("Passaggio di status non previsto.");
+                
+            }
+        }
     }
 
     public class StatusDto

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
 using RemaSoftware.DALServices;
@@ -17,6 +18,7 @@ using RemaSoftware.Models.PDFViewModel;
 using Microsoft.Extensions.Configuration;
 using RemaSoftware.Constants;
 using RemaSoftware.ContextModels;
+using RemaSoftware.DALServices.Impl;
 using UtilityServices.Dtos;
 
 namespace RemaSoftware.Controllers
@@ -287,6 +289,21 @@ namespace RemaSoftware.Controllers
         {
             var vm = _orderService.GetOrdersNotCompleted(); 
             return View(vm);
+        }
+
+        [HttpPost]
+        public IActionResult UpdateOrderStatus(ChangeStatusDto chgStatusDto)
+        {
+            var newStatus = OrderStatusConstants.GetNewOrderStatus(chgStatusDto.CurrentStatus);
+            _orderService.UpdateOrderStatus(chgStatusDto.OrderId, newStatus.Status);
+            _notyfService.Success("tutto ok");
+            return RedirectToAction("OrderSummary");
+        }
+        
+        public class ChangeStatusDto
+        {
+            public int OrderId { get; set; }
+            public string CurrentStatus { get; set; }
         }
 
         #region Models validation

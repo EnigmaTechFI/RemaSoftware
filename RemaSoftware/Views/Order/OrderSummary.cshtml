@@ -1,5 +1,6 @@
 ﻿@using System.Globalization
 @using RemaSoftware.Constants
+@using RemaSoftware.Controllers
 @using RemaSoftware.Models.OrderViewModel
 @model RemaSoftware.Models.OrderViewModel.OrderSummaryViewModel
 
@@ -63,6 +64,13 @@
                                 <i class="fas fa-file-download fa-lg pl-2" title="Scarica ordine in PDF" style="cursor: pointer; color: #4e73df"></i>
                             </a>
                             <i class="fas fa-copy fa-lg pl-2" style="color: red; cursor: pointer" onclick="setOrderId(@order.OrderID)" data-toggle="modal" data-target="#copy-ord-modal" title="Duplica Ordine"></i>
+                            @if (!string.IsNullOrEmpty(order.Status) && order.Status != OrderStatusConstants.STATUS_COMPLETED)
+                            {
+                                <i class="fas fa-arrow-circle-up fa-lg pl-2"
+                                   title="Avanza status ordine" style="cursor: pointer; color: darkgreen"
+                                   data-toggle="modal" data-target="#confirm-change-status-modal"
+                                   onclick="SetNextOrderStatusAndOrderId(@order.OrderID, '@order.Status')"></i>
+                            }
                         </td>
                     </tr>
                 }
@@ -73,6 +81,7 @@
 </div>
 
 @{await Html.RenderPartialAsync("../Order/_CopyOrderModal", new CopyOrderViewModel());}
+@{ await Html.RenderPartialAsync("_ConfirmChangeOrderStatusModal", new OrderController.ChangeStatusDto());}
 
 @section Scripts
 {
@@ -115,11 +124,33 @@
     function setOrderId(OrderIdToDuplicate) {
         $("#id_ordine").val(OrderIdToDuplicate)
     }
+    
+    function SetNextOrderStatusAndOrderId(orderId, currentStatus){
+        $("#id-ordine-chg-status").val(orderId);
+        $("#current-status-chg-status").val(currentStatus);
+    }
+    
+    // function UpdateOrderStatus(){
+    //     var model = {
+    //         orderId: $("#confirm-change-status-modal").data("orderId"),
+    //         currentStatus: $("#confirm-change-status-modal").data("currentStatus")
+    //     }
+    //
+    //     $.post('@Url.Action("UpdateOrderStatus", "Order")', model, function (data){
+    //         if (data.result == true){
+    //            
+    //             toastNotifySuccess(data.toastMessage);
+    //             window.location.reload();
+    //         }else{
+    //             toastNotifyError(data.toastMessage);
+    //         }
+    //     });    
+    // }
 
     function SaveEditOpertions() {
         ShowLoader();
         var model = $("#form-edit-ops").serialize();
-        $.post('@Url.Action("EditOrderOperations", "Order")', model, function (data){
+        $.post('@Url.Action("EditOrderOperations", "Order")', JSON.stringify(model), function (data){
             if (data.result == true){
                 $("#edit-ops-modal").modal('toggle');
                 toastNotifySuccess(data.toastMessage);
