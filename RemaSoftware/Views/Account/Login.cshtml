@@ -53,23 +53,17 @@
                                         </div>
                                         <div class="form-group">
                                             <input asp-for="Input.Password" type="password" class="form-control form-control-user"
-                                                   id="exampleInputPassword" placeholder="Password">
+                                                   id="exampleInputPassword" placeholder="Password"><i class="far fa-eye show-hide-pwd-icon" id="show-hide-pwd-icon"></i>
                                             <span asp-validation-for="Input.Password" class="text-danger"></span>
                                         </div>
-                                        <div class="form-group">
-                                            <div class="custom-control custom-checkbox small">
-                                                <input onclick="myFunction()" type="checkbox" class="custom-control-input" id="show_psw">
-                                                <label class="custom-control-label" for="show_psw">Mostra Password</label>
-                                            </div>
-                                        </div>
-                                        <input type="submit" class="btn btn-primary btn-user btn-block" value="Login">
-                                        <br />
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox small">
                                                 <input asp-for="Input.RememberMe" type="checkbox" class="custom-control-input" id="customCheck">
                                                 <label class="custom-control-label" for="customCheck">Ricordami</label>
                                             </div>
                                         </div>
+                                        <input type="submit" class="btn btn-primary btn-user btn-block" value="Login">
+                                        <br />
                                     </form>
                                     <hr>
                                     <a data-toggle="modal" data-target="#forgot-pwd-modal" href="#">Password Dimenticata?</a>
@@ -114,16 +108,25 @@
             </div>
         </div>
     </div>
-
+    <style>
+        .show-hide-pwd-icon {
+            float: right;
+            margin-right: 15px;
+            margin-top: -30px;
+            position: relative;
+            z-index: 2;
+            cursor: pointer
+        }
+    </style>
         <script>
-            function myFunction() {
-                var x = document.getElementById("exampleInputPassword");
-                if (x.type === "password") {
-                    x.type = "text";
-                } else {
-                    x.type = "password";
-                }
-            }
+        const pwdInput = document.querySelector('#show-hide-pwd-icon');
+            pwdInput.addEventListener('click', function (e) {
+                
+                var type = document.querySelector('#exampleInputPassword').getAttribute('type') === 'password' ? 'text' : 'password';
+                exampleInputPassword.setAttribute('type', type);
+                this.classList.toggle('fa-eye-slash');
+                this.classList.toggle('fa-eye');
+            });
         </script>
 
     <!-- Bootstrap core JavaScript-->

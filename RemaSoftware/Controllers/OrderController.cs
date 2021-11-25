@@ -294,6 +294,7 @@ namespace RemaSoftware.Controllers
         [HttpPost]
         public IActionResult UpdateOrderStatus(int orderId, string currentStatus)
         {
+            // todo try catch
             var newStatus = OrderStatusConstants.GetNewOrderStatus(currentStatus);
             _orderService.UpdateOrderStatus(orderId, newStatus.Status);
             _notyfService.Success("tutto ok");
