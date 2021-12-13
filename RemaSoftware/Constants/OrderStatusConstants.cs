@@ -31,7 +31,7 @@ namespace RemaSoftware.Constants
                 {
                     Status = STATUS_WORKING,
                     StatusDescription = STATUS_WORKING_DESC,
-                    StatusCssClass = "blue"
+                    StatusCssClass = "orange"
                 }
             },
             {

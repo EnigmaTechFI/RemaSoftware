@@ -297,8 +297,8 @@ namespace RemaSoftware.Controllers
             // todo try catch
             var newStatus = OrderStatusConstants.GetNewOrderStatus(currentStatus);
             _orderService.UpdateOrderStatus(orderId, newStatus.Status);
-            _notyfService.Success("tutto ok");
-            return RedirectToAction("OrderSummary");
+            _notyfService.Success("Stato dell'ordine cambiato correttamente");
+            return RedirectToAction("OrdersNotExtinguished");
         }
 
         #region Models validation
