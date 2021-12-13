@@ -31,8 +31,8 @@ namespace UtilityServices
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(apiEndpoint);
             httpWebRequest.ContentType = "application/json";
             httpWebRequest.Method = "POST";
-            var myProxy = new WebProxy("http://winproxy.server.lan:3128/", true);
-            httpWebRequest.Proxy = myProxy;
+            //var myProxy = new WebProxy("http://winproxy.server.lan:3128/", true);
+            //httpWebRequest.Proxy = myProxy;
 
             OrderAPI orderToSendInCloud = new OrderAPI()
             {

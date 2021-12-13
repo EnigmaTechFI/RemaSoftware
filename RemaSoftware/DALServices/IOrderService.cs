@@ -20,7 +20,7 @@ namespace RemaSoftware.DALServices
         Order GetOrderBySKU(string sku);
         bool UpdateOrder(Order order);
         void DeleteOrderByID(int OrderID);
-        void UpdateOrderStatus(int orderId, string newStatus);
+        void UpdateOrderStatus(int orderId, int outgoing_orders);
         List<Order> GetOrdersNotCompleted();
     }
 }

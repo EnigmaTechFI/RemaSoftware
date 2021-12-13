@@ -29,9 +29,9 @@
                         <th>Cliente</th>
                         <th>Data Entrata</th>
                         <th>Data Scadenza</th>
-                        <th>N° Pezzi</th>
+                        <th>N° Pezzi Iniziale</th>
+                        <th>N° Pezzi Attuale</th>
                         <th>Prz. Unitario</th>
-                        <th>Prz. Totale</th>
                         <th>Status</th>
                         <th>Azioni</th>
                     </tr>
@@ -47,8 +47,8 @@
                         <td>@order.DataIn.ToString("d", new CultureInfo("it-IT"))</td>
                         <td>@order.DataOut.ToString("d", new CultureInfo("it-IT"))</td>
                         <td>@order.Number_Piece</td>
+                        <td>@order.Number_Pieces_InStock</td>
                         <td>&euro; @order.Price_Uni.ToString("0.00")</td>
-                        <td>&euro; @order.Price_Tot.ToString("0.00")</td>
                         <td class="text-center">
                             @{
                                 if (!string.IsNullOrEmpty(order.Status))
@@ -64,13 +64,6 @@
                                 <i class="fas fa-file-download fa-lg pl-2" title="Scarica ordine in PDF" style="cursor: pointer; color: #4e73df"></i>
                             </a>
                             <i class="fas fa-copy fa-lg pl-2" style="color: red; cursor: pointer" onclick="setOrderId(@order.OrderID)" data-toggle="modal" data-target="#copy-ord-modal" title="Duplica Ordine"></i>
-                            @if (!string.IsNullOrEmpty(order.Status) && order.Status != OrderStatusConstants.STATUS_COMPLETED)
-                            {
-                                <i class="fas fa-arrow-circle-up fa-lg pl-2"
-                                   title="Avanza status ordine" style="cursor: pointer; color: darkgreen"
-                                   data-toggle="modal" data-target="#confirm-change-status-modal"
-                                   onclick="SetNextOrderStatusAndOrderId(@order.OrderID, '@order.Status')"></i>
-                            }
                         </td>
                     </tr>
                 }
@@ -81,7 +74,6 @@
 </div>
 
 @{await Html.RenderPartialAsync("../Order/_CopyOrderModal", new CopyOrderViewModel());}
-@{ await Html.RenderPartialAsync("_ConfirmChangeOrderStatusModal");}
 
 @section Scripts
 {
@@ -124,28 +116,6 @@
     function setOrderId(OrderIdToDuplicate) {
         $("#id_ordine").val(OrderIdToDuplicate)
     }
-    
-    function SetNextOrderStatusAndOrderId(orderId, currentStatus){
-        $("#id-ordine-chg-status").val(orderId);
-        $("#current-status-chg-status").val(currentStatus);
-    }
-    
-    // function UpdateOrderStatus(){
-    //     var model = {
-    //         orderId: $("#confirm-change-status-modal").data("orderId"),
-    //         currentStatus: $("#confirm-change-status-modal").data("currentStatus")
-    //     }
-    //
-    //     $.post('@Url.Action("UpdateOrderStatus", "Order")', model, function (data){
-    //         if (data.result == true){
-    //            
-    //             toastNotifySuccess(data.toastMessage);
-    //             window.location.reload();
-    //         }else{
-    //             toastNotifyError(data.toastMessage);
-    //         }
-    //     });    
-    // }
 
     function SaveEditOpertions() {
         ShowLoader();

@@ -6,7 +6,7 @@
     ViewData["Title"] = "Ordini non completati";
 }
 
-<link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
+<link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css" />
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Ordini non completati</h1>
@@ -20,22 +20,22 @@
         <div class="table-responsive">
             <table class="table table-bordered" id="table-orders" width="100%" cellspacing="0">
                 <thead>
-                <tr>
-                    <th>DDT</th>
-                    <th>SKU</th>
-                    <th>Nome</th>
-                    <th>Cliente</th>
-                    <th>Data Entrata</th>
-                    <th>Data Scadenza</th>
-                    <th>N° Pezzi</th>
-                    <th>Prz. Unitario</th>
-                    <th>Prz. Totale</th>
-                    <th>Status</th>
-                </tr>
+                    <tr>
+                        <th>DDT</th>
+                        <th>SKU</th>
+                        <th>Nome</th>
+                        <th>Cliente</th>
+                        <th>Data Entrata</th>
+                        <th>Data Scadenza</th>
+                        <th>N° Pezzi Iniziale</th>
+                        <th>N° Pezzi Attuale</th>
+                        <th>Status</th>
+                        <th>Azioni</th>
+                    </tr>
                 </thead>
                 <tbody>
-                @foreach (var order in Model)
-                {
+                    @foreach (var order in Model)
+                    {
                     <tr>
                         <td>@order.DDT</td>
                         <td>@order.SKU</td>
@@ -44,8 +44,7 @@
                         <td>@order.DataIn.ToString("d", new CultureInfo("it-IT"))</td>
                         <td>@order.DataOut.ToString("d", new CultureInfo("it-IT"))</td>
                         <td>@order.Number_Piece</td>
-                        <td>&euro; @order.Price_Uni.ToString("0.00")</td>
-                        <td>&euro; @order.Price_Tot.ToString("0.00")</td>
+                        <td>@order.Number_Pieces_InStock</td>
                         <td class="text-center">
                             @{
                                 if (!string.IsNullOrEmpty(order.Status))
@@ -55,16 +54,34 @@
                                 }
                             }
                         </td>
+                        <td class="text-center">
+                            @if (!string.IsNullOrEmpty(order.Status) && order.Status != OrderStatusConstants.STATUS_COMPLETED)
+                            {
+                                <i class="fas fa-arrow-circle-up fa-lg pl-2"
+                                   title="Avanza status ordine" style="cursor: pointer; color: darkgreen"
+                                   data-toggle="modal" data-target="#confirm-change-status-modal"
+                                   onclick="SetNextOrderStatusAndOrderId(@order.OrderID, '@order.Status')"></i>
+                            }
+                        </td>
                     </tr>
-                }
+                    }
                 </tbody>
             </table>
         </div>
-        
-            <div class="row">
-                <div class="col-12 h5">
-                    Totale pezzi in magazzino: <b>@Model.Sum(s=>s.Number_Piece)</b>
-                </div>
+
+        <div class="row">
+            <div class="col-12 h5">
+                Totale pezzi in magazzino: <b>@Model.Sum(s => s.Number_Pieces_InStock)</b>
             </div>
+        </div>
     </div>
 </div>
+@{ await Html.RenderPartialAsync("_ConfirmChangeOrderStatusModal");}
+@section Scripts{ 
+    <script>
+        function SetNextOrderStatusAndOrderId(orderId, currentStatus) {
+            $("#id-ordine-chg-status").val(orderId);
+            $("#current-status-chg-status").val(currentStatus);
+        }
+    </script>
+}

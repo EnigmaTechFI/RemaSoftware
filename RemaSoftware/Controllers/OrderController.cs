@@ -123,6 +123,7 @@ namespace RemaSoftware.Controllers
             DateTime parsedDateTime;
             DateTime.TryParseExact(model.DataOutStr, "dd/MM/yyyy", null, DateTimeStyles.None, out parsedDateTime);
             model.Order.DataOut = parsedDateTime;
+            model.Order.Number_Pieces_InStock = model.Order.Number_Piece;
 
             var validationResult = this.ValidateNewOrderViewModel(model);
             if (validationResult != "")
@@ -193,6 +194,7 @@ namespace RemaSoftware.Controllers
             Order newOrder = new Order();
             newOrder.DDT = model.Code_DDT;
             newOrder.Number_Piece = model.NumberPiece;
+            newOrder.Number_Pieces_InStock = model.NumberPiece;
             newOrder.DataIn = DateTime.UtcNow;
             newOrder.ClientID = oldOrder.ClientID;
             newOrder.DataOut = oldOrder.DataOut;
@@ -292,13 +294,20 @@ namespace RemaSoftware.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdateOrderStatus(int orderId, string currentStatus)
+        public IActionResult UpdateOrderStatus(int orderId, string currentStatus, int outgoing_orders)
         {
             // todo try catch
-            var newStatus = OrderStatusConstants.GetNewOrderStatus(currentStatus);
-            _orderService.UpdateOrderStatus(orderId, newStatus.Status);
-            _notyfService.Success("tutto ok");
-            return RedirectToAction("OrderSummary");
+            try
+            {
+                _orderService.UpdateOrderStatus(orderId, outgoing_orders);
+                _notyfService.Success("Numero pezzi modificato correttamente");
+            }
+            catch(Exception e)
+            {
+                _notyfService.Error(e.Message);
+            }
+
+            return RedirectToAction("OrdersNotExtinguished");
         }
 
         #region Models validation
