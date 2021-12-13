@@ -9,7 +9,7 @@ using UtilityServices;
 
 namespace RemaSoftware.Controllers
 {
-    public class AccountController : Controller
+    public class  AccountController : Controller
     {
         private readonly SignInManager<MyUser> _signInManager;
         private readonly IEmailService _emailService;

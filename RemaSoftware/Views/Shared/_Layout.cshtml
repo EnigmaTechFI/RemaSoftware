@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using RemaSoftware.ContextModels
+@using RemaSoftware.Constants
+@inject Microsoft.AspNetCore.Identity.UserManager<MyUser> _userManager
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
@@ -102,6 +105,22 @@
                 <span>Aggiungi Prodotto</span>
             </a>
         </li>
+        @if (User.IsInRole("Admin"))
+        {
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Contabilità
+            </div>
+        
+            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Accounting" ? "active" : "")">
+                <a class="nav-link" asp-action="Accounting" asp-controller="Accounting">
+                    <i class="fas fa-fw fa-calculator"></i>
+                    <span>Contabilità</span>
+                </a>
+            </li>
+        }
 
         <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">
@@ -160,7 +179,16 @@
                     <li class="nav-item dropdown no-arrow">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">@User.Identity.Name</span>
+                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">@User.Identity.Name
+                                
+                                @if (User.IsInRole(Roles.Admin))
+                                {
+                                    <text>(Admin)</text>
+                                }else if (User.IsInRole(Roles.Dipendente))
+                                {
+                                    <text>(Dipendente)</text>
+                                }
+                                </span>
                         </a>
                         <!-- Dropdown - User Information -->
                         <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
