@@ -151,13 +151,27 @@ namespace RemaSoftware.DALServices.Impl
             
         }
 
-        public void UpdateOrderStatus(int orderId, string newStatus)
+        public void UpdateOrderStatus(int orderId, int outgoing_orders)
         {
             var order = _dbContext.Orders.SingleOrDefault(sd => sd.OrderID == orderId);
             if (order == null)
                 throw new Exception($"Ordine non trovato con id: {orderId}.");
-            
-            order.Status = newStatus;
+
+            order.Number_Pieces_InStock = order.Number_Pieces_InStock - outgoing_orders;
+
+            if (order.Number_Pieces_InStock < 0)
+                throw new Exception($"Numero pezzi attuale minore rispetto a numero pezzi in uscita ({outgoing_orders})");
+
+            else if(order.Number_Pieces_InStock == 0 )
+            {
+                order.Status = "C";
+            }
+
+            else if(order.Number_Pieces_InStock > 0)
+            {
+                order.Status = "B";
+            }
+
             _dbContext.Orders.Update(order);
             _dbContext.SaveChanges();
         }

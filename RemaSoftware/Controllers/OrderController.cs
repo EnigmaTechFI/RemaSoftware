@@ -294,12 +294,19 @@ namespace RemaSoftware.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdateOrderStatus(int orderId, string currentStatus)
+        public IActionResult UpdateOrderStatus(int orderId, string currentStatus, int outgoing_orders)
         {
             // todo try catch
-            var newStatus = OrderStatusConstants.GetNewOrderStatus(currentStatus);
-            _orderService.UpdateOrderStatus(orderId, newStatus.Status);
-            _notyfService.Success("Stato dell'ordine cambiato correttamente");
+            try
+            {
+                _orderService.UpdateOrderStatus(orderId, outgoing_orders);
+                _notyfService.Success("Numero pezzi modificato correttamente");
+            }
+            catch(Exception e)
+            {
+                _notyfService.Error(e.Message);
+            }
+
             return RedirectToAction("OrdersNotExtinguished");
         }
 
