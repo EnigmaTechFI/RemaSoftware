@@ -29,7 +29,8 @@
                         <th>Cliente</th>
                         <th>Data Entrata</th>
                         <th>Data Scadenza</th>
-                        <th>N° Pezzi</th>
+                        <th>N° Pezzi Iniziale</th>
+                        <th>N° Pezzi Attuale</th>
                         <th>Prz. Unitario</th>
                         <th>Status</th>
                         <th>Azioni</th>
@@ -46,6 +47,7 @@
                         <td>@order.DataIn.ToString("d", new CultureInfo("it-IT"))</td>
                         <td>@order.DataOut.ToString("d", new CultureInfo("it-IT"))</td>
                         <td>@order.Number_Piece</td>
+                        <td>@order.Number_Pieces_InStock</td>
                         <td>&euro; @order.Price_Uni.ToString("0.00")</td>
                         <td class="text-center">
                             @{
@@ -105,7 +107,8 @@
                 { "searchable": false, "orderable": false, "targets": 6 },
                 { "searchable": false, "orderable": false, "targets": 7 },
                 { "searchable": false, "orderable": false, "targets": 8 },
-                { "searchable": false, "orderable": false, "targets": 9 }
+                { "searchable": false, "orderable": false, "targets": 9 },
+                { "searchable": false, "orderable": false, "targets": 10 }
               ]
         });
     });

@@ -28,6 +28,7 @@
                         <th>Data Entrata</th>
                         <th>Data Scadenza</th>
                         <th>N° Pezzi Iniziale</th>
+                        <th>N° Pezzi Attuale</th>
                         <th>Status</th>
                         <th>Azioni</th>
                     </tr>
@@ -35,33 +36,34 @@
                 <tbody>
                     @foreach (var order in Model)
                     {
-                        <tr>
-                            <td>@order.DDT</td>
-                            <td>@order.SKU</td>
-                            <td>@order.Name</td>
-                            <td>@order.Client.Name</td>
-                            <td>@order.DataIn.ToString("d", new CultureInfo("it-IT"))</td>
-                            <td>@order.DataOut.ToString("d", new CultureInfo("it-IT"))</td>
-                            <td>@order.Number_Piece</td>
-                            <td class="text-center">
-                                @{
-                                    if (!string.IsNullOrEmpty(order.Status))
-                                    {
-                                        var statusDto = OrderStatusConstants.OrderStatuses[@order.Status];
-                                        <i class="fas fa-circle fa-lg" style="color: @statusDto?.StatusCssClass" title="@statusDto?.StatusDescription"></i>
-                                    }
-                                }
-                            </td>
-                            <td class="text-center">
-                                @if (!string.IsNullOrEmpty(order.Status) && order.Status != OrderStatusConstants.STATUS_COMPLETED)
+                    <tr>
+                        <td>@order.DDT</td>
+                        <td>@order.SKU</td>
+                        <td>@order.Name</td>
+                        <td>@order.Client.Name</td>
+                        <td>@order.DataIn.ToString("d", new CultureInfo("it-IT"))</td>
+                        <td>@order.DataOut.ToString("d", new CultureInfo("it-IT"))</td>
+                        <td>@order.Number_Piece</td>
+                        <td>@order.Number_Pieces_InStock</td>
+                        <td class="text-center">
+                            @{
+                                if (!string.IsNullOrEmpty(order.Status))
                                 {
-                                    <i class="fas fa-arrow-circle-up fa-lg pl-2"
-                                       title="Avanza status ordine" style="cursor: pointer; color: darkgreen"
-                                       data-toggle="modal" data-target="#confirm-change-status-modal"
-                                       onclick="SetNextOrderStatusAndOrderId(@order.OrderID, '@order.Status')"></i>
+                                    var statusDto = OrderStatusConstants.OrderStatuses[@order.Status];
+                                    <i class="fas fa-circle fa-lg" style="color: @statusDto?.StatusCssClass" title="@statusDto?.StatusDescription"></i>
                                 }
-                            </td>
-                        </tr>
+                            }
+                        </td>
+                        <td class="text-center">
+                            @if (!string.IsNullOrEmpty(order.Status) && order.Status != OrderStatusConstants.STATUS_COMPLETED)
+                            {
+                                <i class="fas fa-arrow-circle-up fa-lg pl-2"
+                                   title="Avanza status ordine" style="cursor: pointer; color: darkgreen"
+                                   data-toggle="modal" data-target="#confirm-change-status-modal"
+                                   onclick="SetNextOrderStatusAndOrderId(@order.OrderID, '@order.Status')"></i>
+                            }
+                        </td>
+                    </tr>
                     }
                 </tbody>
             </table>

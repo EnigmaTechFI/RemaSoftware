@@ -123,6 +123,7 @@ namespace RemaSoftware.Controllers
             DateTime parsedDateTime;
             DateTime.TryParseExact(model.DataOutStr, "dd/MM/yyyy", null, DateTimeStyles.None, out parsedDateTime);
             model.Order.DataOut = parsedDateTime;
+            model.Order.Number_Pieces_InStock = model.Order.Number_Piece;
 
             var validationResult = this.ValidateNewOrderViewModel(model);
             if (validationResult != "")
@@ -193,6 +194,7 @@ namespace RemaSoftware.Controllers
             Order newOrder = new Order();
             newOrder.DDT = model.Code_DDT;
             newOrder.Number_Piece = model.NumberPiece;
+            newOrder.Number_Pieces_InStock = model.NumberPiece;
             newOrder.DataIn = DateTime.UtcNow;
             newOrder.ClientID = oldOrder.ClientID;
             newOrder.DataOut = oldOrder.DataOut;

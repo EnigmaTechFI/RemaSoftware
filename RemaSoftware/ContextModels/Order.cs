@@ -21,6 +21,9 @@ namespace RemaSoftware.ContextModels
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]
         public int Number_Piece { get; set; }
 
+        [Required(ErrorMessage = "Questo campo è obbligatorio!")]
+        public int Number_Pieces_InStock { get; set; }
+
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime DataIn { get; set; }
