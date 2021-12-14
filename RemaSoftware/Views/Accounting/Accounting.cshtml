@@ -1,12 +1,55 @@
+@model RemaSoftware.Models.AccountingViewModel.AccountingViewModel
+
+
 <!DOCTYPE html>
 
-<html>
 <head>
-    <title>title</title>
+    <title>Contabilità</title>
 </head>
-<body>
-<div>
-      
+<link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css" />
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Contabilit&#224;</h1>
 </div>
-</body>
-</html>
+
+<div class="card shadow mb-4" id="order-summ-content">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Resoconto contabilit&#224;</h6>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12 h5">
+                Totale pezzi in azienda: <b>@Model.orderInFactoryGroupByClient.Sum(s => s.NumberPiecesInStock)</b>
+            </div>
+        </div>
+        <br />
+
+        <div class="row">
+            <div class="col-12 h5">
+                Totale fatturato in azienda: <b>@Model.orderInFactoryGroupByClient.Sum(s => s.TotPriceInStock).ToString("0.00")&#8364;</b>
+            </div>
+        </div>
+        <br />
+        <div class="table-responsive">
+            <table class="table table-bordered" id="table-orders" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>N&deg; Pezzi Attuale</th>
+                        <th>Fatturato Attuale</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model.orderInFactoryGroupByClient)
+                    {
+                        <tr>
+                            <td>@order.Client</td>
+                            <td>@order.NumberPiecesInStock</td>
+                            <td>@order.TotPriceInStock.ToString("0.00")&#8364;</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -48,6 +48,7 @@ namespace RemaSoftware.ContextModels
 
         public decimal Price_Uni { get; set; }
         public decimal Price_Tot => this.Price_Uni * this.Number_Piece;
+        public decimal Price_InStock => this.Price_Uni * this.Number_Pieces_InStock;
         public string Note { get; set; }
         [MaxLength(1)]
         public string Status { get; set; }
