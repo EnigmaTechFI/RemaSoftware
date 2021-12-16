@@ -25,6 +25,13 @@ namespace RemaSoftware.DALServices.Impl
             _dbContext.SaveChanges();
         }
 
+        public List<Operation> AddOperations(List<Operation> operations)
+        {
+            _dbContext.Operations.AddRange(operations);
+            _dbContext.SaveChanges();
+            return operations;
+        }
+
         public bool EditOrderOperations(int orderId, List<int> operationToAdd, List<int> operationToRemove)
         {
             foreach (var addOperId in operationToAdd)

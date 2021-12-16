@@ -86,7 +86,7 @@ namespace RemaSoftware.Controllers
             if (emailResponse)
             {
                 _notyfToastService.Success($"Mail inviata correttamente! (a { email })");
-                return RedirectToAction("Login"); // todo toast con avviso che è stata mandata la mail
+                return RedirectToAction("Login");
             }
             
             _notyfToastService.Error("Errore durante l'invio della mail di recupero password. Segnalare il problema.");

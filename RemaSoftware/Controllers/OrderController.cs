@@ -7,6 +7,7 @@ using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using NLog;
 using RemaSoftware.DALServices;
 using RemaSoftware.Helper;
@@ -105,10 +106,10 @@ namespace RemaSoftware.Controllers
             {
                 Clients = _clientService.GetAllClients(),
                 OldOrders_SKU = _orderService.GetOldOrders_SKU().Distinct().ToList(),
-                Operations = availableOperations?.Select(s=>new OperationFlag
+                Operations = availableOperations?.Select(s=>new SelectListItem
                 {
-                    Operation = s,
-                    Flag = false
+                    Text = s.Name,
+                    Value = $"{s.OperationID}-{s.Name}"
                 }).ToList()
             };
             vm.OldOrders_SKU.Insert(0, "");
@@ -120,12 +121,7 @@ namespace RemaSoftware.Controllers
         [HttpPost]
         public JsonResult NewOrder(NewOrderViewModel model)
         {
-            DateTime parsedDateTime;
-            DateTime.TryParseExact(model.DataOutStr, "dd/MM/yyyy", null, DateTimeStyles.None, out parsedDateTime);
-            model.Order.DataOut = parsedDateTime;
-            model.Order.Number_Pieces_InStock = model.Order.Number_Piece;
-
-            var validationResult = this.ValidateNewOrderViewModel(model);
+            var validationResult = this.ValidateNewOrderViewModelAndSetDataOut(model);
             if (validationResult != "")
                 return new JsonResult(new {Result = false, ToastMessage = validationResult});
 
@@ -135,15 +131,24 @@ namespace RemaSoftware.Controllers
                 model.Order.Image_URL = iamgeName;
             }
 
+            model.Order.Number_Pieces_InStock = model.Order.Number_Piece;
             model.Order.DataIn = DateTime.UtcNow;
-            model.Order.Price_Uni = (decimal)model.uni_price;
-            model.Order.Status = Constants.OrderStatusConstants.STATUS_ARRIVED;
+            model.Order.Price_Uni = model.uni_price ?? 0;
+            model.Order.Status = OrderStatusConstants.STATUS_ARRIVED;
 
+            // aggiungo sul db le operazioni nuove
+            var operationsSelectedToCreate = model.OperationsSelected.Where(w=>w.StartsWith("0")).Select(s=>s.Split('-').Last());
+            var addedOps =_operationService.AddOperations(
+                operationsSelectedToCreate.Select(s=>new Operation
+                {
+                    Name = s, Description = s
+                }).ToList());
+            
             // aggiungo all'ordine le operazioni selezionate
-            var operationsSelected = model.Operations.Where(w=>w.Flag).ToList();
-            model.Order.Order_Operation = operationsSelected.Select(s => new Order_Operation
+            var operationsSelectedAlredyExisting = model.OperationsSelected.Where(w=>!w.StartsWith("0")).Select(s=>int.Parse(s.Split('-').First())).ToList();
+            model.Order.Order_Operation = operationsSelectedAlredyExisting.Union(addedOps.Select(s=>s.OperationID)).Select(s => new Order_Operation
             {
-                OperationID = s.Operation.OperationID
+                OperationID = s
             }).ToList();
             
             try
@@ -296,7 +301,6 @@ namespace RemaSoftware.Controllers
         [HttpPost]
         public IActionResult UpdateOrderStatus(int orderId, string currentStatus, int outgoing_orders)
         {
-            // todo try catch
             try
             {
                 _orderService.UpdateOrderStatus(orderId, outgoing_orders);
@@ -312,8 +316,12 @@ namespace RemaSoftware.Controllers
 
         #region Models validation
 
-        private string ValidateNewOrderViewModel(NewOrderViewModel model)
+        private string ValidateNewOrderViewModelAndSetDataOut(NewOrderViewModel model)
         {
+            DateTime parsedDateTime;
+            DateTime.TryParseExact(model.DataOutStr, "dd/MM/yyyy", null, DateTimeStyles.None, out parsedDateTime);
+            model.Order.DataOut = parsedDateTime;
+            
             if (string.IsNullOrEmpty(model.Order.SKU))
                 return "SKU mancante.";
             if (string.IsNullOrEmpty(model.Order.DDT))
