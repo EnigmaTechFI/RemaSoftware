@@ -1,6 +1,5 @@
 ﻿@using System.Globalization
 @using RemaSoftware.Constants
-@using RemaSoftware.Controllers
 @using RemaSoftware.Models.OrderViewModel
 @model RemaSoftware.Models.OrderViewModel.OrderSummaryViewModel
 
@@ -77,8 +76,11 @@
 
 @section Scripts
 {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
     <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
     <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/js/select2.min.js" integrity="sha512-9p/L4acAjbjIaaGXmZf0Q2bV42HetlCLbv8EP0z3rLbQED2TAFUlDvAezy7kumYqg5T8jHtDdlm1fgIsr5QzKg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
     $(document).ready( function () {
@@ -120,7 +122,7 @@
     function SaveEditOpertions() {
         ShowLoader();
         var model = $("#form-edit-ops").serialize();
-        $.post('@Url.Action("EditOrderOperations", "Order")', JSON.stringify(model), function (data){
+        $.post('@Url.Action("EditOrderOperations", "Order")', model, function (data){
             if (data.result == true){
                 $("#edit-ops-modal").modal('toggle');
                 toastNotifySuccess(data.toastMessage);
@@ -170,10 +172,35 @@
             type: "GET",
             success: function (result) {
                 if (result != null) {
+                    if ($("#edit-ops-modal")){
+                        $("#edit-ops-modal").remove()    
+                    }
                     $("#order-summ-content").after(result);
-                    $("#edit-ops-modal").modal('toggle');
+                    $("#edit-ops-modal").modal('toggle');                    
                 }
             }
+        }).then(function (){
+            $.ajax({
+                url: "@Url.Action("GetOperationsByOrderId", "Order")?orderId=" + orderId,
+                type: "GET",
+                success: function (data) {
+                    if (data != null) {
+                        $('.select2-edit-operations').select2({
+                            placeholder: "Seleziona operazioni",
+                            tags: true,
+                            createTag: function (tag) {
+                                return {
+                                    id: `0-${tag.term}`,
+                                    text: tag.term,
+                                    isNew: true
+                                };
+                            }
+                          });
+                        $('.select2-edit-operations').val(data.result);
+                        $('.select2-edit-operations').trigger("change");
+                    }
+                }
+            })
         });
         }
 

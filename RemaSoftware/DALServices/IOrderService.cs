@@ -22,5 +22,6 @@ namespace RemaSoftware.DALServices
         void DeleteOrderByID(int OrderID);
         void UpdateOrderStatus(int orderId, int outgoing_orders);
         List<Order> GetOrdersNotCompleted();
+        List<Operation> GetOperationsByOrderId(int orderId);
     }
 }

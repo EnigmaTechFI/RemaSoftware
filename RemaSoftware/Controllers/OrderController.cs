@@ -5,22 +5,17 @@ using System.IO;
 using System.Linq;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NLog;
 using RemaSoftware.DALServices;
 using RemaSoftware.Helper;
-using RemaSoftware.Models.ClientViewModel;
 using UtilityServices;
-using RemaSoftware.Models.Common;
 using RemaSoftware.Models.OrderViewModel;
 using RemaSoftware.Models.PDFViewModel;
 using Microsoft.Extensions.Configuration;
 using RemaSoftware.Constants;
 using RemaSoftware.ContextModels;
-using RemaSoftware.DALServices.Impl;
-using UtilityServices.Dtos;
 
 namespace RemaSoftware.Controllers
 {
@@ -168,25 +163,30 @@ namespace RemaSoftware.Controllers
         {
             var vm = new EditOrderOperationsViewModel();
             
-            var allAvailableOperations = _operationService.GetAllOperations();
             var order = _orderService.GetOrderWithOperationsById(orderId);
             if (order == null)
             {
                 Logger.Error($"GetOperationsForEdit - order not found for id: {orderId}");
                 return new JsonResult(new { Result = false, ToastMessage="Ordine non trovato."});
             }
-            
-            foreach (var op in allAvailableOperations)
-            {
-                vm.OrderOperations.Add(new OperationFlag
-                {
-                    Operation = op,
-                    Flag = order.Order_Operation.Any(a=>a.OperationID == op.OperationID)
-                });
-            }
-
             vm.OrderId = orderId;
+            
+            var allAvailableOperations = _operationService.GetAllOperations();
+            vm.Operations = allAvailableOperations?.Select(s => new SelectListItem
+            {
+                Text = s.Name,
+                Value = $"{s.OperationID}-{s.Name}"
+            }).ToList();
+            
+            vm.OperationsSelected = order.Order_Operation.Select(s => $"{s.OperationID}-{s.Operations.Name}").ToList();
+            
             return PartialView("_EditOrderOperationsModal", vm);
+        }
+        
+        public JsonResult GetOperationsByOrderId(int orderId)
+        {
+            var ops = _orderService.GetOperationsByOrderId(orderId).Select(s=>$"{s.OperationID}-{s.Name}").ToArray();
+            return new JsonResult(new { Result = ops});
         }
 
         public JsonResult SaveDuplicateOrder(CopyOrderViewModel model)
@@ -234,24 +234,31 @@ namespace RemaSoftware.Controllers
         {
             try
             {
+                var convertedOps = model.OperationsSelected.Select(s => new Operation
+                {
+                    OperationID = int.Parse(s.Split("-").First()),
+                    Name = s.Split("-").Last()
+                }).ToList();
+                
                 var order = _orderService.GetOrderWithOperationsById(model.OrderId);
 
-                var operationToAdd = new List<int>();
+                var addedOps = _operationService.AddOperations(
+                    convertedOps.Where(w=>w.OperationID == 0).ToList()
+                    ).ToList();
+                addedOps.ForEach(fe=>convertedOps.Remove(fe));
+                
+                var operationToAdd = addedOps.Select(s=>s.OperationID).ToList();
                 var operationToRemove = new List<int>();
-                
-                foreach (var operation in model.OrderOperations)
+                foreach (var op in order.Order_Operation)
                 {
-                    var existingOper = order.Order_Operation.SingleOrDefault(sd => sd.OperationID == operation.Operation.OperationID);
-
-                    if (existingOper == null && operation.Flag) // se non esiste e flag è a true vuol dire che è nuova
-                    {
-                        operationToAdd.Add(operation.Operation.OperationID); continue;
-                    }
-
-                    if (existingOper != null && !operation.Flag) // se esiste ci sono 2 casi: flag=true tutto rimane uguale, flag=false si elimina
-                        operationToRemove.Add(operation.Operation.OperationID);
+                    var existingOper = convertedOps.Where(w=>w.OperationID != 0).SingleOrDefault(sd => sd.OperationID == op.OperationID);
+                    if (existingOper == null)
+                        operationToRemove.Add(op.OperationID);
+                    else
+                        convertedOps.Remove(existingOper);
                 }
-                
+                operationToAdd.AddRange(convertedOps.Select(s=>s.OperationID));
+
                 var result = _operationService.EditOrderOperations(model.OrderId, operationToAdd, operationToRemove);
                 return new JsonResult(new { Result = result, ToastMessage="Operazioni modificate correttamente."});
             }
@@ -260,8 +267,6 @@ namespace RemaSoftware.Controllers
                 Logger.Error($"Errore durante la modifica delle operazioni dell'ordine: {model.OrderId}.");
                 return new JsonResult(new { Result = false, ToastMessage="Errore durante la modifica delle operazioni dell'ordine."});
             }
-
-
         }
         
         public JsonResult GetOrderBySKU(string orderSKU)

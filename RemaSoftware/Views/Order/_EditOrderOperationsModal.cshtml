@@ -15,17 +15,10 @@
                     <div class="col-12" id="div-list-ops">
                         <form method="post" id="form-edit-ops">
                             <input type="hidden" asp-for="OrderId">
-                            @for(int i =0; i<Model.OrderOperations.Count; i++)
-                            {
-                                <div class="form-check">
-                                    <input type="hidden" asp-for="@Model.OrderOperations[i].Operation.OperationID">
-                                    <input class="form-check-input" type="checkbox" asp-for="@Model.OrderOperations[i].Flag" id="check-@Model.OrderOperations[i].Operation.OperationID">
-                                    <label for="check-@Model.OrderOperations[i].Operation.OperationID" class="form-check-label">
-                                        @Model.OrderOperations[i].Operation.Name
-                                    </label>
-                                </div>
-    
-                            }
+                            @Html.DropDownListFor(
+                                model=>model.OperationsSelected,
+                                Model.Operations, 
+                                new {multiple="multiple", @class=" form-control select2-edit-operations", id="OperationsSelected", name="OperationsSelected[]", style="width:100%;"})
                         </form>
                         
                     </div>

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.JsonPatch.Converters;
 using Microsoft.EntityFrameworkCore;
 using NLog;
 using RemaSoftware.Constants;
@@ -181,6 +180,11 @@ namespace RemaSoftware.DALServices.Impl
             return _dbContext.Orders
                 .Include(i=>i.Client)
                 .Where(w => w.Status != OrderStatusConstants.STATUS_COMPLETED).ToList();
+        }
+
+        public List<Operation> GetOperationsByOrderId(int orderId)
+        {
+            return _dbContext.Order_Operations.Where(w => w.OrderID == orderId).Select(s=>s.Operations).ToList();
         }
     }
 }
