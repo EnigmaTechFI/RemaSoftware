@@ -1,10 +1,14 @@
+@using System.Globalization
+@using RemaSoftware.Constants
 @model RemaSoftware.Models.AccountingViewModel.AccountingViewModel
 
 
 <!DOCTYPE html>
 
 <head>
-    <title>Contabilità</title>
+    @{
+        ViewData["Title"] = "Contabilità";
+    }
 </head>
 <link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css" />
 
@@ -14,7 +18,7 @@
 
 <div class="card shadow mb-4" id="order-summ-content">
     <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Resoconto contabilit&#224;</h6>
+        <h6 class="m-0 font-weight-bold text-primary">Resoconto contabilit&#224; attuale</h6>
     </div>
     <div class="card-body">
         <div class="row">
@@ -53,3 +57,69 @@
         </div>
     </div>
 </div>
+
+
+<div class="card shadow mb-4" id="order-summ-content">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Resoconto prodotti in azienda</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="table-orders" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>DDT</th>
+                        <th>SKU</th>
+                        <th>Nome</th>
+                        <th>Cliente</th>
+                        <th>Data Entrata</th>
+                        <th>Data Scadenza</th>
+                        <th>N&deg; Pezzi Iniziale</th>
+                        <th>N&deg; Pezzi Attuale</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model.ordersNotCompleted)
+                    {
+                        <tr>
+                            <td>@order.DDT</td>
+                            <td>@order.SKU</td>
+                            <td>@order.Name</td>
+                            <td>@order.Client.Name</td>
+                            <td>@order.DataIn.ToString("d", new CultureInfo("it-IT"))</td>
+                            <td>@order.DataOut.ToString("d", new CultureInfo("it-IT"))</td>
+                            <td>@order.Number_Piece</td>
+                            <td>@order.Number_Pieces_InStock</td>
+                            <td class="text-center">
+                                @{
+                                    if (!string.IsNullOrEmpty(order.Status))
+                                    {
+                                        var statusDto = OrderStatusConstants.OrderStatuses[@order.Status];
+                                        <i class="fas fa-circle fa-lg" style="color: @statusDto?.StatusCssClass" title="@statusDto?.StatusDescription"></i>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<input type="button" class="btn btn-primary" value="Stampa resoconto" onclick="PrintPDF()">
+@section Scripts
+{
+
+    <script>
+        function PrintPDF() {
+            var aElement = document.createElement("a");
+            aElement.setAttribute("type", "hidden");
+            aElement.href = '@Url.Action("DownloadPdfAccounting", "Accounting")';
+            aElement.target = "_blank";
+            document.getElementsByTagName("body")
+            aElement.click();
+    }
+    </script>
+}
+

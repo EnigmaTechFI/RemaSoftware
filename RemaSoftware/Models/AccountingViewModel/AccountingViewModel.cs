@@ -9,7 +9,8 @@ namespace RemaSoftware.Models.AccountingViewModel
     public class AccountingViewModel
     {
         public List<OrderInFactoryGroupByClient> orderInFactoryGroupByClient { get; set;}
-        
+        public List<Order> ordersNotCompleted { get; set; }
+
         public class OrderInFactoryGroupByClient
         {
             public string Client { get; set; }
