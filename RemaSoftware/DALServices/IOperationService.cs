@@ -10,5 +10,6 @@ namespace RemaSoftware.DALServices
 
         void AddOperation(Operation operation);
         List<Operation> AddOperations(List<Operation> operations);
+        void RemoveAllOrderOperations(int orderId);
     }
 }

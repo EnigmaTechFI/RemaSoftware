@@ -7,6 +7,7 @@ using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers;
 using NLog;
 using RemaSoftware.DALServices;
 using RemaSoftware.Helper;
@@ -141,8 +142,9 @@ namespace RemaSoftware.Controllers
             
             // aggiungo all'ordine le operazioni selezionate
             var operationsSelectedAlredyExisting = model.OperationsSelected.Where(w=>!w.StartsWith("0")).Select(s=>int.Parse(s.Split('-').First())).ToList();
-            model.Order.Order_Operation = operationsSelectedAlredyExisting.Union(addedOps.Select(s=>s.OperationID)).Select(s => new Order_Operation
+            model.Order.Order_Operation = operationsSelectedAlredyExisting.Union(addedOps.Select(s=>s.OperationID)).Select((s, index) => new Order_Operation
             {
+                Ordering = index + 1, //+1 perchè parte da 0...
                 OperationID = s
             }).ToList();
             
@@ -185,7 +187,8 @@ namespace RemaSoftware.Controllers
         
         public JsonResult GetOperationsByOrderId(int orderId)
         {
-            var ops = _orderService.GetOperationsByOrderId(orderId).Select(s=>$"{s.OperationID}-{s.Name}").ToArray();
+            var ops = _orderService.GetOperationsByOrderId(orderId)
+                .Select(s=>$"{s.OperationID}-{s.Name}").ToArray();
             return new JsonResult(new { Result = ops});
         }
 
@@ -234,33 +237,29 @@ namespace RemaSoftware.Controllers
         {
             try
             {
-                var convertedOps = model.OperationsSelected.Select(s => new Operation
+                var operationsFromUser = model.OperationsSelected.Select((s, index) => new Operation
                 {
                     OperationID = int.Parse(s.Split("-").First()),
                     Name = s.Split("-").Last()
                 }).ToList();
                 
-                var order = _orderService.GetOrderWithOperationsById(model.OrderId);
-
-                var addedOps = _operationService.AddOperations(
-                    convertedOps.Where(w=>w.OperationID == 0).ToList()
-                    ).ToList();
-                addedOps.ForEach(fe=>convertedOps.Remove(fe));
+                var newOperationsToCreate = operationsFromUser.Where(w => w.OperationID == 0).ToList();
                 
-                var operationToAdd = addedOps.Select(s=>s.OperationID).ToList();
-                var operationToRemove = new List<int>();
-                foreach (var op in order.Order_Operation)
+                var addedOps = _operationService.AddOperations(
+                    newOperationsToCreate
+                );
+                
+                foreach (var opAdded in addedOps)
                 {
-                    var existingOper = convertedOps.Where(w=>w.OperationID != 0).SingleOrDefault(sd => sd.OperationID == op.OperationID);
-                    if (existingOper == null)
-                        operationToRemove.Add(op.OperationID);
-                    else
-                        convertedOps.Remove(existingOper);
+                    var aa = operationsFromUser.Single(s => s.Name == opAdded.Name);
+                    aa.OperationID = opAdded.OperationID;
                 }
-                operationToAdd.AddRange(convertedOps.Select(s=>s.OperationID));
-
-                var result = _operationService.EditOrderOperations(model.OrderId, operationToAdd, operationToRemove);
-                return new JsonResult(new { Result = result, ToastMessage="Operazioni modificate correttamente."});
+                
+                // rimuovo tutte le operazioni per quell'ordine e le riaggiungo
+                _operationService.RemoveAllOrderOperations(model.OrderId);
+                _orderService.AddOrderOperation(model.OrderId, operationsFromUser.Select(s=>s.OperationID).ToList());
+                
+                return new JsonResult(new { Result = true, ToastMessage="Operazioni modificate correttamente."});
             }
             catch (Exception e)
             {

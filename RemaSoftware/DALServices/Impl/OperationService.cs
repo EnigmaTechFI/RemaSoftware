@@ -32,6 +32,13 @@ namespace RemaSoftware.DALServices.Impl
             return operations;
         }
 
+        public void RemoveAllOrderOperations(int orderId)
+        {
+            var orderOperations = _dbContext.Order_Operations.Where(w => w.OrderID == orderId);
+            _dbContext.Order_Operations.RemoveRange(orderOperations);
+            _dbContext.SaveChanges();
+        }
+
         public bool EditOrderOperations(int orderId, List<int> operationToAdd, List<int> operationToRemove)
         {
             foreach (var addOperId in operationToAdd)

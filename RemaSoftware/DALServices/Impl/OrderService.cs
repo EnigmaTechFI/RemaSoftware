@@ -32,11 +32,17 @@ namespace RemaSoftware.DALServices.Impl
 
         public Order GetOrderWithOperationsById(int orderId)
         {
-            return _dbContext.Orders
+            var order = _dbContext.Orders
                 .Include(i=>i.Client)
                 .Include(i=>i.Order_Operation)
                 .ThenInclude(ti=>ti.Operations)
                 .SingleOrDefault(sd => sd.OrderID == orderId);
+            
+            if (order == null)
+                throw new Exception($"Order not found with Id: {orderId}");
+            
+            order.Order_Operation = order.Order_Operation.OrderBy(ob => ob.Ordering).ToList();
+            return order;
         }
 
         public Order AddOrder(Order order)
@@ -66,10 +72,17 @@ namespace RemaSoftware.DALServices.Impl
         {
             var Order_Op = new List<Order_Operation>();
 
+            var counterOrdering = 1;
             foreach(var id in operationId)
             {
-                Order_Operation op = new Order_Operation { OrderID = orderId, OperationID = id};
+                Order_Operation op = new Order_Operation
+                {
+                    OrderID = orderId,
+                    OperationID = id,
+                    Ordering = counterOrdering
+                };
                 Order_Op.Add(op);
+                counterOrdering++;
             }
 
             _dbContext.AddRange(Order_Op);
@@ -184,7 +197,9 @@ namespace RemaSoftware.DALServices.Impl
 
         public List<Operation> GetOperationsByOrderId(int orderId)
         {
-            return _dbContext.Order_Operations.Where(w => w.OrderID == orderId).Select(s=>s.Operations).ToList();
+            return _dbContext.Order_Operations.Where(w => w.OrderID == orderId)
+                .OrderBy(ob=>ob.Ordering)
+                .Select(s=>s.Operations).ToList();
         }
     }
 }

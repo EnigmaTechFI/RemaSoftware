@@ -165,7 +165,7 @@
             }
         });
     }
-
+    var antani;
     function GetOperationsAndOpenModal(orderId) {
         $.ajax({
             url: "@Url.Action("GetEditOrderOperationsModal", "Order")?orderId=" + orderId,
@@ -185,7 +185,8 @@
                 type: "GET",
                 success: function (data) {
                     if (data != null) {
-                        $('.select2-edit-operations').select2({
+                        var ddEditOperations = $(".select2-edit-operations");
+                        ddEditOperations.select2({
                             placeholder: "Seleziona operazioni",
                             tags: true,
                             createTag: function (tag) {
@@ -195,9 +196,23 @@
                                     isNew: true
                                 };
                             }
-                          });
-                        $('.select2-edit-operations').val(data.result);
-                        $('.select2-edit-operations').trigger("change");
+                        });
+                        ddEditOperations.on("select2:select", function (evt) {
+                            var element = evt.params.data.element;
+                            var $element = $(element);
+                          
+                            $element.detach();
+                            $(this).append($element);
+                            $(this).trigger("change");
+                        });
+                        ddEditOperations.val(data.result);
+                        var invertedResult = $(".select2-edit-operations option:selected").get().reverse();
+                        $(invertedResult).each((index, element) =>{
+                            var $element = $(element);
+                            $element.detach();
+                            ddEditOperations.append($element);
+                            ddEditOperations.trigger("change");
+                        })
                     }
                 }
             })

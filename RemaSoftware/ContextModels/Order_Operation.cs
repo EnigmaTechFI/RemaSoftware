@@ -9,6 +9,7 @@
         public int OperationID {get; set;}
 
         public Operation Operations { get; set; }
+        public int Ordering { get; set; }
 
     }
 }
