@@ -217,7 +217,8 @@ namespace RemaSoftware.Controllers
             // aggiungo all'ordine le operazioni selezionate
             newOrder.Order_Operation = oldOrder.Order_Operation.Select(s => new Order_Operation
             {
-                OperationID = s.OperationID
+                OperationID = s.OperationID,
+                Ordering = s.Ordering
             }).ToList();
 
             try
