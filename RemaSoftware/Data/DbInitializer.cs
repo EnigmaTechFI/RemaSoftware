@@ -47,16 +47,16 @@ namespace RemaSoftware.Data
                 var addedRole = userManager.AddToRolesAsync(adm2, new [] { Roles.Admin, Roles.Dipendente }).Result;
             }
             
-            var dip1 = userManager.FindByEmailAsync("dipendente1@gmail.com").Result;
+            var dip1 = userManager.FindByEmailAsync("rema.pul.user@gmail.com").Result;
             if (dip1 == null)
             {
                 dip1 = new MyUser
                 {
-                    UserName = "dipendente1",
-                    Email = "dipendente1@gmail.com"
+                    UserName = "rema-user",
+                    Email = "rema.pul.user@gmail.com"
                 };
 
-                IdentityResult result = userManager.CreateAsync(dip1, "Dipendente2021!").Result;
+                IdentityResult result = userManager.CreateAsync(dip1, "RemaPul2022!").Result;
                 
                 var addedRole = userManager.AddToRolesAsync(dip1, new [] { Roles.Dipendente }).Result;
             }

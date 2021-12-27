@@ -206,14 +206,15 @@
                             $(this).append($element);
                             $(this).trigger("change");
                         });
+                        
                         ddEditOperations.val(data.result);
-                        var invertedResult = $(".select2-edit-operations option:selected").get().reverse();
-                        $(invertedResult).each((index, element) =>{
-                            var $element = $(element);
+                        for (var i = 0; i<data.result.length; i++){
+                            var opt = ddEditOperations.find("[value="+data.result[i]+"]");
+                            var $element = $(opt);
                             $element.detach();
                             ddEditOperations.append($element);
                             ddEditOperations.trigger("change");
-                        })
+                        }
                     }
                 }
             })
