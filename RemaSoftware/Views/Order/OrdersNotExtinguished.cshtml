@@ -55,13 +55,13 @@
                             }
                         </td>
                         <td class="text-center">
-                            @if (!string.IsNullOrEmpty(order.Status) && order.Status != OrderStatusConstants.STATUS_COMPLETED)
-                            {
-                                <i class="fas fa-arrow-circle-up fa-lg pl-2"
+                            @* @if (!string.IsNullOrEmpty(order.Status) && order.Status != OrderStatusConstants.STATUS_COMPLETED) *@
+                            @* { *@
+                                 <i class="fas fa-arrow-circle-up fa-lg pl-2"
                                    title="Avanza status ordine" style="cursor: pointer; color: darkgreen"
                                    data-toggle="modal" data-target="#confirm-change-status-modal"
                                    onclick="SetNextOrderStatusAndOrderId(@order.OrderID, '@order.Status')"></i>
-                            }
+                            @*}*@
                         </td>
                     </tr>
                     }
