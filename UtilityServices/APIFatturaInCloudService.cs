@@ -19,15 +19,15 @@ namespace UtilityServices
         {
             _configuration = configuration;
         }
-        
+
         public string AddOrderCloud(OrderDto order)
         {
             Logger.Info("Inizio invio a ApiFattureInCloud");
-            
-            var apiEndpoint = _configuration["ApiFattureInCloud:ApiEndpoint"];
+
+            var apiEndpoint = _configuration["ApiFattureInCloud:ApiEndpointNewProduct"];
             var apiUID = _configuration["ApiFattureInCloud:ApiUID"];
             var apiKey = _configuration["ApiFattureInCloud:ApiKEY"];
-            
+
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(apiEndpoint);
             httpWebRequest.ContentType = "application/json";
             httpWebRequest.Method = "POST";
@@ -69,7 +69,47 @@ namespace UtilityServices
 
             Logger.Info($"Risposta da FattureInCloud: {result}");
             var obj = JsonConvert.DeserializeObject<dynamic>(result);
-            return obj.id; 
+            return obj.id;
+        }
+
+        public string DeleteOrder(string productId)
+        {
+            Logger.Info("Inizio eliminazione da ApiFattureInCloud");
+
+            var apiEndpoint = _configuration["ApiFattureInCloud:ApiEndpointDeleteProduct"];
+            var apiUID = _configuration["ApiFattureInCloud:ApiUID"];
+            var apiKey = _configuration["ApiFattureInCloud:ApiKEY"];
+
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create(apiEndpoint);
+            httpWebRequest.ContentType = "application/json";
+            httpWebRequest.Method = "POST";
+            var myProxy = new WebProxy("http://winproxy.server.lan:3128/", true);
+            httpWebRequest.Proxy = myProxy;
+
+            OrderToDelete orderToSendInCloud = new OrderToDelete()
+            {
+                api_uid = apiUID,
+                api_key = apiKey,
+                id = productId,
+            };
+
+            string stringjson = JsonConvert.SerializeObject(orderToSendInCloud);
+
+            using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+            {
+                streamWriter.Write(stringjson);
+            }
+
+            var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+            string result;
+            using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+            {
+                result = streamReader.ReadToEnd();
+            }
+
+            Logger.Info($"Risposta da FattureInCloud: {result}");
+            var obj = JsonConvert.DeserializeObject<dynamic>(result);
+            return obj.error_code;
         }
     }
 
@@ -91,5 +131,10 @@ namespace UtilityServices
         public bool magazzino { get; set; }
         public int giacenza_iniziale { get; set; }
 
+    }
+    class OrderToDelete{
+        public string api_uid { get; set; }
+        public string api_key { get; set; }
+        public string id { get; set; }
     }
 }

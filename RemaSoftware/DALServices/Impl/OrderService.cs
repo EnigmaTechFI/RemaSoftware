@@ -148,17 +148,19 @@ namespace RemaSoftware.DALServices.Impl
             }
         }
 
-        public void DeleteOrderByID(int OrderID)
+        public bool DeleteOrderByID(int OrderID)
         {
             try
             {
                 var order = _dbContext.Orders.SingleOrDefault(i => i.OrderID == OrderID);
                 _dbContext.Remove(order);
                 _dbContext.SaveChanges();
+                return true;
             }
             catch
             {
                 Logger.Error($"[Eliminazione Ordine] Ordine non presente. ID: {OrderID}");
+                return false;
             }
             
         }

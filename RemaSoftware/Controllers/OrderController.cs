@@ -319,6 +319,31 @@ namespace RemaSoftware.Controllers
             return RedirectToAction("OrdersNotExtinguished");
         }
 
+        [HttpDelete]
+        public JsonResult DeleteProduct(int productId)
+        {
+            try
+            {
+                var order = _orderService.GetOrderById(productId);
+                var result = _apiFatturaInCloud.DeleteOrder(order.ID_FattureInCloud);
+            }
+            catch(Exception e)
+            {
+                Logger.Error(e, $"Problema di connessione con FattureInCloud");
+                return new JsonResult(new { Error = e, ToastMessage = $"Problema di connessione con FattureInCloud.COntattare gli sviluppatori" });
+            }
+            try
+            {
+                var deleteResult = _orderService.DeleteOrderByID(productId);
+                return new JsonResult(new { Result = deleteResult, ToastMessage = "Articolo di magazzino eliminato correttamente." });
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Error deleting stockArticle: {productId}");
+                return new JsonResult(new { Error = e, ToastMessage = $"Errore durante l\\'eliminazione dell\\'articolo di magazzino." });
+            }
+        }
+
         #region Models validation
 
         private string ValidateNewOrderViewModelAndSetDataOut(NewOrderViewModel model)

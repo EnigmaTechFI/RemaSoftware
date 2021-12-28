@@ -38,7 +38,7 @@
                 <tbody>
                 @foreach (var order in Model.Orders)
                 {
-                    <tr>
+                    <tr id="product-@order.OrderID">
                         <td>@order.DDT</td>
                         <td>@order.SKU</td>
                         <td>@order.Name</td>
@@ -62,12 +62,31 @@
                             <a style="text-decoration: none" target="_blank" href='@Url.Action("DownloadPdfOrder", "Order", new {orderId = order.OrderID})'>
                                 <i class="fas fa-file-download fa-lg pl-2" title="Scarica ordine in PDF" style="cursor: pointer; color: #4e73df"></i>
                             </a>
-                            <i class="fas fa-copy fa-lg pl-2" style="color: red; cursor: pointer" onclick="setOrderId(@order.OrderID)" data-toggle="modal" data-target="#copy-ord-modal" title="Duplica Ordine"></i>
+                            <i class="fas fa-copy fa-lg pl-2" style="color: green; cursor: pointer" onclick="setOrderId(@order.OrderID)" data-toggle="modal" data-target="#copy-ord-modal" title="Duplica Ordine"></i>
+                            <i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer; color: #e74a3b" id="@order.OrderID" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDataArticleId('#confirm-del-modal', @order.OrderID)"></i>                        
                         </td>
                     </tr>
                 }
                 </tbody>
             </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirm-del-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Conferma eliminazione</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Sei sicuro di voler eliminare questo prodotto?</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
+                <button class="btn btn-primary" onclick="DeleteStockArticle()">Elimina</button>
+            </div>
         </div>
     </div>
 </div>
@@ -84,8 +103,33 @@
     <script src="https://cdn.datatables.net/plug-ins/1.10.11/sorting/date-eu.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
+
+    function SetDataArticleId(elementName, articleId){
+        $(elementName).data("articleId", articleId );
+    }
+
+    function DeleteStockArticle(){
+        var articleId = $("#confirm-del-modal").data("articleId");
+        $.ajax({
+            url: '@Url.Action("DeleteProduct", "Order")?' + $.param({"productId": articleId}),
+            type: 'DELETE',
+            success: function (data) {
+                if (data.result == true){
+                    table.row($("tr#product-" + articleId)).remove().draw();
+                    $("#confirm-del-modal").modal('toggle');
+                    toastNotifySuccess(data.toastMessage);
+                }else{
+                    toastNotifyError(data.toastMessage);
+                }
+            },
+            error: function (data){
+                toastNotifyError("Errore durante l\'eliminazione dell\'articolo di magazzino.");
+            }
+        });
+    }
+
     $(document).ready( function () {
-        $('#table-orders').DataTable({
+        table = $('#table-orders').DataTable({
             "language": {
                 "lengthMenu": "Mostra _MENU_ risultati per pagina",
                 "zeroRecords": "Nessun risultato trovato",
@@ -147,7 +191,7 @@
                 aElement.target = "_blank";
                 document.getElementsByTagName("body")
                 aElement.click();
-                
+
                 window.location.href='@Model.RedirectUrlAfterCreation';
             } else {
                 toastNotifyError(data.toastMessage);
@@ -174,10 +218,10 @@
             success: function (result) {
                 if (result != null) {
                     if ($("#edit-ops-modal")){
-                        $("#edit-ops-modal").remove()    
+                        $("#edit-ops-modal").remove()
                     }
                     $("#order-summ-content").after(result);
-                    $("#edit-ops-modal").modal('toggle');                    
+                    $("#edit-ops-modal").modal('toggle');
                 }
             }
         }).then(function (){
@@ -201,12 +245,12 @@
                         ddEditOperations.on("select2:select", function (evt) {
                             var element = evt.params.data.element;
                             var $element = $(element);
-                          
+
                             $element.detach();
                             $(this).append($element);
                             $(this).trigger("change");
                         });
-                        
+
                         ddEditOperations.val(data.result);
                         for (var i = 0; i<data.result.length; i++){
                             var opt = ddEditOperations.find("[value="+data.result[i]+"]");

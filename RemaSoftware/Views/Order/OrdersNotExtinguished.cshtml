@@ -18,7 +18,7 @@
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-bordered" id="table-orders" width="100%" cellspacing="0">
+            <table class="table table-bordered" id="table-not-extinguished" width="100%" cellspacing="0">
                 <thead>
                     <tr>
                         <th>DDT</th>
@@ -36,34 +36,34 @@
                 <tbody>
                     @foreach (var order in Model)
                     {
-                    <tr>
-                        <td>@order.DDT</td>
-                        <td>@order.SKU</td>
-                        <td>@order.Name</td>
-                        <td>@order.Client.Name</td>
-                        <td>@order.DataIn.ToString("d", new CultureInfo("it-IT"))</td>
-                        <td>@order.DataOut.ToString("d", new CultureInfo("it-IT"))</td>
-                        <td>@order.Number_Piece</td>
-                        <td>@order.Number_Pieces_InStock</td>
-                        <td class="text-center">
-                            @{
-                                if (!string.IsNullOrEmpty(order.Status))
-                                {
-                                    var statusDto = OrderStatusConstants.OrderStatuses[@order.Status];
-                                    <i class="fas fa-circle fa-lg" style="color: @statusDto?.StatusCssClass" title="@statusDto?.StatusDescription"></i>
+                        <tr>
+                            <td>@order.DDT</td>
+                            <td>@order.SKU</td>
+                            <td>@order.Name</td>
+                            <td>@order.Client.Name</td>
+                            <td>@order.DataIn.ToString("d", new CultureInfo("it-IT"))</td>
+                            <td>@order.DataOut.ToString("d", new CultureInfo("it-IT"))</td>
+                            <td>@order.Number_Piece</td>
+                            <td>@order.Number_Pieces_InStock</td>
+                            <td class="text-center">
+                                @{
+                                    if (!string.IsNullOrEmpty(order.Status))
+                                    {
+                                        var statusDto = OrderStatusConstants.OrderStatuses[@order.Status];
+                                        <i class="fas fa-circle fa-lg" style="color: @statusDto?.StatusCssClass" title="@statusDto?.StatusDescription"></i>
+                                    }
                                 }
-                            }
-                        </td>
-                        <td class="text-center">
-                            @* @if (!string.IsNullOrEmpty(order.Status) && order.Status != OrderStatusConstants.STATUS_COMPLETED) *@
-                            @* { *@
-                                 <i class="fas fa-arrow-circle-up fa-lg pl-2"
+                            </td>
+                            <td class="text-center">
+                                @* @if (!string.IsNullOrEmpty(order.Status) && order.Status != OrderStatusConstants.STATUS_COMPLETED) *@
+                                @* { *@
+                                <i class="fas fa-arrow-circle-up fa-lg pl-2"
                                    title="Avanza status ordine" style="cursor: pointer; color: darkgreen"
                                    data-toggle="modal" data-target="#confirm-change-status-modal"
                                    onclick="SetNextOrderStatusAndOrderId(@order.OrderID, '@order.Status')"></i>
-                            @*}*@
-                        </td>
-                    </tr>
+                                @*}*@
+                            </td>
+                        </tr>
                     }
                 </tbody>
             </table>
@@ -77,8 +77,42 @@
     </div>
 </div>
 @{ await Html.RenderPartialAsync("_ConfirmChangeOrderStatusModal");}
-@section Scripts{ 
+@section Scripts{
+
+    <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
     <script>
+        $(document).ready(function () {
+            table = $('#table-not-extinguished').DataTable({
+                "language": {
+                    "lengthMenu": "Mostra _MENU_ risultati per pagina",
+                    "zeroRecords": "Nessun risultato trovato",
+                    "info": "Pagina _PAGE_ di _PAGES_",
+                    "infoEmpty": "Nessun risultato disponibile",
+                    "infoFiltered": "(filtrato da _MAX_ risultati totali)",
+                    "search": "Ricerca:",
+                    "paginate": {
+                        "first": "Inizio",
+                        "previous": "Precedente",
+                        "next": "Successivo",
+                        "last": "Fine"
+                    }
+                },
+                "columnDefs": [
+                    { "searchable": true, "orderable": true, "targets": 0 },
+                    { "searchable": true, "orderable": true, "targets": 1 },
+                    { "searchable": true, "orderable": true, "targets": 2 },
+                    { "searchable": true, "orderable": true, "targets": 3 },
+                    { "searchable": false, "orderable": true, "targets": 4, type: 'date-eu' },
+                    { "searchable": false, "orderable": true, "targets": 5, type: 'date-eu' },
+                    { "searchable": false, "orderable": false, "targets": 6 },
+                    { "searchable": false, "orderable": false, "targets": 7 },
+                    { "searchable": false, "orderable": false, "targets": 8 },
+                    { "searchable": false, "orderable": false, "targets": 9 }
+                ]
+            });
+        });
+
         function SetNextOrderStatusAndOrderId(orderId, currentStatus) {
             $("#id-ordine-chg-status").val(orderId);
             $("#current-status-chg-status").val(currentStatus);
