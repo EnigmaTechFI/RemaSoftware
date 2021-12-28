@@ -123,7 +123,7 @@
                 }
             },
             error: function (data){
-                toastNotifyError("Errore durante l\'eliminazione dell\'articolo di magazzino.");
+                toastNotifyError(data.toastMessage);
             }
         });
     }

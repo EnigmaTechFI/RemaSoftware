@@ -67,7 +67,7 @@ namespace UtilityServices
                 result = streamReader.ReadToEnd();
             }
 
-            Logger.Info($"Risposta da FattureInCloud: {result}");
+            Logger.Info($"Creazione - Risposta da FattureInCloud: {result}");
             var obj = JsonConvert.DeserializeObject<dynamic>(result);
             return obj.id;
         }
@@ -107,7 +107,7 @@ namespace UtilityServices
                 result = streamReader.ReadToEnd();
             }
 
-            Logger.Info($"Risposta da FattureInCloud: {result}");
+            Logger.Info($"Delete - Risposta da FattureInCloud: {result}");
             var obj = JsonConvert.DeserializeObject<dynamic>(result);
             return obj.error_code;
         }

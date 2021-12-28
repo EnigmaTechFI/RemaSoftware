@@ -319,7 +319,6 @@ namespace RemaSoftware.Controllers
             return RedirectToAction("OrdersNotExtinguished");
         }
 
-        [HttpDelete]
         public JsonResult DeleteProduct(int productId)
         {
             try
