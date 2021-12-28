@@ -119,7 +119,7 @@
         var articleId = $("#confirm-del-modal").data("articleId");
         $.ajax({
             url: '@Url.Action("DeleteStockArticle", "Stock")?' + $.param({"stockArticleId": articleId}),
-            type: 'DELETE',
+            type: 'GET',
             success: function (data) {
                 if (data.result == true){
                     table.row($("tr#article-" + articleId)).remove().draw();

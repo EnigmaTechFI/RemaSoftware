@@ -112,7 +112,7 @@
         var articleId = $("#confirm-del-modal").data("articleId");
         $.ajax({
             url: '@Url.Action("DeleteProduct", "Order")?' + $.param({"productId": articleId}),
-            type: 'DELETE',
+            type: 'GET',
             success: function (data) {
                 if (data.result == true){
                     table.row($("tr#product-" + articleId)).remove().draw();

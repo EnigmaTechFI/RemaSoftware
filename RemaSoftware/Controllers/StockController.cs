@@ -93,8 +93,7 @@ namespace RemaSoftware.Controllers
             }
             return null;
         }
-
-        [HttpDelete]
+        
         public JsonResult DeleteStockArticle(int stockArticleId)
         {
             try
