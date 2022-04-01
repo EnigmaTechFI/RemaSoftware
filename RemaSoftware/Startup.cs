@@ -1,3 +1,6 @@
+using System;
+using System.Net.WebSockets;
+using System.Threading;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -12,6 +15,8 @@ using AspNetCoreHero.ToastNotification;
 using AspNetCoreHero.ToastNotification.Extensions;
 using UtilityServices;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
 using RemaSoftware.DALServices;
 using RemaSoftware.DALServices.Impl;
 using RemaSoftware.Helper;
@@ -72,6 +77,7 @@ namespace RemaSoftware
                     }
                 };
             });
+            
             //services.AddAuthorization(options =>
             //{
             //    options.AddPolicy("RequireAdministratorRole",
@@ -94,6 +100,8 @@ namespace RemaSoftware
                 config.Position = NotyfPosition.TopRight;
             });
 
+            services.AddSignalR();
+            services.AddTransient<MyHub>();
             services.AddTransient<IImageService, ImageService>();
             services.AddTransient<IEmailService, EmailService>();
             //services.AddTransient<IPdfService, PdfService>();
@@ -125,10 +133,14 @@ namespace RemaSoftware
                 app.UseDeveloperExceptionPage();
 
             }
-
             
+            // app.UseSignalR(routes =>
+            // {
+            //     routes.MapHub<MyHub>("/myhub");
+            // });
+
             //if (!env.IsEnvironment("Test"))
-                app.UseHttpsRedirection();
+                //app.UseHttpsRedirection();
 
             app.UseStaticFiles();
 
@@ -143,8 +155,20 @@ namespace RemaSoftware
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}");
+                endpoints.MapHub<MyHub>("/myhub");
             });
             DbInitializer.SeedUsersAndRoles(userManager, roleManager);
         }
+        
+        private async Task Echo(HttpContext context, WebSocket webSocket)  
+        {  
+            var buffer = new byte[1024 * 4];  
+            WebSocketReceiveResult result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);  
+            while (!result.CloseStatus.HasValue)  
+            {  
+                await webSocket.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), result.MessageType, result.EndOfMessage, CancellationToken.None);  
+                result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);  
+            }
+        }  
     }
 }

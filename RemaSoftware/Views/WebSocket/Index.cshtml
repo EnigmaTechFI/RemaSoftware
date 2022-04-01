@@ -1,0 +1,25 @@
+
+<div id="signlar-msgs"></div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+            // connessione all'hub signalr.
+            var connection = new signalR.HubConnectionBuilder()
+                                .withUrl('/myhub')
+                                .build();
+            // gli dico cosa fare quando arriva un messaggio
+            connection.on('broadcastMessage', function (name, message) {
+                var div = document.getElementById("signlar-msgs")
+                var h4 = document.createElement('H4');
+                h4.appendChild(document.createTextNode('name:' + name + ' message:' + message))
+                div.appendChild(h4);
+            });
+            // starto la connessione con il server
+            connection.start()
+                .then(function () {
+                    console.log('connection started');
+            })
+            .catch(error => {
+                console.error(error.message);
+            });
+        });
+</script>
