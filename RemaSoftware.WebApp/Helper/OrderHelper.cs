@@ -1,8 +1,8 @@
 using System;
 using System.Drawing;
-using RemaSoftware.WebApp.ContextModels;
-using RemaSoftware.WebApp.DALServices;
-using RemaSoftware.WebApp.Data;
+using RemaSoftware.Domain.ContextModels;
+using RemaSoftware.Domain.DALServices;
+using RemaSoftware.Domain.Data;
 using RemaSoftware.UtilityServices;
 using RemaSoftware.UtilityServices.Dtos;
 

@@ -1,5 +1,5 @@
-using RemaSoftware.WebApp.Constants;
-using RemaSoftware.WebApp.ContextModels;
+using RemaSoftware.Domain.Constants;
+using RemaSoftware.Domain.ContextModels;
 
 namespace RemaSoftware.WebApp.Models.OrderViewModel
 {

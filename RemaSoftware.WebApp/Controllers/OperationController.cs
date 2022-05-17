@@ -2,9 +2,8 @@
 using System;
 using NLog;
 using AspNetCoreHero.ToastNotification.Abstractions;
-using RemaSoftware.WebApp.ContextModels;
-using RemaSoftware.WebApp.DALServices;
-using RemaSoftware.WebApp.Data;
+using RemaSoftware.Domain.ContextModels;
+using RemaSoftware.Domain.DALServices;
 using RemaSoftware.WebApp.Models.OperationViewModel;
 
 namespace RemaSoftware.WebApp.Controllers
@@ -13,7 +12,6 @@ namespace RemaSoftware.WebApp.Controllers
     {
         private readonly IOperationService _operationService;
         private readonly INotyfService _notyfToastService;
-        private readonly ApplicationDbContext _applicationDbContext;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         public OperationController(IOperationService operationService, INotyfService notyfToastService)
         {

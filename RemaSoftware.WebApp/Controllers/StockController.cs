@@ -4,8 +4,8 @@ using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NLog;
-using RemaSoftware.WebApp.ContextModels;
-using RemaSoftware.WebApp.DALServices;
+using RemaSoftware.Domain.ContextModels;
+using RemaSoftware.Domain.DALServices;
 using RemaSoftware.WebApp.Models.StockViewModel;
 
 namespace RemaSoftware.WebApp.Controllers
@@ -91,7 +91,6 @@ namespace RemaSoftware.WebApp.Controllers
                 Logger.Error(e, $"Errore durante l'aggiornamento dell'articolo magazzino: {model.Warehouse_StockID}");
                 return new JsonResult(new {Error = e, Messge = $"Errore durante l\'aggiornamento dell\'articolo magazzino: {model.Warehouse_StockID}"});
             }
-            return null;
         }
         
         public JsonResult DeleteStockArticle(int stockArticleId)

@@ -10,10 +10,10 @@ using AspNetCoreHero.ToastNotification;
 using AspNetCoreHero.ToastNotification.Extensions;
 using RemaSoftware.UtilityServices;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using RemaSoftware.WebApp.ContextModels;
-using RemaSoftware.WebApp.DALServices;
-using RemaSoftware.WebApp.DALServices.Impl;
-using RemaSoftware.WebApp.Data;
+using RemaSoftware.Domain.ContextModels;
+using RemaSoftware.Domain.DALServices;
+using RemaSoftware.Domain.DALServices.Impl;
+using RemaSoftware.Domain.Data;
 using RemaSoftware.WebApp.Helper;
 
 namespace RemaSoftware.WebApp

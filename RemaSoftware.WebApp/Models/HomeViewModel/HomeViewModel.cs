@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using RemaSoftware.WebApp.ContextModels;
+using RemaSoftware.Domain.ContextModels;
 
 namespace RemaSoftware.WebApp.Models.HomeViewModel
 {

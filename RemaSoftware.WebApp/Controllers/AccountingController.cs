@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
-using RemaSoftware.WebApp.Constants;
-using RemaSoftware.WebApp.DALServices;
+using RemaSoftware.Domain.Constants;
+using RemaSoftware.Domain.DALServices;
 using RemaSoftware.WebApp.Helper;
 using RemaSoftware.WebApp.Models.AccountingViewModel;
 

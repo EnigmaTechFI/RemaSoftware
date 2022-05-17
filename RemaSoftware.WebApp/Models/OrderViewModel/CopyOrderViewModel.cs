@@ -1,4 +1,4 @@
-﻿using RemaSoftware.WebApp.ContextModels;
+﻿using RemaSoftware.Domain.ContextModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using RemaSoftware.WebApp.ContextModels;
+using RemaSoftware.Domain.ContextModels;
 
 namespace RemaSoftware.WebApp.Models.PDFViewModel
 {

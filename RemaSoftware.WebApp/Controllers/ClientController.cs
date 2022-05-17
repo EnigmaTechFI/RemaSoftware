@@ -4,9 +4,8 @@ using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
-using RemaSoftware.WebApp.ContextModels;
-using RemaSoftware.WebApp.DALServices;
-using RemaSoftware.WebApp.Data;
+using RemaSoftware.Domain.ContextModels;
+using RemaSoftware.Domain.DALServices;
 using RemaSoftware.WebApp.Models.ClientViewModel;
 
 namespace RemaSoftware.WebApp.Controllers
@@ -16,7 +15,6 @@ namespace RemaSoftware.WebApp.Controllers
     {
         private readonly IClientService _clientService;
         private readonly INotyfService _notyfToastService;
-        private readonly ApplicationDbContext _applicationDbContext;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public ClientController(IClientService clientService, INotyfService notyfToastService)
@@ -26,9 +24,9 @@ namespace RemaSoftware.WebApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> AddClient()
+        public Task<IActionResult> AddClient()
         {
-            return View();
+            return Task.FromResult<IActionResult>(View());
         }
 
         [HttpPost]

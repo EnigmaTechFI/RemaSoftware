@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using RemaSoftware.WebApp.DALServices;
-using RemaSoftware.WebApp.Data;
+using RemaSoftware.Domain.DALServices;
+using RemaSoftware.Domain.Data;
 using RemaSoftware.WebApp.Models.AccountingViewModel;
 using static RemaSoftware.WebApp.Models.AccountingViewModel.AccountingViewModel;
 

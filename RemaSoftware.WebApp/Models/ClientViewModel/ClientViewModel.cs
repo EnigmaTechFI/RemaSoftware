@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using RemaSoftware.WebApp.ContextModels;
+using RemaSoftware.Domain.ContextModels;
 
 namespace RemaSoftware.WebApp.Models.ClientViewModel
 {

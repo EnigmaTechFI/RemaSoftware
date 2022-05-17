@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using RemaSoftware.WebApp.ContextModels;
-using RemaSoftware.WebApp.DALServices;
-using RemaSoftware.WebApp.Data;
+using RemaSoftware.Domain.ContextModels;
+using RemaSoftware.Domain.DALServices;
+using RemaSoftware.Domain.Data;
 using RemaSoftware.WebApp.Models.HomeViewModel;
 
 namespace RemaSoftware.WebApp.Helper
