@@ -1,0 +1,269 @@
+﻿@using System.Globalization
+@using RemaSoftware.WebApp.Constants
+@using RemaSoftware.WebApp.Models.OrderViewModel
+@model RemaSoftware.WebApp.Models.OrderViewModel.OrderSummaryViewModel
+
+@{
+    ViewData["Title"] = "Resoconto";
+}
+
+<link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Resoconto</h1>
+</div>
+
+<div class="card shadow mb-4" id="order-summ-content">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Resoconto ordini</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="table-orders" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>DDT</th>
+                        <th>SKU</th>
+                        <th>Nome</th>
+                        <th>Cliente</th>
+                        <th>Data Entrata</th>
+                        <th>Data Scadenza</th>
+                        <th>N° Pezzi Iniziale</th>
+                        <th>N° Pezzi Attuale</th>
+                        <th>Prz. Unitario</th>
+                        <th>Status</th>
+                        <th>Azioni</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var order in Model.Orders)
+                {
+                    <tr id="product-@order.OrderID">
+                        <td>@order.DDT</td>
+                        <td>@order.SKU</td>
+                        <td>@order.Name</td>
+                        <td>@order.Client.Name</td>
+                        <td>@order.DataIn.ToString("d", new CultureInfo("it-IT"))</td>
+                        <td>@order.DataOut.ToString("d", new CultureInfo("it-IT"))</td>
+                        <td>@order.Number_Piece</td>
+                        <td>@order.Number_Pieces_InStock</td>
+                        <td>&euro; @order.Price_Uni.ToString("0.00")</td>
+                        <td class="text-center">
+                            @{
+                                if (!string.IsNullOrEmpty(order.Status))
+                                {
+                                    var statusDto = OrderStatusConstants.OrderStatuses[@order.Status];
+                                    <i class="fas fa-circle fa-lg" style="color: @statusDto?.StatusCssClass" title="@statusDto?.StatusDescription"></i>
+                                }
+                            }
+                        </td>
+                        <td class="text-center">
+                            <i class="fas fa-users-cog fa-lg" style="color: #858796; cursor: pointer" onclick="GetOperationsAndOpenModal(@order.OrderID)" title="Visualizza / Modifica operazioni"></i>
+                            <a style="text-decoration: none" target="_blank" href='@Url.Action("DownloadPdfOrder", "Order", new {orderId = order.OrderID})'>
+                                <i class="fas fa-file-download fa-lg pl-2" title="Scarica ordine in PDF" style="cursor: pointer; color: #4e73df"></i>
+                            </a>
+                            <i class="fas fa-copy fa-lg pl-2" style="color: green; cursor: pointer" onclick="setOrderId(@order.OrderID)" data-toggle="modal" data-target="#copy-ord-modal" title="Duplica Ordine"></i>
+                            <i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer; color: #e74a3b" id="@order.OrderID" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDataArticleId('#confirm-del-modal', @order.OrderID)"></i>                        
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirm-del-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Conferma eliminazione</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Sei sicuro di voler eliminare questo prodotto?</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
+                <button class="btn btn-primary" onclick="DeleteStockArticle()">Elimina</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@{await Html.RenderPartialAsync("../Order/_CopyOrderModal", new CopyOrderViewModel());}
+
+@section Scripts
+{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
+    <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/js/select2.min.js" integrity="sha512-9p/L4acAjbjIaaGXmZf0Q2bV42HetlCLbv8EP0z3rLbQED2TAFUlDvAezy7kumYqg5T8jHtDdlm1fgIsr5QzKg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.10.11/sorting/date-eu.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+
+    function SetDataArticleId(elementName, articleId){
+        $(elementName).data("articleId", articleId );
+    }
+
+    function DeleteStockArticle(){
+        var articleId = $("#confirm-del-modal").data("articleId");
+        $.ajax({
+            url: '@Url.Action("DeleteProduct", "Order")?' + $.param({"productId": articleId}),
+            type: 'GET',
+            success: function (data) {
+                if (data.result == true){
+                    table.row($("tr#product-" + articleId)).remove().draw();
+                    $("#confirm-del-modal").modal('toggle');
+                    toastNotifySuccess(data.toastMessage);
+                }else{
+                    toastNotifyError(data.toastMessage);
+                }
+            },
+            error: function (data){
+                toastNotifyError(data.toastMessage);
+            }
+        });
+    }
+
+    $(document).ready( function () {
+        table = $('#table-orders').DataTable({
+            "language": {
+                "lengthMenu": "Mostra _MENU_ risultati per pagina",
+                "zeroRecords": "Nessun risultato trovato",
+                "info": "Pagina _PAGE_ di _PAGES_",
+                "infoEmpty": "Nessun risultato disponibile",
+                "infoFiltered": "(filtrato da _MAX_ risultati totali)",
+                "search": "Ricerca:",
+                "paginate": {
+                    "first": "Inizio",
+                    "previous": "Precedente",
+                    "next": "Successivo",
+                    "last": "Fine"
+                }
+            },
+            "columnDefs": [
+                { "searchable": true, "orderable": true, "targets": 0 },
+                { "searchable": true, "orderable": true, "targets": 1 },
+                { "searchable": true, "orderable": true, "targets": 2 },
+                { "searchable": true, "orderable": true, "targets": 3 },
+                { "searchable": false, "orderable": true, "targets": 4, type: 'date-eu' },
+                { "searchable": false, "orderable": true, "targets": 5, type: 'date-eu' },
+                { "searchable": false, "orderable": false, "targets": 6 },
+                { "searchable": false, "orderable": false, "targets": 7 },
+                { "searchable": false, "orderable": false, "targets": 8 },
+                { "searchable": false, "orderable": false, "targets": 9 },
+                { "searchable": false, "orderable": false, "targets": 10 }
+              ]
+        });
+    });
+
+    function setOrderId(OrderIdToDuplicate) {
+        $("#id_ordine").val(OrderIdToDuplicate)
+    }
+
+    function SaveEditOpertions() {
+        ShowLoader();
+        var model = $("#form-edit-ops").serialize();
+        $.post('@Url.Action("EditOrderOperations", "Order")', model, function (data){
+            if (data.result == true){
+                $("#edit-ops-modal").modal('toggle');
+                toastNotifySuccess(data.toastMessage);
+            } else {
+                toastNotifyError(data.toastMessage);
+            }
+            HideLoader();
+        });
+        }
+
+    function SaveNewOrder() {
+        ShowLoader();
+        var model = $("#form-copy-ord").serialize();
+        $.post('@Url.Action("SaveDuplicateOrder", "Order")', model, function (data){
+            if (data.result == true){
+                $("#copy-ord-modal").modal('toggle');
+                toastNotifySuccess(data.toastMessage);
+                var aElement = document.createElement("a");
+                aElement.setAttribute("type", "hidden");
+                aElement.href = '@Url.Action("DownloadPdfOrder", "Order")' + "?orderId=" + data.orderId;
+                aElement.target = "_blank";
+                document.getElementsByTagName("body")
+                aElement.click();
+
+                window.location.href='@Model.RedirectUrlAfterCreation';
+            } else {
+                toastNotifyError(data.toastMessage);
+            }
+            HideLoader();
+        }).done(function () {
+            HideLoader();
+        });
+    }
+
+    function DownloadPdf(orderId) {
+        $.ajax({
+            url: "@Url.Action("DownloadPdfOrder", "Order")?orderId=" + orderId,
+            type: "GET",
+            success: function (result) {
+            }
+        });
+    }
+    var antani;
+    function GetOperationsAndOpenModal(orderId) {
+        $.ajax({
+            url: "@Url.Action("GetEditOrderOperationsModal", "Order")?orderId=" + orderId,
+            type: "GET",
+            success: function (result) {
+                if (result != null) {
+                    if ($("#edit-ops-modal")){
+                        $("#edit-ops-modal").remove()
+                    }
+                    $("#order-summ-content").after(result);
+                    $("#edit-ops-modal").modal('toggle');
+                }
+            }
+        }).then(function (){
+            $.ajax({
+                url: "@Url.Action("GetOperationsByOrderId", "Order")?orderId=" + orderId,
+                type: "GET",
+                success: function (data) {
+                    if (data != null) {
+                        var ddEditOperations = $(".select2-edit-operations");
+                        ddEditOperations.select2({
+                            placeholder: "Seleziona operazioni",
+                            tags: true,
+                            createTag: function (tag) {
+                                return {
+                                    id: `0-${tag.term}`,
+                                    text: tag.term,
+                                    isNew: true
+                                };
+                            }
+                        });
+                        ddEditOperations.on("select2:select", function (evt) {
+                            var element = evt.params.data.element;
+                            var $element = $(element);
+
+                            $element.detach();
+                            $(this).append($element);
+                            $(this).trigger("change");
+                        });
+
+                        ddEditOperations.val(data.result);
+                        for (var i = 0; i<data.result.length; i++){
+                            var opt = ddEditOperations.find("[value="+data.result[i]+"]");
+                            var $element = $(opt);
+                            $element.detach();
+                            ddEditOperations.append($element);
+                            ddEditOperations.trigger("change");
+                        }
+                    }
+                }
+            })
+        });
+        }
+
+    </script>>
+}

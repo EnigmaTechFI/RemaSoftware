@@ -1,0 +1,33 @@
+@model RemaSoftware.WebApp.Models.OrderViewModel.EditOrderOperationsViewModel
+
+<div class="modal fade" id="edit-ops-modal" tabindex="-1" role="dialog" aria-labelledby="modal-head" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-head">Modifica operazioni dell'ordine</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="pb-2 font-italic h6">Seleziona le operazioni per questo ordine</p>
+                <div class="row">
+                    <div class="col-12" id="div-list-ops">
+                        <form method="post" id="form-edit-ops">
+                            <input type="hidden" asp-for="OrderId">
+                            @Html.DropDownListFor(
+                                model=>model.OperationsSelected,
+                                Model.Operations, 
+                                new {multiple="multiple", @class=" form-control select2-edit-operations", id="OperationsSelected", name="OperationsSelected[]", style="width:100%;"})
+                        </form>
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
+                <button  class="btn btn-primary" onclick="SaveEditOpertions()">Conferma</button>
+            </div>
+        </div>
+    </div>
+</div>

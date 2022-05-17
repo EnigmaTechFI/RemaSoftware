@@ -1,0 +1,60 @@
+﻿@model RemaSoftware.WebApp.Models.ClientViewModel.ClientViewModel
+
+    @{
+        ViewData["Title"] = "Aggiungi Cliente";
+    }
+
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Aggiungi Cliente</h1>
+</div>
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Nuovo Cliente</h6>
+    </div>
+    <div class="card-body">
+        <form method="post" class="needs-validation" novalidate>
+            <div class="form-row">
+                <div class="col-md-4 mb-3">
+                    <label for="validationTooltip01">Nome Azienda *</label>
+                    <input asp-for="Name" type="text" class="form-control" id="validationTooltip01" placeholder="Nome Azienda" required>
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="validationTooltip02">P. IVA</label>
+                    <input asp-for="P_Iva" type="text" class="form-control" id="validationTooltip02" placeholder="P. IVA">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="validationTooltip02">Via</label>
+                    <input asp-for="Street" type="text" class="form-control" id="validationTooltip02" placeholder="Via">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="validationTooltip02">N° Civico</label>
+                    <input asp-for="StreetNumber" type="text" class="form-control" id="validationTooltip02" placeholder="Numero Civico">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-6 mb-3">
+                    <label for="validationTooltip03">Città</label>
+                    <input asp-for="City" type="text" class="form-control" id="validationTooltip03" placeholder="Città">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="validationTooltip03">Provincia</label>
+                    <input asp-for="Province" type="text" class="form-control" id="validationTooltip03" placeholder="Città">
+                </div>
+                
+                <div class="col-md-3 mb-3">
+                    <label for="validationTooltip04">CAP</label>
+                    <input asp-for="Cap" type="text" class="form-control" id="validationTooltip04" placeholder="CAP">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="validationTooltip05">Stato</label>
+                    <input asp-for="Nation" type="text" class="form-control" id="validationTooltip05" placeholder="Stato">
+                </div>
+            </div>
+            <button class="btn btn-primary" type="submit">Aggiungi</button>
+        </form>
+    </div>
+</div>
+
+
