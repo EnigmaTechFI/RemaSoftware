@@ -3,7 +3,7 @@ using System.IO;
 using Microsoft.Extensions.Configuration;
 using NLog;
 
-namespace UtilityServices
+namespace RemaSoftware.UtilityServices
 {
     public class ImageService : IImageService
     {

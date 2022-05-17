@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers;
 using NLog;
-using UtilityServices;
+using RemaSoftware.UtilityServices;
 using Microsoft.Extensions.Configuration;
 using RemaSoftware.WebApp.Constants;
 using RemaSoftware.WebApp.ContextModels;

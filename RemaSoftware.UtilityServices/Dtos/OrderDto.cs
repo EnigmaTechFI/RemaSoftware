@@ -1,6 +1,6 @@
 using System;
 
-namespace UtilityServices.Dtos
+namespace RemaSoftware.UtilityServices.Dtos
 {
     public class OrderDto
     {

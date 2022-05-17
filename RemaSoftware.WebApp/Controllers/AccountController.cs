@@ -5,7 +5,7 @@ using AspNetCoreHero.ToastNotification.Abstractions;
 using NLog;
 using RemaSoftware.WebApp.ContextModels;
 using RemaSoftware.WebApp.Models.LoginViewModel;
-using UtilityServices;
+using RemaSoftware.UtilityServices;
 
 namespace RemaSoftware.WebApp.Controllers
 {

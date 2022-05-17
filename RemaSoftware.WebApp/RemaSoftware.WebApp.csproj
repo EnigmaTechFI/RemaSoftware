@@ -36,7 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\UtilityServices\UtilityServices.csproj" />
+    <ProjectReference Include="..\RemaSoftware.UtilityServices\RemaSoftware.UtilityServices.csproj" />
   </ItemGroup>
 
   <ItemGroup>

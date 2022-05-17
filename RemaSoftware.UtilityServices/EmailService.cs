@@ -3,7 +3,7 @@ using System.Net.Mail;
 using Microsoft.Extensions.Configuration;
 using NLog;
 
-namespace UtilityServices
+namespace RemaSoftware.UtilityServices
 {
     public class EmailService : IEmailService
     {

@@ -3,8 +3,8 @@ using System.Drawing;
 using RemaSoftware.WebApp.ContextModels;
 using RemaSoftware.WebApp.DALServices;
 using RemaSoftware.WebApp.Data;
-using UtilityServices;
-using UtilityServices.Dtos;
+using RemaSoftware.UtilityServices;
+using RemaSoftware.UtilityServices.Dtos;
 
 namespace RemaSoftware.WebApp.Helper
 {
