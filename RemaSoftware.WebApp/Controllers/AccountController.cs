@@ -44,19 +44,14 @@ namespace RemaSoftware.WebApp.Controllers
 
                 if (user == null)
                 {
-                    // todo toast errore user not found
+                    _notyfToastService.Error("User not found.");
                     return View(model);
                 }
 
                 var result = await _signInManager.PasswordSignInAsync(user, model.Input.Password, model.Input.RememberMe, lockoutOnFailure: false);
 
                 if (result.Succeeded)
-                {
-
                     return RedirectToAction("Index", "Home");
-
-                }
-
             }
 
             return View(model);
@@ -107,7 +102,7 @@ namespace RemaSoftware.WebApp.Controllers
             if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(email))
             {
                 Logger.Error($"Richiesta reset password (GET), nessun utente trovato con email: {email}");
-                // todo toast errore
+                _notyfToastService.Error($"Nessun utente trovato con email: {email}");
                 return RedirectToAction("Login");
             }
             
@@ -130,7 +125,7 @@ namespace RemaSoftware.WebApp.Controllers
             if (user == null)
             {
                 Logger.Error($"Richiesta reset password (POST), nessun utente trovato con email: {model.Email}");
-                // todo toast errore
+                _notyfToastService.Error($"Nessun utente trovato con email: {model.Email}");
                 RedirectToAction("ResetPassword");
             }
             

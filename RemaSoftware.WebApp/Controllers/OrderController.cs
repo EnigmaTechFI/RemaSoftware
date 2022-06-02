@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers;
 using NLog;
 using RemaSoftware.UtilityServices;
 using Microsoft.Extensions.Configuration;
@@ -29,7 +29,6 @@ namespace RemaSoftware.WebApp.Controllers
         private readonly IClientService _clientService;
         private readonly IOperationService _operationService;
         private readonly IImageService _imageService;
-        private readonly PdfHelper _pdfHelper;
         private readonly IConfiguration _configuration;
         private readonly OrderHelper _orderHelper;
         private readonly string _basePathForImages;
@@ -38,13 +37,12 @@ namespace RemaSoftware.WebApp.Controllers
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public OrderController(IOrderService orderService, IClientService clientService, IOperationService operationService,
-            PdfHelper pdfHelper, IImageService imageService, IAPIFatturaInCloudService apiFatturaInCloudService,
+            IImageService imageService, IAPIFatturaInCloudService apiFatturaInCloudService,
             INotyfService notyfService, IConfiguration configuration, OrderHelper orderHelper)
         {
             _orderService = orderService;
             _clientService = clientService;
             _operationService = operationService;
-            _pdfHelper = pdfHelper;
             _imageService = imageService;
             _apiFatturaInCloud = apiFatturaInCloudService;
             _notyfService = notyfService;
@@ -92,7 +90,6 @@ namespace RemaSoftware.WebApp.Controllers
             } 
             return View("../Pdf/SingleOrderSummary", vm);
         }
-        
         
         [HttpGet]
         public IActionResult NewOrder()
@@ -199,20 +196,22 @@ namespace RemaSoftware.WebApp.Controllers
                 return new JsonResult(new {Result = false, ToastMessage = validationResult});
             
             var oldOrder = _orderService.GetOrderWithOperationsById(model.OrderId);
-            Order newOrder = new Order();
-            newOrder.DDT = model.Code_DDT;
-            newOrder.Number_Piece = model.NumberPiece;
-            newOrder.Number_Pieces_InStock = model.NumberPiece;
-            newOrder.DataIn = DateTime.UtcNow;
-            newOrder.ClientID = oldOrder.ClientID;
-            newOrder.DataOut = oldOrder.DataOut;
-            newOrder.Description = oldOrder.Description;
-            newOrder.Image_URL = oldOrder.Image_URL;
-            newOrder.Name = oldOrder.Name;
-            newOrder.Note = oldOrder.Note;
-            newOrder.SKU = oldOrder.SKU;
-            newOrder.Price_Uni = oldOrder.Price_Uni;
-            newOrder.Status = OrderStatusConstants.STATUS_ARRIVED;
+            Order newOrder = new Order()
+            {
+                DDT = model.Code_DDT,
+                Number_Piece = model.NumberPiece,
+                Number_Pieces_InStock = model.NumberPiece,
+                DataIn = DateTime.UtcNow,
+                ClientID = oldOrder.ClientID,
+                DataOut = oldOrder.DataOut,
+                Description = oldOrder.Description,
+                Image_URL = oldOrder.Image_URL,
+                Name = oldOrder.Name,
+                Note = oldOrder.Note,
+                SKU = oldOrder.SKU,
+                Price_Uni = oldOrder.Price_Uni,
+                Status = OrderStatusConstants.STATUS_ARRIVED
+            };
 
             // aggiungo all'ordine le operazioni selezionate
             newOrder.Order_Operation = oldOrder.Order_Operation.Select(s => new Order_Operation

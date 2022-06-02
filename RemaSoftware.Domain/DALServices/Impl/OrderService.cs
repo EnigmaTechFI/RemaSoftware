@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using NLog;
 using RemaSoftware.Domain.Constants;
@@ -23,6 +20,24 @@ namespace RemaSoftware.Domain.DALServices.Impl
         {
             return _dbContext.Orders
                 .Include(i=>i.Client).ToList();
+        }
+
+        public List<Order> GetChunkedOrders(int skip, int take)
+        {
+            var query = _dbContext.Orders
+                .Include(i => i.Client)
+                .OrderByDescending(ob=>ob.DataOut)
+                .AsQueryable();
+            if (skip > 0)
+                query = query.Skip(skip);
+            if (take > 0)
+                query = query.Take(take);
+            return query.ToList();
+        }
+
+        public int GetTotalOrdersCount()
+        {
+            return _dbContext.Orders.Count();
         }
 
         public Order GetOrderById(int orderId)

@@ -12,12 +12,14 @@ namespace RemaSoftware.UtilityServices
     public class APIFatturaInCloudService : IAPIFatturaInCloudService
     {
         private readonly IConfiguration _configuration;
+        private readonly string _env;
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public APIFatturaInCloudService(IConfiguration configuration)
+        public APIFatturaInCloudService(IConfiguration configuration, string env)
         {
             _configuration = configuration;
+            _env = env;
         }
 
         public string AddOrderCloud(OrderDto order)
@@ -31,8 +33,11 @@ namespace RemaSoftware.UtilityServices
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(apiEndpoint);
             httpWebRequest.ContentType = "application/json";
             httpWebRequest.Method = "POST";
-            var myProxy = new WebProxy("http://winproxy.server.lan:3128/", true);
-            httpWebRequest.Proxy = myProxy;
+            if (_env != "Test")
+            {
+                var myProxy = new WebProxy("http://winproxy.server.lan:3128/", true);
+                httpWebRequest.Proxy = myProxy;
+            }
 
             OrderAPI orderToSendInCloud = new OrderAPI()
             {

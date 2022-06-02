@@ -145,17 +145,9 @@
                 }
             },
             "columnDefs": [
-                { "searchable": true, "orderable": true, "targets": 0 },
-                { "searchable": true, "orderable": true, "targets": 1 },
-                { "searchable": true, "orderable": true, "targets": 2 },
-                { "searchable": true, "orderable": true, "targets": 3 },
-                { "searchable": false, "orderable": true, "targets": 4, type: 'date-eu' },
-                { "searchable": false, "orderable": true, "targets": 5, type: 'date-eu' },
-                { "searchable": false, "orderable": false, "targets": 6 },
-                { "searchable": false, "orderable": false, "targets": 7 },
-                { "searchable": false, "orderable": false, "targets": 8 },
-                { "searchable": false, "orderable": false, "targets": 9 },
-                { "searchable": false, "orderable": false, "targets": 10 }
+                { "searchable": true, "orderable": true, "targets": [0,1,2,3] },
+                { "searchable": false, "orderable": true, "targets": [4, 5], type: 'date-eu' },
+                { "searchable": false, "orderable": false, "targets": [6,7,8,9,10] },
               ]
         });
     });

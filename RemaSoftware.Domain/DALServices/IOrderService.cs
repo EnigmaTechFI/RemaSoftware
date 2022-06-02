@@ -17,6 +17,8 @@ namespace RemaSoftware.Domain.DALServices
         List<Order> GetOrdersNearToDeadlineTakeTop(int topSelector);
         List<Order> GetAllOrdersNearToDeadline();
         List<string> GetOldOrders_SKU();
+        List<Order> GetChunkedOrders(int skip, int take);
+        int GetTotalOrdersCount();
         Order GetOrderBySKU(string sku);
         bool UpdateOrder(Order order);
         bool DeleteOrderByID(int OrderID);

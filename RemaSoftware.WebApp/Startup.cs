@@ -20,8 +20,11 @@ namespace RemaSoftware.WebApp
 {
     public class Startup
     {
+        private readonly IWebHostEnvironment _environment;
+
         public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
+            _environment = environment;
             Configuration = configuration;
             var builder = new ConfigurationBuilder()
             .SetBasePath(environment.ContentRootPath)
@@ -72,12 +75,8 @@ namespace RemaSoftware.WebApp
                     }
                 };
             });
-            //services.AddAuthorization(options =>
-            //{
-            //    options.AddPolicy("RequireAdministratorRole",
-            //        policy => policy.RequireRole("SuperUser", "Admin", "User"));
-            //});
-
+            
+            
 
             var mvcBuilder = services.AddControllersWithViews().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
@@ -96,7 +95,6 @@ namespace RemaSoftware.WebApp
 
             services.AddTransient<IImageService, ImageService>();
             services.AddTransient<IEmailService, EmailService>();
-            //services.AddTransient<IPdfService, PdfService>();
             services.AddTransient<IOrderService, OrderService>();
             services.AddTransient<IOperationService, OperationService>();
             services.AddTransient<IClientService, ClientService>();
@@ -104,12 +102,12 @@ namespace RemaSoftware.WebApp
             services.AddTransient<PdfHelper>();
             services.AddTransient<DashboardHelper>();
             services.AddTransient<AccountingHelper>();
-            services.AddTransient<IAPIFatturaInCloudService, APIFatturaInCloudService>();
+            services.AddTransient<IAPIFatturaInCloudService, APIFatturaInCloudService>(
+                x=> new APIFatturaInCloudService(x.GetRequiredService<IConfiguration>(), _environment.EnvironmentName));
             services.AddTransient<OrderHelper>();
             
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationDbContext context, UserManager<MyUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             context.Database.Migrate();
@@ -119,15 +117,12 @@ namespace RemaSoftware.WebApp
             }
             else
             {
-                //app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
                 app.UseDeveloperExceptionPage();
 
             }
-
             
-            //if (!env.IsEnvironment("Test"))
+            if (env.EnvironmentName != "Test")
                 app.UseHttpsRedirection();
 
             app.UseStaticFiles();
