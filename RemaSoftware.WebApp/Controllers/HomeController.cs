@@ -36,7 +36,7 @@ namespace RemaSoftware.WebApp.Controllers
                 TotalProcessedPieces = _orderService.GetTotalProcessedPiecese(),
                 TotalCountOrdersNotExtinguished = _orderService.GetCountOrdersNotExtinguished(),
                 LastMonthEarnings = _orderService.GetLastMonthEarnings(),
-                //PieChartData = _dashboardHelper.GetDataForDashboardPieChart(),
+                PieChartData = _dashboardHelper.GetDataForDashboardPieChart(),
                 AreaChartData = _dashboardHelper.GetDataForDashboardAreaChart(),
                 OrderNearToDeadline = _orderService.GetOrdersNearToDeadlineTakeTop(5),
                 StockArticleAddRemQty = _dashboardHelper.GetAllWarehouseStocksForDashboard(),

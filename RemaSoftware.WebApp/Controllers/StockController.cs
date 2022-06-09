@@ -1,90 +1,84 @@
 ﻿using System;
 using System.Linq;
 using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NLog;
 using RemaSoftware.Domain.ContextModels;
 using RemaSoftware.Domain.DALServices;
+using RemaSoftware.WebApp.DTOs;
+using RemaSoftware.WebApp.Helper;
 using RemaSoftware.WebApp.Models.StockViewModel;
 
 namespace RemaSoftware.WebApp.Controllers
 {
+    [Authorize]
     public class StockController : Controller
     {
-        private readonly IWarehouseStockService _warehouseService;
-        private readonly INotyfService _notyfToastService;
+        private readonly StockHelper _stockHelper;
+        private readonly INotyfService _notyfService;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public StockController(IWarehouseStockService warehouseService, INotyfService notyfToastService)
+        public StockController(StockHelper stockHelper, INotyfService notyfService)
         {
-            _warehouseService = warehouseService;
-            _notyfToastService = notyfToastService;
+            _stockHelper = stockHelper;
+            _notyfService = notyfService;
         }
         
         [HttpGet]
         public IActionResult Stock()
         {
-            var stocks = _warehouseService.GetAllWarehouseStocks();
-            var vm = new StockListViewModel
+            var vm = new StockListViewModel();
+            try
             {
-                WarehouseStocks = stocks.Select(s=>new StockViewModel
-                {
-                    StockArticleId = s.Warehouse_StockID,
-                    Name = s.Name,
-                    Brand = s.Brand,
-                    Size = s.Size,
-                    Price_Uni = s.Price_Uni,
-                    Number_Piece = s.Number_Piece
-                }).ToList()
-            };
-
+                vm = _stockHelper.GetStockListViewModel();
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Errore durante il caricamento della lista di magazzino.");
+                _notyfService.Error("Errore durante il caricamento della lista di magazzino.");
+            }
+            
             return View(vm);
         }
         
         [HttpGet]
         public IActionResult AddProduct()
         {
-            var vm = new StockViewModel();
-            return View(vm);
+            return View(new StockViewModel());
         }
 
         [HttpPost]
         public IActionResult AddProduct(StockViewModel model)
         {
-            try { 
+            try 
+            { 
                 if (ModelState.IsValid)
                 {
-                    model.Size = string.IsNullOrEmpty(model.Size)
-                        ? "Unica"
-                        : model.Size;
-                    _warehouseService.AddOrUpdateWarehouseStock(new Warehouse_Stock
-                    {
-                        Name = model.Name,
-                        Brand = model.Brand,
-                        Size = model.Size,
-                        Number_Piece = model.Number_Piece,
-                        Price_Uni = model.Price_Uni
-                    });
+                    _stockHelper.AddStockProduct(model);
+                    
+                    _notyfService.Success("Articolo aggiunto al magazzino correttamente.");
                     return RedirectToAction("Stock", "Stock"); //redirect to "Giacenze"
                 }
             }
-            catch (DbUpdateException) {
-                ModelState.AddModelError("", "Unable to save changes. " +
-                   "Try again, and if the problem persists " +
-                   "see your system administrator.");
+            catch (Exception e) {
+                
+                Logger.Error(e, $"Errore durante l'aggiunta dell'articolo di magazzino.");
+                _notyfService.Error("Errore durante l'aggiunta dell'articolo di magazzino.");
             }
             return View(model);
         }
 
  
+        // non usata
         [HttpPost]
         public JsonResult SaveStockArticleEdit(Warehouse_Stock model)
         {
             try
             {
-                var result = _warehouseService.AddOrUpdateWarehouseStock(model);
-                return new JsonResult(new {result});
+                _stockHelper.EditStockArticle(model);
+                return new JsonResult(new {result = true, ToastMessage="Articolo di magazzino modificato correttamente."});
             }
             catch (Exception e)
             {
@@ -97,8 +91,8 @@ namespace RemaSoftware.WebApp.Controllers
         {
             try
             {
-                var deleteResult = _warehouseService.DeleteWarehouseStockById(stockArticleId);
-                return new JsonResult(new { Result = deleteResult, ToastMessage="Articolo di magazzino eliminato correttamente."});
+                _stockHelper.DeleteStockArticle(stockArticleId);
+                return new JsonResult(new { Result = true, ToastMessage="Articolo di magazzino eliminato correttamente."});
             }
             catch (Exception e)
             {
@@ -108,25 +102,13 @@ namespace RemaSoftware.WebApp.Controllers
         }
 
         [HttpPost]
-        public JsonResult AddOrRemoveQuantity(QtyAddRemoveJSModel model)
+        public JsonResult AddOrRemoveQuantity(QtyAddRemoveJsDTO model)
         {
-            if (model.ArticleId <= default(int))
-                return new JsonResult(new {Result = false, ToastMessage = $"Articolo mancante."});
-            if (model.QtyToAddRemove <= 0)
-                return new JsonResult(new {Result = false, ToastMessage = $"La quantità deve essere maggiore di 0."});
-            
             try
             {
-                var stockArticle = _warehouseService.GetStockArticleById(model.ArticleId);
+                var result = _stockHelper.AddOrRemoveQuantityFromArticle(model);
                 
-                if(model.QtyToAddRemoveRadio == 0 && stockArticle.Number_Piece - model.QtyToAddRemove < 0)
-                    return new JsonResult(new {Result = false, ToastMessage = $"La quantità risulterebbe minore di 0."});
-                
-                stockArticle.Number_Piece = model.QtyToAddRemoveRadio == 1
-                    ? stockArticle.Number_Piece + model.QtyToAddRemove
-                    : stockArticle.Number_Piece - model.QtyToAddRemove;
-                var res = _warehouseService.UpdateStockArticle(stockArticle);
-                return new JsonResult(new { Result = res, ToastMessage="Quantità modificata correttamente.", NewQty=stockArticle.Number_Piece, NewPrice = stockArticle.Price_Tot});
+                return new JsonResult(new { result.Result, result.ToastMessage, NewQty=result.Number_Piece, NewPrice = result.Price_Tot});
             }
             catch (Exception e)
             {
@@ -134,12 +116,5 @@ namespace RemaSoftware.WebApp.Controllers
                 return new JsonResult(new {Error = e, ToastMessage = $"Errore durante l\\'eliminazione dell\\'articolo di magazzino."});
             }
         }
-    }
-
-    public class QtyAddRemoveJSModel
-    {
-        public int ArticleId { get; set; }
-        public int QtyToAddRemove { get; set; }
-        public int QtyToAddRemoveRadio { get; set; }
     }
 }

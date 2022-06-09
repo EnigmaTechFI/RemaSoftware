@@ -105,6 +105,8 @@ namespace RemaSoftware.WebApp
             services.AddTransient<IAPIFatturaInCloudService, APIFatturaInCloudService>(
                 x=> new APIFatturaInCloudService(x.GetRequiredService<IConfiguration>(), _environment.EnvironmentName));
             services.AddTransient<OrderHelper>();
+            services.AddTransient<StockHelper>();
+            services.AddTransient<ClientHelper>();
             
         }
 

@@ -28,6 +28,7 @@ namespace RemaSoftware.WebApp.Helper
                 var addedOrder = _orderService.AddOrder(orderToSave);
                 try
                 {
+                    #if !DEBUG
                     var id_fatture = _apiFatturaInCloudService.AddOrderCloud(new OrderDto
                     {
                         Name = addedOrder.Name,
@@ -41,7 +42,7 @@ namespace RemaSoftware.WebApp.Helper
                     });
 
                     addedOrder.ID_FattureInCloud = id_fatture;
-
+                    #endif
                     _orderService.UpdateOrder(addedOrder);
 
                     transaction.Commit();

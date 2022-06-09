@@ -1,11 +1,9 @@
 using System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using NLog;
 using RemaSoftware.Domain.Constants;
-using RemaSoftware.Domain.DALServices;
 using RemaSoftware.WebApp.Helper;
 using RemaSoftware.WebApp.Models.AccountingViewModel;
 
