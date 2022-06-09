@@ -298,7 +298,7 @@ namespace RemaSoftware.WebApp.Controllers
         [HttpGet]
         public IActionResult OrdersNotExtinguished()
         {
-            var vm = _orderService.GetOrdersNotCompleted(); 
+            var vm = _orderService.GetOrdersNotCompleted().ToList(); 
             return View(vm);
         }
 

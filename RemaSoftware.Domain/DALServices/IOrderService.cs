@@ -23,7 +23,7 @@ namespace RemaSoftware.Domain.DALServices
         bool UpdateOrder(Order order);
         bool DeleteOrderByID(int OrderID);
         void UpdateOrderStatus(int orderId, int outgoing_orders);
-        List<Order> GetOrdersNotCompleted();
+        IEnumerable<Order> GetOrdersNotCompleted();
         List<Operation> GetOperationsByOrderId(int orderId);
     }
 }

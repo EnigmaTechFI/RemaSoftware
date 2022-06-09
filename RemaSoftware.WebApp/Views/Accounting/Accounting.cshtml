@@ -23,14 +23,14 @@
     <div class="card-body">
         <div class="row">
             <div class="col-12 h5">
-                Totale pezzi in azienda: <b>@Model.orderInFactoryGroupByClient.Sum(s => s.NumberPiecesInStock)</b>
+                Totale pezzi in azienda: <b>@Model.OrdersInFactoryGroupByClient.Sum(s => s.NumberPiecesInStock)</b>
             </div>
         </div>
         <br />
 
         <div class="row">
             <div class="col-12 h5">
-                Totale fatturato in azienda: <b>@Model.orderInFactoryGroupByClient.Sum(s => s.TotPriceInStock).ToString("0.00")&#8364;</b>
+                Totale fatturato in azienda: <b>@Model.OrdersInFactoryGroupByClient.Sum(s => s.TotPriceInStock).ToString("0.00")&#8364;</b>
             </div>
         </div>
         <br />
@@ -44,7 +44,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var order in Model.orderInFactoryGroupByClient)
+                    @foreach (var order in Model.OrdersInFactoryGroupByClient)
                     {
                         <tr>
                             <td>@order.Client</td>
@@ -81,7 +81,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var order in Model.ordersNotCompleted)
+                    @foreach (var order in Model.OrdersNotCompleted)
                     {
                         <tr>
                             <td>@order.DDT</td>

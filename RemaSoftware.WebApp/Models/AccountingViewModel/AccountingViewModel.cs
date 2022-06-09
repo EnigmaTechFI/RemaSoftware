@@ -8,8 +8,8 @@ namespace RemaSoftware.WebApp.Models.AccountingViewModel
 {
     public class AccountingViewModel
     {
-        public List<OrderInFactoryGroupByClient> orderInFactoryGroupByClient { get; set;}
-        public List<Order> ordersNotCompleted { get; set; }
+        public List<OrderInFactoryGroupByClient> OrdersInFactoryGroupByClient { get; set;}
+        public List<Order> OrdersNotCompleted { get; set; }
 
         public class OrderInFactoryGroupByClient
         {

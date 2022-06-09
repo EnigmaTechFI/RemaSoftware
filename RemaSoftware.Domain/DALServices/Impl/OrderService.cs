@@ -205,11 +205,11 @@ namespace RemaSoftware.Domain.DALServices.Impl
             _dbContext.SaveChanges();
         }
 
-        public List<Order> GetOrdersNotCompleted()
+        public IEnumerable<Order> GetOrdersNotCompleted()
         {
             return _dbContext.Orders
                 .Include(i=>i.Client)
-                .Where(w => w.Status != OrderStatusConstants.STATUS_COMPLETED).ToList();
+                .Where(w => w.Status != OrderStatusConstants.STATUS_COMPLETED).AsEnumerable();
         }
 
         public List<Operation> GetOperationsByOrderId(int orderId)
