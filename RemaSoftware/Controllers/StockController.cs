@@ -7,9 +7,11 @@ using RemaSoftware.Models.StockViewModel;
 using Microsoft.EntityFrameworkCore;
 using NLog;
 using RemaSoftware.DALServices;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RemaSoftware.Controllers
 {
+    [Authorize]
     public class StockController : Controller
     {
         private readonly IWarehouseStockService _warehouseService;

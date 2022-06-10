@@ -8,6 +8,7 @@ using System.Linq;
 
 namespace RemaSoftware.Controllers
 {
+    [Authorize(Roles = Roles.Admin)]
     public class AccountingController : Controller
     {
 
@@ -23,7 +24,6 @@ namespace RemaSoftware.Controllers
         }
 
 
-        [Authorize(Roles = Roles.Admin)]
         public IActionResult Accounting()
         {
             var vm = new AccountingViewModel();
