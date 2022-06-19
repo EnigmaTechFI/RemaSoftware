@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
 
-namespace RemaSoftware.Domain.ContextModels
+namespace RemaSoftware.Domain.Models
 {
     public class MyUser : IdentityUser
     {

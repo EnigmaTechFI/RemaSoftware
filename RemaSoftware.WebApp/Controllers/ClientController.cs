@@ -4,8 +4,8 @@ using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
-using RemaSoftware.Domain.ContextModels;
-using RemaSoftware.Domain.DALServices;
+using RemaSoftware.Domain.Models;
+using RemaSoftware.Domain.Services;
 using RemaSoftware.WebApp.Helper;
 using RemaSoftware.WebApp.Models.ClientViewModel;
 

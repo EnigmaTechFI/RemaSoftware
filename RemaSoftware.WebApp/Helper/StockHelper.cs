@@ -1,6 +1,6 @@
 using System.Linq;
-using RemaSoftware.Domain.ContextModels;
-using RemaSoftware.Domain.DALServices;
+using RemaSoftware.Domain.Models;
+using RemaSoftware.Domain.Services;
 using RemaSoftware.WebApp.Controllers;
 using RemaSoftware.WebApp.DTOs;
 using RemaSoftware.WebApp.Models.StockViewModel;

@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using RemaSoftware.Domain.Constants;
-using RemaSoftware.Domain.ContextModels;
+using RemaSoftware.Domain.Models;
 
 namespace RemaSoftware.Domain.Data
 {

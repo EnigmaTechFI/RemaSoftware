@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using RemaSoftware.Domain.ContextModels;
-using RemaSoftware.Domain.DALServices;
+using RemaSoftware.Domain.Models;
+using RemaSoftware.Domain.Services;
 using RemaSoftware.Domain.Data;
 using RemaSoftware.WebApp.Models.HomeViewModel;
 

@@ -1,5 +1,5 @@
-using RemaSoftware.Domain.ContextModels;
-using RemaSoftware.Domain.DALServices;
+using RemaSoftware.Domain.Models;
+using RemaSoftware.Domain.Services;
 using RemaSoftware.WebApp.Models.ClientViewModel;
 
 namespace RemaSoftware.WebApp.Helper;

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using RemaSoftware.Domain.ContextModels;
+using RemaSoftware.Domain.Models;
 
-namespace RemaSoftware.Domain.DALServices
+namespace RemaSoftware.Domain.Services
 {
     public interface IOperationService
     {

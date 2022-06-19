@@ -1,4 +1,4 @@
-﻿namespace RemaSoftware.Domain.ContextModels
+﻿namespace RemaSoftware.Domain.Models
 {
     public class Order_Operation
     {

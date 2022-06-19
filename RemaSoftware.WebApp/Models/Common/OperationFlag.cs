@@ -1,4 +1,4 @@
-using RemaSoftware.Domain.ContextModels;
+using RemaSoftware.Domain.Models;
 
 namespace RemaSoftware.WebApp.Models.Common
 {

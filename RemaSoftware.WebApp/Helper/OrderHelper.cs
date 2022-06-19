@@ -1,7 +1,7 @@
 using System;
 using System.Drawing;
-using RemaSoftware.Domain.ContextModels;
-using RemaSoftware.Domain.DALServices;
+using RemaSoftware.Domain.Models;
+using RemaSoftware.Domain.Services;
 using RemaSoftware.Domain.Data;
 using RemaSoftware.UtilityServices;
 using RemaSoftware.UtilityServices.Dtos;

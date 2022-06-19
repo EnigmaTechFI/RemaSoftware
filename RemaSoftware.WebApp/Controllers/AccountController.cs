@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using NLog;
-using RemaSoftware.Domain.ContextModels;
+using RemaSoftware.Domain.Models;
 using RemaSoftware.WebApp.Models.LoginViewModel;
 using RemaSoftware.UtilityServices;
 

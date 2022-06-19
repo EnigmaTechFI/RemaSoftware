@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using RemaSoftware.Domain.ContextModels;
+using RemaSoftware.Domain.Models;
 
 namespace RemaSoftware.Domain.Data
 {

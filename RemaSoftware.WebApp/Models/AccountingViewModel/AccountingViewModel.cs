@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using RemaSoftware.Domain.ContextModels;
+using RemaSoftware.Domain.Models;
 
 namespace RemaSoftware.WebApp.Models.AccountingViewModel
 {

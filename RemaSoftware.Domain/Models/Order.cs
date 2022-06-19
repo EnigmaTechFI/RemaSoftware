@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace RemaSoftware.Domain.ContextModels
+namespace RemaSoftware.Domain.Models
 {
     public class Order
     {

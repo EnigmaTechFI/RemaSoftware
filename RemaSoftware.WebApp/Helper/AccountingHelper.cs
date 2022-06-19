@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Timers;
-using RemaSoftware.Domain.DALServices;
+using RemaSoftware.Domain.Services;
 using RemaSoftware.Domain.Data;
 using RemaSoftware.WebApp.Models.AccountingViewModel;
 using static RemaSoftware.WebApp.Models.AccountingViewModel.AccountingViewModel;

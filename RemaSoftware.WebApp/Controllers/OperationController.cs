@@ -2,8 +2,8 @@
 using System;
 using NLog;
 using AspNetCoreHero.ToastNotification.Abstractions;
-using RemaSoftware.Domain.ContextModels;
-using RemaSoftware.Domain.DALServices;
+using RemaSoftware.Domain.Models;
+using RemaSoftware.Domain.Services;
 using RemaSoftware.WebApp.Models.OperationViewModel;
 
 namespace RemaSoftware.WebApp.Controllers

@@ -1,7 +1,7 @@
 using System;
-using RemaSoftware.Domain.ContextModels;
-using RemaSoftware.Domain.DALServices;
-using RemaSoftware.Domain.DALServices.Impl;
+using RemaSoftware.Domain.Models;
+using RemaSoftware.Domain.Services;
+using RemaSoftware.Domain.Services.Impl;
 using Xunit;
 
 namespace RemaSoftware.Domain.Test.Integration;

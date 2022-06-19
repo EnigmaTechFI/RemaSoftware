@@ -2,7 +2,7 @@ using System;
 using System.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using RemaSoftware.Domain.ContextModels;
+using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Data;
 
 namespace RemaSoftware.Domain.Test;

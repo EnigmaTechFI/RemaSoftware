@@ -223,7 +223,7 @@ namespace RemaSoftware.Domain.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("RemaSoftware.ContextModels.Client", b =>
+            modelBuilder.Entity("RemaSoftware.Models.Client", b =>
                 {
                     b.Property<int>("ClientID")
                         .ValueGeneratedOnAdd()
@@ -267,7 +267,7 @@ namespace RemaSoftware.Domain.Migrations
                     b.ToTable("Clients");
                 });
 
-            modelBuilder.Entity("RemaSoftware.ContextModels.Operation", b =>
+            modelBuilder.Entity("RemaSoftware.Models.Operation", b =>
                 {
                     b.Property<int>("OperationID")
                         .ValueGeneratedOnAdd()
@@ -287,7 +287,7 @@ namespace RemaSoftware.Domain.Migrations
                     b.ToTable("Operations");
                 });
 
-            modelBuilder.Entity("RemaSoftware.ContextModels.Order", b =>
+            modelBuilder.Entity("RemaSoftware.Models.Order", b =>
                 {
                     b.Property<int>("OrderID")
                         .ValueGeneratedOnAdd()
@@ -353,7 +353,7 @@ namespace RemaSoftware.Domain.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("RemaSoftware.ContextModels.Order_Operation", b =>
+            modelBuilder.Entity("RemaSoftware.Models.Order_Operation", b =>
                 {
                     b.Property<int>("OrderID")
                         .HasColumnType("int");
@@ -371,7 +371,7 @@ namespace RemaSoftware.Domain.Migrations
                     b.ToTable("Order_Operations");
                 });
 
-            modelBuilder.Entity("RemaSoftware.ContextModels.Warehouse_Stock", b =>
+            modelBuilder.Entity("RemaSoftware.Models.Warehouse_Stock", b =>
                 {
                     b.Property<int>("Warehouse_StockID")
                         .ValueGeneratedOnAdd()
@@ -402,7 +402,7 @@ namespace RemaSoftware.Domain.Migrations
                     b.ToTable("Warehouse_Stocks");
                 });
 
-            modelBuilder.Entity("RemaSoftware.ContextModels.MyUser", b =>
+            modelBuilder.Entity("RemaSoftware.Models.MyUser", b =>
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
@@ -469,24 +469,24 @@ namespace RemaSoftware.Domain.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("RemaSoftware.ContextModels.Order", b =>
+            modelBuilder.Entity("RemaSoftware.Models.Order", b =>
                 {
-                    b.HasOne("RemaSoftware.ContextModels.Client", "Client")
+                    b.HasOne("RemaSoftware.Models.Client", "Client")
                         .WithMany("Orders")
                         .HasForeignKey("ClientID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("RemaSoftware.ContextModels.Order_Operation", b =>
+            modelBuilder.Entity("RemaSoftware.Models.Order_Operation", b =>
                 {
-                    b.HasOne("RemaSoftware.ContextModels.Operation", "Operations")
+                    b.HasOne("RemaSoftware.Models.Operation", "Operations")
                         .WithMany("Order_Operation")
                         .HasForeignKey("OperationID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RemaSoftware.ContextModels.Order", "Orders")
+                    b.HasOne("RemaSoftware.Models.Order", "Orders")
                         .WithMany("Order_Operation")
                         .HasForeignKey("OrderID")
                         .OnDelete(DeleteBehavior.Cascade)
