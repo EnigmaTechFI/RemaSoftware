@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Data;
 
-namespace RemaSoftware.Domain.Test;
+namespace RemaSoftware.Helper.Test;
 
 public class IntegrationTestFixture : IDisposable
 {
@@ -24,9 +24,9 @@ public class IntegrationTestFixture : IDisposable
         this.DbContext = new ApplicationDbContext(options);
         DbContext.Database.EnsureCreated();
 
-        this.DbContext.Clients.Add(new Client()
+        var clinte1 = this.DbContext.Clients.Add(new Client
         {
-            Name = "Antani",
+            Name = "Cliente1",
             Street = "via",
             Cap = "50100",
             City = "Firenze",
@@ -34,6 +34,20 @@ public class IntegrationTestFixture : IDisposable
             Province = "FI",
             P_Iva = "123123123123123",
             StreetNumber = "70"
+        });
+        this.DbContext.Orders.Add(new Order()
+        {
+            Name = "Order1",
+            Status = "A",
+            DataIn = DateTime.Now,
+            DataOut = DateTime.Now.AddDays(10),
+            DDT ="DDT1",
+            Number_Piece = 100,
+            Number_Pieces_InStock = 100,
+            Price_Uni = 15,
+            SKU = "SKU1",
+            Client = clinte1.Entity,
+            Image_URL = ""
         });
         
         DbContext.SaveChanges();

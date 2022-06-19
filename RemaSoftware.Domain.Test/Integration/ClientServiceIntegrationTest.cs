@@ -26,5 +26,6 @@ public class ClientServiceIntegrationTest : IClassFixture<IntegrationTestFixture
 
     public void Dispose()
     {
+        _fixture.Dispose();
     }
 }

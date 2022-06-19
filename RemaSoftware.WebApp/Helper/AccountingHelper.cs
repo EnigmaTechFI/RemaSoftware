@@ -24,7 +24,7 @@ namespace RemaSoftware.WebApp.Helper
             var ordersInFactory = _orderService.GetOrdersNotCompleted()
                 .GroupBy(c => c.ClientID)
                 .Select(s =>
-                    new AccountingViewModel.OrderInFactoryGroupByClient
+                    new OrderInFactoryGroupByClient
                     {
                         Client = s.First().Client.Name,
                         NumberPiecesInStock = s.Sum(sum => sum.Number_Pieces_InStock),
