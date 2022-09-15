@@ -11,13 +11,13 @@ namespace RemaSoftware.Helper
     public class OrderHelper
     {
         private readonly IOrderService _orderService;
-        private readonly IAPIFatturaInCloudService _apiFatturaInCloudService;
+        private readonly IAPIContabilit‡InCloudService _apiContabilit‡InCloudService;
         private readonly ApplicationDbContext _dbContext;
 
-        public OrderHelper(IOrderService orderService, IAPIFatturaInCloudService apiFatturaInCloudService, ApplicationDbContext dbContext)
+        public OrderHelper(IOrderService orderService, IAPIContabilit‡InCloudService apiContabilit‡InCloudService, ApplicationDbContext dbContext)
         {
             _orderService = orderService;
-            _apiFatturaInCloudService = apiFatturaInCloudService;
+            _apiContabilit‡InCloudService = apiContabilit‡InCloudService;
             _dbContext = dbContext;
         }
         
@@ -28,8 +28,9 @@ namespace RemaSoftware.Helper
                 var addedOrder = _orderService.AddOrder(orderToSave);
                 try
                 {
-                    var id_fatture = _apiFatturaInCloudService.AddOrderCloud(new OrderDto
+                    _apiContabilit‡InCloudService.AddOrderCloud(new OrderDto
                     {
+                        Id = addedOrder.OrderID,
                         Name = addedOrder.Name,
                         Description = addedOrder.Description,
                         DataIn = addedOrder.DataIn,
@@ -40,9 +41,18 @@ namespace RemaSoftware.Helper
                         DDT = addedOrder.DDT
                     });
 
-                    addedOrder.ID_FattureInCloud = id_fatture;
-
-                    _orderService.UpdateOrder(addedOrder);
+                    _apiContabilit‡InCloudService.UpdateInventory(new OrderDto
+                    {
+                        Id = addedOrder.OrderID,
+                        Name = addedOrder.Name,
+                        Description = addedOrder.Description,
+                        DataIn = addedOrder.DataIn,
+                        DataOut = addedOrder.DataOut,
+                        Number_Piece = addedOrder.Number_Piece,
+                        Price_Uni = addedOrder.Price_Uni,
+                        SKU = addedOrder.SKU,
+                        DDT = addedOrder.DDT
+                    });
 
                     transaction.Commit();
                     return addedOrder;

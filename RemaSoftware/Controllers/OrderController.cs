@@ -24,7 +24,7 @@ namespace RemaSoftware.Controllers
     public class OrderController : Controller
     {
         private readonly IOrderService _orderService;
-        private readonly IAPIFatturaInCloudService _apiFatturaInCloud;
+        private readonly IAPIContabilitàInCloudService _apiContabilitàInCloudService;
         private readonly INotyfService _notyfService;
         private readonly IClientService _clientService;
         private readonly IOperationService _operationService;
@@ -38,7 +38,7 @@ namespace RemaSoftware.Controllers
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public OrderController(IOrderService orderService, IClientService clientService, IOperationService operationService,
-            PdfHelper pdfHelper, IImageService imageService, IAPIFatturaInCloudService apiFatturaInCloudService,
+            PdfHelper pdfHelper, IImageService imageService, IAPIContabilitàInCloudService apiContabilitàInCloudService,
             INotyfService notyfService, IConfiguration configuration, OrderHelper orderHelper)
         {
             _orderService = orderService;
@@ -46,7 +46,7 @@ namespace RemaSoftware.Controllers
             _operationService = operationService;
             _pdfHelper = pdfHelper;
             _imageService = imageService;
-            _apiFatturaInCloud = apiFatturaInCloudService;
+            _apiContabilitàInCloudService = apiContabilitàInCloudService;
             _notyfService = notyfService;
             _configuration = configuration;
             _orderHelper = orderHelper;
@@ -323,13 +323,12 @@ namespace RemaSoftware.Controllers
         {
             try
             {
-                var order = _orderService.GetOrderById(productId);
-                var result = _apiFatturaInCloud.DeleteOrder(order.ID_FattureInCloud);
+                _apiContabilitàInCloudService.DeleteOrder(productId.ToString());
             }
             catch(Exception e)
             {
-                Logger.Error(e, $"Problema di connessione con FattureInCloud");
-                return new JsonResult(new { Error = e, ToastMessage = $"Problema di connessione con FattureInCloud.COntattare gli sviluppatori" });
+                Logger.Error(e, $"Problema di connessione con ContabilitàInCloud");
+                return new JsonResult(new { Error = e, ToastMessage = $"Problema di connessione con ContabilitàInCloud. Contattare gli sviluppatori" });
             }
             try
             {

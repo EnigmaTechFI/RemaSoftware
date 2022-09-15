@@ -105,6 +105,7 @@ namespace RemaSoftware
             services.AddTransient<DashboardHelper>();
             services.AddTransient<AccountingHelper>();
             services.AddTransient<IAPIFatturaInCloudService, APIFatturaInCloudService>();
+            services.AddTransient<IAPIContabilitàInCloudService, APIContabilitàInCloudService>();
             services.AddTransient<OrderHelper>();
             
         }

@@ -1,0 +1,251 @@
+{
+	"info": {
+		"_postman_id": "2eef684b-9413-4948-b4a2-478cd82b632e",
+		"name": "RemaSoftware|ContabilitàInCloud",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13946911"
+	},
+	"item": [
+		{
+			"name": "DDT",
+			"item": [
+				{
+					"name": "Purchase",
+					"item": [
+						{
+							"name": "CreatePurchaseDDT",
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"content-type": true
+								}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "X-AppSecretToken",
+										"value": "x7qQJYFT6oLhQnau94ZBMxzMebfbVi1USgha7oaJEdc1",
+										"type": "text"
+									},
+									{
+										"key": "X-AgreementGrantToken",
+										"value": "q7gPoOqY1xiux7TGMbuQUQmOlKpX2sigI2y6uC6iM5o1",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"ownerDeliveryNoteReference\": \"12345\",\r\n    \"ownerDeliveryNoteReferenceDate\": \"2022-09-15\",\r\n    \"affectsInStockCounter\": true,\r\n    \"deliveryNoteType\": \"Purchase\",\r\n    \"deliveryNoteStatus\": \"Issued\",\r\n    \"owner\": {\r\n        \"vatZone\": {\r\n            \"vatZoneNumber\": 1,\r\n            \"id\": 1\r\n        },\r\n        \"id\": 1\r\n    },\r\n    \"numberSeries\": {\r\n        \"prefix\": \"DDTA\",\r\n        \"sequenceType\": \"Continious\",\r\n        \"numberSeriesSequenceElement\": {\r\n            \"number\": 1,\r\n            \"id\": 240\r\n        },\r\n        \"id\": 30\r\n    },\r\n    \"productDetails\": {\r\n        \"productLines\": [\r\n            {\r\n                \"product\": {\r\n                    \"name\": \"S1467F3X\",\r\n                    \"id\": \"28\"\r\n                },\r\n                \"lineNr\": 2,\r\n                \"vatInfo\": {\r\n                    \"vatAccount\": {\r\n                        \"id\": \"V022\"\r\n                    },\r\n                    \"vatRate\": 22.0\r\n                },\r\n                \"quantity\": 1.0,\r\n                \"unit\": {\r\n                    \"name\": \"pezzi\",\r\n                    \"id\": 1\r\n                },\r\n                \"unitNetPrice\": 0.0,\r\n                \"totalNetAmount\": 0.0,\r\n                \"totalGrossAmount\": 0.0,\r\n                \"unitCostPrice\": null,\r\n                \"discountPercentage\": 0.0,\r\n                \"totalVatAmount\": 0.0,\r\n                \"manuallyEditedSalesPrice\": false\r\n            },\r\n            {\r\n                \"product\": {\r\n                    \"name\": \"S1467F3X\",\r\n                    \"id\": \"28\"\r\n                },\r\n                \"lineNr\": 1,\r\n                \"vatInfo\": {\r\n                    \"vatAccount\": {\r\n                        \"id\": \"V022\"\r\n                    },\r\n                    \"vatRate\": 22.0\r\n                },\r\n                \"quantity\": 1.0,\r\n                \"unit\": {\r\n                    \"name\": \"pezzi\",\r\n                    \"id\": 1\r\n                },\r\n                \"unitNetPrice\": 0.0,\r\n                \"totalNetAmount\": 0.0,\r\n                \"totalGrossAmount\": 0.0,\r\n                \"unitCostPrice\": null,\r\n                \"discountPercentage\": 0.0,\r\n                \"totalVatAmount\": 0.0,\r\n                \"manuallyEditedSalesPrice\": false\r\n            }\r\n        ]\r\n    },\r\n    \"date\": \"2022-09-15\",\r\n    \"additionalInfo\": {\r\n        \"currency\": \"EUR\",\r\n        \"exchangeRate\": 100.0\r\n    },\r\n    \"pdf\": {\r\n        \"download\": \"https://reviso-delivery-note-app.azurewebsites.net/api/delivery-notes/purchase/print/13\"\r\n    }\r\n}"
+								},
+								"url": {
+									"raw": "https://rest.reviso.com/delivery-notes/purchase",
+									"protocol": "https",
+									"host": [
+										"rest",
+										"reviso",
+										"com"
+									],
+									"path": [
+										"delivery-notes",
+										"purchase"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetAllPurchaseDDT",
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"content-type": true
+								},
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-AppSecretToken",
+										"value": "x7qQJYFT6oLhQnau94ZBMxzMebfbVi1USgha7oaJEdc1",
+										"type": "text"
+									},
+									{
+										"key": "X-AgreementGrantToken",
+										"value": "q7gPoOqY1xiux7TGMbuQUQmOlKpX2sigI2y6uC6iM5o1",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "https://rest.reviso.com/delivery-notes/purchase",
+									"protocol": "https",
+									"host": [
+										"rest",
+										"reviso",
+										"com"
+									],
+									"path": [
+										"delivery-notes",
+										"purchase"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Test",
+			"item": [
+				{
+					"name": "TestConnection",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-AppSecretToken",
+								"value": "x7qQJYFT6oLhQnau94ZBMxzMebfbVi1USgha7oaJEdc1",
+								"type": "text"
+							},
+							{
+								"key": "X-AgreementGrantToken",
+								"value": "q7gPoOqY1xiux7TGMbuQUQmOlKpX2sigI2y6uC6iM5o1",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://rest.reviso.com/self",
+							"protocol": "https",
+							"host": [
+								"rest",
+								"reviso",
+								"com"
+							],
+							"path": [
+								"self"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product",
+			"item": [
+				{
+					"name": "CreateProduct",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-AppSecretToken",
+								"value": "x7qQJYFT6oLhQnau94ZBMxzMebfbVi1USgha7oaJEdc1",
+								"type": "text"
+							},
+							{
+								"key": "X-AgreementGrantToken",
+								"value": "q7gPoOqY1xiux7TGMbuQUQmOlKpX2sigI2y6uC6iM5o1",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"salesPrice\": 0.65,\r\n    \"description\": \"BOLLA N. 1201150/2021\",\r\n    \"name\": \"S1467F3X\",\r\n    \"productGroup\": {\r\n        \"productGroupNumber\": 3\r\n    },\r\n    \"unit\": {\r\n        \"unitNumber\": 1,\r\n        \"self\": \"https://rest.reviso.com/units/1\"\r\n    },\r\n    \"productNumber\": \"28\"\r\n}"
+						},
+						"url": {
+							"raw": "https://rest.reviso.com/products/",
+							"protocol": "https",
+							"host": [
+								"rest",
+								"reviso",
+								"com"
+							],
+							"path": [
+								"products",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllProducts",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-AppSecretToken",
+								"value": "x7qQJYFT6oLhQnau94ZBMxzMebfbVi1USgha7oaJEdc1",
+								"type": "text"
+							},
+							{
+								"key": "X-AgreementGrantToken",
+								"value": "q7gPoOqY1xiux7TGMbuQUQmOlKpX2sigI2y6uC6iM5o1",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"salesPrice\": 0.65,\r\n    \"description\": \"BOLLA N. 1201150/2021\",\r\n    \"name\": \"S1467F3X\",\r\n    \"productGroup\": {\r\n        \"productGroupNumber\": 3\r\n    },\r\n    \"unit\": {\r\n        \"unitNumber\": 1,\r\n        \"self\": \"https://rest.reviso.com/units/1\"\r\n    },\r\n    \"productNumber\": \"28\"\r\n}"
+						},
+						"url": {
+							"raw": "https://rest.reviso.com/products/",
+							"protocol": "https",
+							"host": [
+								"rest",
+								"reviso",
+								"com"
+							],
+							"path": [
+								"products",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
