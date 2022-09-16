@@ -62,6 +62,9 @@
                             <a style="text-decoration: none" target="_blank" href='@Url.Action("DownloadPdfOrder", "Order", new {orderId = order.OrderID})'>
                                 <i class="fas fa-file-download fa-lg pl-2" title="Scarica ordine in PDF" style="cursor: pointer; color: #4e73df"></i>
                             </a>
+                            <a style="text-decoration: none" href='@Url.Action("UpdateOrder", "Order", new {Id = order.OrderID})'>
+                                <i class="fas fa-pen fa-lg pl-2" title="Scarica ordine in PDF" style="cursor: pointer; color: yellow"></i>
+                            </a>
                             <i class="fas fa-copy fa-lg pl-2" style="color: green; cursor: pointer" onclick="setOrderId(@order.OrderID)" data-toggle="modal" data-target="#copy-ord-modal" title="Duplica Ordine"></i>
                             <i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer; color: #e74a3b" id="@order.OrderID" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDataArticleId('#confirm-del-modal', @order.OrderID)"></i>                        
                         </td>

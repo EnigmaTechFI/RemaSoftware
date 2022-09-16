@@ -142,7 +142,7 @@ namespace RemaSoftware.DALServices.Impl
                 return true;
 
             }
-            catch
+            catch(Exception ex)
             {
                 return false;
             }
