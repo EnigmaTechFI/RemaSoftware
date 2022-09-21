@@ -77,7 +77,7 @@ namespace RemaSoftware.Helper
                         DDT = orderToSave.DDT
                     });
 
-                    if (result != "success")
+                    if (!result)
                         throw new Exception();
 
                     transaction.Commit();

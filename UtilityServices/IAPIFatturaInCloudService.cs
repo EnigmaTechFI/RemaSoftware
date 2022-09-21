@@ -7,6 +7,6 @@ namespace UtilityServices
     {
         public string AddOrderCloud(OrderDto order);
         public string DeleteOrder(string productId);
-        public string UpdateOrderCloud(OrderToUpdateDto order);
+        public bool UpdateOrderCloud(OrderToUpdateDto order);
     }
 }

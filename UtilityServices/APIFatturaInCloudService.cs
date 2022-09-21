@@ -112,7 +112,7 @@ namespace UtilityServices
             return obj.error_code;
         }
 
-        public string UpdateOrderCloud(OrderToUpdateDto order)
+        public bool UpdateOrderCloud(OrderToUpdateDto order)
         {
             Logger.Info("Inizio aggiornamento prodotto su ApiFattureInCloud");
 
