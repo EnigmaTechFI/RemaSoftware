@@ -162,7 +162,9 @@ namespace UtilityServices
 
             Logger.Info($"Creazione - Risposta da FattureInCloud: {result}");
             var obj = JsonConvert.DeserializeObject<dynamic>(result);
-            return obj.success;
+            if(obj.success == true)
+                return obj.success;
+            return false;
         }
     }
 
