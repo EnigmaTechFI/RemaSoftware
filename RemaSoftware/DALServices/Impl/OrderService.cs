@@ -197,6 +197,13 @@ namespace RemaSoftware.DALServices.Impl
                 .Where(w => w.Status != OrderStatusConstants.STATUS_COMPLETED).ToList();
         }
 
+        public List<Order> GetOrdersCompleted()
+        {
+            return _dbContext.Orders
+                .Include(i => i.Client)
+                .Where(w => w.Status == OrderStatusConstants.STATUS_COMPLETED).ToList();
+        }
+
         public List<Operation> GetOperationsByOrderId(int orderId)
         {
             return _dbContext.Order_Operations.Where(w => w.OrderID == orderId)

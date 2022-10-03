@@ -57,7 +57,7 @@ namespace RemaSoftware.Controllers
         [HttpGet]
         public IActionResult OrderSummary()
         {
-            var orders = _orderService.GetAllOrders();
+            var orders = _orderService.GetOrdersNotCompleted();
             var vm = new OrderSummaryViewModel
             {
                 Orders = orders
@@ -65,6 +65,13 @@ namespace RemaSoftware.Controllers
             vm.RedirectUrlAfterCreation = Url.Action("OrderSummary", "Order");
 
             return View(vm);
+        }
+
+        [HttpGet]
+        public JsonResult OrderSummaryCompleted()
+        {
+            var orders = _orderService.GetOrdersCompleted();
+            return new JsonResult(new { Orders = orders });
         }
 
         public IActionResult DownloadPdfOrder(int orderId)
