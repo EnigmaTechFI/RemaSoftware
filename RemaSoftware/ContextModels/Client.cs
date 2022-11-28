@@ -23,7 +23,16 @@ namespace RemaSoftware.ContextModels
         public string Province { get; set; }
         [MaxLength(50)]
         public string Nation { get; set; }
-    
+        [MaxLength(5)]
+        public string Nation_ISO { get; set; }
+        [MaxLength(50)]
+        public string Email { get; set; }
+        [MaxLength(15)]
+        public string PhoneNumber { get; set; }
+        [MaxLength(15)]
+        public string Fax { get; set; }
+        public int FC_ClientID { get; set; }
         public virtual ICollection<Order> Orders { get; set; } 
+        public virtual ICollection<MyUser> MyUsers { get; set; } 
     }
 }
