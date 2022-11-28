@@ -21,8 +21,6 @@ namespace RemaSoftware.ContextModels
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]
         [MaxLength(70)]
         public string Image_URL { get; set; }
-        public string Description { get; set; }
-        public string Note { get; set; }
         public virtual List<Ddt_In> Ddt_In { get; set; }
 
     }

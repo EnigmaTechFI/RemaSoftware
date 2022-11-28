@@ -13,5 +13,6 @@ namespace RemaSoftware.ContextModels
         [MaxLength(1)]
         public string Status { get; set; }
         public int FC_Ddt_Out_ID { get; set; }
+        public int NumberPieces { get; set; }
     }
 }

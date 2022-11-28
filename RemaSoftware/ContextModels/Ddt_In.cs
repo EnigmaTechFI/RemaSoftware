@@ -29,6 +29,7 @@ namespace RemaSoftware.ContextModels
         public string Status { get; set; }
         public bool IsReso { get; set; }
         public string Note { get; set; }
+        public string Description { get; set; }
         public virtual List<ProductOperation> ProductOperations { get; set; }
     }
 }
