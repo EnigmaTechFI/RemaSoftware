@@ -188,10 +188,15 @@
 
     async function getAllOrder() {
         if (enable) {
+            ShowLoader();
             enable = false;
             $.ajax({
                 url: "@Url.Action("OrderSummaryCompleted", "Order")",
                 type: "GET",
+                error: function(xhr, status, error) {
+                  var err = eval("(" + xhr.responseText + ")");
+                  alert(err.Message);
+                },
                 success: function(result) {
                     var table = $('#table-orders').DataTable();
                     result.orders.forEach(function(a) {
@@ -224,6 +229,8 @@
                     });
                     $('#load-order').hide();
                 }
+            }).done(function () {
+                HideLoader();
             });
         }   
         
