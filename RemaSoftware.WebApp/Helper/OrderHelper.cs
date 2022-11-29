@@ -5,6 +5,7 @@ using RemaSoftware.Domain.Services;
 using RemaSoftware.Domain.Data;
 using RemaSoftware.UtilityServices;
 using RemaSoftware.UtilityServices.Dtos;
+using UtilityServices.Dtos;
 
 namespace RemaSoftware.WebApp.Helper
 {
@@ -56,6 +57,41 @@ namespace RemaSoftware.WebApp.Helper
                 }
             }
             
+        }
+
+        public Order UpdateOrderAndSendToFattureInCloud(Order orderToSave)
+        {
+            using (var transaction = _dbContext.Database.BeginTransaction())
+            {
+                var addedOrder = _orderService.UpdateOrder(orderToSave);
+                try
+                {
+                    var result = _apiFatturaInCloudService.UpdateOrderCloud(new OrderToUpdateDto
+                    {
+                        Id = orderToSave.ID_FattureInCloud,
+                        Name = orderToSave.Name,
+                        Description = orderToSave.Description,
+                        DataIn = orderToSave.DataIn,
+                        DataOut = orderToSave.DataOut,
+                        Number_Piece = orderToSave.Number_Piece,
+                        Price_Uni = orderToSave.Price_Uni,
+                        SKU = orderToSave.SKU,
+                        DDT = orderToSave.DDT
+                    });
+
+                    if (!result)
+                        throw new Exception();
+
+                    transaction.Commit();
+                    return orderToSave;
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+
         }
     }
 }

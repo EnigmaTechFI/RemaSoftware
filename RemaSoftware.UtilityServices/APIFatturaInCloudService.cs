@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using NLog;
 using NLog.Fluent;
 using RemaSoftware.UtilityServices.Dtos;
-
+using UtilityServices.Dtos;
 
 namespace RemaSoftware.UtilityServices
 {
@@ -116,10 +116,66 @@ namespace RemaSoftware.UtilityServices
             var obj = JsonConvert.DeserializeObject<dynamic>(result);
             return obj.error_code;
         }
+
+        public bool UpdateOrderCloud(OrderToUpdateDto order)
+        {
+            Logger.Info("Inizio aggiornamento prodotto su ApiFattureInCloud");
+
+            var apiEndpoint = _configuration["ApiFattureInCloud:ApiEndpointUpdateProduct"];
+            var apiUID = _configuration["ApiFattureInCloud:ApiUID"];
+            var apiKey = _configuration["ApiFattureInCloud:ApiKEY"];
+
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create(apiEndpoint);
+            httpWebRequest.ContentType = "application/json";
+            httpWebRequest.Method = "POST";
+            var myProxy = new WebProxy("http://winproxy.server.lan:3128/", true);
+            httpWebRequest.Proxy = myProxy;
+
+            OrderAPI orderToSendInCloud = new OrderAPI()
+            {
+                id = order.Id.ToString(),
+                api_uid = apiUID,
+                api_key = apiKey,
+                cod = order.DDT,
+                nome = order.SKU,
+                desc = order.Description,
+                prezzo_ivato = false,
+                prezzo_netto = order.Price_Uni.ToString("0.##"),
+                prezzo_lordo = "0",
+                costo = "0",
+                cod_iva = 0,
+                um = "",
+                categoria = "",
+                note = "",
+                magazzino = true,
+                giacenza_iniziale = order.Number_Piece
+            };
+
+            string stringjson = JsonConvert.SerializeObject(orderToSendInCloud);
+
+            using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+            {
+                streamWriter.Write(stringjson);
+            }
+
+            var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+            string result;
+            using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+            {
+                result = streamReader.ReadToEnd();
+            }
+
+            Logger.Info($"Creazione - Risposta da FattureInCloud: {result}");
+            var obj = JsonConvert.DeserializeObject<dynamic>(result);
+            if(obj.success == true)
+                return obj.success;
+            return false;
+        }
     }
 
     class OrderAPI
     {
+        public string id { get; set; }
         public string api_uid { get; set; }
         public string api_key { get; set; }
         public string cod { get; set; }

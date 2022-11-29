@@ -55,14 +55,21 @@ namespace RemaSoftware.WebApp.Controllers
         [HttpGet]
         public IActionResult OrderSummary()
         {
-            var orders = _orderService.GetAllOrders();
+            var orders = _orderService.GetOrdersNotCompleted();
             var vm = new OrderSummaryViewModel
             {
-                Orders = orders
+                Orders = orders.ToList()
             };
             vm.RedirectUrlAfterCreation = Url.Action("OrderSummary", "Order");
 
             return View(vm);
+        }
+
+        [HttpGet]
+        public JsonResult OrderSummaryCompleted()
+        {
+            var orders = _orderService.GetOrdersCompleted();
+            return new JsonResult(new { Orders = orders });
         }
 
         public IActionResult DownloadPdfOrder(int orderId)
@@ -148,6 +155,71 @@ namespace RemaSoftware.WebApp.Controllers
             try
             {
                 var addedOrder = _orderHelper.AddOrderAndSendToFattureInCloud(model.Order);
+                return new JsonResult(new { Result = true, OrderId = addedOrder.OrderID });
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Errore durante la creazione dell'ordine.");
+                return new JsonResult(new { Result = false, ToastMessage = "Errore durante la creazione dell'ordine." });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult UpdateOrder(int Id)
+        {
+            var orderToUpdate = _orderService.GetOrderWithOperationsById(Id);
+            
+            var availableOperations = _operationService.GetAllOperations();
+            var vm = new NewOrderViewModel
+            {
+                Clients = _clientService.GetAllClients(),
+                OldOrders_SKU = _orderService.GetOldOrders_SKU().Distinct().ToList(),
+                Operations = availableOperations?.Select(s => new SelectListItem
+                {
+                    Text = s.Name,
+                    Value = $"{s.OperationID}-{s.Name}"
+                }).ToList(),
+                Order = orderToUpdate,
+                DataOutStr = orderToUpdate.DataOut.ToString("dd/MM/yyyy"),
+            };
+            vm.OldOrders_SKU.Insert(0, orderToUpdate.SKU);
+
+            vm.RedirectUrlAfterCreation = Url.Action("Index", "Home");
+            return View(vm);
+        }
+
+        [HttpPost]
+        public JsonResult UpdateOrder(NewOrderViewModel model)
+        {
+            model.Order.Price_Uni = model.uni_price ?? model.Order.Price_Uni;
+
+            var validationResult = this.ValidateNewOrderViewModelAndSetDataOut(model);
+            if (validationResult != "")
+                return new JsonResult(new { Result = false, ToastMessage = validationResult });
+
+            model.Order.Number_Pieces_InStock = model.Order.Number_Piece;
+
+            // aggiungo sul db le operazioni nuove
+            var operationsSelectedToCreate = model.OperationsSelected.Where(w => w.StartsWith("0")).Select(s => s.Split('-').Last());
+            var addedOps = _operationService.AddOperations(
+                operationsSelectedToCreate.Select(s => new Operation
+                {
+                    Name = s,
+                    Description = s
+                }).ToList());
+
+            // aggiungo all'ordine le operazioni selezionate
+            var operationsSelectedAlredyExisting = model.OperationsSelected.Where(w => !w.StartsWith("0")).Select(s => int.Parse(s.Split('-').First())).ToList();
+            model.Order.Order_Operation = operationsSelectedAlredyExisting.Union(addedOps.Select(s => s.OperationID)).Select((s, index) => new Order_Operation
+            {
+                Ordering = index + 1, //+1 perchè parte da 0...
+                OperationID = s,
+                OrderID = model.Order.OrderID
+            }).ToList();
+
+            try
+            {
+                var addedOrder = _orderHelper.UpdateOrderAndSendToFattureInCloud(model.Order);
                 return new JsonResult(new { Result = true, OrderId = addedOrder.OrderID });
             }
             catch (Exception e)
@@ -328,7 +400,7 @@ namespace RemaSoftware.WebApp.Controllers
             catch(Exception e)
             {
                 Logger.Error(e, $"Problema di connessione con FattureInCloud");
-                return new JsonResult(new { Error = e, ToastMessage = $"Problema di connessione con FattureInCloud.COntattare gli sviluppatori" });
+                return new JsonResult(new { Error = e, ToastMessage = $"Problema di connessione con FattureInCloud.Contattare gli sviluppatori" });
             }
             try
             {
@@ -360,7 +432,7 @@ namespace RemaSoftware.WebApp.Controllers
                 return "Cliente mancante.";
             if (string.IsNullOrEmpty(model.Order.Name))
                 return "Nome mancante.";
-            if (model.uni_price<default(decimal) || model.uni_price == null)
+            if (model.uni_price<default(decimal) || (model.uni_price == null && model.Order.Price_Uni == null))
                 return "Prezzo unitario mancante.";
             if (model.Order.DataOut<=default(DateTime))
                 return "Data di scadenza non valida.";

@@ -33,11 +33,11 @@ namespace RemaSoftware.Domain.Models
         public DateTime DataOut { get; set; }
 
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]
-        [MaxLength(20)]
+        [MaxLength(50)]
         public string SKU { get; set; }
 
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]
-        [MaxLength(30)]
+        [MaxLength(50)]
         public string DDT { get; set; }
 
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]

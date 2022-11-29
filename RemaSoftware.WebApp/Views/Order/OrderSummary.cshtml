@@ -53,7 +53,7 @@
                                 if (!string.IsNullOrEmpty(order.Status))
                                 {
                                     var statusDto = OrderStatusConstants.OrderStatuses[@order.Status];
-                                    <i class="fas fa-circle fa-lg" style="color: @statusDto?.StatusCssClass" title="@statusDto?.StatusDescription"></i>
+                                                                                                                <i class="fas fa-circle fa-lg" style="color: @statusDto?.StatusCssClass" title="@statusDto?.StatusDescription"></i>
                                 }
                             }
                         </td>
@@ -61,6 +61,9 @@
                             <i class="fas fa-users-cog fa-lg" style="color: #858796; cursor: pointer" onclick="GetOperationsAndOpenModal(@order.OrderID)" title="Visualizza / Modifica operazioni"></i>
                             <a style="text-decoration: none" target="_blank" href='@Url.Action("DownloadPdfOrder", "Order", new {orderId = order.OrderID})'>
                                 <i class="fas fa-file-download fa-lg pl-2" title="Scarica ordine in PDF" style="cursor: pointer; color: #4e73df"></i>
+                            </a>
+                            <a style="text-decoration: none" href='@Url.Action("UpdateOrder", "Order", new {Id = order.OrderID})'>
+                                <i class="fas fa-pen fa-lg pl-2" title="Scarica ordine in PDF" style="cursor: pointer; color: yellow"></i>
                             </a>
                             <i class="fas fa-copy fa-lg pl-2" style="color: green; cursor: pointer" onclick="setOrderId(@order.OrderID)" data-toggle="modal" data-target="#copy-ord-modal" title="Duplica Ordine"></i>
                             <i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer; color: #e74a3b" id="@order.OrderID" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDataArticleId('#confirm-del-modal', @order.OrderID)"></i>                        
@@ -71,6 +74,12 @@
             </table>
         </div>
     </div>
+</div>
+
+<div id="load-order" style="left:40%; width: 20%;" class="btn-group btn-group-toggle" data-toggle="buttons">
+    <label class="btn btn-secondary">
+        <input onclick="asyncGetAllOrder()" type="radio" name="options" id="option_a2" autocomplete="off" active> Carica di più
+    </label>
 </div>
 
 <div class="modal fade" id="confirm-del-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -103,6 +112,7 @@
     <script src="https://cdn.datatables.net/plug-ins/1.10.11/sorting/date-eu.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
+    let enable = true;
 
     function SetDataArticleId(elementName, articleId){
         $(elementName).data("articleId", articleId );
@@ -142,15 +152,81 @@
                     "previous": "Precedente",
                     "next": "Successivo",
                     "last": "Fine"
-                }
+                }                
             },
+            "order": [[4, 'desc']],
             "columnDefs": [
                 { "searchable": true, "orderable": true, "targets": [0,1,2,3] },
                 { "searchable": false, "orderable": true, "targets": [4, 5], type: 'date-eu' },
                 { "searchable": false, "orderable": false, "targets": [6,7,8,9,10] },
               ]
         });
+
+        
+        
     });
+
+    function formatDate(timestamp){
+        var x=new Date(timestamp);
+        var dd = x.getDate();
+        var mm = x.getMonth()+1;
+        var yy = x.getFullYear();
+        return dd +"/" + mm+"/" + yy;
+     }
+
+    const asyncGetAllOrder = async () => {
+        await getAllOrder()
+    }
+
+    async function getAllOrder() {
+        if (enable) {
+            ShowLoader();
+            enable = false;
+            $.ajax({
+                url: "@Url.Action("OrderSummaryCompleted", "Order")",
+                type: "GET",
+                error: function(xhr, status, error) {
+                  var err = eval("(" + xhr.responseText + ")");
+                  alert(err.Message);
+                },
+                success: function(result) {
+                    var table = $('#table-orders').DataTable();
+                    result.orders.forEach(function(a) {
+                        var newRow = `<tr id="${a.orderID}">
+                                <td>${a.ddt}</td>
+                                <td>${a.sku}</td>
+                                <td>${a.name}</td>
+                                <td>${a.client.name}</td>
+                                <td>${formatDate(a.dataIn)}</td>
+                                <td>${formatDate(a.dataOut)}</td>
+                                <td>${a.number_Piece}</td>
+                                <td>${a.number_Pieces_InStock}</td>
+                                <td>&euro; ${a.price_Uni}</td>
+                                <td class="text-center">
+                                    <i class="fas fa-circle fa-lg" style="color: red" title="estinto"></i>
+                                </td>
+                                <td class="text-center">
+                                    <i class="fas fa-users-cog fa-lg" style="color: #858796; cursor: pointer" onclick="GetOperationsAndOpenModal(${a.orderID})" title="Visualizza / Modifica operazioni"></i>
+                                    <a style="text-decoration: none" target="_blank" href='DownloadPdfOrder/Order?orderId${a.orderID}'>
+                                        <i class="fas fa-file-download fa-lg pl-2" title="Scarica ordine in PDF" style="cursor: pointer; color: #4e73df"></i>
+                                    </a>
+                                    <a style="text-decoration: none" href='UpdateOrder/Order?orderId${a.orderID}'>
+                                        <i class="fas fa-pen fa-lg pl-2" title="Scarica ordine in PDF" style="cursor: pointer; color: yellow"></i>
+                                    </a>
+                                    <i class="fas fa-copy fa-lg pl-2" style="color: green; cursor: pointer" onclick="setOrderId(${a.orderID})" data-toggle="modal" data-target="#copy-ord-modal" title="Duplica Ordine"></i>
+                                    <i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer; color: #e74a3b" id="${a.orderID}" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDataArticleId('#confirm-del-modal', ${a.orderID})"></i>                        
+                                </td>
+                            </tr>`;
+                        table.row.add($(newRow)).draw();
+                    });
+                    $('#load-order').hide();
+                }
+            }).done(function () {
+                HideLoader();
+            });
+        }   
+        
+    }
 
     function setOrderId(OrderIdToDuplicate) {
         $("#id_ordine").val(OrderIdToDuplicate)
@@ -257,5 +333,5 @@
         });
         }
 
-    </script>>
+    </script>
 }

@@ -24,6 +24,7 @@ namespace RemaSoftware.Domain.Services
         bool DeleteOrderByID(int OrderID);
         void UpdateOrderStatus(int orderId, int outgoing_orders);
         IEnumerable<Order> GetOrdersNotCompleted();
+        List<Order> GetOrdersCompleted();
         List<Operation> GetOperationsByOrderId(int orderId);
     }
 }
