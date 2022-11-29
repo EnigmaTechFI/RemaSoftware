@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using NLog;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
+using RemaSoftware.Models.ClientViewModel;
 using RemaSoftware.WebApp.Helper;
 using RemaSoftware.WebApp.Models.ClientViewModel;
 
@@ -25,9 +26,19 @@ namespace RemaSoftware.WebApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult AddClient()
+        public async Task<IActionResult> ClientList()
         {
-            return View(new ClientViewModel());
+            var vm = new ClientListViewModel()
+            {
+                Clients = _clientHelper.GetAllClients()
+            };
+            return View(vm);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AddClient()
+        {
+            return View();
         }
 
         [HttpPost]

@@ -21,6 +21,12 @@ namespace RemaSoftware.WebApp.Models.ClientViewModel
         public string Province { get; set; }
         [MaxLength(50)]
         public string Nation { get; set; }
+        [MaxLength(50)]
+        public string Email { get; set; }
+        [MaxLength(15)]
+        public string PhoneNumber { get; set; }
+        [MaxLength(15)]
+        public string Fax { get; set; }
 
     }
 }

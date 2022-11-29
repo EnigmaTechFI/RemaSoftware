@@ -13,6 +13,11 @@ namespace RemaSoftware.Domain.Data
         public DbSet<Client> Clients { get; set; }
 
         public DbSet<Order> Orders { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Ddt_In> Ddt_In { get; set; }
+        public DbSet<Ddt_Out> Ddt_Out { get; set; }
+        public DbSet<ProductOperation> ProductOperations { get; set; }
+        public DbSet<OperationTimeline> OperationTimelines { get; set; }
 
         public DbSet<Operation> Operations { get; set; }
 
@@ -24,6 +29,9 @@ namespace RemaSoftware.Domain.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Order_Operation>().HasKey(a => new { a.OrderID, a.OperationID });
+            modelBuilder.Entity<ProductOperation>().HasKey(a => new { a.Ddt_In_ID, a.OperationID });
+            modelBuilder.Entity<Ddt_In>().HasKey(a => new { a.Ddt_In_ID});
+            modelBuilder.Entity<Ddt_Out>().HasKey(a => new { a.Ddt_Out_ID});
             base.OnModelCreating(modelBuilder);
         }
         #endregion

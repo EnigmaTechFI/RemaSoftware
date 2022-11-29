@@ -1,6 +1,7 @@
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
 using RemaSoftware.WebApp.Models.ClientViewModel;
+using System.Collections.Generic;
 
 namespace RemaSoftware.WebApp.Helper;
 
@@ -26,5 +27,10 @@ public class ClientHelper
             P_Iva = model.P_Iva
         };
         _clientService.AddClient(newClient);
+    }
+
+    public List<Client> GetAllClients()
+    {
+        return _clientService.GetAllClients();
     }
 }
