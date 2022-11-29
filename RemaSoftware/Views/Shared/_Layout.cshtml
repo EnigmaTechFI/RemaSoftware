@@ -48,14 +48,14 @@
 
         <!-- Heading -->
         <div class="sidebar-heading">
-            Ordini
+            Produzione
         </div>
 
         <!-- Nav Item - Pages Collapse Menu -->
         <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "OrderSummary" ? "active" : "")">
             <a class="nav-link" asp-action="OrderSummary" asp-controller="Order">
                 <i class="fas fa-fw fa-tasks"></i>
-                <span>Resoconto</span>
+                <span>Prodotti</span>
             </a>
         </li>
         <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "NewOrder" ? "active" : "")">
@@ -64,16 +64,36 @@
                 <span>Registra Ordine</span>
             </a>
         </li>
-        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "AddClient" ? "active" : "")">
-            <a class="nav-link" asp-action="AddClient" asp-controller="Client">
-                <i class="fas fa-fw fa-address-card"></i>
-                <span>Aggiungi Cliente</span>
+        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "OrdersNotExtinguished" ? "active" : "")">
+            <a class="nav-link" asp-action="OrdersNotExtinguished" asp-controller="Order">
+                <i class="fas fa-boxes"></i>
+                <span>Ordini in produzione</span>
             </a>
         </li>
         <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "OrdersNotExtinguished" ? "active" : "")">
             <a class="nav-link" asp-action="OrdersNotExtinguished" asp-controller="Order">
                 <i class="fas fa-boxes"></i>
-                <span>Ordini non completati</span>
+                <span>Ordini in magazzino</span>
+            </a>
+        </li>
+        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "OrdersNotExtinguished" ? "active" : "")">
+            <a class="nav-link" asp-action="OrdersNotExtinguished" asp-controller="Order">
+                <i class="fas fa-boxes"></i>
+                <span>Gestione operazioni</span>
+            </a>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+
+        <!-- Heading -->
+        <div class="sidebar-heading">
+            Anagrafiche
+        </div>
+        <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Client" ? "active" : "")">
+            <a class="nav-link" asp-action="ClientList" asp-controller="Client">
+                <i class="fas fa-fw fa-address-card"></i>
+                <span>Clienti</span>
             </a>
         </li>
 
@@ -105,13 +125,25 @@
             <hr class="sidebar-divider">
             <!-- Heading -->
             <div class="sidebar-heading">
-                Contabilità
+                Amministrazione
             </div>
         
             <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Accounting" ? "active" : "")">
                 <a class="nav-link" asp-action="Accounting" asp-controller="Accounting">
                     <i class="fas fa-fw fa-calculator"></i>
                     <span>Contabilità</span>
+                </a>
+            </li>
+            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Accounting" ? "active" : "")">
+                <a class="nav-link" asp-action="Accounting" asp-controller="Accounting">
+                    <i class="fas fa-fw fa-calculator"></i>
+                    <span>Analisi produzione</span>
+                </a>
+            </li>
+            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Accounting" ? "active" : "")">
+                <a class="nav-link" asp-action="Accounting" asp-controller="Accounting">
+                    <i class="fas fa-fw fa-calculator"></i>
+                    <span>Variazioni DDT</span>
                 </a>
             </li>
         }

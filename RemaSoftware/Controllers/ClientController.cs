@@ -26,6 +26,16 @@ namespace RemaSoftware.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> ClientList()
+        {
+            var vm = new ClientListViewModel()
+            {
+                Clients = _clientService.GetAllClients()
+            };
+            return View(vm);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> AddClient()
         {
             return View();
