@@ -1,7 +1,7 @@
 ﻿using RemaSoftware.Domain.Models;
 using System.Collections.Generic;
 
-namespace RemaSoftware.Models.ClientViewModel
+namespace RemaSoftware.WebApp.Models.ClientViewModel
 {
     public class ClientListViewModel
     {

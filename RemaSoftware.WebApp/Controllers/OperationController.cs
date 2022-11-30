@@ -20,6 +20,17 @@ namespace RemaSoftware.WebApp.Controllers
         }
 
         [HttpGet]
+        public IActionResult OperationList()
+        {
+            var vm = new OperationListViewModel()
+            {
+                Operations = _operationService.GetAllOperations()
+            };
+
+            return View(vm);
+        }
+
+        [HttpGet]
         public IActionResult AddOperation()
         {
             var vm = new AddOperationViewModel();
@@ -33,14 +44,13 @@ namespace RemaSoftware.WebApp.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var add_operation = new Operation
+                    _operationService.AddOperation(new Operation
                     {
                         Name = model.Name,
                         Description = model.Description
-                    };
-                    _operationService.AddOperation(add_operation);
+                    });
                     _notyfToastService.Success("Operazione aggiunta con successo.");
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("OperationList");
                 }
             }
             catch (Exception ex)

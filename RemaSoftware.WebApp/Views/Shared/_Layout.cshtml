@@ -58,10 +58,10 @@
                 <span>Prodotti</span>
             </a>
         </li>
-        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "NewOrder" ? "active" : "")">
-            <a class="nav-link" asp-action="NewOrder" asp-controller="Order">
-                <i class="fas fa-fw fa-dolly-flatbed"></i>
-                <span>Registra Ordine</span>
+        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "OrdersNotExtinguished" ? "active" : "")">
+            <a class="nav-link" asp-action="OrdersNotExtinguished" asp-controller="Order">
+                <i class="fas fa-boxes"></i>
+                <span>Lotti in magazzino</span>
             </a>
         </li>
         <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "OrdersNotExtinguished" ? "active" : "")">
@@ -73,13 +73,13 @@
         <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "OrdersNotExtinguished" ? "active" : "")">
             <a class="nav-link" asp-action="OrdersNotExtinguished" asp-controller="Order">
                 <i class="fas fa-boxes"></i>
-                <span>Lotti in magazzino</span>
+                <span>Lotti in consegna</span>
             </a>
         </li>
-        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "OrdersNotExtinguished" ? "active" : "")">
-            <a class="nav-link" asp-action="OrdersNotExtinguished" asp-controller="Order">
+        <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Operation" ? "active" : "")">
+            <a class="nav-link" asp-action="OperationList" asp-controller="Operation">
                 <i class="fas fa-boxes"></i>
-                <span>Gestione operazioni</span>
+                <span>Operazioni</span>
             </a>
         </li>
 

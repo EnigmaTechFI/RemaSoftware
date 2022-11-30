@@ -50,7 +50,7 @@ namespace RemaSoftware.WebApp.Controllers
             {
                 if(ModelState.IsValid)
                     _productHelper.AddProduct(model);
-
+                /*TODO: Effettuare tutti i controlli necessari*/
                 return View(model);
             }
             catch(Exception ex)

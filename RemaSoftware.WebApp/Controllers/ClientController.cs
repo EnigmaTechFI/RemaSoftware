@@ -6,9 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using NLog;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
-using RemaSoftware.Models.ClientViewModel;
-using RemaSoftware.WebApp.Helper;
 using RemaSoftware.WebApp.Models.ClientViewModel;
+using RemaSoftware.WebApp.Helper;
 
 namespace RemaSoftware.WebApp.Controllers
 {

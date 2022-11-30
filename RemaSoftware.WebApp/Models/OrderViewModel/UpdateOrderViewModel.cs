@@ -2,7 +2,7 @@
 using RemaSoftware.Domain.Models;
 using System.Collections.Generic;
 
-namespace RemaSoftware.Models.OrderViewModel
+namespace RemaSoftware.WebApp.Models.OrderViewModel
 {
     public class UpdateOrderViewModel
     {
