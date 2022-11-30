@@ -1,13 +1,17 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace RemaSoftware.Domain.Models
 {
-    public class ProductOperation
+    public class BatchOperations
     {
-        public int Ddt_In_ID { get; set; }
+        public int BatchID { get; set; }
 
-        public Ddt_In Ddt_In { get; set; }
+        public Batch Batch { get; set; }
 
         public int OperationID { get; set; }
 

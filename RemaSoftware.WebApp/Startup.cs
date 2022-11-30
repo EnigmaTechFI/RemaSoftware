@@ -96,12 +96,14 @@ namespace RemaSoftware.WebApp
             services.AddTransient<IImageService, ImageService>();
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<IOrderService, OrderService>();
+            services.AddTransient<IProductService, ProductService>();
             services.AddTransient<IOperationService, OperationService>();
             services.AddTransient<IClientService, ClientService>();
             services.AddTransient<IWarehouseStockService, WarehouseStockService>();
             services.AddTransient<PdfHelper>();
             services.AddTransient<DashboardHelper>();
             services.AddTransient<AccountingHelper>();
+            services.AddTransient<ProductHelper>();
             services.AddTransient<IAPIFatturaInCloudService, APIFatturaInCloudService>(
                 x=> new APIFatturaInCloudService(x.GetRequiredService<IConfiguration>(), _environment.EnvironmentName));
             services.AddTransient<OrderHelper>();

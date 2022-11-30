@@ -8,7 +8,6 @@ namespace RemaSoftware.Domain.Models
         public string Name { get; set; }
         public string Surname { get; set; }
         public DateTime Birthday { get; set; }
-        public int? ClientID { get; set; }
-        public Client? Client { get; set; }
+        public virtual UserClient UserClient { get; set; }
     }
 }

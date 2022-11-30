@@ -24,8 +24,14 @@ public class ClientHelper
             City = model.City,
             Nation = model.Nation,
             Province = model.Province,
-            P_Iva = model.P_Iva
+            P_Iva = model.P_Iva,
+            Email = model.Email,
+            Fax = model.Fax ?? "",
+            PhoneNumber = model.PhoneNumber,
+            Nation_ISO = ""
         };
+
+        /*TODO: Registrazione del cliente su fatture in cloud*/
         _clientService.AddClient(newClient);
     }
 

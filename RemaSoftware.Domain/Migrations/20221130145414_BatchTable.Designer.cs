@@ -3,17 +3,19 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RemaSoftware.Domain.Data;
 
 #nullable disable
 
-namespace RemaSoftware.Domain.Migrations
+namespace RemaSoftware.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221130145414_BatchTable")]
+    partial class BatchTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -610,24 +612,6 @@ namespace RemaSoftware.Domain.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("RemaSoftware.Domain.Models.UserClient", b =>
-                {
-                    b.Property<string>("MyUserID")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("ClientID")
-                        .HasColumnType("int");
-
-                    b.HasKey("MyUserID", "ClientID");
-
-                    b.HasIndex("ClientID");
-
-                    b.HasIndex("MyUserID")
-                        .IsUnique();
-
-                    b.ToTable("UserClient");
-                });
-
             modelBuilder.Entity("RemaSoftware.Domain.Models.Warehouse_Stock", b =>
                 {
                     b.Property<int>("Warehouse_StockID")
@@ -667,11 +651,16 @@ namespace RemaSoftware.Domain.Migrations
                     b.Property<DateTime>("Birthday")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("ClientID")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Surname")
                         .HasColumnType("nvarchar(max)");
+
+                    b.HasIndex("ClientID");
 
                     b.HasDiscriminator().HasValue("MyUser");
                 });
@@ -815,23 +804,13 @@ namespace RemaSoftware.Domain.Migrations
                     b.Navigation("Client");
                 });
 
-            modelBuilder.Entity("RemaSoftware.Domain.Models.UserClient", b =>
+            modelBuilder.Entity("RemaSoftware.Domain.Models.MyUser", b =>
                 {
                     b.HasOne("RemaSoftware.Domain.Models.Client", "Client")
-                        .WithMany("UserClients")
-                        .HasForeignKey("ClientID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RemaSoftware.Domain.Models.MyUser", "MyUser")
-                        .WithOne("UserClient")
-                        .HasForeignKey("RemaSoftware.Domain.Models.UserClient", "MyUserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("MyUsers")
+                        .HasForeignKey("ClientID");
 
                     b.Navigation("Client");
-
-                    b.Navigation("MyUser");
                 });
 
             modelBuilder.Entity("RemaSoftware.Domain.Models.Batch", b =>
@@ -848,9 +827,9 @@ namespace RemaSoftware.Domain.Migrations
 
             modelBuilder.Entity("RemaSoftware.Domain.Models.Client", b =>
                 {
-                    b.Navigation("Orders");
+                    b.Navigation("MyUsers");
 
-                    b.Navigation("UserClients");
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("RemaSoftware.Domain.Models.Operation", b =>
@@ -866,11 +845,6 @@ namespace RemaSoftware.Domain.Migrations
             modelBuilder.Entity("RemaSoftware.Domain.Models.Product", b =>
                 {
                     b.Navigation("Ddt_In");
-                });
-
-            modelBuilder.Entity("RemaSoftware.Domain.Models.MyUser", b =>
-                {
-                    b.Navigation("UserClient");
                 });
 #pragma warning restore 612, 618
         }

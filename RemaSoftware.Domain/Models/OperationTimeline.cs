@@ -6,8 +6,8 @@ namespace RemaSoftware.Domain.Models
     public class OperationTimeline
     {
         public int OperationTimelineID { get; set; }
-        public int ProductOperationID { get; set; }
-        public ProductOperation ProductOperation { get; set; }
+        public int BatchOperationID { get; set; }
+        public BatchOperations BatchOperations { get; set; }
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime StartDate { get; set; }
