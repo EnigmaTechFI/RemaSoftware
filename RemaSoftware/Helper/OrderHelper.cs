@@ -31,7 +31,7 @@ namespace RemaSoftware.Helper
                     var id_fatture = _apiFatturaInCloudService.AddOrderCloud(new OrderDto
                     {
                         Name = addedOrder.Name,
-                        Description = addedOrder.Description,
+                        Description = addedOrder.Description ?? string.Empty,
                         DataIn = addedOrder.DataIn,
                         DataOut = addedOrder.DataOut,
                         Number_Piece = addedOrder.Number_Piece,
@@ -51,6 +51,7 @@ namespace RemaSoftware.Helper
                 {
                     transaction.Rollback();
                     _orderService.DeleteOrderByID(addedOrder.OrderID);
+                    transaction.Commit();
                     throw;
                 }
             }
@@ -74,7 +75,8 @@ namespace RemaSoftware.Helper
                         Number_Piece = orderToSave.Number_Piece,
                         Price_Uni = orderToSave.Price_Uni,
                         SKU = orderToSave.SKU,
-                        DDT = orderToSave.DDT
+                        DDT = orderToSave.DDT,
+                        ID_FattureInCloud = orderToSave.ID_FattureInCloud
                     });
 
                     if (!result)
