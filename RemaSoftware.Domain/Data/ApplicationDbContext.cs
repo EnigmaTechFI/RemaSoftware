@@ -9,20 +9,18 @@ namespace RemaSoftware.Domain.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         public DbSet<MyUser> MyUsers { get; set; }
-
+        public DbSet<UserClient> UserClients { get; set; }
         public DbSet<Client> Clients { get; set; }
-
         public DbSet<Order> Orders { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Ddt_In> Ddt_In { get; set; }
         public DbSet<Ddt_Out> Ddt_Out { get; set; }
+        public DbSet<Batch> Batch { get; set; }
         public DbSet<BatchOperations> BatchOperations { get; set; }
         public DbSet<OperationTimeline> OperationTimelines { get; set; }
-
         public DbSet<Operation> Operations { get; set; }
-
+        public DbSet<Order> Order { get; set; }
         public DbSet<Order_Operation> Order_Operations { get; set; }
-
         public DbSet<Warehouse_Stock> Warehouse_Stocks { get; set; }
         
         #region Required

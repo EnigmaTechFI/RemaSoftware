@@ -42,5 +42,10 @@ namespace RemaSoftware.Domain.Services.Impl
         {
             return _dbContext.Products.Include(i => i.Client).ToList();
         }
+
+        public Product GetProductById(int productId)
+        {
+            return _dbContext.Products.Include(i => i.Client).SingleOrDefault(i => i.ProductID == productId);
+        }
     }
 }

@@ -26,5 +26,9 @@ namespace RemaSoftware.Domain.Services
         IEnumerable<Order> GetOrdersNotCompleted();
         List<Order> GetOrdersCompleted();
         List<Operation> GetOperationsByOrderId(int orderId);
+        Batch GetBatchById(int batchId);
+        Batch GetBatchByProductIdAndOperationList(int productId, List<int> operationId);
+        Batch CreateBatch(Batch batch); 
+        Ddt_In CreateDDtIn(Ddt_In ddt_In); 
     }
 }

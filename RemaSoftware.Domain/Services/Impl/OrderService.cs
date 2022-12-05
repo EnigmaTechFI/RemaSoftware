@@ -225,5 +225,57 @@ namespace RemaSoftware.Domain.Services.Impl
                 .OrderBy(ob=>ob.Ordering)
                 .Select(s=>s.Operations).ToList();
         }
+
+        public Batch GetBatchById(int batchId)
+        {
+            return _dbContext.Batch
+                .Include(b => b.BatchOperations)
+                .ThenInclude(o => o.Operations)
+                .Include(s => s.Ddt_In)
+                .SingleOrDefault(s => s.BatchId == batchId);
+        }
+
+        public Batch GetBatchByProductIdAndOperationList(int productId, List<int> operationId)
+        {
+            var batch = _dbContext.Ddt_In
+                .Include(b => b.Batch)
+                .ThenInclude(b => b.BatchOperations)
+                .Where(d => d.ProductID == productId && d.Batch.BatchOperations.All(s => operationId.Contains(s.OperationID)))
+                .Select(s => s.Batch).SingleOrDefault();
+            return batch;
+        }
+
+        public Batch CreateBatch(Batch batch)
+        {
+            try
+            {
+                var addedBatch = _dbContext.Add(batch);
+                _dbContext.SaveChanges();
+
+                return addedBatch.Entity;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Errore durante la creazione della commessa: {batch.Ddt_In[0].Code}");
+                return null;
+            }
+            
+        }
+
+        public Ddt_In CreateDDtIn(Ddt_In ddt_In)
+        {
+            try
+            {
+                var addedDdtIn = _dbContext.Add(ddt_In);
+                _dbContext.SaveChanges();
+
+                return addedDdtIn.Entity;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Errore durante la creazione della commessa: {ddt_In.Code}");
+                return null;
+            }
+        }
     }
 }

@@ -11,5 +11,6 @@ namespace RemaSoftware.Domain.Services
     {
         List<Product> GetAllProducts();
         Product AddProduct(Product product);
+        Product GetProductById(int productId);
     }
 }

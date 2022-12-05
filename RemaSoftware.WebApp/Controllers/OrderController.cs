@@ -17,6 +17,7 @@ using RemaSoftware.Domain.Services;
 using RemaSoftware.WebApp.Helper;
 using RemaSoftware.WebApp.Models.OrderViewModel;
 using RemaSoftware.WebApp.Models.PDFViewModel;
+using RemaSoftware.WebApp.Validation;
 
 namespace RemaSoftware.WebApp.Controllers
 {
@@ -31,6 +32,7 @@ namespace RemaSoftware.WebApp.Controllers
         private readonly IImageService _imageService;
         private readonly IConfiguration _configuration;
         private readonly OrderHelper _orderHelper;
+        private readonly OrderValidation _orderValidation;
         private readonly string _basePathForImages;
 
 
@@ -38,7 +40,7 @@ namespace RemaSoftware.WebApp.Controllers
 
         public OrderController(IOrderService orderService, IClientService clientService, IOperationService operationService,
             IImageService imageService, IAPIFatturaInCloudService apiFatturaInCloudService,
-            INotyfService notyfService, IConfiguration configuration, OrderHelper orderHelper)
+            INotyfService notyfService, IConfiguration configuration, OrderHelper orderHelper, OrderValidation orderValidation)
         {
             _orderService = orderService;
             _clientService = clientService;
@@ -48,10 +50,11 @@ namespace RemaSoftware.WebApp.Controllers
             _notyfService = notyfService;
             _configuration = configuration;
             _orderHelper = orderHelper;
-            _basePathForImages = 
+            _basePathForImages =
                 (Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName + _configuration["ImagePath"]).Replace("/", "\\");
+            _orderValidation = orderValidation;
         }
-        
+
         [HttpGet]
         public IActionResult OrderSummary()
         {
@@ -99,133 +102,43 @@ namespace RemaSoftware.WebApp.Controllers
         }
         
         [HttpGet]
-        public IActionResult NewOrder()
+        public IActionResult NewOrder(int productId)
         {
-            var availableOperations = _operationService.GetAllOperations();
             var vm = new NewOrderViewModel
             {
                 Clients = _clientService.GetAllClients(),
-                OldOrders_SKU = _orderService.GetOldOrders_SKU().Distinct().ToList(),
-                Operations = availableOperations?.Select(s=>new SelectListItem
-                {
-                    Text = s.Name,
-                    Value = $"{s.OperationID}-{s.Name}"
-                }).ToList()
-            };
-            vm.OldOrders_SKU.Insert(0, "");
-
-            vm.RedirectUrlAfterCreation = Url.Action("Index", "Home");
-            return View(vm);
-        }
-
-        [HttpPost]
-        public JsonResult NewOrder(NewOrderViewModel model)
-        {
-            var validationResult = this.ValidateNewOrderViewModelAndSetDataOut(model);
-            if (validationResult != "")
-                return new JsonResult(new {Result = false, ToastMessage = validationResult});
-
-            if (!string.IsNullOrEmpty(model.Photo))
-            {
-                var iamgeName = _imageService.SavingOrderImage(model.Photo, _basePathForImages);
-                model.Order.Image_URL = iamgeName;
-            }
-
-            model.Order.Number_Pieces_InStock = model.Order.Number_Piece;
-            model.Order.DataIn = DateTime.UtcNow;
-            model.Order.Price_Uni = model.uni_price ?? 0;
-            model.Order.Status = OrderStatusConstants.STATUS_ARRIVED;
-
-            // aggiungo sul db le operazioni nuove
-            var operationsSelectedToCreate = model.OperationsSelected.Where(w=>w.StartsWith("0")).Select(s=>s.Split('-').Last());
-            var addedOps =_operationService.AddOperations(
-                operationsSelectedToCreate.Select(s=>new Operation
-                {
-                    Name = s, Description = s
-                }).ToList());
-            
-            // aggiungo all'ordine le operazioni selezionate
-            var operationsSelectedAlredyExisting = model.OperationsSelected.Where(w=>!w.StartsWith("0")).Select(s=>int.Parse(s.Split('-').First())).ToList();
-            model.Order.Order_Operation = operationsSelectedAlredyExisting.Union(addedOps.Select(s=>s.OperationID)).Select((s, index) => new Order_Operation
-            {
-                Ordering = index + 1, //+1 perchè parte da 0...
-                OperationID = s
-            }).ToList();
-            
-            try
-            {
-                var addedOrder = _orderHelper.AddOrderAndSendToFattureInCloud(model.Order);
-                return new JsonResult(new { Result = true, OrderId = addedOrder.OrderID });
-            }
-            catch (Exception e)
-            {
-                Logger.Error($"Errore durante la creazione dell'ordine.");
-                return new JsonResult(new { Result = false, ToastMessage = "Errore durante la creazione dell'ordine." });
-            }
-        }
-
-        [HttpGet]
-        public IActionResult UpdateOrder(int Id)
-        {
-            var orderToUpdate = _orderService.GetOrderWithOperationsById(Id);
-            
-            var availableOperations = _operationService.GetAllOperations();
-            var vm = new NewOrderViewModel
-            {
-                Clients = _clientService.GetAllClients(),
-                OldOrders_SKU = _orderService.GetOldOrders_SKU().Distinct().ToList(),
-                Operations = availableOperations?.Select(s => new SelectListItem
+                Operations = _operationService.GetAllOperations()?.Select(s=>new SelectListItem
                 {
                     Text = s.Name,
                     Value = $"{s.OperationID}-{s.Name}"
                 }).ToList(),
-                Order = orderToUpdate,
-                DataOutStr = orderToUpdate.DataOut.ToString("dd/MM/yyyy"),
+                Ddt_In = new Ddt_In()
+                {
+                    ProductID = productId,
+                }
             };
-            vm.OldOrders_SKU.Insert(0, orderToUpdate.SKU);
-
-            vm.RedirectUrlAfterCreation = Url.Action("Index", "Home");
             return View(vm);
         }
 
         [HttpPost]
-        public JsonResult UpdateOrder(NewOrderViewModel model)
+        public IActionResult NewOrder(NewOrderViewModel model)
         {
-            model.Order.Price_Uni = model.uni_price ?? model.Order.Price_Uni;
-
-            var validationResult = this.ValidateNewOrderViewModelAndSetDataOut(model);
-            if (validationResult != "")
-                return new JsonResult(new { Result = false, ToastMessage = validationResult });
-
-            model.Order.Number_Pieces_InStock = model.Order.Number_Piece;
-
-            // aggiungo sul db le operazioni nuove
-            var operationsSelectedToCreate = model.OperationsSelected.Where(w => w.StartsWith("0")).Select(s => s.Split('-').Last());
-            var addedOps = _operationService.AddOperations(
-                operationsSelectedToCreate.Select(s => new Operation
+            try {
+                var validationResult = _orderValidation.ValidateNewOrderViewModelAndSetDefaultData(model);
+                if (validationResult != "")
                 {
-                    Name = s,
-                    Description = s
-                }).ToList());
-
-            // aggiungo all'ordine le operazioni selezionate
-            var operationsSelectedAlredyExisting = model.OperationsSelected.Where(w => !w.StartsWith("0")).Select(s => int.Parse(s.Split('-').First())).ToList();
-            model.Order.Order_Operation = operationsSelectedAlredyExisting.Union(addedOps.Select(s => s.OperationID)).Select((s, index) => new Order_Operation
-            {
-                Ordering = index + 1, //+1 perchè parte da 0...
-                OperationID = s,
-                OrderID = model.Order.OrderID
-            }).ToList();
-
-            try
-            {
-                var addedOrder = _orderHelper.UpdateOrderAndSendToFattureInCloud(model.Order);
-                return new JsonResult(new { Result = true, OrderId = addedOrder.OrderID });
+                    _notyfService.Error(validationResult);
+                    return RedirectToAction("NewOrder", new { productId = model.Ddt_In.ProductID });
+                }
+                _orderHelper.AddNewDdtIn(model);
+                _notyfService.Success("Commessa registrata correttamente");
+                return RedirectToAction("NewOrder", new { productId = model.Ddt_In.ProductID });
             }
             catch (Exception e)
             {
                 Logger.Error($"Errore durante la creazione dell'ordine.");
-                return new JsonResult(new { Result = false, ToastMessage = "Errore durante la creazione dell'ordine." });
+                _notyfService.Error(e.Message);
+                return RedirectToAction("NewOrder", new { productId = model.Ddt_In.ProductID });
             }
         }
 
@@ -415,29 +328,6 @@ namespace RemaSoftware.WebApp.Controllers
         }
 
         #region Models validation
-
-        private string ValidateNewOrderViewModelAndSetDataOut(NewOrderViewModel model)
-        {
-            DateTime parsedDateTime;
-            DateTime.TryParseExact(model.DataOutStr, "dd/MM/yyyy", null, DateTimeStyles.None, out parsedDateTime);
-            model.Order.DataOut = parsedDateTime;
-            
-            if (string.IsNullOrEmpty(model.Order.SKU))
-                return "SKU mancante.";
-            if (string.IsNullOrEmpty(model.Order.DDT))
-                return "Codice DDT mancante.";
-            if (string.IsNullOrEmpty(model.Photo) && string.IsNullOrEmpty(model.Order.Image_URL))
-                return "Foto mancante.";
-            if (model.Order.ClientID <= default(int))
-                return "Cliente mancante.";
-            if (string.IsNullOrEmpty(model.Order.Name))
-                return "Nome mancante.";
-            if (model.uni_price<default(decimal) || (model.uni_price == null && model.Order.Price_Uni == null))
-                return "Prezzo unitario mancante.";
-            if (model.Order.DataOut<=default(DateTime))
-                return "Data di scadenza non valida.";
-            return "";
-        }
 
         private string ValidateDuplicateOrderViewModel(CopyOrderViewModel model)
         {

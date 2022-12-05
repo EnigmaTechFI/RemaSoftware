@@ -15,6 +15,7 @@ using RemaSoftware.Domain.Services;
 using RemaSoftware.Domain.Services.Impl;
 using RemaSoftware.Domain.Data;
 using RemaSoftware.WebApp.Helper;
+using RemaSoftware.WebApp.Validation;
 
 namespace RemaSoftware.WebApp
 {
@@ -109,6 +110,7 @@ namespace RemaSoftware.WebApp
             services.AddTransient<OrderHelper>();
             services.AddTransient<StockHelper>();
             services.AddTransient<ClientHelper>();
+            services.AddTransient<OrderValidation>();
             
         }
 
