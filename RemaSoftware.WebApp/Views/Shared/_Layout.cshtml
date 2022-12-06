@@ -58,8 +58,8 @@
                 <span>Prodotti</span>
             </a>
         </li>
-        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "OrdersNotExtinguished" ? "active" : "")">
-            <a class="nav-link" asp-action="OrdersNotExtinguished" asp-controller="Order">
+        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "BatchInStock" ? "active" : "")">
+            <a class="nav-link" asp-action="BatchInStock" asp-controller="Order">
                 <i class="fas fa-boxes"></i>
                 <span>Lotti in magazzino</span>
             </a>

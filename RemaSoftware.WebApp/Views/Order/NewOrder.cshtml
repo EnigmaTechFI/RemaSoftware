@@ -23,6 +23,14 @@
                 <input min="0" asp-for="Ddt_In.Number_Piece" type="number" class="form-control" id="formGroupExampleInput" placeholder="Numero di pezzi">
             </div>
             <div class="form-group">
+                <div class="form-check">
+                    <input asp-for="Ddt_In.IsReso" class="form-check-input" type="checkbox" id="gridCheck">
+                    <label class="form-check-label" for="gridCheck">
+                        Selezionare se si sta inserendo un reso
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
                 <label for="validationTooltip04">Prezzo Unitario (IVA Inclusa) *</label>
                 <div class="input-group-append">
                     <input min="0" asp-for="uni_price" type="number" pattern="^[\d,]+$" class="form-control" id="priceUnit" placeholder="Prezzo Unitario">
@@ -38,7 +46,16 @@
                     </span>
                 </div>
             </div>
-
+            <div class="form-group">
+                <label for="formGroupExampleInput">Seleziona priorità</label>
+                <select asp-for="Ddt_In.Priority" class="form-control">
+                  <option value="0">Minore</option>
+                  <option selected="selected" value="1">Normale</option>
+                  <option value="2">Maggiore</option>
+                  <option value="3">Critica</option>
+                  <option value="4">Bloccante</option>
+                </select>
+            </div>
             <div class="form-group">
                 <label for="desc">Descrizione</label>
                 <textarea asp-for="Ddt_In.Description" class="form-control" id="desc" rows="3"></textarea>
@@ -54,6 +71,7 @@
                     Model.Operations, 
                     new {multiple="multiple", @class=" form-control select2-operations", name="OperationsSelected[]", style="width:100%;"})
             </div>
+            
             <div style="width:100px; margin-top:50px;">
                 <button class="btn btn-primary" type="submit">Aggiungi</button>
             </div>

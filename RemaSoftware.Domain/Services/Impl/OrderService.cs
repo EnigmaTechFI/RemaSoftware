@@ -277,5 +277,14 @@ namespace RemaSoftware.Domain.Services.Impl
                 return null;
             }
         }
+
+        public List<Batch> GetBatchesByDDTStatus(string status)
+        {
+            return _dbContext.Batch
+                .Include(d => d.Ddt_In.Where(s => s.Status == status))
+                .ThenInclude(s => s.Product)
+                .ThenInclude(s => s.Client)
+                .ToList();
+        }
     }
 }

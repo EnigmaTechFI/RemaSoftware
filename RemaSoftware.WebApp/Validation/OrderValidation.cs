@@ -16,7 +16,7 @@ namespace RemaSoftware.WebApp.Validation
                 return "Inserire il numero di pezzi";
             if (string.IsNullOrEmpty(model.Ddt_In.Description))
                 return "Inserire descrizione DDT.";
-            if (model.uni_price < default(decimal) || (model.uni_price == null))
+            if ((model.uni_price < default(decimal) || (model.uni_price == null)) && !model.Ddt_In.IsReso)
                 return "Prezzo unitario mancante.";
             if (model.Ddt_In.DataOut <= DateTime.Now)
                 return "Data di scadenza non valida.";

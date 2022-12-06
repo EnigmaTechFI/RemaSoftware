@@ -27,6 +27,11 @@ namespace RemaSoftware.WebApp.Helper
             _productService = productService;
         }
 
+        public List<Batch> GetBatchByDDTStatus(string status)
+        {   
+            return _orderService.GetBatchesByDDTStatus(status);
+        }
+
         public Ddt_In AddNewDdtIn(NewOrderViewModel model)
         {
             var operationsSelected = model.OperationsSelected.Where(w => !w.StartsWith("0")).Select(s => int.Parse(s.Split('-').First())).ToList();

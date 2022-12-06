@@ -1,42 +1,44 @@
-﻿@model RemaSoftware.WebApp.Models.ProductViewModel.ProductListViewModel
+﻿@model RemaSoftware.WebApp.Models.OrderViewModel.BatchInStockViewModel
 
 @{
-    ViewData["Title"] = "Lista Prodotti";
+    ViewData["Title"] = "Lotti in magazzino";
 }
 
 <link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
 
 <div class="card shadow mb-4" id="order-summ-content">
     <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
-        <h3 class="m-0 font-weight-bold text-primary">Lista prodotti</h3>
-        <div>
+        <h3 class="m-0 font-weight-bold text-primary">Lotti in magazzino</h3>
+        @*<div>
             <button class="btn btn-primary" type="button" onclick="location.href='@Url.Action("NewProduct", "Product")'">Nuovo prodotto</button>
-        </div>
+        </div>*@
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-bordered" id="table-products" width="100%" cellspacing="0">
+            <table class="table table-bordered table-hover" id="table-batches" width="100%" cellspacing="0">
                 <thead>
                     <tr>
-                        <th>SKU</th>
-                        <th>Nome</th>
+                        <th>Lotto</th>
                         <th>Cliente</th>
-                        <th>Pezzi in azienda</th>
+                        <th>Codice prodotto</th>
+                        <th>DDT associate</th>
+                        <th>Pezzi nel lotto</th>
                         <th>Azioni</th>
                     </tr>
                 </thead>
                 <tbody>
-                @foreach (var product in Model.Products)
+                @foreach (var batch in Model.Batches)
                 {
-                    <tr id="product-@product.ProductID">
-                        <td>@product.SKU</td>
-                        <td>@product.Name</td>
-                        <td>@product.Client.Name</td>
-                        <td>@product.Ddt_In.Sum(s=> s.Number_Piece)</td>
+                    <tr style="cursor: pointer;" onclick="showDDT(@batch.BatchId)" id="batch-@batch.BatchId">
+                        <td>@batch.BatchId</td>
+                        <td>@batch.Ddt_In[0].Product.Client.Name</td>
+                        <td>@batch.Ddt_In[0].Product.SKU</td>
+                        <td>Visualizza DDT associate</td>
+                        <td>@batch.Ddt_In.Sum(s=> s.Number_Piece)</td>
                         <td class="text-center">
-                            <a style="text-decoration: none" asp-action="NewOrder" asp-controller="Order" asp-route-productId="@product.ProductID">
+                            @*<a style="text-decoration: none" asp-action="NewOrder" asp-controller="Order" asp-route-productId="@product.ProductID">
                                 <i class="fas fa-file-text fa-lg pl-2" title="Registra commessa" style="cursor: pointer; color: lightgray"></i>
-                            </a>
+                            </a>*@
                             <a style="text-decoration: none">
                                 <i class="fas fa-pen fa-lg pl-2" title="Modifica prodotto" style="cursor: pointer; color: lightgray"></i>
                             </a>
@@ -46,6 +48,25 @@
                 }
                 </tbody>
             </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ddt_associate" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">DDT associate al lotto #</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="batch_ddt"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Chiudi</button>
+            </div>
         </div>
     </div>
 </div>
@@ -75,6 +96,18 @@
     <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
 
     <script>
+    const batches = @Json.Serialize(Model.Batches)
+    function showDDT(batchId) {
+        var batch = batches.filter(obj => {
+          return obj.batchId === batchId
+        })
+        var ddt_list = ""
+        batch[0].ddt_In.forEach(function(ddt) {
+            ddt_list = ddt_list + ddt.code + "<br/>"
+        })
+        $("#ddt_associate").modal('show');
+        document.getElementById("batch_ddt").textContent = ddt_list
+    }
 
     function DeleteStockArticle(){
         var articleId = $("#confirm-del-modal").data("articleId");
@@ -97,7 +130,7 @@
     }
 
     $(document).ready( function () {
-        table = $('#table-products').DataTable({
+        table = $('#table-batches').DataTable({
             "language": {
                 "lengthMenu": "Mostra _MENU_ risultati per pagina",
                 "zeroRecords": "Nessun risultato trovato",

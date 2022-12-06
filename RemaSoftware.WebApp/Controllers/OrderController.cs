@@ -101,6 +101,8 @@ namespace RemaSoftware.WebApp.Controllers
             return View("../Pdf/SingleOrderSummary", vm);
         }
         
+        /*VERSIONE 2.0*/
+
         [HttpGet]
         public IActionResult NewOrder(int productId)
         {
@@ -141,6 +143,17 @@ namespace RemaSoftware.WebApp.Controllers
                 return RedirectToAction("NewOrder", new { productId = model.Ddt_In.ProductID });
             }
         }
+
+        [HttpGet]
+        public IActionResult BatchInStock()
+        {
+            return View(new BatchInStockViewModel()
+            {
+                Batches = _orderHelper.GetBatchByDDTStatus("A")
+            });
+        }
+
+        /*END VERSIONE 2.0*/
 
         [HttpGet]
         public IActionResult GetEditOrderOperationsModal(int orderId)
