@@ -12,14 +12,14 @@ namespace RemaSoftware.UtilityServices
     public class APIFatturaInCloudService : IAPIFatturaInCloudService
     {
         private readonly IConfiguration _configuration;
-        private readonly string _env;
+        private readonly string _ficAccessToken;
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public APIFatturaInCloudService(IConfiguration configuration, string env)
         {
             _configuration = configuration;
-            _env = env;
+            _ficAccessToken = _configuration["ApiFattureInCloud:AccessToken"];
         }
 
         public string AddOrderCloud(OrderDto order)
@@ -27,38 +27,34 @@ namespace RemaSoftware.UtilityServices
             Logger.Info("Inizio invio a ApiFattureInCloud");
 
             var apiEndpoint = _configuration["ApiFattureInCloud:ApiEndpointNewProduct"];
-            var apiUID = _configuration["ApiFattureInCloud:ApiUID"];
-            var apiKey = _configuration["ApiFattureInCloud:ApiKEY"];
 
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(apiEndpoint);
             httpWebRequest.ContentType = "application/json";
             httpWebRequest.Method = "POST";
-            if (_env != "Test")
-            {
+            httpWebRequest.Headers.Add("authorization", "Bearer " + _ficAccessToken);
+            #if !DEBUG
                 var myProxy = new WebProxy("http://winproxy.server.lan:3128/", true);
                 httpWebRequest.Proxy = myProxy;
-            }
-
+            #endif
+            
             OrderAPI orderToSendInCloud = new OrderAPI()
             {
-                api_uid = apiUID,
-                api_key = apiKey,
-                cod = order.DDT,
-                nome = order.SKU,
-                desc = order.Description,
+                code = order.DDT,
+                name = order.SKU,
+                description = order.Description,
                 prezzo_ivato = false,
-                prezzo_netto = order.Price_Uni.ToString("0.##"),
-                prezzo_lordo = "0",
-                costo = "0",
-                cod_iva = 0,
-                um = "",
-                categoria = "",
-                note = "",
-                magazzino = true,
-                giacenza_iniziale = order.Number_Piece
+                net_price = order.Price_Uni.ToString("0.##"),
+                gross_price = "0",
+                net_cost = "0",
+                
+                measure = "",
+                category = "",
+                notes = "",
+                in_stock = true,
+                stock_initial = order.Number_Piece
             };
 
-            string stringjson = JsonConvert.SerializeObject(orderToSendInCloud);
+            string stringjson = JsonConvert.SerializeObject(new { data=orderToSendInCloud });
 
             using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
             {
@@ -74,7 +70,7 @@ namespace RemaSoftware.UtilityServices
 
             Logger.Info($"Creazione - Risposta da FattureInCloud: {result}");
             var obj = JsonConvert.DeserializeObject<dynamic>(result);
-            return obj.id;
+            return obj.data.id;
         }
 
         public string DeleteOrder(string productId)
@@ -82,29 +78,16 @@ namespace RemaSoftware.UtilityServices
             Logger.Info("Inizio eliminazione da ApiFattureInCloud");
 
             var apiEndpoint = _configuration["ApiFattureInCloud:ApiEndpointDeleteProduct"];
-            var apiUID = _configuration["ApiFattureInCloud:ApiUID"];
-            var apiKey = _configuration["ApiFattureInCloud:ApiKEY"];
 
-            var httpWebRequest = (HttpWebRequest)WebRequest.Create(apiEndpoint);
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create(apiEndpoint + productId);
             httpWebRequest.ContentType = "application/json";
-            httpWebRequest.Method = "POST";
-            var myProxy = new WebProxy("http://winproxy.server.lan:3128/", true);
-            httpWebRequest.Proxy = myProxy;
-
-            OrderToDelete orderToSendInCloud = new OrderToDelete()
-            {
-                api_uid = apiUID,
-                api_key = apiKey,
-                id = productId,
-            };
-
-            string stringjson = JsonConvert.SerializeObject(orderToSendInCloud);
-
-            using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
-            {
-                streamWriter.Write(stringjson);
-            }
-
+            httpWebRequest.Method = "DELETE";
+            httpWebRequest.Headers.Add("authorization", "Bearer " + _ficAccessToken);
+#if !DEBUG
+                var myProxy = new WebProxy("http://winproxy.server.lan:3128/", true);
+                httpWebRequest.Proxy = myProxy;
+#endif
+            
             var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
             string result;
             using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
@@ -122,36 +105,35 @@ namespace RemaSoftware.UtilityServices
             Logger.Info("Inizio aggiornamento prodotto su ApiFattureInCloud");
 
             var apiEndpoint = _configuration["ApiFattureInCloud:ApiEndpointUpdateProduct"];
-            var apiUID = _configuration["ApiFattureInCloud:ApiUID"];
-            var apiKey = _configuration["ApiFattureInCloud:ApiKEY"];
 
-            var httpWebRequest = (HttpWebRequest)WebRequest.Create(apiEndpoint);
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create(apiEndpoint + order.ID_FattureInCloud);
             httpWebRequest.ContentType = "application/json";
-            httpWebRequest.Method = "POST";
-            var myProxy = new WebProxy("http://winproxy.server.lan:3128/", true);
-            httpWebRequest.Proxy = myProxy;
+            httpWebRequest.Method = "PUT";
+            httpWebRequest.Headers.Add("authorization", "Bearer " + _ficAccessToken);
+#if !DEBUG
+                var myProxy = new WebProxy("http://winproxy.server.lan:3128/", true);
+                httpWebRequest.Proxy = myProxy;
+#endif
 
             OrderAPI orderToSendInCloud = new OrderAPI()
             {
-                id = order.Id.ToString(),
-                api_uid = apiUID,
-                api_key = apiKey,
-                cod = order.DDT,
-                nome = order.SKU,
-                desc = order.Description,
+                id = order.Id,
+                code = order.DDT,
+                name = order.SKU,
+                description = order.Description,
                 prezzo_ivato = false,
-                prezzo_netto = order.Price_Uni.ToString("0.##"),
-                prezzo_lordo = "0",
-                costo = "0",
+                net_price = order.Price_Uni.ToString("0.##"),
+                gross_price = "0",
+                net_cost = "0",
                 cod_iva = 0,
-                um = "",
-                categoria = "",
-                note = "",
-                magazzino = true,
-                giacenza_iniziale = order.Number_Piece
+                measure = "",
+                category = "",
+                notes = "",
+                in_stock = true,
+                stock_initial = order.Number_Piece
             };
 
-            string stringjson = JsonConvert.SerializeObject(orderToSendInCloud);
+            string stringjson = JsonConvert.SerializeObject(new {data=orderToSendInCloud});
 
             using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
             {
@@ -166,36 +148,39 @@ namespace RemaSoftware.UtilityServices
             }
 
             Logger.Info($"Creazione - Risposta da FattureInCloud: {result}");
-            var obj = JsonConvert.DeserializeObject<dynamic>(result);
-            if(obj.success == true)
-                return obj.success;
-            return false;
+            return true;
         }
     }
 
     class OrderAPI
     {
         public string id { get; set; }
-        public string api_uid { get; set; }
-        public string api_key { get; set; }
-        public string cod { get; set; }
-        public string nome { get; set; }
-        public string desc { get; set; }
+        // public string api_uid { get; set; }
+        // public string api_key { get; set; }
+        public string code { get; set; }
+        public string name { get; set; }
+        public string description { get; set; }
         public bool prezzo_ivato { get; set; }
-        public string prezzo_netto { get; set; }
-        public string prezzo_lordo { get; set; }
-        public string costo { get; set; }
+        public string net_price { get; set; }
+        public string gross_price { get; set; }
+        public string net_cost { get; set; }
         public int cod_iva { get; set; }
-        public string um { get; set; }
-        public string categoria { get; set; }
-        public string note { get; set; }
-        public bool magazzino { get; set; }
-        public int giacenza_iniziale { get; set; }
+        public string measure { get; set; }
+        public string category { get; set; }
+        public string notes { get; set; }
+        public bool in_stock { get; set; }
+        public int stock_initial { get; set; }
 
     }
     class OrderToDelete{
         public string api_uid { get; set; }
         public string api_key { get; set; }
         public string id { get; set; }
+    }
+
+    class default_vat
+    {
+        public int id { get; set; }
+        public bool is_disabled { get; set; }
     }
 }
