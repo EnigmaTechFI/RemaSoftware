@@ -6,14 +6,17 @@ namespace RemaSoftware.Domain.Constants
     public static class OrderStatusConstants
     {
         public const string STATUS_ARRIVED = "A";
-        public static readonly string STATUS_ARRIVED_DESC = "Arrivato in magazzino";
+        public static readonly string STATUS_ARRIVED_DESC = "In magazzino";
         
         public const string STATUS_WORKING = "B";
         public static readonly string STATUS_WORKING_DESC = "In lavorazione";
         
         public const string STATUS_COMPLETED = "C";
-        public static readonly string STATUS_COMPLETED_DESC = "Completato e uscito dal magazzino";
-        
+        public static readonly string STATUS_COMPLETED_DESC = "In consegna";
+
+        public const string STATUS_DELIVERED = "D";
+        public static readonly string STATUS_DELIVERED_DESC = "Consegnato";
+
         public static readonly Dictionary<string, StatusDto> OrderStatuses = new Dictionary<string, StatusDto>
         {
             {
@@ -43,6 +46,15 @@ namespace RemaSoftware.Domain.Constants
                     StatusCssClass = "green"
                 }
             },
+            {
+                STATUS_DELIVERED,
+                new StatusDto
+                {
+                    Status = STATUS_DELIVERED,
+                    StatusDescription = STATUS_DELIVERED_DESC,
+                    StatusCssClass = "green"
+                }
+            }
         };
 
         public static StatusDto GetNewOrderStatus(string currentStatus)

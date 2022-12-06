@@ -5,7 +5,6 @@ namespace RemaSoftware.WebApp.Models.OrderViewModel
 {
     public class OrderSummaryViewModel
     {
-        public List<Order> Orders { get; set; }
-        public string RedirectUrlAfterCreation { get; set; }
+        public List<Ddt_In> Ddt_In { get; set; }
     }
 }

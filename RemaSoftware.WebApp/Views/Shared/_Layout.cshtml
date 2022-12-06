@@ -54,8 +54,14 @@
         <!-- Nav Item - Pages Collapse Menu -->
         <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Product" ? "active" : "")">
             <a class="nav-link" asp-action="ProductList" asp-controller="Product">
-                <i class="fas fa-fw fa-tasks"></i>
+                <i class="fas fa-tag"></i>
                 <span>Prodotti</span>
+            </a>
+        </li>
+        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "OrderSummary" ? "active" : "")">
+            <a class="nav-link" asp-action="OrderSummary" asp-controller="Order">
+                <i class="fas fa-file-alt"></i>
+                <span>Resoconto ordini</span>
             </a>
         </li>
         <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "BatchInStock" ? "active" : "")">
@@ -66,19 +72,19 @@
         </li>
         <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "OrdersNotExtinguished" ? "active" : "")">
             <a class="nav-link" asp-action="OrdersNotExtinguished" asp-controller="Order">
-                <i class="fas fa-boxes"></i>
+                <i class="fas fa-pallet"></i>
                 <span>Lotti in produzione</span>
             </a>
         </li>
         <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "OrdersNotExtinguished" ? "active" : "")">
             <a class="nav-link" asp-action="OrdersNotExtinguished" asp-controller="Order">
-                <i class="fas fa-boxes"></i>
+                <i class="fas fa-truck-loading"></i>
                 <span>Lotti in consegna</span>
             </a>
         </li>
         <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Operation" ? "active" : "")">
             <a class="nav-link" asp-action="OperationList" asp-controller="Operation">
-                <i class="fas fa-boxes"></i>
+                <i class="fas fa-tools"></i>
                 <span>Operazioni</span>
             </a>
         </li>
@@ -278,7 +284,7 @@
 <footer class="sticky-footer bg-white">
     <div class="container my-auto">
         <div class="copyright text-center my-auto">
-            <span>Copyright &copy; Re.Ma. s.r.l.s. | <a href="https://www.enigma-tech.it">ΣnigmΔ Tech</a> </span>
+            <span>Copyright &copy; 2022 Re.Ma. S.r.l. - Powered by <a href="https://www.enigma-tech.it">ΣnigmΔ Tech</a> </span>
         </div>
     </div>
 </footer>

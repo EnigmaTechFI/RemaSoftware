@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using RemaSoftware.UtilityServices;
 using RemaSoftware.WebApp.Helper;
 using RemaSoftware.WebApp.Models.ProductViewModel;
 using System;
-using System.IO;
 
 namespace RemaSoftware.WebApp.Controllers
 {
@@ -57,6 +54,20 @@ namespace RemaSoftware.WebApp.Controllers
             {
                 return View(model);
             }
+        }
+
+        [HttpGet]
+        public JsonResult DeleteProduct(int productId)
+        {
+            try
+            {
+                return new JsonResult(new { Result = _productHelper.DeleteProduct(productId), ToastMessage = "Prodotto eliminato correttamente." });
+            }
+            catch(Exception e)
+            {
+                return new JsonResult(new { Result = "Error", ToastMessage = e.Message });
+            }
+            
         }
     }
 }

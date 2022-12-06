@@ -57,5 +57,18 @@ namespace RemaSoftware.WebApp.Helper
             }
 
         }
+
+        public string DeleteProduct(int productId)
+        {
+            try
+            {
+                var product = _productService.GetProductById(productId);
+                return _productService.DeleteProduct(product);
+            }
+            catch(Exception e)
+            {
+                return e.Message;
+            }
+        }
     }
 }

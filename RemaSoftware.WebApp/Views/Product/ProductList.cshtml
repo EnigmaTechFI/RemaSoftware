@@ -40,7 +40,7 @@
                             <a style="text-decoration: none">
                                 <i class="fas fa-pen fa-lg pl-2" title="Modifica prodotto" style="cursor: pointer; color: lightgray"></i>
                             </a>
-                            <i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer; color: lightgray" title="Elimina prodotto" data-toggle="modal" data-target="#confirm-del-modal"></i>                        
+                            <i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer; color: lightgray" title="Elimina prodotto" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDataArticleId('#confirm-del-modal', @product.ProductID)"></i>                        
                         </td>
                     </tr>
                 }
@@ -62,7 +62,7 @@
             <div class="modal-body">Sei sicuro di voler eliminare questo prodotto?</div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
-                <button class="btn btn-primary" onclick="DeleteStockArticle()">Elimina</button>
+                <button class="btn btn-primary" onclick="DeleteProduct()">Elimina</button>
             </div>
         </div>
     </div>
@@ -76,13 +76,17 @@
 
     <script>
 
-    function DeleteStockArticle(){
+    function SetDataArticleId(elementName, articleId){
+        $(elementName).data("articleId", articleId );
+    }
+
+    function DeleteProduct(){
         var articleId = $("#confirm-del-modal").data("articleId");
         $.ajax({
-            url: '@Url.Action("DeleteProduct", "Order")?' + $.param({"productId": articleId}),
+            url: '@Url.Action("DeleteProduct", "Product")?' + $.param({"productId": articleId}),
             type: 'GET',
             success: function (data) {
-                if (data.result == true){
+                if (data.result == "Success"){
                     table.row($("tr#product-" + articleId)).remove().draw();
                     $("#confirm-del-modal").modal('toggle');
                     toastNotifySuccess(data.toastMessage);

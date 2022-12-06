@@ -22,8 +22,6 @@ namespace RemaSoftware.Domain.Services.Impl
 
         public Product AddProduct(Product product)
         {
-            if (product == null)
-                throw new Exception("Product vuoto.");
             try
             {
                 var newProduct = _dbContext.Add(product);
@@ -46,6 +44,22 @@ namespace RemaSoftware.Domain.Services.Impl
         public Product GetProductById(int productId)
         {
             return _dbContext.Products.Include(i => i.Client).SingleOrDefault(i => i.ProductID == productId);
+        }
+
+        public string DeleteProduct(Product product)
+        {
+            try
+            {
+                _dbContext.Remove(product);
+                _dbContext.SaveChanges();
+
+                return "Success";
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Errore durante l'aggiunta del prodotto: {product.ToString()}");
+                return e.Message;
+            }
         }
     }
 }

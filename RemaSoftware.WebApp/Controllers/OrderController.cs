@@ -58,14 +58,10 @@ namespace RemaSoftware.WebApp.Controllers
         [HttpGet]
         public IActionResult OrderSummary()
         {
-            var orders = _orderService.GetOrdersNotCompleted();
-            var vm = new OrderSummaryViewModel
+            return View(new OrderSummaryViewModel()
             {
-                Orders = orders.ToList()
-            };
-            vm.RedirectUrlAfterCreation = Url.Action("OrderSummary", "Order");
-
-            return View(vm);
+                Ddt_In = _orderHelper.GetAllDdtIn_NoPagination()
+            });
         }
 
         [HttpGet]

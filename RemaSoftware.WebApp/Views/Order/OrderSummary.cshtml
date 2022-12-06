@@ -4,58 +4,62 @@
 @model RemaSoftware.WebApp.Models.OrderViewModel.OrderSummaryViewModel
 
 @{
-    ViewData["Title"] = "Resoconto";
+    ViewData["Title"] = "Resoconto ordini";
 }
 
 <link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
 
 <div class="card shadow mb-4" id="order-summ-content">
     <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
-        <h3 class="m-0 font-weight-bold text-primary">Lista prodotti</h3>
+        <h3 class="m-0 font-weight-bold text-primary">Resoconto ordini</h3>
         <div>
-            <button class="btn btn-primary" type="button" onclick="location.href='@Url.Action("NewProduct", "Product")'">Nuovo prodotto</button>
+            <button class="btn btn-primary" type="button">Registra ordine</button>
         </div>
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-bordered" id="table-orders" width="100%" cellspacing="0">
+            <table class="table table-bordered" id="table-ddt" width="100%" cellspacing="0">
                 <thead>
                     <tr>
-                        <th>SKU</th>
-                        <th>Nome</th>
                         <th>Cliente</th>
-                        <th>Pezzi in azienda</th>
+                        <th>DDT</th>
+                        <th>SKU</th>
+                        <th>N° pezzi</th>
                         <th>Prz. Unitario</th>
+                        <th>Arrivo ordine</th>
+                        <th>Scadenza ordine</th>
                         <th>Status</th>
                         <th>Azioni</th>
                     </tr>
                 </thead>
                 <tbody>
-                @foreach (var order in Model.Orders)
+                @foreach (var ddt in Model.Ddt_In)
                 {
-                    <tr id="product-@order.OrderID">
-                        <td>@order.SKU</td>
-                        <td>@order.Name</td>
-                        <td>@order.Client.Name</td>
-                        <td>@order.Number_Pieces_InStock</td>
-                        <td>&euro; @order.Price_Uni.ToString("0.00")</td>
+                    <tr id="ddt-@ddt.Ddt_In_ID">
+                        <td>@ddt.Product.Client.Name</td>
+                        <td>@ddt.Code</td>
+                        <td>@ddt.Product.SKU</td>
+                        <td>@ddt.Number_Piece</td>
+                        <td>&euro; @ddt.Batch.Price_Uni.ToString("0.00")</td>
+                        <td>@ddt.DataIn.ToString("dd/MM/yy")</td>
+                        <td>@ddt.DataOut.ToString("dd/MM/yy")</td>
                         <td class="text-center">
                             @{
-                                if (!string.IsNullOrEmpty(order.Status))
+                                if (!string.IsNullOrEmpty(ddt.Status))
                                 {
-                                    var statusDto = OrderStatusConstants.OrderStatuses[@order.Status];
-                                                                                                                <i class="fas fa-circle fa-lg" style="color: @statusDto?.StatusCssClass" title="@statusDto?.StatusDescription"></i>
+                                    var statusDto = OrderStatusConstants.OrderStatuses[@ddt.Status];
+                                    <i class="fas fa-circle fa-lg" style="color: @statusDto?.StatusCssClass" title="@statusDto?.StatusDescription"></i>
                                 }
                             }
                         </td>
                         <td class="text-center">
-                            <a style="text-decoration: none" target="_blank" href='@Url.Action("DownloadPdfOrder", "Order", new {orderId = order.OrderID})'>
+                            @*<a style="text-decoration: none" target="_blank" href='@Url.Action("DownloadPdfOrder", "Order", new {orderId = order.OrderID})'>
                                 <i class="fas fa-file-download fa-lg pl-2" title="Scarica ordine in PDF" style="cursor: pointer; color: lightgray"></i>
                             </a>
                             <a style="text-decoration: none" href='@Url.Action("UpdateOrder", "Order", new {Id = order.OrderID})'>
                                 <i class="fas fa-pen fa-lg pl-2" title="Modifica" style="cursor: pointer; color: lightgray"></i>
-                            </a>
-                            <i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer; color: lightgray" id="@order.OrderID" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDataArticleId('#confirm-del-modal', @order.OrderID)"></i>                        
+                            </a>*@
+                            <i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer; color: lightgray" id="@ddt.Ddt_In_ID" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDataArticleId('#confirm-del-modal', @ddt.Ddt_In_ID)"></i>                        
                         </td>
                     </tr>
                 }
@@ -74,10 +78,10 @@
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
-            <div class="modal-body">Sei sicuro di voler eliminare questo prodotto?</div>
+            <div class="modal-body">Sei sicuro di voler eliminare questa ddt?</div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
-                <button class="btn btn-primary" onclick="DeleteStockArticle()">Elimina</button>
+                <button class="btn btn-danger" onclick="DeleteStockArticle()">Elimina</button>
             </div>
         </div>
     </div>
@@ -122,7 +126,7 @@
     }
 
     $(document).ready( function () {
-        table = $('#table-orders').DataTable({
+        table = $('#table-ddt').DataTable({
             "language": {
                 "lengthMenu": "Mostra _MENU_ risultati per pagina",
                 "zeroRecords": "Nessun risultato trovato",
@@ -144,8 +148,10 @@
                 { "searchable": true, "orderable": true, "targets": 2 },
                 { "searchable": false, "orderable": false, "targets": 3 },
                 { "searchable": false, "orderable": false, "targets": 4 },
-                { "searchable": false, "orderable": false, "targets": 5 },
-                { "searchable": false, "orderable": false, "targets": 6 },
+                { "searchable": false, "orderable": true, "targets": 5 },
+                { "searchable": false, "orderable": true, "targets": 6 },
+                { "searchable": false, "orderable": false, "targets": 7 },
+                { "searchable": false, "orderable": false, "targets": 8 },
               ]
         });
 
@@ -232,30 +238,6 @@
             HideLoader();
         });
         }
-
-    function SaveNewOrder() {
-        ShowLoader();
-        var model = $("#form-copy-ord").serialize();
-        $.post('@Url.Action("SaveDuplicateOrder", "Order")', model, function (data){
-            if (data.result == true){
-                $("#copy-ord-modal").modal('toggle');
-                toastNotifySuccess(data.toastMessage);
-                var aElement = document.createElement("a");
-                aElement.setAttribute("type", "hidden");
-                aElement.href = '@Url.Action("DownloadPdfOrder", "Order")' + "?orderId=" + data.orderId;
-                aElement.target = "_blank";
-                document.getElementsByTagName("body")
-                aElement.click();
-
-                window.location.href='@Model.RedirectUrlAfterCreation';
-            } else {
-                toastNotifyError(data.toastMessage);
-            }
-            HideLoader();
-        }).done(function () {
-            HideLoader();
-        });
-    }
 
     function DownloadPdf(orderId) {
         $.ajax({

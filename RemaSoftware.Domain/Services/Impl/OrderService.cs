@@ -286,5 +286,15 @@ namespace RemaSoftware.Domain.Services.Impl
                 .ThenInclude(s => s.Client)
                 .ToList();
         }
+
+        public List<Ddt_In> GetAllDdtIn()
+        {
+            return _dbContext.Ddt_In
+                .Include(d => d.Product)
+                .ThenInclude(s => s.Client)
+                .Include(b => b.Batch)
+                .ThenInclude(b => b.BatchOperations)
+                .ToList();
+        }
     }
 }
