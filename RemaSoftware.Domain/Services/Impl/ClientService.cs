@@ -16,10 +16,11 @@ namespace RemaSoftware.Domain.Services.Impl
             _dbContext = dbContext;
         }
 
-        public void AddClient(Client customer)
+        public Client AddClient(Client customer)
         {
-            _dbContext.Add(customer);
+            var addedClient = _dbContext.Add(customer);
             _dbContext.SaveChanges();
+            return addedClient.Entity;
         }
 
         public List<Client> GetAllClients()

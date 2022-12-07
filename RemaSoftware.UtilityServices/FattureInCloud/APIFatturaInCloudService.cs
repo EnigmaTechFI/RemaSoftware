@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using NLog;
@@ -7,18 +8,20 @@ using NLog.Fluent;
 using RemaSoftware.UtilityServices.Dtos;
 using UtilityServices.Dtos;
 
-namespace RemaSoftware.UtilityServices
+namespace RemaSoftware.UtilityServices.FattureInCloud
 {
     public class APIFatturaInCloudService : IAPIFatturaInCloudService
     {
         private readonly IConfiguration _configuration;
+        private readonly IFicBaseHttp _ficBaseHttp;
         private readonly string _ficAccessToken;
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public APIFatturaInCloudService(IConfiguration configuration, string env)
+        public APIFatturaInCloudService(IConfiguration configuration, string env, IFicBaseHttp ficBaseHttp)
         {
             _configuration = configuration;
+            _ficBaseHttp = ficBaseHttp;
             _ficAccessToken = _configuration["ApiFattureInCloud:AccessToken"];
         }
 
@@ -26,9 +29,7 @@ namespace RemaSoftware.UtilityServices
         {
             Logger.Info("Inizio invio a ApiFattureInCloud");
 
-            var apiEndpoint = _configuration["ApiFattureInCloud:ApiEndpointNewProduct"];
-
-            var httpWebRequest = (HttpWebRequest)WebRequest.Create(apiEndpoint);
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create(FicApiUrls.ProductUrl);
             httpWebRequest.ContentType = "application/json";
             httpWebRequest.Method = "POST";
             httpWebRequest.Headers.Add("authorization", "Bearer " + _ficAccessToken);
@@ -77,12 +78,10 @@ namespace RemaSoftware.UtilityServices
         {
             Logger.Info("Inizio eliminazione da ApiFattureInCloud");
 
-            var apiEndpoint = _configuration["ApiFattureInCloud:ApiEndpointDeleteProduct"];
-
-            var httpWebRequest = (HttpWebRequest)WebRequest.Create(apiEndpoint + productId);
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create(FicApiUrls.ProductUrl + productId);
             httpWebRequest.ContentType = "application/json";
             httpWebRequest.Method = "DELETE";
-            httpWebRequest.Headers.Add("authorization", "Bearer " + _ficAccessToken);
+            httpWebRequest.Headers.Add("authorization", "Bearer " + "/" + _ficAccessToken);
 #if !DEBUG
                 var myProxy = new WebProxy("http://winproxy.server.lan:3128/", true);
                 httpWebRequest.Proxy = myProxy;
@@ -104,9 +103,7 @@ namespace RemaSoftware.UtilityServices
         {
             Logger.Info("Inizio aggiornamento prodotto su ApiFattureInCloud");
 
-            var apiEndpoint = _configuration["ApiFattureInCloud:ApiEndpointUpdateProduct"];
-
-            var httpWebRequest = (HttpWebRequest)WebRequest.Create(apiEndpoint + order.ID_FattureInCloud);
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create(FicApiUrls.ProductUrl + "/" + order.ID_FattureInCloud);
             httpWebRequest.ContentType = "application/json";
             httpWebRequest.Method = "PUT";
             httpWebRequest.Headers.Add("authorization", "Bearer " + _ficAccessToken);
@@ -150,6 +147,12 @@ namespace RemaSoftware.UtilityServices
             Logger.Info($"Creazione - Risposta da FattureInCloud: {result}");
             return true;
         }
+
+        public async Task<int> AddClient(ClientDto client)
+        {
+            var result = await _ficBaseHttp.Post<ClientDtoResponseFic>(FicApiUrls.ClientUrl, new {data = client});
+            return result.Data.FicId;
+        }
     }
 
     class OrderAPI
@@ -176,11 +179,5 @@ namespace RemaSoftware.UtilityServices
         public string api_uid { get; set; }
         public string api_key { get; set; }
         public string id { get; set; }
-    }
-
-    class default_vat
-    {
-        public int id { get; set; }
-        public bool is_disabled { get; set; }
     }
 }

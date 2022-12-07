@@ -1,10 +1,8 @@
 using System;
-using System.Drawing;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
 using RemaSoftware.Domain.Data;
-using RemaSoftware.UtilityServices;
-using RemaSoftware.UtilityServices.Dtos;
+using RemaSoftware.UtilityServices.FattureInCloud;
 using UtilityServices.Dtos;
 using RemaSoftware.WebApp.Models.OrderViewModel;
 using System.Collections.Generic;

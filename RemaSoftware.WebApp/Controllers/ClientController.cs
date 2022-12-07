@@ -41,13 +41,13 @@ namespace RemaSoftware.WebApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddClient(ClientViewModel model)
+        public async Task<IActionResult> AddClient(ClientViewModel model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    _clientHelper.AddClient(model);
+                    await _clientHelper.AddClient(model);
                     _notyfToastService.Success("Cliente aggiunto con successo.");
                     return RedirectToAction("Index", "Home");
                 }

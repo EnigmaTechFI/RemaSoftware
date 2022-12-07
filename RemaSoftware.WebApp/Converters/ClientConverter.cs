@@ -1,4 +1,5 @@
 using RemaSoftware.Domain.Models;
+using RemaSoftware.UtilityServices.Dtos;
 using RemaSoftware.WebApp.Models.ClientViewModel;
 
 namespace RemaSoftware.WebApp.Converters;
@@ -33,6 +34,23 @@ public static class ClientConverter
             P_Iva = model.P_Iva,
             Street = model.Street,
             StreetNumber = model.StreetNumber,
+            Cap = model.Cap,
+            City = model.City,
+            Province = model.Province,
+            Nation = model.Nation,
+            Email = model.Email,
+            PhoneNumber = model.PhoneNumber,
+            Fax = model.Fax
+        };
+    }
+
+    public static ClientDto FromModelToFicApiDto(Client model)
+    {
+        return new ClientDto()
+        {
+            Name = model.Name,
+            P_Iva = model.P_Iva,
+            Street = model.Street + ", " + model.StreetNumber,
             Cap = model.Cap,
             City = model.City,
             Province = model.Province,

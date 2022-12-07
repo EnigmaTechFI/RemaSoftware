@@ -14,6 +14,7 @@ using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
 using RemaSoftware.Domain.Services.Impl;
 using RemaSoftware.Domain.Data;
+using RemaSoftware.UtilityServices.FattureInCloud;
 using RemaSoftware.WebApp.Helper;
 using RemaSoftware.WebApp.Validation;
 
@@ -94,6 +95,7 @@ namespace RemaSoftware.WebApp
                 config.Position = NotyfPosition.TopRight;
             });
 
+            services.AddHttpClient<IFicBaseHttp, FicBaseHttp>();
             services.AddTransient<IImageService, ImageService>();
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<IOrderService, OrderService>();
@@ -106,7 +108,7 @@ namespace RemaSoftware.WebApp
             services.AddTransient<AccountingHelper>();
             services.AddTransient<ProductHelper>();
             services.AddTransient<IAPIFatturaInCloudService, APIFatturaInCloudService>(
-                x=> new APIFatturaInCloudService(x.GetRequiredService<IConfiguration>(), _environment.EnvironmentName));
+                x=> new APIFatturaInCloudService(x.GetRequiredService<IConfiguration>(), _environment.EnvironmentName, x.GetRequiredService<IFicBaseHttp>()));
             services.AddTransient<OrderHelper>();
             services.AddTransient<StockHelper>();
             services.AddTransient<ClientHelper>();

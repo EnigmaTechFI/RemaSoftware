@@ -2,18 +2,24 @@ using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
 using RemaSoftware.WebApp.Models.ClientViewModel;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using RemaSoftware.UtilityServices.Dtos;
+using RemaSoftware.UtilityServices.FattureInCloud;
 
 namespace RemaSoftware.WebApp.Helper;
 
 public class ClientHelper
 {
     private readonly IClientService _clientService;
-    public ClientHelper(IClientService clientService)
+    private readonly IAPIFatturaInCloudService _ficService;
+
+    public ClientHelper(IClientService clientService, IAPIFatturaInCloudService ficService)
     {
         _clientService = clientService;
+        _ficService = ficService;
     }
 
-    public void AddClient(ClientViewModel model)
+    public async Task AddClient(ClientViewModel model)
     {
         var newClient = new Client
         {
@@ -30,9 +36,11 @@ public class ClientHelper
             PhoneNumber = model.PhoneNumber,
             Nation_ISO = ""
         };
-
-        /*TODO: Registrazione del cliente su fatture in cloud*/
-        _clientService.AddClient(newClient);
+        
+        var addedClient = _clientService.AddClient(newClient);
+        var ficClientId = await _ficService.AddClient(Converters.ClientConverter.FromModelToFicApiDto(newClient));
+        addedClient.FC_ClientID = ficClientId;
+        // TODO transazionalità (come per order ma da rivedere il rollback)
     }
 
     public List<Client> GetAllClients()
