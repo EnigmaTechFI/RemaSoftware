@@ -39,4 +39,21 @@ public class ClientHelper
     {
         return _clientService.GetAllClients();
     }
+
+    public ClientViewModel GetClient(int clientId)
+    {
+        var client = _clientService.GetClient(clientId);
+        return Converters.ClientConverter.FroModelToVm(client);
+    }
+
+    public bool DeleteClient(int clientId)
+    {
+        return _clientService.DeleteById(clientId);
+    }
+
+    public bool EditClient(ClientViewModel model)
+    {
+        var clientModel = Converters.ClientConverter.FromVmToModel(model);
+        return _clientService.UpdateClient(clientModel);
+    }
 }

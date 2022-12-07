@@ -59,5 +59,48 @@ namespace RemaSoftware.WebApp.Controllers
             }
             return View(model);
         }
+
+        [HttpGet]
+        public IActionResult EditClient(int clientId)
+        {
+            var vm = _clientHelper.GetClient(clientId);
+            return View(vm);
+        }
+
+        [HttpPost]
+        public IActionResult EditClient(ClientViewModel model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _clientHelper.EditClient(model);
+                    _notyfToastService.Success("Cliente modificato con successo.");
+                    return View(model);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Errore durante la modifica del Cliente.");
+                _notyfToastService.Error("Errore durante la modifica del Cliente.");
+            }
+            return View(model);
+        }
+
+        [HttpDelete]
+        public JsonResult DeleteClient(int clientId)
+        {
+            try
+            {
+                var result = _clientHelper.DeleteClient(clientId);
+                return new JsonResult(new { Result = result, ToastMessage = "Cliente eliminato con successo." });
+                
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Errore durante l\\'eliminazione del Cliente con id: <{clientId}>.");
+                return new JsonResult(new { Error = ex, ToastMessage = $"Errore durante l\\'eliminazione del Cliente." });
+            }
+        }
     }
 }

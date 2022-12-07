@@ -5,6 +5,7 @@ namespace RemaSoftware.WebApp.Models.ClientViewModel
 {
     public class ClientViewModel
     {
+        public int ClientId { get; set; }
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]
         public string Name { get; set; }
         [MaxLength(20)]

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using NLog;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Data;
 
@@ -8,6 +9,7 @@ namespace RemaSoftware.Domain.Services.Impl
     public class ClientService : IClientService
     {
         private readonly ApplicationDbContext _dbContext;
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public ClientService(ApplicationDbContext dbContext)
         {
@@ -34,6 +36,45 @@ namespace RemaSoftware.Domain.Services.Impl
         public int GetTotalCustomerCount()
         {
             return _dbContext.Clients.Count();
+        }
+
+        public bool DeleteById(int clientId)
+        {
+            try
+            {
+                var hasProducts = _dbContext.Products.Any(a => a.ClientID == clientId);
+                if (hasProducts)
+                {
+                    var client = _dbContext.Clients.SingleOrDefault(sd => sd.ClientID == clientId);
+                    //client.IsDeleted = true;
+                    _dbContext.Clients.Update(client);
+                }
+                else
+                    _dbContext.Clients.Remove(new Client { ClientID = clientId});
+                
+                _dbContext.SaveChanges();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Errore durante l'eliminazione del cliente: {clientId}. ", e);
+                return false;
+            }
+        }
+
+        public bool UpdateClient(Client clientModel)
+        {
+            try
+            {
+                _dbContext.Clients.Update(clientModel);
+                _dbContext.SaveChanges();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Errore durante l'update del cliente: {clientModel.ClientID}. ", e);
+                return false;
+            }
         }
     }
 }
