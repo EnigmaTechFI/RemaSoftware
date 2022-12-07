@@ -9,8 +9,8 @@ namespace RemaSoftware.Domain.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         public DbSet<MyUser> MyUsers { get; set; }
-        public DbSet<UserClient> UserClients { get; set; }
         public DbSet<Client> Clients { get; set; }
+        public DbSet<UserClient> UserClients { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Ddt_In> Ddt_In { get; set; }

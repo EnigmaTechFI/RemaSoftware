@@ -13,5 +13,6 @@ namespace RemaSoftware.Domain.Services
         Product AddProduct(Product product);
         Product GetProductById(int productId);
         string DeleteProduct(Product product);
+        Product UpdateProduct(Product product);
     }
 }

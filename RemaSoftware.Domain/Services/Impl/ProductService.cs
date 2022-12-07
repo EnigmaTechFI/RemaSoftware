@@ -57,9 +57,25 @@ namespace RemaSoftware.Domain.Services.Impl
             }
             catch (Exception e)
             {
-                Logger.Error(e, $"Errore durante l'aggiunta del prodotto: {product.ToString()}");
+                Logger.Error(e, $"Errore durante l'eliminazione del prodotto: #{product.SKU}");
                 return e.Message;
             }
+        }
+
+        public Product UpdateProduct(Product product)
+        {
+            try
+            {
+                var updatedProduct = _dbContext.Update(product);
+                _dbContext.SaveChanges();
+
+                return updatedProduct.Entity;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Errore durante l'aggiornamento del prodotto: #{product.SKU}");
+            }
+            return null;
         }
     }
 }

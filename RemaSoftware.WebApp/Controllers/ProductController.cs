@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RemaSoftware.WebApp.Helper;
 using RemaSoftware.WebApp.Models.ProductViewModel;
@@ -11,11 +12,13 @@ namespace RemaSoftware.WebApp.Controllers
     {
         private readonly ClientHelper _clientHelper;
         private readonly ProductHelper _productHelper;
+        private readonly INotyfService _notyfToastService;
 
-        public ProductController(ClientHelper clientHelper, ProductHelper productHelper)
+        public ProductController(ClientHelper clientHelper, ProductHelper productHelper, INotyfService notyfToastService)
         {
             _clientHelper = clientHelper;
             _productHelper = productHelper;
+            _notyfToastService = notyfToastService;
         }
 
         [HttpGet]
@@ -45,13 +48,14 @@ namespace RemaSoftware.WebApp.Controllers
         {
             try
             {
-                if(ModelState.IsValid)
-                    _productHelper.AddProduct(model);
-                /*TODO: Effettuare tutti i controlli necessari*/
-                return View(model);
+                _productHelper.AddProduct(model);
+                _notyfToastService.Success("Prodotto aggiunto correttamente");
+                return RedirectToAction("ProductList");
             }
             catch(Exception ex)
             {
+                model.Clients = _clientHelper.GetAllClients();
+                _notyfToastService.Error(ex.Message);
                 return View(model);
             }
         }
@@ -69,5 +73,29 @@ namespace RemaSoftware.WebApp.Controllers
             }
             
         }
+
+        [HttpGet]
+        public IActionResult UpdateProduct(int productId)
+        {
+            return View(_productHelper.UpdateProduct(productId));
+        }
+
+        [HttpPost]
+        public IActionResult UpdateProduct(UpdateProductViewModel model)
+        {
+            try
+            {
+                _productHelper.UpdateProduct(model);
+                _notyfToastService.Success("Prodotto aggiornato correttamente");
+                return RedirectToAction("ProductList");
+            }
+            catch (Exception ex)
+            {
+                model.Clients = _clientHelper.GetAllClients();
+                _notyfToastService.Error(ex.Message);
+                return View(model);
+            }
+        }
+
     }
 }
