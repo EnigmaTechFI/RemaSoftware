@@ -69,7 +69,9 @@ public class ClientHelper
         {
             var ficClientId = _clientService.GetClientIdFattureInCloudByRemaClientId(clientId);
             _ficService.DeleteClient(ficClientId);
-            return _clientService.DeleteById(clientId);
+            var result = _clientService.DeleteById(clientId);
+            transaction.Commit();
+            return result;
             
         }
     }
