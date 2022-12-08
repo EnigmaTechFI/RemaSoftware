@@ -26,7 +26,7 @@ public class FicBaseHttp : IFicBaseHttp
         if (string.IsNullOrEmpty(url)) throw new ArgumentNullException(nameof(url));
         var responseMessage = await _httpClient.DeleteAsync(url);
         if (!responseMessage.IsSuccessStatusCode)
-            throw new FattureInCloudException($"Errore durante l'eliminazione del cliente su FattureInCloud. {responseMessage}");
+            throw new FattureInCloudException($"Errore durante l'eliminazione del cliente su FattureInCloud. {responseMessage.ToString()}");
         return true;
     }
 
