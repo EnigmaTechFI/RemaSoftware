@@ -77,5 +77,11 @@ namespace RemaSoftware.Domain.Services.Impl
                 return false;
             }
         }
+
+        public int GetClientIdFattureInCloudByRemaClientId(int remaClientId)
+        {
+            if (remaClientId <= 0) throw new ArgumentException("Parametro RemaClientId obbligaotrio.");
+            return _dbContext.Clients.Single(sd => sd.ClientID == remaClientId).FC_ClientID;
+        }
     }
 }

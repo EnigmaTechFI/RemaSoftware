@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
@@ -6,6 +7,8 @@ using Newtonsoft.Json;
 using NLog;
 using NLog.Fluent;
 using RemaSoftware.UtilityServices.Dtos;
+using RemaSoftware.UtilityServices.Exceptions;
+using RemaSoftware.UtilityServices.FicResponses;
 using UtilityServices.Dtos;
 
 namespace RemaSoftware.UtilityServices.FattureInCloud
@@ -152,6 +155,18 @@ namespace RemaSoftware.UtilityServices.FattureInCloud
         {
             var result = await _ficBaseHttp.Post<ClientDtoResponseFic>(FicApiUrls.ClientUrl, new {data = client});
             return result.Data.FicId;
+        }
+
+        public async Task UpdateClient(ClientDto client, int ficClientId)
+        {
+            var url = $"{FicApiUrls.ClientUrl}/{ficClientId}";
+            await _ficBaseHttp.Put<ClientDtoResponseFic>(url, new {data = client});
+        }
+
+        public async Task DeleteClient(int ficClientId)
+        {
+            var url = $"{FicApiUrls.ClientUrl}/{ficClientId}";
+            await _ficBaseHttp.Delete(url);
         }
     }
 

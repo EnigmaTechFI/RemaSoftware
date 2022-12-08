@@ -1,10 +1,14 @@
+using System;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
 using RemaSoftware.WebApp.Models.ClientViewModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using RemaSoftware.Domain.Data;
 using RemaSoftware.UtilityServices.Dtos;
+using RemaSoftware.UtilityServices.Exceptions;
 using RemaSoftware.UtilityServices.FattureInCloud;
+using RemaSoftware.WebApp.Converters;
 
 namespace RemaSoftware.WebApp.Helper;
 
@@ -12,35 +16,40 @@ public class ClientHelper
 {
     private readonly IClientService _clientService;
     private readonly IAPIFatturaInCloudService _ficService;
+    private readonly ApplicationDbContext _dbContext;
 
-    public ClientHelper(IClientService clientService, IAPIFatturaInCloudService ficService)
+    public ClientHelper(IClientService clientService, IAPIFatturaInCloudService ficService, ApplicationDbContext dbContext)
     {
         _clientService = clientService;
         _ficService = ficService;
+        _dbContext = dbContext;
     }
 
     public async Task AddClient(ClientViewModel model)
     {
-        var newClient = new Client
+        using (var transaction = _dbContext.Database.BeginTransaction())
         {
-            Name = model.Name,
-            StreetNumber = model.StreetNumber,
-            Street = model.Street,
-            Cap = model.Cap,
-            City = model.City,
-            Nation = model.Nation,
-            Province = model.Province,
-            P_Iva = model.P_Iva,
-            Email = model.Email,
-            Fax = model.Fax ?? "",
-            PhoneNumber = model.PhoneNumber,
-            Nation_ISO = ""
-        };
+            var newClient = new Client
+            {
+                Name = model.Name,
+                StreetNumber = model.StreetNumber,
+                Street = model.Street,
+                Cap = model.Cap,
+                City = model.City,
+                Nation = model.Nation,
+                Province = model.Province,
+                P_Iva = model.P_Iva,
+                Email = model.Email,
+                Fax = model.Fax ?? "",
+                PhoneNumber = model.PhoneNumber,
+                Nation_ISO = ""
+            };
         
-        var addedClient = _clientService.AddClient(newClient);
-        var ficClientId = await _ficService.AddClient(Converters.ClientConverter.FromModelToFicApiDto(newClient));
-        addedClient.FC_ClientID = ficClientId;
-        // TODO transazionalità (come per order ma da rivedere il rollback)
+            var ficClientId = await _ficService.AddClient(ClientConverter.FromModelToFicApiDto(newClient));
+            newClient.FC_ClientID = ficClientId;
+            var addedClient = _clientService.AddClient(newClient);
+            transaction.Commit();
+        }
     }
 
     public List<Client> GetAllClients()
@@ -56,12 +65,27 @@ public class ClientHelper
 
     public bool DeleteClient(int clientId)
     {
-        return _clientService.DeleteById(clientId);
+        using (var transaction = _dbContext.Database.BeginTransaction())
+        {
+            var ficClientId = _clientService.GetClientIdFattureInCloudByRemaClientId(clientId);
+            _ficService.DeleteClient(ficClientId);
+            return _clientService.DeleteById(clientId);
+            
+        }
     }
 
-    public bool EditClient(ClientViewModel model)
+    public async Task<bool> EditClient(ClientViewModel model)
     {
-        var clientModel = Converters.ClientConverter.FromVmToModel(model);
-        return _clientService.UpdateClient(clientModel);
+        using (var transaction = _dbContext.Database.BeginTransaction())
+        {
+            var clientModel = Converters.ClientConverter.FromVmToModel(model);
+
+            var ficClientId = _clientService.GetClientIdFattureInCloudByRemaClientId(model.ClientId);
+            await _ficService.UpdateClient(ClientConverter.FromModelToFicApiDto(clientModel), ficClientId);
+            
+            var result = _clientService.UpdateClient(clientModel);
+            transaction.Commit();
+            return result;
+        }
     }
 }

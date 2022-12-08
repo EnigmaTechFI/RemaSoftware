@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using NLog;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
+using RemaSoftware.UtilityServices.Exceptions;
 using RemaSoftware.WebApp.Models.ClientViewModel;
 using RemaSoftware.WebApp.Helper;
 
@@ -52,10 +53,15 @@ namespace RemaSoftware.WebApp.Controllers
                     return RedirectToAction("Index", "Home");
                 }
             }
-            catch (Exception ex)
+            catch (FattureInCloudException ex)
             {
-                Logger.Error(ex, "Errore durante l'aggiunta del Cliente.");
-                _notyfToastService.Error("Errore durante la creazione del Cliente.");
+                Logger.Error(ex, "Errore durante l'aggiunta del Cliente su FattureInCloud.");
+                _notyfToastService.Error("Errore durante la creazione del Cliente su FattureInCloud.");
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Errore generico durante l'aggiunta del Cliente.");
+                _notyfToastService.Error("Errore generico durante l'aggiunta del Cliente.");
             }
             return View(model);
         }
@@ -68,21 +74,26 @@ namespace RemaSoftware.WebApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditClient(ClientViewModel model)
+        public async Task<IActionResult> EditClient(ClientViewModel model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    _clientHelper.EditClient(model);
+                    await _clientHelper.EditClient(model);
                     _notyfToastService.Success("Cliente modificato con successo.");
                     return View(model);
                 }
             }
-            catch (Exception ex)
+            catch (FattureInCloudException ex)
             {
-                Logger.Error(ex, "Errore durante la modifica del Cliente.");
-                _notyfToastService.Error("Errore durante la modifica del Cliente.");
+                Logger.Error(ex, "Errore durante la modifica del Cliente su FattureInCloud.");
+                _notyfToastService.Error("Errore durante la modifica del Cliente su FattureInCloud.");
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Errore generico durante la modifica del Cliente.");
+                _notyfToastService.Error("Errore generico durante la modifica del Cliente.");
             }
             return View(model);
         }

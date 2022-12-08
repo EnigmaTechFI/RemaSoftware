@@ -4,6 +4,8 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using RemaSoftware.UtilityServices.Exceptions;
+using RemaSoftware.UtilityServices.FicResponses;
 
 namespace RemaSoftware.UtilityServices.FattureInCloud;
 
@@ -23,9 +25,9 @@ public class FicBaseHttp : IFicBaseHttp
     {
         if (string.IsNullOrEmpty(url)) throw new ArgumentNullException(nameof(url));
         var responseMessage = await _httpClient.DeleteAsync(url);
-        if (responseMessage.IsSuccessStatusCode)
-            return true;
-        return false;
+        if (!responseMessage.IsSuccessStatusCode)
+            throw new FattureInCloudException($"Errore durante l'eliminazione del cliente su FattureInCloud. {responseMessage}");
+        return true;
     }
 
     public async Task<TModel> Get<TModel>(string url) where TModel : class
@@ -34,7 +36,7 @@ public class FicBaseHttp : IFicBaseHttp
         return await _httpClient.GetFromJsonAsync<TModel>(url);
     }
 
-    public async Task<TModel> Post<TModel>(string url, object data) where TModel : class
+    public async Task<TModel> Post<TModel>(string url, object data) where TModel : BaseErrorFicResponse
     {
         if (string.IsNullOrEmpty(url)) 
             throw new ArgumentNullException(nameof(url));
@@ -42,19 +44,14 @@ public class FicBaseHttp : IFicBaseHttp
         var response = await _httpClient.PostAsJsonAsync(url, data);
 
         var contentAsString = await response.Content.ReadAsStringAsync();
-            
-        try
-        {
-            var deserialize = JsonSerializer.Deserialize<TModel>(contentAsString);
-            return deserialize;
-        }
-        catch(Exception e)
-        {
-            return null;
-        }
+
+        var deserialize = JsonSerializer.Deserialize<TModel>(contentAsString);
+        if (deserialize == null || deserialize.Error != null)
+            throw new FattureInCloudException($"Errore durante la creazione del cliente su FattureInCloud. Error: {deserialize.Error.ErrorMessage} {deserialize.Error.ValidationErrors}.");
+        return deserialize;
     }
 
-    public async Task<TModel> Put<TModel>(string url, object data) where TModel : class
+    public async Task<TModel> Put<TModel>(string url, object data) where TModel : BaseErrorFicResponse
     {
         if (string.IsNullOrEmpty(url)) 
             throw new ArgumentNullException(nameof(url));
@@ -62,15 +59,11 @@ public class FicBaseHttp : IFicBaseHttp
         var response = await _httpClient.PutAsJsonAsync(url, data);
 
         var contentAsString = await response.Content.ReadAsStringAsync();
-            
-        try
-        {
-            var deserialize = JsonSerializer.Deserialize<TModel>(contentAsString);
-            return deserialize;
-        }
-        catch(Exception e)
-        {
-            return null;
-        }
+        
+        var deserialize = JsonSerializer.Deserialize<TModel>(contentAsString);
+        
+        if (deserialize == null || deserialize.Error != null)
+            throw new FattureInCloudException($"Errore durante la creazione del cliente su FattureInCloud. Error: {deserialize.Error.ErrorMessage} {deserialize.Error.ValidationErrors}.");
+        return deserialize;
     }
 }

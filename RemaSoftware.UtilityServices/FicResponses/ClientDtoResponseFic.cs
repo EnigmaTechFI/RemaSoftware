@@ -1,8 +1,8 @@
 using System.Text.Json.Serialization;
 
-namespace RemaSoftware.UtilityServices.Dtos;
+namespace RemaSoftware.UtilityServices.FicResponses;
 
-public class ClientDtoResponseFic
+public class ClientDtoResponseFic : BaseErrorFicResponse
 {
     [JsonPropertyName("data")]
     public ClientData Data { get; set; }

@@ -13,5 +13,7 @@ namespace RemaSoftware.UtilityServices.FattureInCloud
         
         // Client
         public Task<int> AddClient(ClientDto client);
+        public Task UpdateClient(ClientDto client, int ficClientId);
+        Task DeleteClient(int ficClientId);
     }
 }

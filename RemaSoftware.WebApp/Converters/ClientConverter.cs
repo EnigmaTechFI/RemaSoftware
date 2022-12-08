@@ -21,7 +21,7 @@ public static class ClientConverter
             Nation = vm.Nation,
             Email = vm.Email,
             PhoneNumber = vm.PhoneNumber,
-            Fax = vm.Fax
+            Fax = vm.Fax,
         };
     }
 
