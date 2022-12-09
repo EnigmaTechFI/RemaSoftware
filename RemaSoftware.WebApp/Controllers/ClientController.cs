@@ -98,20 +98,26 @@ namespace RemaSoftware.WebApp.Controllers
             return View(model);
         }
 
-        [HttpDelete]
-        public JsonResult DeleteClient(int clientId)
-        {
-            try
-            {
-                var result = _clientHelper.DeleteClient(clientId);
-                return new JsonResult(new { Result = result, ToastMessage = "Cliente eliminato con successo." });
-                
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex, "Errore durante l\\'eliminazione del Cliente con id: <{clientId}>.");
-                return new JsonResult(new { Error = ex, ToastMessage = $"Errore durante l\\'eliminazione del Cliente." });
-            }
-        }
+        // [HttpDelete]
+        // public JsonResult DeleteClient(int clientId)
+        // {
+        //     try
+        //     {
+        //         var result = _clientHelper.DeleteClient(clientId);
+        //         return new JsonResult(new { Result = result, ToastMessage = "Cliente eliminato con successo." });
+        //         
+        //     }
+        //     catch (FattureInCloudException ex)
+        //     {
+        //         Logger.Error(ex, "Errore durante la cancellazione del Cliente su FattureInCloud.");
+        //         _notyfToastService.Error("Errore durante la modifica del Cliente su FattureInCloud.");
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         Logger.Error(e, "Errore generico durante la cancellazione del Cliente con id: <{clientId}>.");
+        //         _notyfToastService.Error("Errore generico durante la cancellazione del Cliente.");
+        //     }
+        //     return new JsonResult(new { ToastMessage = $"Errore durante l\\'eliminazione del Cliente." });
+        // }
     }
 }

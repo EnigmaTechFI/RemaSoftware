@@ -4,6 +4,7 @@
     ViewData["Title"] = "Modifica Cliente";
 }
 
+<link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
 <div class="card shadow mb-4">
     <div class="card-header py-3">
         <h4 class="m-0 font-weight-bold text-primary">Modifica Cliente</h4>
@@ -68,3 +69,23 @@
         </form>
     </div>
 </div>
+
+@{ await Html.RenderPartialAsync("_UtentiCliente", Model.ClientUsers);}
+
+@section Scripts
+{
+    <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
+    <script>
+        table = $('#table-clientusers').DataTable({
+            "language": {
+                "zeroRecords": "Nessun utente associato a questo cliente"
+            },
+            "searching": false,
+            "bLengthChange": false,
+            "info": false,
+            "paging": false,
+            "ordering": false
+        });
+    </script>
+}

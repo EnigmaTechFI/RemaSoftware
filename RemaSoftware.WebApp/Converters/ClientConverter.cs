@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.UtilityServices.Dtos;
 using RemaSoftware.WebApp.Models.ClientViewModel;
@@ -40,7 +42,8 @@ public static class ClientConverter
             Nation = model.Nation,
             Email = model.Email,
             PhoneNumber = model.PhoneNumber,
-            Fax = model.Fax
+            Fax = model.Fax,
+            ClientUsers = model.UserClients.Select(s=>s.MyUser).ToList()
         };
     }
 

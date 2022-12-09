@@ -34,9 +34,10 @@
                         <td>@client.Email</td>
                         <td>@client.PhoneNumber</td>
                         <td class="text-center">
-                            <i class="fas fa-trash fa-lg pl-2" style="cursor: pointer; color: lightgray" id="@client.ClientID" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetClientId('#confirm-del-modal', @client.ClientID)"></i>     
+                            @* <i class="fas fa-trash fa-lg pl-2" style="cursor: pointer; color: lightgray" id="@client.ClientID" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetClientId('#confirm-del-modal', @client.ClientID)"></i>      *@
                             <a style="text-decoration: none" href='@Url.Action("EditClient", "Client", new {clientId = client.ClientID})'>
                                 <i class="fas fa-pen fa-lg pl-2" title="Modifica" style="cursor: pointer; color: lightgray"></i>
+                                <i class="fas fa-user-plus fa-lg" title="Aggiungi Utente" style="cursor: pointer; color: lightgray"></i>
                             </a>     
                         </td>
                     </tr>
@@ -60,6 +61,28 @@
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
                 <button class="btn btn-primary" onclick="DeleteClient()">Elimina</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="create-clientuser" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Crea Utente</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">S
+                <form>
+                    
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
+                <button class="btn btn-primary" onclick="CreateClientUser()">Elimina</button>
             </div>
         </div>
     </div>
@@ -106,24 +129,24 @@
         $(elementName).data("clientId", clientId );
     }
 
-    function DeleteClient(){
-        var clientId = $("#confirm-del-modal").data("clientId");
-        $.ajax({
-            url: '@Url.Action("DeleteClient", "Client")?' + $.param({"clientId": clientId}),
-            type: 'DELETE',
-            success: function (data) {
-                if (data.result == true){
-                    table.row($("tr#client-" + clientId)).remove().draw();
-                    $("#confirm-del-modal").modal('toggle');
-                    toastNotifySuccess(data.toastMessage);
-                }else{
-                    toastNotifyError(data.toastMessage);
-                }
-            },
-            error: function (data){
-                toastNotifyError(data.toastMessage);
-            }
-        });
-    }
+    // function DeleteClient(){
+    //     var clientId = $("#confirm-del-modal").data("clientId");
+    //     $.ajax({
+    //         url: '@Url.Action("DeleteClient", "Client")?' + $.param({"clientId": clientId}),
+    //         type: 'DELETE',
+    //         success: function (data) {
+    //             if (data.result == true){
+    //                 table.row($("tr#client-" + clientId)).remove().draw();
+    //                 $("#confirm-del-modal").modal('toggle');
+    //                 toastNotifySuccess(data.toastMessage);
+    //             }else{
+    //                 toastNotifyError(data.toastMessage);
+    //             }
+    //         },
+    //         error: function (data){
+    //             toastNotifyError(data.toastMessage);
+    //         }
+    //     });
+    // }
     </script>
 }

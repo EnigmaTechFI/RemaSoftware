@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using RemaSoftware.Domain.Models;
 
 namespace RemaSoftware.WebApp.Models.ClientViewModel
@@ -28,6 +29,7 @@ namespace RemaSoftware.WebApp.Models.ClientViewModel
         public string PhoneNumber { get; set; }
         [MaxLength(15)]
         public string Fax { get; set; }
-
+        
+        public List<MyUser> ClientUsers { get; set; }
     }
 }

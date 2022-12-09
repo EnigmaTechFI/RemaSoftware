@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using NLog;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Data;
@@ -30,7 +31,10 @@ namespace RemaSoftware.Domain.Services.Impl
 
         public Client GetClient(int id)
         {
-            var client = _dbContext.Clients.SingleOrDefault(i => i.ClientID == id);
+            var client = _dbContext.Clients
+                .Include(i=>i.UserClients)
+                .ThenInclude(i=>i.MyUser)
+                .SingleOrDefault(i => i.ClientID == id);
             return client;
         }
 
