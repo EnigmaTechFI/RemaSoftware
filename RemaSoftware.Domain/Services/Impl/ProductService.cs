@@ -38,7 +38,7 @@ namespace RemaSoftware.Domain.Services.Impl
 
         public List<Product> GetAllProducts()
         {
-            return _dbContext.Products.Include(i => i.Client).Include(s => s.Ddt_In).ToList();
+            return _dbContext.Products.Include(i => i.Client).Include(s => s.Ddts_In).ToList();
         }
 
         public Product GetProductById(int productId)

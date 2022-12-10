@@ -243,15 +243,18 @@ namespace RemaSoftware.Domain.Migrations
 
                     b.HasKey("BatchId");
 
-                    b.ToTable("Batch");
+                    b.ToTable("Batches");
                 });
 
-            modelBuilder.Entity("RemaSoftware.Domain.Models.BatchOperations", b =>
+            modelBuilder.Entity("RemaSoftware.Domain.Models.BatchOperation", b =>
                 {
-                    b.Property<int>("BatchID")
+                    b.Property<int>("BatchOperationID")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("OperationID")
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BatchOperationID"), 1L, 1);
+
+                    b.Property<int>("BatchID")
                         .HasColumnType("int");
 
                     b.Property<decimal?>("ExtraPrice")
@@ -269,6 +272,9 @@ namespace RemaSoftware.Domain.Migrations
                     b.Property<int>("NumberWastePiece")
                         .HasColumnType("int");
 
+                    b.Property<int>("OperationID")
+                        .HasColumnType("int");
+
                     b.Property<int>("Ordering")
                         .HasColumnType("int");
 
@@ -276,7 +282,9 @@ namespace RemaSoftware.Domain.Migrations
                         .HasMaxLength(1)
                         .HasColumnType("nvarchar(1)");
 
-                    b.HasKey("BatchID", "OperationID");
+                    b.HasKey("BatchOperationID");
+
+                    b.HasIndex("BatchID");
 
                     b.HasIndex("OperationID");
 
@@ -347,6 +355,32 @@ namespace RemaSoftware.Domain.Migrations
                     b.ToTable("Clients");
                 });
 
+            modelBuilder.Entity("RemaSoftware.Domain.Models.Ddt_Association", b =>
+                {
+                    b.Property<int>("Ddt_In_ID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Ddt_Out_ID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Ddt_In_ID1")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Ddt_Out_ID1")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumberPieces")
+                        .HasColumnType("int");
+
+                    b.HasKey("Ddt_In_ID", "Ddt_Out_ID");
+
+                    b.HasIndex("Ddt_In_ID1");
+
+                    b.HasIndex("Ddt_Out_ID1");
+
+                    b.ToTable("Ddt_Associations");
+                });
+
             modelBuilder.Entity("RemaSoftware.Domain.Models.Ddt_In", b =>
                 {
                     b.Property<int>("Ddt_In_ID")
@@ -368,9 +402,6 @@ namespace RemaSoftware.Domain.Migrations
 
                     b.Property<DateTime>("DataOut")
                         .HasColumnType("datetime2");
-
-                    b.Property<int?>("Ddt_Out_ID")
-                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -404,7 +435,7 @@ namespace RemaSoftware.Domain.Migrations
 
                     b.HasIndex("ProductID");
 
-                    b.ToTable("Ddt_In");
+                    b.ToTable("Ddts_In");
                 });
 
             modelBuilder.Entity("RemaSoftware.Domain.Models.Ddt_Out", b =>
@@ -421,16 +452,13 @@ namespace RemaSoftware.Domain.Migrations
                     b.Property<int>("FC_Ddt_Out_ID")
                         .HasColumnType("int");
 
-                    b.Property<int>("NumberPieces")
-                        .HasColumnType("int");
-
                     b.Property<string>("Status")
                         .HasMaxLength(1)
                         .HasColumnType("nvarchar(1)");
 
                     b.HasKey("Ddt_Out_ID");
 
-                    b.ToTable("Ddt_Out");
+                    b.ToTable("Ddts_Out");
                 });
 
             modelBuilder.Entity("RemaSoftware.Domain.Models.Operation", b =>
@@ -456,23 +484,17 @@ namespace RemaSoftware.Domain.Migrations
 
             modelBuilder.Entity("RemaSoftware.Domain.Models.OperationTimeline", b =>
                 {
-                    b.Property<int>("OperationTimelineID")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("SubBatchID")
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OperationTimelineID"), 1L, 1);
 
                     b.Property<int>("BatchOperationID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("BatchOperationsBatchID")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("BatchOperationsOperationID")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("OperationTimelineID")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
@@ -481,9 +503,9 @@ namespace RemaSoftware.Domain.Migrations
                         .HasMaxLength(1)
                         .HasColumnType("nvarchar(1)");
 
-                    b.HasKey("OperationTimelineID");
+                    b.HasKey("SubBatchID", "BatchOperationID");
 
-                    b.HasIndex("BatchOperationsBatchID", "BatchOperationsOperationID");
+                    b.HasIndex("BatchOperationID");
 
                     b.ToTable("OperationTimelines");
                 });
@@ -609,6 +631,27 @@ namespace RemaSoftware.Domain.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("RemaSoftware.Domain.Models.SubBatch", b =>
+                {
+                    b.Property<int>("SubBatchID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SubBatchID"), 1L, 1);
+
+                    b.Property<int>("BatchID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumberPieces")
+                        .HasColumnType("int");
+
+                    b.HasKey("SubBatchID");
+
+                    b.HasIndex("BatchID");
+
+                    b.ToTable("SubBatches");
+                });
+
             modelBuilder.Entity("RemaSoftware.Domain.Models.UserClient", b =>
                 {
                     b.Property<string>("MyUserID")
@@ -726,7 +769,7 @@ namespace RemaSoftware.Domain.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("RemaSoftware.Domain.Models.BatchOperations", b =>
+            modelBuilder.Entity("RemaSoftware.Domain.Models.BatchOperation", b =>
                 {
                     b.HasOne("RemaSoftware.Domain.Models.Batch", "Batch")
                         .WithMany("BatchOperations")
@@ -735,7 +778,7 @@ namespace RemaSoftware.Domain.Migrations
                         .IsRequired();
 
                     b.HasOne("RemaSoftware.Domain.Models.Operation", "Operations")
-                        .WithMany()
+                        .WithMany("BatchOperations")
                         .HasForeignKey("OperationID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -745,16 +788,31 @@ namespace RemaSoftware.Domain.Migrations
                     b.Navigation("Operations");
                 });
 
+            modelBuilder.Entity("RemaSoftware.Domain.Models.Ddt_Association", b =>
+                {
+                    b.HasOne("RemaSoftware.Domain.Models.Ddt_In", "Ddt_In")
+                        .WithMany("Ddt_Associations")
+                        .HasForeignKey("Ddt_In_ID1");
+
+                    b.HasOne("RemaSoftware.Domain.Models.Ddt_Out", "Ddt_Out")
+                        .WithMany("Ddt_Associations")
+                        .HasForeignKey("Ddt_Out_ID1");
+
+                    b.Navigation("Ddt_In");
+
+                    b.Navigation("Ddt_Out");
+                });
+
             modelBuilder.Entity("RemaSoftware.Domain.Models.Ddt_In", b =>
                 {
                     b.HasOne("RemaSoftware.Domain.Models.Batch", "Batch")
-                        .WithMany("Ddt_In")
+                        .WithMany("Ddts_In")
                         .HasForeignKey("BatchID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("RemaSoftware.Domain.Models.Product", "Product")
-                        .WithMany("Ddt_In")
+                        .WithMany("Ddts_In")
                         .HasForeignKey("ProductID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -766,11 +824,21 @@ namespace RemaSoftware.Domain.Migrations
 
             modelBuilder.Entity("RemaSoftware.Domain.Models.OperationTimeline", b =>
                 {
-                    b.HasOne("RemaSoftware.Domain.Models.BatchOperations", "BatchOperations")
+                    b.HasOne("RemaSoftware.Domain.Models.BatchOperation", "BatchOperation")
                         .WithMany("OperationTimelines")
-                        .HasForeignKey("BatchOperationsBatchID", "BatchOperationsOperationID");
+                        .HasForeignKey("BatchOperationID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("BatchOperations");
+                    b.HasOne("RemaSoftware.Domain.Models.SubBatch", "SubBatch")
+                        .WithMany("OperationTimelines")
+                        .HasForeignKey("SubBatchID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("BatchOperation");
+
+                    b.Navigation("SubBatch");
                 });
 
             modelBuilder.Entity("RemaSoftware.Domain.Models.Order", b =>
@@ -814,6 +882,17 @@ namespace RemaSoftware.Domain.Migrations
                     b.Navigation("Client");
                 });
 
+            modelBuilder.Entity("RemaSoftware.Domain.Models.SubBatch", b =>
+                {
+                    b.HasOne("RemaSoftware.Domain.Models.Batch", "Batch")
+                        .WithMany("SubBatches")
+                        .HasForeignKey("BatchID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Batch");
+                });
+
             modelBuilder.Entity("RemaSoftware.Domain.Models.UserClient", b =>
                 {
                     b.HasOne("RemaSoftware.Domain.Models.Client", "Client")
@@ -837,10 +916,12 @@ namespace RemaSoftware.Domain.Migrations
                 {
                     b.Navigation("BatchOperations");
 
-                    b.Navigation("Ddt_In");
+                    b.Navigation("Ddts_In");
+
+                    b.Navigation("SubBatches");
                 });
 
-            modelBuilder.Entity("RemaSoftware.Domain.Models.BatchOperations", b =>
+            modelBuilder.Entity("RemaSoftware.Domain.Models.BatchOperation", b =>
                 {
                     b.Navigation("OperationTimelines");
                 });
@@ -852,8 +933,20 @@ namespace RemaSoftware.Domain.Migrations
                     b.Navigation("UserClients");
                 });
 
+            modelBuilder.Entity("RemaSoftware.Domain.Models.Ddt_In", b =>
+                {
+                    b.Navigation("Ddt_Associations");
+                });
+
+            modelBuilder.Entity("RemaSoftware.Domain.Models.Ddt_Out", b =>
+                {
+                    b.Navigation("Ddt_Associations");
+                });
+
             modelBuilder.Entity("RemaSoftware.Domain.Models.Operation", b =>
                 {
+                    b.Navigation("BatchOperations");
+
                     b.Navigation("Order_Operation");
                 });
 
@@ -864,7 +957,12 @@ namespace RemaSoftware.Domain.Migrations
 
             modelBuilder.Entity("RemaSoftware.Domain.Models.Product", b =>
                 {
-                    b.Navigation("Ddt_In");
+                    b.Navigation("Ddts_In");
+                });
+
+            modelBuilder.Entity("RemaSoftware.Domain.Models.SubBatch", b =>
+                {
+                    b.Navigation("OperationTimelines");
                 });
 
             modelBuilder.Entity("RemaSoftware.Domain.Models.MyUser", b =>

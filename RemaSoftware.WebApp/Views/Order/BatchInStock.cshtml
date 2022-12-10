@@ -31,10 +31,10 @@
                 {
                     <tr style="cursor: pointer;" onclick="showDDT(@batch.BatchId)" id="batch-@batch.BatchId">
                         <td>@batch.BatchId</td>
-                        <td>@batch.Ddt_In[0].Product.Client.Name</td>
-                        <td>@batch.Ddt_In[0].Product.SKU</td>
+                        <td>@batch.Ddts_In[0].Product.Client.Name</td>
+                        <td>@batch.Ddts_In[0].Product.SKU</td>
                         <td>Visualizza DDT associate</td>
-                        <td>@batch.Ddt_In.Sum(s=> s.Number_Piece)</td>
+                        <td>@batch.Ddts_In.Sum(s=> s.Number_Piece)</td>
                         <td class="text-center">
                             @*<a style="text-decoration: none" asp-action="NewOrder" asp-controller="Order" asp-route-productId="@product.ProductID">
                                 <i class="fas fa-file-text fa-lg pl-2" title="Registra commessa" style="cursor: pointer; color: lightgray"></i>

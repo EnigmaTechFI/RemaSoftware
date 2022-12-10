@@ -40,11 +40,11 @@ namespace RemaSoftware.WebApp.Helper
         public Ddt_In AddNewDdtIn(NewOrderViewModel model)
         {
             var operationsSelected = model.OperationsSelected.Where(w => !w.StartsWith("0")).Select(s => int.Parse(s.Split('-').First())).ToList();
-            var batchOperationList = new List<BatchOperations>();
+            var batchOperationList = new List<BatchOperation>();
             var index = 0;
             foreach(var operation in operationsSelected)
             {
-                batchOperationList.Add(new BatchOperations()
+                batchOperationList.Add(new BatchOperation()
                 {
                     OperationID = operation,
                     Ordering = index++
@@ -57,7 +57,7 @@ namespace RemaSoftware.WebApp.Helper
             {
                 _orderService.CreateBatch(new Batch()
                 {
-                    Ddt_In = ddtList,
+                    Ddts_In = ddtList,
                     Price_Uni = model.uni_price.Value,
                     BatchOperations = batchOperationList
                 });
