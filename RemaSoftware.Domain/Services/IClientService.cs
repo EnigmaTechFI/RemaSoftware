@@ -12,5 +12,7 @@ namespace RemaSoftware.Domain.Services
         bool DeleteById(int clientId);
         bool UpdateClient(Client clientModel);
         int GetClientIdFattureInCloudByRemaClientId(int remaClientId);
+        MyUser AddUserClient(MyUser clientUser, string password);
+        Task<MyUser> UpdateUserClient(MyUser clientUser);
     }
 }

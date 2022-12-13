@@ -90,4 +90,36 @@ public class ClientHelper
             return result;
         }
     }
+
+    public bool AddOrUpdateUserClient(AddOrdUpdateClientUserViewModel model)
+    {
+        if (!string.IsNullOrEmpty(model.UserId)) // siamo in edit
+        {
+            _clientService.UpdateUserClient(new MyUser()
+            {
+                Id = model.UserId,
+                Name = model.Name,
+                Surname = model.Surname,
+                Email = model.Email,
+                UserName = model.Email
+            });
+        }
+        else
+        {
+            var addedUserClient = _clientService.AddUserClient(new MyUser()
+            {
+                Name = model.Name,
+                Surname = model.Surname,
+                Email = model.Email,
+                UserName = model.Email
+            }, model.Password);
+            _dbContext.UserClients.Add(new UserClient()
+            {
+                ClientID = model.ParentClientId,
+                MyUserID = addedUserClient.Id
+            });
+        }
+        _dbContext.SaveChanges();
+        return true;
+    }
 }

@@ -1,4 +1,5 @@
 using System;
+using Microsoft.AspNetCore.Identity;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
 using RemaSoftware.Domain.Services.Impl;
@@ -14,7 +15,7 @@ public class ClientServiceIntegrationTest : IClassFixture<IntegrationTestFixture
     public ClientServiceIntegrationTest(IntegrationTestFixture fixture)
     {
         _fixture = fixture;
-        _sut = new ClientService(fixture.DbContext);
+        _sut = new ClientService(fixture.DbContext, null);
     }
 
     [Fact]

@@ -9,7 +9,7 @@ namespace RemaSoftware.Domain.Data
     {
         public static void SeedUsersAndRoles(UserManager<MyUser> userManager, RoleManager<IdentityRole> roleManager)
         {
-            string[] roleNames = { "Admin", "Dipendente" };
+            string[] roleNames = { Roles.Admin, Roles.Dipendente, Roles.Cliente };
             IdentityResult roleResult;
 
             foreach (var roleName in roleNames)

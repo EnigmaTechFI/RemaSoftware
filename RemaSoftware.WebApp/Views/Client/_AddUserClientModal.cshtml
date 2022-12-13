@@ -1,0 +1,54 @@
+@model RemaSoftware.WebApp.Models.ClientViewModel.AddOrdUpdateClientUserViewModel
+@{
+    var isEdit = !string.IsNullOrEmpty(Model.UserId);
+}
+<div class="modal fade" id="add-clientuser" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">
+                    
+                    @(isEdit ? "Modifica utente" : "Crea Utente")
+                </h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form asp-controller="Client" asp-action="AddOrUpdateClientUser" id="addorupdate-userclient-form">
+                    @Html.HiddenFor(hf=>hf.ParentClientId)
+                    <div class="form-row">
+                        <div class="col-6 mb-3">
+                            <label class="font-weight-bold">Name</label>
+                            <input asp-for="Name" type="text" class="form-control" placeholder="Name">
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label class="font-weight-bold">Surname</label>
+                            <input asp-for="Surname" type="text" class="form-control" placeholder="Surname">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-6 mb-3">
+                            <label class="font-weight-bold">Email</label>
+                            <input asp-for="Email" type="email" class="form-control" placeholder="Email">
+                        </div>
+                        @if (!isEdit)
+                        {
+                            <div class="col-6 mb-3">
+                                <label class="font-weight-bold">Password (autogenerata)</label>
+                                <input asp-for="Password" class="form-control" readonly value="@Html.GenerateRandomPassword()"/>
+                            </div>
+                        }
+                    </div>
+                    <div>
+                        <b>NB: Prima di confermare copiare la password, non sarà più visibile!</b>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
+                <button class="btn btn-primary" form="addorupdate-userclient-form" type="submit">Conferma</button>
+            </div>
+        </div>
+    </div>
+</div>

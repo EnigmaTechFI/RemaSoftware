@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
@@ -96,6 +97,33 @@ namespace RemaSoftware.WebApp.Controllers
                 _notyfToastService.Error("Errore generico durante la modifica del Cliente.");
             }
             return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult GetAddOrUpdateClientUserModal(int clientId, string clientUserId)
+        {
+            if (string.IsNullOrEmpty(clientUserId))
+                return PartialView("_AddUserClientModal", new AddOrdUpdateClientUserViewModel
+                {
+                    ParentClientId = clientId
+                });
+
+            var clientUser = _clientHelper.GetClient(clientId).ClientUsers.Single(s=>s.Id==clientUserId);
+            return PartialView("_AddUserClientModal", new AddOrdUpdateClientUserViewModel
+            {
+                UserId = clientUserId,
+                ParentClientId = clientId,
+                Name = clientUser.Name,
+                Surname = clientUser.Surname,
+                Email = clientUser.Email
+            });
+        }
+
+        [HttpPost]
+        public IActionResult AddOrUpdateClientUser(AddOrdUpdateClientUserViewModel model)
+        {
+            var result = _clientHelper.AddOrUpdateUserClient(model);
+            return RedirectToAction("EditClient", new {clientId = model.ParentClientId});
         }
 
         // [HttpDelete]

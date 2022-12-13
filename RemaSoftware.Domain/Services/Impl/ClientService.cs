@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NLog;
+using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Data;
 
@@ -10,11 +10,13 @@ namespace RemaSoftware.Domain.Services.Impl
     public class ClientService : IClientService
     {
         private readonly ApplicationDbContext _dbContext;
+        private readonly UserManager<MyUser> _userManager;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public ClientService(ApplicationDbContext dbContext)
+        public ClientService(ApplicationDbContext dbContext, UserManager<MyUser> userManager)
         {
             _dbContext = dbContext;
+            _userManager = userManager;
         }
 
         public Client AddClient(Client customer)
@@ -86,6 +88,20 @@ namespace RemaSoftware.Domain.Services.Impl
         {
             if (remaClientId <= 0) throw new ArgumentException("Parametro RemaClientId obbligaotrio.");
             return _dbContext.Clients.Single(sd => sd.ClientID == remaClientId).FC_ClientID;
+        }
+
+        public MyUser AddUserClient(MyUser clientUser, string password)
+        {
+            var result = _userManager.CreateAsync(clientUser, password).Result;
+            var addedRole = _userManager.AddToRoleAsync(clientUser, Roles.Cliente).Result;
+
+            return clientUser;
+        }
+
+        public async Task<MyUser> UpdateUserClient(MyUser clientUser)
+        {
+            await _userManager.UpdateAsync(clientUser);
+            return clientUser;
         }
     }
 }

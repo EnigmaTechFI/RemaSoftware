@@ -66,28 +66,6 @@
     </div>
 </div>
 
-<div class="modal fade" id="create-clientuser" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Crea Utente</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">S
-                <form>
-                    
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
-                <button class="btn btn-primary" onclick="CreateClientUser()">Elimina</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 @section Scripts
 {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
@@ -132,7 +110,7 @@
     // function DeleteClient(){
     //     var clientId = $("#confirm-del-modal").data("clientId");
     //     $.ajax({
-    //         url: '@Url.Action("DeleteClient", "Client")?' + $.param({"clientId": clientId}),
+    //         @*url: '@Url.Action("DeleteClient", "Client")?' + $.param({"clientId": clientId}),*@
     //         type: 'DELETE',
     //         success: function (data) {
     //             if (data.result == true){
