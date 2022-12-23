@@ -228,16 +228,16 @@ namespace RemaSoftware.Domain.Services.Impl
 
         public Batch GetBatchById(int batchId)
         {
-            return _dbContext.Batch
+            return _dbContext.Batches
                 .Include(b => b.BatchOperations)
                 .ThenInclude(o => o.Operations)
-                .Include(s => s.Ddt_In)
+                .Include(s => s.Ddts_In)
                 .SingleOrDefault(s => s.BatchId == batchId);
         }
 
         public Batch GetBatchByProductIdAndOperationList(int productId, List<int> operationId)
         {
-            var batch = _dbContext.Ddt_In
+            var batch = _dbContext.Ddts_In
                 .Include(b => b.Batch)
                 .ThenInclude(b => b.BatchOperations)
                 .Where(d => d.ProductID == productId && d.Batch.BatchOperations.All(s => operationId.Contains(s.OperationID)))
@@ -256,7 +256,7 @@ namespace RemaSoftware.Domain.Services.Impl
             }
             catch (Exception e)
             {
-                Logger.Error(e, $"Errore durante la creazione della commessa: {batch.Ddt_In[0].Code}");
+                Logger.Error(e, $"Errore durante la creazione della commessa: {batch.Ddts_In[0].Code}");
                 return null;
             }
             
@@ -280,8 +280,8 @@ namespace RemaSoftware.Domain.Services.Impl
 
         public List<Batch> GetBatchesByDDTStatus(string status)
         {
-            return _dbContext.Batch
-                .Include(d => d.Ddt_In.Where(s => s.Status == status))
+            return _dbContext.Batches
+                .Include(d => d.Ddts_In.Where(s => s.Status == status))
                 .ThenInclude(s => s.Product)
                 .ThenInclude(s => s.Client)
                 .ToList();
@@ -289,7 +289,7 @@ namespace RemaSoftware.Domain.Services.Impl
 
         public List<Ddt_In> GetAllDdtIn()
         {
-            return _dbContext.Ddt_In
+            return _dbContext.Ddts_In
                 .Include(d => d.Product)
                 .ThenInclude(s => s.Client)
                 .Include(b => b.Batch)

@@ -32,7 +32,7 @@
                         <td>@product.SKU</td>
                         <td>@product.Name</td>
                         <td>@product.Client.Name</td>
-                        <td>@product.Ddt_In.Sum(s=> s.Number_Piece)</td>
+                        <td>@product.Ddts_In.Sum(s=> s.Number_Piece)</td>
                         <td class="text-center">
                             <a style="text-decoration: none" asp-action="NewOrder" asp-controller="Order" asp-route-productId="@product.ProductID">
                                 <i class="fas fa-file-text fa-lg pl-2" title="Registra commessa" style="cursor: pointer; color: lightgray"></i>

@@ -7,7 +7,6 @@ namespace RemaSoftware.Domain.Models
     public class Ddt_In
     {
         public int Ddt_In_ID { get; set; }
-        public int? Ddt_Out_ID { get; set; }
         public int ProductID { get; set; }
         public Product Product { get; set; }
         public int BatchID { get; set; }
@@ -32,5 +31,6 @@ namespace RemaSoftware.Domain.Models
         public string Note { get; set; }
         public string Description { get; set; }
         public Batch Batch { get; set; }
+        public virtual List<Ddt_Association> Ddt_Associations { get; set; }
     }
 }
