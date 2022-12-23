@@ -14,5 +14,6 @@ namespace RemaSoftware.Domain.Services
         int GetClientIdFattureInCloudByRemaClientId(int remaClientId);
         MyUser AddUserClient(MyUser clientUser, string password);
         Task<MyUser> UpdateUserClient(MyUser clientUser);
+        Task<bool> DeleteUserClientById(string clientUserId);
     }
 }

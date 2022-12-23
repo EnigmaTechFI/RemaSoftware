@@ -114,7 +114,7 @@ namespace RemaSoftware.WebApp
             services.AddTransient<ClientHelper>();
             services.AddTransient<OrderValidation>();
             services.AddTransient<ProductValidation>();
-            
+            services.AddTransient<ClientValidation>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationDbContext context, UserManager<MyUser> userManager, RoleManager<IdentityRole> roleManager)

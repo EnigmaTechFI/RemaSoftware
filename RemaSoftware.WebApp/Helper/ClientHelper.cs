@@ -91,11 +91,11 @@ public class ClientHelper
         }
     }
 
-    public bool AddOrUpdateUserClient(AddOrdUpdateClientUserViewModel model)
+    public async Task<bool> AddOrUpdateUserClient(AddOrdUpdateClientUserViewModel model)
     {
         if (!string.IsNullOrEmpty(model.UserId)) // siamo in edit
         {
-            _clientService.UpdateUserClient(new MyUser()
+            await _clientService.UpdateUserClient(new MyUser()
             {
                 Id = model.UserId,
                 Name = model.Name,
@@ -121,5 +121,10 @@ public class ClientHelper
         }
         _dbContext.SaveChanges();
         return true;
+    }
+
+    public async Task<bool> DeleteClientUser(string clientuserId)
+    {
+        return await _clientService.DeleteUserClientById(clientuserId);
     }
 }

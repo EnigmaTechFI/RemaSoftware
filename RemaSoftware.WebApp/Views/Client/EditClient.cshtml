@@ -91,20 +91,37 @@
                 <tbody>
                 @foreach (var client in Model.ClientUsers)
                 {
-                    <tr>
+                    <tr id="clientuser-row-@client.Id">
                         <td>@client.Name</td>
                         <td>@client.Surname</td>
                         <td>@client.Email</td>
                         <td class="text-center">
-                            <i class="fas fa-trash fa-lg pl-2" style="cursor: pointer; color: lightgray"  title="Elimina" data-toggle="modal" data-target="#confirm-del-modal"></i>     
-                            <a style="text-decoration: none" href=''>
-                                <i class="fas fa-pen fa-lg pl-2" title="Modifica" style="cursor: pointer; color: lightgray"></i>
-                            </a>     
+                            <i class="fas fa-trash fa-lg pl-2" style="cursor: pointer; color: lightgray"  title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetClientUserId('#confirm-del-modal', '@client.Id')"></i>
+                            <i class="fas fa-pen fa-lg pl-2" title="Modifica" onclick="GetAddOrUpdateClientUserModal(@Model.ClientId, '@client.Id')" style="cursor: pointer; color: lightgray"></i>
+                             
                         </td>
                     </tr>
                 }
                 </tbody>
             </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirm-del-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Conferma eliminazione</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Sei sicuro di voler eliminare questo utente?</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
+                <button class="btn btn-primary" onclick="DeleteClientUser()">Elimina</button>
+            </div>
         </div>
     </div>
 </div>
@@ -125,14 +142,13 @@
             "ordering": false
         });
         
-        function GetAddOrUpdateClientUserModal(clientId) {
-            var existingModal = $('#add-clientuser')
-            if(existingModal.length){ // se è già stata generata la mostro, altrimenti la genero chiamando l'action
-                existingModal.modal('show')
-                return
-            }
+        function GetAddOrUpdateClientUserModal(clientId, clientuserId) {
+            $('#add-clientuser').remove()
+            var url = `@Url.Action("GetAddOrUpdateClientUserModal", "Client")?clientId=${clientId}`
+            if (clientuserId)
+                url+= `&clientuserId=${clientuserId}`
             $.ajax({
-                url: '@Url.Action("GetAddOrUpdateClientUserModal", "Client")?clientId=' + clientId,
+                url: url,
                 type: 'GET',
                 success: function (data) {
                     $(document.body).append(data);
@@ -140,5 +156,30 @@
                 }
             });
         }
+        
+        function SetClientUserId(elementName, clientuserId){
+            $(elementName).data("clientuserId", clientuserId );
+        }
+        
+        function DeleteClientUser(){
+            var clientuserId = $("#confirm-del-modal").data("clientuserId");
+            $.ajax({
+                url: '@Url.Action("DeleteClientUser", "Client")?' + $.param({"clientuserId": clientuserId}),
+                type: 'DELETE',
+                success: function (data) {
+                    if (data.result == true){
+                        table.row($("tr#clientuser-row-" + clientuserId)).remove().draw();
+                        $("#confirm-del-modal").modal('toggle');
+                        toastNotifySuccess(data.toastMessage);
+                    }else{
+                        toastNotifyError(data.toastMessage);
+                    }
+                },
+                error: function (data){
+                    toastNotifyError(data.toastMessage);
+                }
+            });
+        }
+        
     </script>
 }

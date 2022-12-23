@@ -5,11 +5,10 @@ using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
-using RemaSoftware.Domain.Models;
-using RemaSoftware.Domain.Services;
 using RemaSoftware.UtilityServices.Exceptions;
 using RemaSoftware.WebApp.Models.ClientViewModel;
 using RemaSoftware.WebApp.Helper;
+using RemaSoftware.WebApp.Validation;
 
 namespace RemaSoftware.WebApp.Controllers
 {
@@ -18,12 +17,14 @@ namespace RemaSoftware.WebApp.Controllers
     {
         private readonly ClientHelper _clientHelper;
         private readonly INotyfService _notyfToastService;
+        private readonly ClientValidation _clientValidation;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public ClientController(ClientHelper clientHelper, INotyfService notyfToastService)
+        public ClientController(ClientHelper clientHelper, INotyfService notyfToastService, ClientValidation clientValidation)
         {
             _clientHelper = clientHelper;
             _notyfToastService = notyfToastService;
+            _clientValidation = clientValidation;
         }
 
         [HttpGet]
@@ -120,9 +121,29 @@ namespace RemaSoftware.WebApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddOrUpdateClientUser(AddOrdUpdateClientUserViewModel model)
+        public async Task<IActionResult> AddOrUpdateClientUser(AddOrdUpdateClientUserViewModel model)
         {
-            var result = _clientHelper.AddOrUpdateUserClient(model);
+            try
+            {
+                var validationResult = _clientValidation.ValideateClientUser(model);
+                if (validationResult.Result)
+                {
+                    var successMessage = model.IsEdit ? "Utente modificato con successo." : "Utente aggiunto con successo.";
+                    _notyfToastService.Success(successMessage);
+                    await _clientHelper.AddOrUpdateUserClient(model);
+                }
+                else
+                    _notyfToastService.Error(validationResult.Errors);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Errore generico durante la modifica o l'inserimento dell'utente associato al Cliente: <{model.ParentClientId}>.");
+                var errorMessage = model.IsEdit
+                    ? "Errore generico durante la modifica dell'utente."
+                    : "Errore generico durante l'inserimento dell'utente.";
+                _notyfToastService.Error(errorMessage);
+            }
+            
             return RedirectToAction("EditClient", new {clientId = model.ParentClientId});
         }
 
@@ -147,5 +168,22 @@ namespace RemaSoftware.WebApp.Controllers
         //     }
         //     return new JsonResult(new { ToastMessage = $"Errore durante l\\'eliminazione del Cliente." });
         // }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteClientUser(string clientuserId)
+        {
+            try
+            {
+                var result = await _clientHelper.DeleteClientUser(clientuserId);
+                return new JsonResult(new { Result = result, ToastMessage = "Utente eliminato con successo." });
+                
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Errore generico durante la cancellazione del client user asp net con id: <{clientuserId}>.");
+                _notyfToastService.Error("Errore generico durante la cancellazione dell'utente.");
+            }
+            return new JsonResult(new { ToastMessage = $"Errore durante l\\'eliminazione dell'utente." });
+        }
     }
 }

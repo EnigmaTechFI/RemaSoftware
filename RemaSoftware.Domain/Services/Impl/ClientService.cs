@@ -100,8 +100,24 @@ namespace RemaSoftware.Domain.Services.Impl
 
         public async Task<MyUser> UpdateUserClient(MyUser clientUser)
         {
-            await _userManager.UpdateAsync(clientUser);
+            var clientuserOnDb = await _userManager.FindByIdAsync(clientUser.Id);
+            if (clientUser == null)
+                throw new Exception($"Utente non trovato con id {clientUser.Id}");
+            clientuserOnDb.Name = clientUser.Name;
+            clientuserOnDb.Surname = clientUser.Surname;
+            clientuserOnDb.Email = clientUser.Email;
+            clientuserOnDb.UserName = clientUser.UserName;
+            var res = await _userManager.UpdateAsync(clientuserOnDb);
             return clientUser;
+        }
+
+        public async Task<bool> DeleteUserClientById(string clientUserId)
+        {
+            var clientUser = await _userManager.FindByIdAsync(clientUserId);
+            if (clientUser == null)
+                throw new Exception($"Utente non trovato con id {clientUserId}");
+            await _userManager.DeleteAsync(clientUser);
+            return true;
         }
     }
 }

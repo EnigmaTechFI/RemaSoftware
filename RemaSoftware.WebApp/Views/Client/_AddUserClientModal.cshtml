@@ -17,6 +17,7 @@
             <div class="modal-body">
                 <form asp-controller="Client" asp-action="AddOrUpdateClientUser" id="addorupdate-userclient-form">
                     @Html.HiddenFor(hf=>hf.ParentClientId)
+                    @Html.HiddenFor(hf=>hf.UserId)
                     <div class="form-row">
                         <div class="col-6 mb-3">
                             <label class="font-weight-bold">Name</label>
@@ -40,9 +41,12 @@
                             </div>
                         }
                     </div>
-                    <div>
-                        <b>NB: Prima di confermare copiare la password, non sarà più visibile!</b>
-                    </div>
+                    @if (isEdit)
+                    {
+                        <div>
+                            <b>NB: Prima di confermare copiare la password, non sarà più visibile!</b>
+                        </div>
+                    }
                 </form>
             </div>
             <div class="modal-footer">
