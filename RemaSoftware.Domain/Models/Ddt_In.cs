@@ -9,7 +9,7 @@ namespace RemaSoftware.Domain.Models
         public int Ddt_In_ID { get; set; }
         public int ProductID { get; set; }
         public Product Product { get; set; }
-        public int BatchID { get; set; }
+        public int SubBatchID { get; set; }
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime DataIn { get; set; }
@@ -30,7 +30,7 @@ namespace RemaSoftware.Domain.Models
         public bool IsReso { get; set; }
         public string Note { get; set; }
         public string Description { get; set; }
-        public Batch Batch { get; set; }
+        public SubBatch SubBatch { get; set; }
         public virtual List<Ddt_Association> Ddt_Associations { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿@model RemaSoftware.WebApp.Models.OrderViewModel.BatchInStockViewModel
+@model RemaSoftware.WebApp.Models.OrderViewModel.BatchInProductionViewModel
 
 @{
     ViewData["Title"] = "Lotti in magazzino";
@@ -8,7 +8,7 @@
 
 <div class="card shadow mb-4" id="order-summ-content">
     <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
-        <h3 class="m-0 font-weight-bold text-primary">Lotti in magazzino</h3>
+        <h3 class="m-0 font-weight-bold text-primary">Lotti in produzione</h3>
         @*<div>
             <button class="btn btn-primary" type="button" onclick="location.href='@Url.Action("NewProduct", "Product")'">Nuovo prodotto</button>
         </div>*@
@@ -29,7 +29,7 @@
                 <tbody>
                 @foreach (var batch in Model.SubBatches)
                 {
-                    <tr style="cursor: pointer;" onclick="showDDT(@batch.SubBatchID)" id="batch-@batch.Batch.BatchId">
+                    <tr style="cursor: pointer;" onclick="showDDT(@batch.SubBatchID)">
                         <td>@batch.Batch.BatchId</td>
                         <td>@batch.Ddts_In[0].Product.Client.Name</td>
                         <td>@batch.Ddts_In[0].Product.SKU</td>
@@ -52,7 +52,7 @@
         
         <div class="row">
             <div class="col-12 h5">
-                Totale pezzi in magazzino: <b>@Model.SubBatches.Sum(s => s.NumberPieces)</b>
+                Totale pezzi in magazzino: <b></b>
             </div>
         </div>
     </div>
@@ -105,7 +105,7 @@
     const batches = @Json.Serialize(Model.SubBatches)
     function showDDT(subbatchId) {
         var batch = batches.filter(obj => {
-          return obj.subBatchID === subbatchId
+          return obj.subBatchId === subbatchId
         })
         var ddt_list = ""
         batch[0].ddts_In.forEach(function(ddt) {

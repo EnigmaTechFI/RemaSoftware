@@ -44,4 +44,8 @@
     <Compile Remove="Migrations\20211123182105_AddStatusInOrderTable.Designer.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\api\v1" />
+  </ItemGroup>
+
 </Project>

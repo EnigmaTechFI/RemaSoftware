@@ -231,18 +231,29 @@ namespace RemaSoftware.Domain.Services.Impl
             return _dbContext.Batches
                 .Include(b => b.BatchOperations)
                 .ThenInclude(o => o.Operations)
-                .Include(s => s.Ddts_In)
+                .Include(s => s.SubBatches)
+                .ThenInclude(s => s.Ddts_In)
                 .SingleOrDefault(s => s.BatchId == batchId);
         }
 
         public Batch GetBatchByProductIdAndOperationList(int productId, List<int> operationId)
         {
-            var batch = _dbContext.Ddts_In
-                .Include(b => b.Batch)
-                .ThenInclude(b => b.BatchOperations)
-                .Where(d => d.ProductID == productId && d.Batch.BatchOperations.All(s => operationId.Contains(s.OperationID)))
-                .Select(s => s.Batch).SingleOrDefault();
-            return batch;
+            try
+            {
+                var batch = _dbContext.Batches
+                    .Include(s => s.SubBatches)
+                    .ThenInclude(s => s.Ddts_In)
+                    .ThenInclude(s => s.Product)
+                    .Include(b => b.BatchOperations)
+                    .Where(s => s.BatchOperations.All(s => operationId.Contains(s.OperationID)) &&
+                                s.SubBatches[0].Ddts_In[0].Product.ProductID == productId)
+                    .SingleOrDefault();
+                return batch;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
         public Batch CreateBatch(Batch batch)
@@ -256,7 +267,7 @@ namespace RemaSoftware.Domain.Services.Impl
             }
             catch (Exception e)
             {
-                Logger.Error(e, $"Errore durante la creazione della commessa: {batch.Ddts_In[0].Code}");
+                Logger.Error(e, $"Errore durante la creazione della commessa: {batch.SubBatches[0].Ddts_In[0].Code}");
                 return null;
             }
             
@@ -278,21 +289,13 @@ namespace RemaSoftware.Domain.Services.Impl
             }
         }
 
-        public List<Batch> GetBatchesByDDTStatus(string status)
-        {
-            return _dbContext.Batches
-                .Include(d => d.Ddts_In.Where(s => s.Status == status))
-                .ThenInclude(s => s.Product)
-                .ThenInclude(s => s.Client)
-                .ToList();
-        }
-
         public List<Ddt_In> GetAllDdtIn()
         {
             return _dbContext.Ddts_In
                 .Include(d => d.Product)
                 .ThenInclude(s => s.Client)
-                .Include(b => b.Batch)
+                .Include(b => b.SubBatch)
+                .ThenInclude(s => s.Batch)
                 .ThenInclude(b => b.BatchOperations)
                 .ToList();
         }

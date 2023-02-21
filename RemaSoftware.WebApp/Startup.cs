@@ -97,6 +97,7 @@ namespace RemaSoftware.WebApp
             services.AddTransient<IImageService, ImageService>();
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<IOrderService, OrderService>();
+            services.AddTransient<ISubBatchService, SubBatchService>();
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<IOperationService, OperationService>();
             services.AddTransient<IClientService, ClientService>();
