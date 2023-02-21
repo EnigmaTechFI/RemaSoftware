@@ -17,4 +17,8 @@
     <Compile Remove="IPdfService.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\RemaSoftware.Domain\RemaSoftware.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

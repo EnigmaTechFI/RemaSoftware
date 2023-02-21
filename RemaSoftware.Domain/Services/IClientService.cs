@@ -9,5 +9,6 @@ namespace RemaSoftware.Domain.Services
         List<Client> GetAllClients();
         Client GetClient(int id);
         int GetTotalCustomerCount();
+        void UpdateClient(Client client);
     }
 }

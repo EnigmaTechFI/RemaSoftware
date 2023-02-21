@@ -35,10 +35,17 @@ namespace RemaSoftware.WebApp.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> UpdateClient(int clientId)
+        {
+            return View(_clientHelper.GetUpdateClientModel(clientId));
+        }
+        
+        [HttpGet]
         public async Task<IActionResult> AddClient()
         {
             return View();
         }
+        
 
         [HttpPost]
         public IActionResult AddClient(ClientViewModel model)
@@ -50,6 +57,26 @@ namespace RemaSoftware.WebApp.Controllers
                     _clientHelper.AddClient(model);
                     _notyfToastService.Success("Cliente aggiunto con successo.");
                     return RedirectToAction("Index", "Home");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Errore durante l'aggiunta del Cliente.");
+                _notyfToastService.Error("Errore durante la creazione del Cliente.");
+            }
+            return View(model);
+        }
+        
+        [HttpPost]
+        public IActionResult UpdateClient(UpdateClientViewModel model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _clientHelper.UpdateClient(model);
+                    _notyfToastService.Success("Cliente aggiornato con successo.");
+                    return RedirectToAction("ClientList");
                 }
             }
             catch (Exception ex)

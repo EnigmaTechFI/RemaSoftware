@@ -34,7 +34,9 @@
                         <td>@client.Email</td>
                         <td>@client.PhoneNumber</td>
                         <td class="text-center">
-                            
+                            <a style="text-decoration: none" asp-action="UpdateClient" asp-controller="Client" asp-route-clientId="@client.ClientID">
+                                <i class="fas fa-pen fa-lg pl-2" title="Modifica prodotto" style="cursor: pointer; color: lightgray"></i>
+                            </a>
                         </td>
                     </tr>
                 }

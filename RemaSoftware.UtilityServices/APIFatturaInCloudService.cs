@@ -1,9 +1,11 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using NLog;
 using NLog.Fluent;
+using RemaSoftware.Domain.Models;
 using RemaSoftware.UtilityServices.Dtos;
 using UtilityServices.Dtos;
 
@@ -20,6 +22,111 @@ namespace RemaSoftware.UtilityServices
         {
             _configuration = configuration;
             _ficAccessToken = _configuration["ApiFattureInCloud:AccessToken"];
+        }
+
+        public int AddClientCloud(Client client)
+        {
+            try
+            {
+
+
+                Logger.Info("Inizio creazione cliente su ApiFattureInCloud");
+                var apiEndpoint = _configuration["ApiFattureInCloud:ApiEndpointCompanies"];
+
+                var httpWebRequest = (HttpWebRequest)WebRequest.Create(apiEndpoint);
+                httpWebRequest.ContentType = "application/json";
+                httpWebRequest.Method = "POST";
+                httpWebRequest.Headers.Add("authorization", "Bearer " + _ficAccessToken);
+    #if !DEBUG
+                    var myProxy = new WebProxy("http://winproxy.server.lan:3128/", true);
+                    httpWebRequest.Proxy = myProxy;
+    #endif
+                ClientApi clientToSendInCloud = new ClientApi()
+                {
+                    type = "company",
+                    name = client.Name,
+                    addressCity = client.City,
+                    addressStreet = client.Street + ", " + client.StreetNumber,
+                    addressProvince = client.Province,
+                    addressPostalCode = client.Cap,
+                    taxCode = client.P_Iva,
+                    vatNumber = client.P_Iva,
+                };
+                string stringjson = JsonConvert.SerializeObject(new { data = clientToSendInCloud });
+
+                using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+                {
+                    streamWriter.Write(stringjson);
+                }
+
+                var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                string result;
+                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                {
+                    result = streamReader.ReadToEnd();
+                }
+
+                Logger.Info($"Creazione cliente - Risposta da FattureInCloud: {result}");
+                var obj = JsonConvert.DeserializeObject<dynamic>(result);
+                return obj.data.id;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.Message);
+                throw new Exception("Errore durante l'aggiunta del cliente a FattureInCloud.");
+            }
+        }
+
+        public void UpdateClientCloud(Client client)
+        {
+            try
+            {
+
+
+                Logger.Info("Inizio aggiornamento cliente su ApiFattureInCloud");
+                var apiEndpoint = _configuration["ApiFattureInCloud:ApiEndpointCompanies"] + "/" + client.FC_ClientID;
+
+                var httpWebRequest = (HttpWebRequest)WebRequest.Create(apiEndpoint);
+                httpWebRequest.ContentType = "application/json";
+                httpWebRequest.Method = "PUT";
+                httpWebRequest.Headers.Add("authorization", "Bearer " + _ficAccessToken);
+                #if !DEBUG
+                    var myProxy = new WebProxy("http://winproxy.server.lan:3128/", true);
+                    httpWebRequest.Proxy = myProxy;
+                #endif
+                ClientApi clientToSendInCloud = new ClientApi()
+                {
+                    type = "company",
+                    name = client.Name,
+                    addressCity = client.City,
+                    addressStreet = client.Street + ", " + client.StreetNumber,
+                    addressProvince = client.Province,
+                    addressPostalCode = client.Cap,
+                    taxCode = client.P_Iva,
+                    vatNumber = client.P_Iva,
+                };
+                string stringjson = JsonConvert.SerializeObject(new { data = clientToSendInCloud });
+
+                using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+                {
+                    streamWriter.Write(stringjson);
+                }
+
+                var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                string result;
+                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                {
+                    result = streamReader.ReadToEnd();
+                }
+
+                Logger.Info($"Aggiornamento cliente - Risposta da FattureInCloud: {result}");
+                var obj = JsonConvert.DeserializeObject<dynamic>(result);;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.Message);
+                throw new Exception("Errore durante l'aggiunta del cliente a FattureInCloud.");
+            }
         }
 
         public string AddOrderCloud(OrderDto order)
@@ -182,5 +289,18 @@ namespace RemaSoftware.UtilityServices
     {
         public int id { get; set; }
         public bool is_disabled { get; set; }
+    }
+
+    class ClientApi
+    {
+        public string type { get; set; }
+        public string name { get; set; }
+        public string vatNumber { get; set; }
+        public string taxCode { get; set; }
+        public string addressStreet { get; set; }
+        public string addressPostalCode { get; set; }
+        public string addressCity { get; set; }
+        public string addressProvince { get; set; }
+        
     }
 }
