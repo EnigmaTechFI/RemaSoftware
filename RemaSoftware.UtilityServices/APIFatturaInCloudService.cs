@@ -180,6 +180,65 @@ namespace RemaSoftware.UtilityServices
             return obj.data.id;
         }
 
+        public string AddDdtInCloud(Ddt_In ddt, string SKU, decimal PriceUni)
+        {
+            try
+            {
+                Logger.Info("Inizio invio a ApiFattureInCloud");
+                
+                var apiEndpoint = _configuration["ApiFattureInCloud:ApiEndpointNewProduct"];
+    
+                var httpWebRequest = (HttpWebRequest)WebRequest.Create(apiEndpoint);
+                httpWebRequest.ContentType = "application/json";
+                httpWebRequest.Method = "POST";
+                httpWebRequest.Headers.Add("authorization", "Bearer " + _ficAccessToken);
+                #if !DEBUG
+                    var myProxy = new WebProxy("http://winproxy.server.lan:3128/", true);
+                    httpWebRequest.Proxy = myProxy;
+                #endif
+                
+                OrderAPI orderToSendInCloud = new OrderAPI()
+                {
+                    code = ddt.Code,
+                    name = SKU,
+                    description = ddt.Description,
+                    prezzo_ivato = false,
+                    net_price = PriceUni.ToString("0.##"),
+                    gross_price = "0",
+                    net_cost = "0",
+                    
+                    measure = "",
+                    category = "",
+                    notes = "",
+                    in_stock = true,
+                    stock_initial = ddt.Number_Piece
+                };
+    
+                string stringjson = JsonConvert.SerializeObject(new { data=orderToSendInCloud });
+    
+                using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+                {
+                    streamWriter.Write(stringjson);
+                }
+    
+                var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                string result;
+                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                {
+                    result = streamReader.ReadToEnd();
+                }
+    
+                Logger.Info($"Creazione - Risposta da FattureInCloud: {result}");
+                var obj = JsonConvert.DeserializeObject<dynamic>(result);
+                return obj.data.id;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.Message);
+                throw new Exception("Errore durante l'invio a fatture in cloud.");
+            }
+        }
+
         public string DeleteOrder(string productId)
         {
             Logger.Info("Inizio eliminazione da ApiFattureInCloud");

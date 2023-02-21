@@ -39,36 +39,54 @@ namespace RemaSoftware.WebApp.Helper
 
         public Ddt_In AddNewDdtIn(NewOrderViewModel model)
         {
-            var operationsSelected = model.OperationsSelected.Where(w => !w.StartsWith("0")).Select(s => int.Parse(s.Split('-').First())).ToList();
-            var batchOperationList = new List<BatchOperation>();
-            var index = 0;
-            foreach(var operation in operationsSelected)
+            using (var transaction = _dbContext.Database.BeginTransaction())
             {
-                batchOperationList.Add(new BatchOperation()
+                try
                 {
-                    OperationID = operation,
-                    Ordering = index++
-                });
-            } 
-            var batch = _orderService.GetBatchByProductIdAndOperationList(model.Ddt_In.ProductID, operationsSelected);
-            var ddtList = new List<Ddt_In>();
-            ddtList.Add(model.Ddt_In);
-            if(batch == null)
-            {
-                _orderService.CreateBatch(new Batch()
+                    var operationsSelected = model.OperationsSelected.Where(w => !w.StartsWith("0"))
+                        .Select(s => int.Parse(s.Split('-').First())).ToList();
+                    var batchOperationList = new List<BatchOperation>();
+                    var index = 0;
+                    foreach (var operation in operationsSelected)
+                    {
+                        batchOperationList.Add(new BatchOperation()
+                        {
+                            OperationID = operation,
+                            Ordering = index++
+                        });
+                    }
+
+                    var batch = _orderService.GetBatchByProductIdAndOperationList(model.Ddt_In.ProductID,
+                        operationsSelected);
+                    model.Ddt_In.FC_Ddt_In_ID = _apiFatturaInCloudService.AddDdtInCloud(model.Ddt_In,
+                        _productService.GetProductById(model.Ddt_In.ProductID).SKU, model.uni_price.Value);
+                    var ddtList = new List<Ddt_In>();
+                    ddtList.Add(model.Ddt_In);
+                    if (batch == null)
+                    {
+                        _orderService.CreateBatch(new Batch()
+                        {
+                            Ddts_In = ddtList,
+                            Price_Uni = model.uni_price.Value,
+                            BatchOperations = batchOperationList
+                        });
+                    }
+                    else
+                    {
+                        model.Ddt_In.BatchID = batch.BatchId;
+                        _orderService.CreateDDtIn(model.Ddt_In);
+                    }
+                    transaction.Commit();
+                    return model.Ddt_In;
+                }
+                catch (Exception e)
                 {
-                    Ddts_In = ddtList,
-                    Price_Uni = model.uni_price.Value,
-                    BatchOperations = batchOperationList
-                });
+                    /*TODO: Eliminazione Ddt da fatture_in_cloud*/
+                    transaction.Rollback();
+                    transaction.Commit();
+                    throw;
+                }
             }
-            else
-            {
-                model.Ddt_In.BatchID = batch.BatchId;
-                return _orderService.CreateDDtIn(model.Ddt_In);
-            }
-            
-            return model.Ddt_In;
         }
         
         public Order AddOrderAndSendToFattureInCloud(Order orderToSave)
