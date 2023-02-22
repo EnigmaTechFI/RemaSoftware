@@ -240,15 +240,28 @@ namespace RemaSoftware.Domain.Services.Impl
         {
             try
             {
-                var batch = _dbContext.Batches
+                //TODO: Controllare!!;
+                var batchesIEnum = _dbContext.Batches
                     .Include(s => s.SubBatches)
                     .ThenInclude(s => s.Ddts_In)
                     .ThenInclude(s => s.Product)
-                    .Include(b => b.BatchOperations)
-                    .Where(s => s.BatchOperations.All(s => operationId.Contains(s.OperationID)) &&
-                                s.SubBatches[0].Ddts_In[0].Product.ProductID == productId)
-                    .SingleOrDefault();
-                return batch;
+                    .Include(b => b.BatchOperations).ToList();
+                var batches = batchesIEnum.Where(s => s.SubBatches[0].Ddts_In[0].ProductID == productId)
+                    .ToList();
+                foreach (var item in batches)
+                {
+                    var opList = new List<int>();
+                    foreach (var op in item.BatchOperations)
+                    {
+                        opList.Add(op.OperationID);
+                    }
+
+                    if (opList.All(operationId.Contains))
+                    {
+                        return item;
+                    }
+                }
+                return null;
             }
             catch (Exception e)
             {
