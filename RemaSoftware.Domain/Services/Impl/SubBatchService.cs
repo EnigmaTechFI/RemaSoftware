@@ -29,6 +29,28 @@ public class SubBatchService : ISubBatchService
         }
     }
 
+    public void UpdateSubBatchStatus(int Id, string status)
+    {
+        try
+        {
+            var sb =_dbContext.SubBatches
+                .Include(s =>s.Ddts_In)
+                .SingleOrDefault(s => s.SubBatchID == Id);
+            sb.Status = status;
+            sb.Ddts_In = sb.Ddts_In.Select(x =>
+            {
+                x.Status = status;
+                return x;
+            }).ToList();
+            _dbContext.SubBatches.Update(sb);
+            _dbContext.SaveChanges();
+        }
+        catch (Exception e)
+        {
+            throw e;
+        }
+    }
+
     public void CreateSubBatch(SubBatch entity)
     {
         try

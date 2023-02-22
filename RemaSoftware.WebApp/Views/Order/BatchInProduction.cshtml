@@ -52,7 +52,7 @@
         
         <div class="row">
             <div class="col-12 h5">
-                Totale pezzi in magazzino: <b></b>
+                Totale pezzi in produzione: <b>@Model.SubBatches.Sum(s => s.NumberPieces)</b>
             </div>
         </div>
     </div>
