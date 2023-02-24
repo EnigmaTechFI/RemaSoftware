@@ -92,7 +92,7 @@ namespace RemaSoftware.WebApp.Controllers
             return View(model);
         }
 
-        /*public JsonResult DeleteClient(int ClientId)
+        public JsonResult DeleteClient(int ClientId)
         {
             try
             {
@@ -105,6 +105,6 @@ namespace RemaSoftware.WebApp.Controllers
                 return new JsonResult(new
                     { Error = e, ToastMessage = $"Errore durante l\\'eliminazione del cliente." });
             }
-        }*/
+        }
     }
 }

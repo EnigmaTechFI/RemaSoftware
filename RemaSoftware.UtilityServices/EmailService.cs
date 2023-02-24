@@ -67,7 +67,7 @@ namespace RemaSoftware.UtilityServices
  
                 SmtpClient client = new SmtpClient();
                 var mailPwd = _configuration["EmailConfig:Password"];
-                client.UseDefaultCredentials = true;
+                //client.UseDefaultCredentials = true; Commentato perchè non prende le credenziali della mail se setto a true
                 client.Credentials = new System.Net.NetworkCredential(mailAddressSender, mailPwd);
                 client.Host = _configuration["EmailConfig:SmtpServer"];
                 client.Port = int.Parse(_configuration["EmailConfig:Port"]);

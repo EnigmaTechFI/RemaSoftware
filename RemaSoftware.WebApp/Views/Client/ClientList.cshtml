@@ -79,7 +79,7 @@
 
     <script>
         function ChangePage(id) {
-            window.location.href = "https://localhost:5001/Client/InfoClient?clientId=" + id;
+            window.location.href = "/Client/InfoClient?clientId=" + id;
         }
     </script>
     
@@ -115,7 +115,7 @@
         $(elementName).data("clientId", clientId );
     }
     
-    /*function DeleteAccount(){
+    function DeleteAccount(){
         var clientId = $("#confirm-del-modal").data("clientId");
         $.ajax({
             url: '@Url.Action("DeleteClient", "Client")?' + $.param({"clientId": clientId}),
@@ -133,7 +133,7 @@
                 toastNotifyError(data.toastMessage);
             }
         });
-    }*/
+    }
     
     </script>
 
