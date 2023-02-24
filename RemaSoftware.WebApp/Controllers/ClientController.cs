@@ -23,7 +23,7 @@ namespace RemaSoftware.WebApp.Controllers
             _clientHelper = clientHelper;
             _notyfToastService = notyfToastService;
         }
-
+        
         [HttpGet]
         public async Task<IActionResult> ClientList()
         {
@@ -33,7 +33,7 @@ namespace RemaSoftware.WebApp.Controllers
             };
             return View(vm);
         }
-
+        
         [HttpGet]
         public async Task<IActionResult> UpdateClient(int clientId)
         {
@@ -41,11 +41,16 @@ namespace RemaSoftware.WebApp.Controllers
         }
         
         [HttpGet]
+        public async Task<IActionResult> InfoClient(int clientId)
+        {
+            return View(_clientHelper.GetInfoClientModel(clientId));
+        }
+
+        [HttpGet]
         public async Task<IActionResult> AddClient()
         {
             return View();
         }
-        
 
         [HttpPost]
         public IActionResult AddClient(ClientViewModel model)
@@ -56,7 +61,7 @@ namespace RemaSoftware.WebApp.Controllers
                 {
                     _clientHelper.AddClient(model);
                     _notyfToastService.Success("Cliente aggiunto con successo.");
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("ClientList", "Client");
                 }
             }
             catch (Exception ex)
@@ -86,5 +91,20 @@ namespace RemaSoftware.WebApp.Controllers
             }
             return View(model);
         }
+
+        /*public JsonResult DeleteClient(int ClientId)
+        {
+            try
+            {
+                var deleteResult = _clientHelper.DeleteClientById(ClientId);
+                return new JsonResult(new { Result = deleteResult, ToastMessage = "Cliente eliminato correttamente." });
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Error delete account: {ClientId}");
+                return new JsonResult(new
+                    { Error = e, ToastMessage = $"Errore durante l\\'eliminazione del cliente." });
+            }
+        }*/
     }
 }
