@@ -49,5 +49,6 @@ namespace RemaSoftware.Domain.Services.Impl
                 throw new Exception("Errore SQL durante l'aggiornamento.");
             }
         }
+        
     }
 }

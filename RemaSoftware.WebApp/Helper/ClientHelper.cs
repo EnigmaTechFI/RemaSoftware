@@ -3,8 +3,14 @@ using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
 using RemaSoftware.WebApp.Models.ClientViewModel;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using NLog;
+using RemaSoftware.Domain.Data;
 using RemaSoftware.UtilityServices;
+
 
 namespace RemaSoftware.WebApp.Helper;
 
@@ -12,10 +18,12 @@ public class ClientHelper
 {
     private readonly IClientService _clientService;
     private readonly IAPIFatturaInCloudService _apiFatturaInCloudService;
-    public ClientHelper(IClientService clientService, IAPIFatturaInCloudService apiFatturaInCloudService)
+    private readonly ApplicationDbContext _dbContext;
+    public ClientHelper(IClientService clientService, IAPIFatturaInCloudService apiFatturaInCloudService, ApplicationDbContext dbContext)
     {
         _clientService = clientService;
         _apiFatturaInCloudService = apiFatturaInCloudService;
+        _dbContext = dbContext;
     }
 
     public void UpdateClient(UpdateClientViewModel model)
@@ -66,7 +74,7 @@ public class ClientHelper
     {
         return new UpdateClientViewModel()
         {
-            Client = _clientService.GetClient(id)
+            Client = _clientService.GetClient(id),
         };
     }
 
@@ -74,4 +82,37 @@ public class ClientHelper
     {
         return _clientService.GetAllClients();
     }
+    
+    public InfoClientViewModel GetInfoClientModel(int id)
+    {
+        return new InfoClientViewModel()
+        {
+            Client = _clientService.GetClient(id),
+            MyUsers = _dbContext.UserClients.Where(i => i.ClientID == id).Select(i => i.MyUser).ToList()
+        };
+    }
+    
+    /*public bool DeleteClientById(int ClientID)
+    {
+        try
+        {
+            List<MyUser> users;
+            
+            var client = _dbContext.Clients.SingleOrDefault(i => i.ClientID == ClientID);
+            users = _dbContext.UserClients.Where(i => i.ClientID == ClientID).Select(i => i.MyUser).ToList();
+
+            _dbContext.Remove(client);
+            for(int i=0; i<users.Count; i++)
+            {
+                _dbContext.Remove(users[i]);
+            }
+            _dbContext.SaveChanges();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }*/
+
 }
