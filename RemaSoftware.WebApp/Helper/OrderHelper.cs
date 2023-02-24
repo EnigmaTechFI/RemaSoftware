@@ -112,7 +112,6 @@ namespace RemaSoftware.WebApp.Helper
                 {
                     /*TODO: Eliminazione Ddt da fatture_in_cloud*/
                     transaction.Rollback();
-                    transaction.Commit();
                     throw;
                 }
             }

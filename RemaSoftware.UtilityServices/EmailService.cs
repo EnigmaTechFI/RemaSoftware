@@ -30,7 +30,7 @@ namespace RemaSoftware.UtilityServices
  
                 SmtpClient client = new SmtpClient();
                 var mailPwd = _configuration["EmailConfig:Password"];
-                client.UseDefaultCredentials = true;
+                
                 client.Credentials = new System.Net.NetworkCredential(mailAddressSender, mailPwd);
                 client.Host = _configuration["EmailConfig:SmtpServer"];
                 client.Port = int.Parse(_configuration["EmailConfig:Port"]);
