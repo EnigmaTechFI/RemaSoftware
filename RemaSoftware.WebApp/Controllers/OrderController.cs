@@ -118,6 +118,16 @@ namespace RemaSoftware.WebApp.Controllers
             return View(vm);
         }
 
+        private NewOrderViewModel NewOrderViewModelThrow(NewOrderViewModel model)
+        {
+            model.Operations = _operationService.GetAllOperations()?.Select(s => new SelectListItem
+            {
+                Text = s.Name,
+                Value = $"{s.OperationID}-{s.Name}"
+            }).ToList();
+            return model;
+        }
+
         [HttpPost]
         public IActionResult NewOrder(NewOrderViewModel model)
         {
@@ -126,7 +136,7 @@ namespace RemaSoftware.WebApp.Controllers
                 if (validationResult != "")
                 {
                     _notyfService.Error(validationResult);
-                    return RedirectToAction("NewOrder", new { productId = model.Ddt_In.ProductID });
+                    return View(NewOrderViewModelThrow(model));
                 }
                 _orderHelper.AddNewDdtIn(model);
                 _notyfService.Success("Commessa registrata correttamente");
@@ -134,9 +144,9 @@ namespace RemaSoftware.WebApp.Controllers
             }
             catch (Exception e)
             {
-                Logger.Error($"Errore durante la creazione dell'ordine.");
-                _notyfService.Error(e.Message);
-                return RedirectToAction("NewOrder", new { productId = model.Ddt_In.ProductID });
+                Logger.Error(e, e.Message);
+                _notyfService.Error("Errore durante la creazione dell'ordine.");
+                return View(NewOrderViewModelThrow(model));
             }
         }
 
@@ -145,7 +155,7 @@ namespace RemaSoftware.WebApp.Controllers
         {
             return View(new BatchInStockViewModel()
             {
-                Batches = _orderHelper.GetBatchByDDTStatus("A")
+                SubBatches = _orderHelper.GetSubBatchesStatus(OrderStatusConstants.STATUS_ARRIVED)
             });
         }
 
@@ -290,10 +300,12 @@ namespace RemaSoftware.WebApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult OrdersNotExtinguished()
+        public IActionResult BatchInProduction()
         {
-            var vm = _orderService.GetOrdersNotCompleted().ToList(); 
-            return View(vm);
+            return View(new BatchInProductionViewModel()
+            {
+                SubBatches = _orderHelper.GetSubBatchesStatus(OrderStatusConstants.STATUS_WORKING)
+            });
         }
 
         [HttpPost]
@@ -309,7 +321,7 @@ namespace RemaSoftware.WebApp.Controllers
                 _notyfService.Error(e.Message);
             }
 
-            return RedirectToAction("OrdersNotExtinguished");
+            return BadRequest();
         }
 
         public JsonResult DeleteProduct(int productId)

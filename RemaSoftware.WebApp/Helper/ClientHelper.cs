@@ -92,7 +92,7 @@ public class ClientHelper
         };
     }
     
-    /*public bool DeleteClientById(int ClientID)
+    public bool DeleteClientById(int ClientID)
     {
         try
         {
@@ -113,6 +113,6 @@ public class ClientHelper
         {
             return false;
         }
-    }*/
+    }
 
 }

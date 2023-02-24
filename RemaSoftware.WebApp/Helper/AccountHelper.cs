@@ -32,45 +32,51 @@ namespace RemaSoftware.WebApp.Helper
 
         public MyUser AddSubAccount(ProfileViewModel model)
         {
-            using var transaction = _dbContext.Database.BeginTransaction();
-            try
+            using (var transaction = _dbContext.Database.BeginTransaction())
             {
-                MyUser newUser = new MyUser();
-                var userClient = new UserClient();
-                userClient.ClientID = model.ClientId;
-                newUser.UserClient = userClient;
-                newUser.UserName = "Account-" + model.NewUser.Email;
-                newUser.Email = model.NewUser.Email;
-
-                var password = PasswordGenerator();
-
-                IdentityResult result = _userManager.CreateAsync(newUser, password).Result;
-
-                if (result.Succeeded)
+                try
                 {
-                    var role = model.Role;
+                    MyUser newUser = new MyUser();
+                    var userClient = new UserClient();
+                    userClient.ClientID = model.ClientId;
+                    newUser.UserClient = userClient;
+                    newUser.UserName = "Account-" + model.NewUser.Email;
+                    newUser.Email = model.NewUser.Email;
 
-                    _userManager.AddToRolesAsync(newUser, new[] { role });
-                        
-                    //bool emailResponse = _emailService.SendEmailNewClientAccount(newUser.Email, password);
+                    var password = PasswordGenerator();
 
-                    /*if (!emailResponse)
+                    IdentityResult result = _userManager.CreateAsync(newUser, password).Result;
+
+                    if (result.Succeeded)
+                    {
+                        var role = model.Role;
+
+                        _userManager.AddToRolesAsync(newUser, new[] { role });
+
+                        try
                         {
-                            throw new Exception("Errore, mail con le credenziali di accesso non inviata correttamente");
-                        }*/
-                    transaction.Commit();
-                }else
-                {
-                    throw new Exception("Errore, la mail è già presente");
+                            _emailService.SendEmailNewClientAccount(newUser.Email, password);
+                        }
+                        catch (Exception e)
+                        {
+                            //TODO: Loggare
+                        }
+
+                        transaction.Commit();
+                    }
+                    else
+                    {
+                        throw new Exception("Errore, la mail è già presente");
+                    }
+
+                    return newUser;
+
                 }
-                return newUser;
-                    
-            }
-            catch(Exception ex)
-            {
-                transaction.Rollback();
-                transaction.Commit();
-                throw ex;
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw ex;
+                }
             }
         }
         

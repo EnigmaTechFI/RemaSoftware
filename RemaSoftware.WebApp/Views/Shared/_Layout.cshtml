@@ -70,14 +70,14 @@
                 <span>Lotti in magazzino</span>
             </a>
         </li>
-        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "OrdersNotExtinguished" ? "active" : "")">
-            <a class="nav-link" asp-action="OrdersNotExtinguished" asp-controller="Order">
+        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "BatchInProduction" ? "active" : "")">
+            <a class="nav-link" asp-action="BatchInProduction" asp-controller="Order">
                 <i class="fas fa-pallet"></i>
                 <span>Lotti in produzione</span>
             </a>
         </li>
         <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "OrdersNotExtinguished" ? "active" : "")">
-            <a class="nav-link" asp-action="OrdersNotExtinguished" asp-controller="Order">
+            <a class="nav-link" asp-action="BatchInProduction" asp-controller="Order">
                 <i class="fas fa-truck-loading"></i>
                 <span>Lotti in consegna</span>
             </a>

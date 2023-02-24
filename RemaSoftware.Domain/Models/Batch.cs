@@ -13,7 +13,6 @@ namespace RemaSoftware.Domain.Models
         [MaxLength(50)]
         public string QrCode { get; set; }
         public decimal Price_Uni { get; set; }
-        public virtual List<Ddt_In> Ddts_In { get; set; }
         public virtual List<BatchOperation> BatchOperations { get; set; }
         public virtual List<SubBatch> SubBatches { get; set; }
     }

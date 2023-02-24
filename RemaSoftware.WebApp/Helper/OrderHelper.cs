@@ -9,27 +9,30 @@ using UtilityServices.Dtos;
 using RemaSoftware.WebApp.Models.OrderViewModel;
 using System.Collections.Generic;
 using System.Linq;
+using RemaSoftware.Domain.Constants;
 
 namespace RemaSoftware.WebApp.Helper
 {
     public class OrderHelper
     {
         private readonly IOrderService _orderService;
+        private readonly ISubBatchService _subBatchService;
         private readonly IProductService _productService;
         private readonly IAPIFatturaInCloudService _apiFatturaInCloudService;
         private readonly ApplicationDbContext _dbContext;
 
-        public OrderHelper(IOrderService orderService, IAPIFatturaInCloudService apiFatturaInCloudService, ApplicationDbContext dbContext, IProductService productService)
+        public OrderHelper(IOrderService orderService, IAPIFatturaInCloudService apiFatturaInCloudService, ApplicationDbContext dbContext, IProductService productService, ISubBatchService subBatchService)
         {
             _orderService = orderService;
             _apiFatturaInCloudService = apiFatturaInCloudService;
             _dbContext = dbContext;
             _productService = productService;
+            _subBatchService = subBatchService;
         }
 
-        public List<Batch> GetBatchByDDTStatus(string status)
+        public List<SubBatch> GetSubBatchesStatus(string status)
         {   
-            return _orderService.GetBatchesByDDTStatus(status);
+            return _subBatchService.GetSubBatchesStatus(status);
         }
 
         public List<Ddt_In> GetAllDdtIn_NoPagination()
@@ -39,36 +42,79 @@ namespace RemaSoftware.WebApp.Helper
 
         public Ddt_In AddNewDdtIn(NewOrderViewModel model)
         {
-            var operationsSelected = model.OperationsSelected.Where(w => !w.StartsWith("0")).Select(s => int.Parse(s.Split('-').First())).ToList();
-            var batchOperationList = new List<BatchOperation>();
-            var index = 0;
-            foreach(var operation in operationsSelected)
+            using (var transaction = _dbContext.Database.BeginTransaction())
             {
-                batchOperationList.Add(new BatchOperation()
+                try
                 {
-                    OperationID = operation,
-                    Ordering = index++
-                });
-            } 
-            var batch = _orderService.GetBatchByProductIdAndOperationList(model.Ddt_In.ProductID, operationsSelected);
-            var ddtList = new List<Ddt_In>();
-            ddtList.Add(model.Ddt_In);
-            if(batch == null)
-            {
-                _orderService.CreateBatch(new Batch()
+                    var operationsSelected = model.OperationsSelected.Where(w => !w.StartsWith("0"))
+                        .Select(s => int.Parse(s.Split('-').First())).ToList();
+                    var batchOperationList = new List<BatchOperation>();
+                    var index = 0;
+                    foreach (var operation in operationsSelected)
+                    {
+                        batchOperationList.Add(new BatchOperation()
+                        {
+                            OperationID = operation,
+                            Ordering = index++
+                        });
+                    }
+
+                    var batch = _orderService.GetBatchByProductIdAndOperationList(model.Ddt_In.ProductID,
+                        operationsSelected);
+                    model.Ddt_In.FC_Ddt_In_ID = _apiFatturaInCloudService.AddDdtInCloud(model.Ddt_In,
+                        _productService.GetProductById(model.Ddt_In.ProductID).SKU, model.uni_price.Value);
+                    if (batch == null)
+                    {
+                        var ddtList = new List<Ddt_In>();
+                        ddtList.Add(model.Ddt_In);
+                        var subBatches = new List<SubBatch>();
+                        subBatches.Add(new SubBatch()
+                        {
+                            Ddts_In = ddtList,
+                            Status = "A",
+                            NumberPieces = model.Ddt_In.Number_Piece,
+                        });
+                        _orderService.CreateBatch(new Batch()
+                        {
+                            SubBatches = subBatches,
+                            Price_Uni = model.uni_price.Value,
+                            BatchOperations = batchOperationList
+                        });
+                    }
+                    else
+                    {
+                        var subBatchInStock = batch.SubBatches
+                            .Where(s => s.Status == OrderStatusConstants.STATUS_ARRIVED).SingleOrDefault();
+                        if (subBatchInStock != null)
+                        {
+                            subBatchInStock.Ddts_In.Add(model.Ddt_In);
+                            subBatchInStock.NumberPieces += model.Ddt_In.Number_Piece;
+                            _subBatchService.UpdateSubBatch(subBatchInStock);
+                        }
+                        else
+                        {
+                            var ddts = new List<Ddt_In>();
+                            ddts.Add(model.Ddt_In);
+                            var subBatch = new SubBatch()
+                            {
+                                BatchID = batch.BatchId,
+                                Ddts_In = ddts,
+                                Status = OrderStatusConstants.STATUS_ARRIVED,
+                                NumberPieces = model.Ddt_In.Number_Piece
+                            };
+                            _subBatchService.CreateSubBatch(subBatch);
+                        }
+                    }
+                    transaction.Commit();
+                    return model.Ddt_In;
+                }
+                catch (Exception e)
                 {
-                    Ddts_In = ddtList,
-                    Price_Uni = model.uni_price.Value,
-                    BatchOperations = batchOperationList
-                });
+                    /*TODO: Eliminazione Ddt da fatture_in_cloud*/
+                    transaction.Rollback();
+                    throw;
+                }
             }
-            else
-            {
-                model.Ddt_In.BatchID = batch.BatchId;
-                return _orderService.CreateDDtIn(model.Ddt_In);
-            }
-            
-            return model.Ddt_In;
         }
         
         public Order AddOrderAndSendToFattureInCloud(Order orderToSave)

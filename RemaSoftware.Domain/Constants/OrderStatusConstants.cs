@@ -12,7 +12,7 @@ namespace RemaSoftware.Domain.Constants
         public static readonly string STATUS_WORKING_DESC = "In lavorazione";
         
         public const string STATUS_COMPLETED = "C";
-        public static readonly string STATUS_COMPLETED_DESC = "In consegna";
+        public static readonly string STATUS_COMPLETED_DESC = "Completato";
 
         public const string STATUS_DELIVERED = "D";
         public static readonly string STATUS_DELIVERED_DESC = "Consegnato";

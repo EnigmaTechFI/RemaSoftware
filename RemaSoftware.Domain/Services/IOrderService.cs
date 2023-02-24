@@ -30,7 +30,6 @@ namespace RemaSoftware.Domain.Services
         Batch GetBatchByProductIdAndOperationList(int productId, List<int> operationId);
         Batch CreateBatch(Batch batch); 
         Ddt_In CreateDDtIn(Ddt_In ddt_In);
-        List<Batch> GetBatchesByDDTStatus(string status);
         List<Ddt_In> GetAllDdtIn();
     }
 }
