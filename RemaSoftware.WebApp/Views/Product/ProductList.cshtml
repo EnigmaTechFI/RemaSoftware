@@ -35,12 +35,12 @@
                         <td>@product.Ddts_In.Sum(s=> s.Number_Piece)</td>
                         <td class="text-center">
                             <a style="text-decoration: none" asp-action="NewOrder" asp-controller="Order" asp-route-productId="@product.ProductID">
-                                <i class="fas fa-file-text fa-lg pl-2" title="Registra commessa" style="cursor: pointer; color: lightgray"></i>
+                                <i class="fas fa-file-text fa-lg pl-2" title="Registra commessa" style="cursor: pointer; color:  #6d767e;"></i>
                             </a>
                             <a style="text-decoration: none" asp-action="UpdateProduct" asp-controller="Product" asp-route-productId="@product.ProductID">
-                                <i class="fas fa-pen fa-lg pl-2" title="Modifica prodotto" style="cursor: pointer; color: lightgray"></i>
+                                <i class="fas fa-pen fa-lg pl-2" title="Modifica prodotto" style="cursor: pointer; color:  #6d767e;"></i>
                             </a>
-                            <i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer; color: lightgray" title="Elimina prodotto" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDataArticleId('#confirm-del-modal', @product.ProductID)"></i>                        
+                            <i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer;  color: #6d767e;" title="Elimina prodotto" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDataArticleId('#confirm-del-modal', @product.ProductID)"></i>                        
                         </td>
                     </tr>
                 }
@@ -62,7 +62,7 @@
             <div class="modal-body">Sei sicuro di voler eliminare questo prodotto?</div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
-                <button class="btn btn-primary" onclick="DeleteProduct()">Elimina</button>
+                <button class="btn btn-danger" onclick="DeleteProduct()">Elimina</button>
             </div>
         </div>
     </div>
@@ -125,9 +125,7 @@
                 { "searchable": false, "orderable": false, "targets": 4 },
               ]
         });
-
-        
-        
+ 
     });
 
     </script>

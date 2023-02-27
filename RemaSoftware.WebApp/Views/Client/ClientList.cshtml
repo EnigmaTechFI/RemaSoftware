@@ -35,7 +35,7 @@
                         <td onclick="ChangePage(@client.ClientID)" id="@client.ClientID" >@client.PhoneNumber</td>
                         <td class="text-center">
                             <a style="text-decoration: none" asp-action="UpdateClient" asp-controller="Client" asp-route-clientId="@client.ClientID">
-                                <i class="fas fa-pen fa-lg pl-2 primary" title="Modifica cliente" style="cursor: pointer;"></i>
+                                <i class="fas fa-pen fa-lg pl-2" title="Modifica cliente" style="cursor: pointer; color:  #6d767e;"></i>
                             </a>
                             @*
                             <i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer; color: #e74a3b;" id="@client.ClientID" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetAccountId('#confirm-del-modal', '@client.ClientID')"></i>

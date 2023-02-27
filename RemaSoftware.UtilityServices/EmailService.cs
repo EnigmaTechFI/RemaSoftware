@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Net.Mail;
 using Microsoft.Extensions.Configuration;
 using NLog;
@@ -22,12 +23,19 @@ namespace RemaSoftware.UtilityServices
                 MailMessage mailMessage = new MailMessage();
                 var mailAddressSender = _configuration["EmailConfig:EmailAddress"];
                 mailMessage.From = new MailAddress(mailAddressSender);
-                mailMessage.To.Add(new MailAddress("alessiocorsi74@gmail.com"));
+                mailMessage.To.Add(new MailAddress(email));
  
                 mailMessage.Subject = "Reset Password";
                 mailMessage.IsBodyHtml = true;
-                mailMessage.Body = returnUrl;
- 
+                string FilePath = "wwwroot/MailTemplate/reset-password.html";  
+                StreamReader str = new StreamReader(FilePath);  
+                string MailText = str.ReadToEnd();  
+                str.Close();
+                
+                MailText = MailText.Replace("[LinkResetPassword]", returnUrl);  
+                
+                mailMessage.Body =  MailText;
+
                 SmtpClient client = new SmtpClient();
                 var mailPwd = _configuration["EmailConfig:Password"];
                 
@@ -61,10 +69,19 @@ namespace RemaSoftware.UtilityServices
                 mailMessage.From = new MailAddress(mailAddressSender);
                 mailMessage.To.Add(new MailAddress(email));
  
-                mailMessage.Subject = "Reset Password";
+                mailMessage.Subject = "Credenziali nuovo account";
                 mailMessage.IsBodyHtml = true;
-                mailMessage.Body = "returnUrl";
- 
+                string FilePath = "wwwroot/MailTemplate/mail-new-account.html";  
+                StreamReader str = new StreamReader(FilePath);  
+                string MailText = str.ReadToEnd();  
+                str.Close();  
+                
+                MailText = MailText.Replace("[email]", email);  
+                MailText = MailText.Replace("[password]", password);  
+                
+                mailMessage.Body =  MailText;
+                
+
                 SmtpClient client = new SmtpClient();
                 var mailPwd = _configuration["EmailConfig:Password"];
                 //client.UseDefaultCredentials = true; Commentato perchè non prende le credenziali della mail se setto a true
@@ -89,4 +106,5 @@ namespace RemaSoftware.UtilityServices
             return false;
         }
     }
+
 }
