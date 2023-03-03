@@ -52,29 +52,73 @@ public class SubBatchService : ISubBatchService
         }
     }
 
-    public void UpdateSubBatchStatusAndOperationTimelineStart(int Id, int machineId, int batchOperationId, int numbersOperator, DateTime start)
+    public async Task<List<int>> UpdateSubBatchStatusAndOperationTimelineStart(int Id, int machineId, int batchOperationId, int numbersOperator, DateTime start)
+    {
+        try
+        {
+            var sb = _dbContext.SubBatches.AsNoTracking()
+                .Include(s =>s.Ddts_In)
+                .SingleOrDefault(s => s.SubBatchID == Id);
+            sb.Status = OrderStatusConstants.STATUS_WORKING;
+            sb.OperationTimelines = new List<OperationTimeline>();
+            for (int i = 0; i < numbersOperator; i++)
+            {
+                sb.OperationTimelines.Add(new OperationTimeline()
+                {
+                    BatchOperationID = batchOperationId,
+                    StartDate = start,
+                    EndDate = start,
+                    MachineId = machineId,
+                    Status = "A"
+                });
+            }
+            sb.Ddts_In = sb.Ddts_In.Select(x =>
+            {
+                x.Status = OrderStatusConstants.STATUS_WORKING;
+                return x;
+            }).ToList();
+            await _dbContext.SaveChangesAsync();
+            _dbContext.Update(sb);
+            _dbContext.SaveChanges();
+            return sb.OperationTimelines.Select(s => s.OperationTimelineID).ToList();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw e;
+        }
+    }
+
+    public void UpdateSubBatchStatusAndOperationTimelineEnd(int Id, int machineId, int batchOperationId, int numbersOperator,
+        DateTime end)
     {
         var sb =_dbContext.SubBatches
             .Include(s =>s.Ddts_In)
-            .Include(s => s.OperationTimelines)
+            .Include(s => s.OperationTimelines.Where(s => s.BatchOperationID == batchOperationId && s.MachineId == machineId && s.Status == "A"))
             .SingleOrDefault(s => s.SubBatchID == Id);
-        sb.Status = OrderStatusConstants.STATUS_WORKING;
         for (int i = 0; i < numbersOperator; i++)
         {
-            sb.OperationTimelines.Add(new OperationTimeline()
-            {
-                BatchOperationID = batchOperationId,
-                StartDate = start,
-                EndDate = start,
-                MachineId = machineId,
-                Status = "A"
-            });
+            sb.OperationTimelines[i].Status = "C";
+            sb.OperationTimelines[i].EndDate = end;
         }
-        sb.Ddts_In = sb.Ddts_In.Select(x =>
+
+        _dbContext.SubBatches.Update(sb);
+        _dbContext.SaveChanges();
+    }
+
+    public void UpdateSubBatchStatusAndOperationTimelinePause(int Id, int machineId, int batchOperationId, int numbersOperator,
+        DateTime end)
+    {
+        var sb =_dbContext.SubBatches
+            .Include(s =>s.Ddts_In)
+            .Include(s => s.OperationTimelines.Where(s => s.BatchOperationID == batchOperationId && s.MachineId == machineId && s.Status == "A"))
+            .SingleOrDefault(s => s.SubBatchID == Id);
+        for (int i = 0; i < numbersOperator; i++)
         {
-            x.Status = OrderStatusConstants.STATUS_WORKING;
-            return x;
-        }).ToList();
+            sb.OperationTimelines[i].Status = "B";
+            sb.OperationTimelines[i].EndDate = end;
+        }
+
         _dbContext.SubBatches.Update(sb);
         _dbContext.SaveChanges();
     }
@@ -107,6 +151,9 @@ public class SubBatchService : ISubBatchService
     public SubBatch GetSubBatchById(int id)
     {
         return _dbContext.SubBatches
+            .Include(s => s.Batch)
+            .ThenInclude(s => s.BatchOperations)
+            .ThenInclude(s => s.Operations)
             .Include(s => s.Batch)
             .ThenInclude(s => s.BatchOperations)
             .ThenInclude(s => s.OperationTimelines)

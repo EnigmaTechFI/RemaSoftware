@@ -45,12 +45,42 @@ public class SubBatchController : ControllerBase
     }
     
     //https://localhost:44328/api/v1/SubBatch/Start?id=1&machineId=1&batchOperationId=1&numberOperators
-    [HttpGet("{id}")]
+    [HttpGet]
     public JsonResult Start(int id, int machineId, int batchOperationId, int numberOperators)
     {
         try
         {
             _batchHelper.StartOperationOnSubBatch(id, machineId, batchOperationId, numberOperators);
+            return new JsonResult(new {Data = "OK", Error = ""});
+        }
+        catch (Exception e)
+        {
+            return new JsonResult(new {Data = "ERROR", Error = e.Message});
+        }
+    }
+    
+    //https://localhost:44328/api/v1/SubBatch/Start?id=1&machineId=1&batchOperationId=1&numberOperators
+    [HttpGet("{id}")]
+    public JsonResult End(int id, int machineId, int batchOperationId, int numberOperators)
+    {
+        try
+        {
+            _batchHelper.EndOperationOnSubBatch(id, machineId, batchOperationId, numberOperators);
+            return new JsonResult(new {Data = "OK", Error = ""});
+        }
+        catch (Exception e)
+        {
+            return new JsonResult(new {Data = "ERROR", Error = e.Message});
+        }
+    }
+    
+    //https://localhost:44328/api/v1/SubBatch/Start?id=1&machineId=1&batchOperationId=1&numberOperators
+    [HttpGet("{id}")]
+    public JsonResult Pause(int id, int machineId, int batchOperationId, int numberOperators)
+    {
+        try
+        {
+            _batchHelper.PauseOperationOnSubBatch(id, machineId, batchOperationId, numberOperators);
             return new JsonResult(new {Data = "OK", Error = ""});
         }
         catch (Exception e)

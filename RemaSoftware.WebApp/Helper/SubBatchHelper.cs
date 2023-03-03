@@ -31,9 +31,18 @@ public class SubBatchHelper
         return _subBatchService.GetSubBatchById(id);
     }
 
-    public void StartOperationOnSubBatch(int id, int machineId, int operationId, int numberOperators)
+    public void StartOperationOnSubBatch(int id, int machineId, int batchOperationId, int numberOperators)
     {
-        _subBatchService.UpdateSubBatchStatusAndOperationTimelineStart(id, machineId, operationId, numberOperators, DateTime.Now);
-        
+        _subBatchService.UpdateSubBatchStatusAndOperationTimelineStart(id, machineId, batchOperationId, numberOperators, DateTime.Now);
+    }
+
+    public void EndOperationOnSubBatch(int id, int machineId, int batchOperationId, int numberOperators)
+    {
+        _subBatchService.UpdateSubBatchStatusAndOperationTimelineStart(id, machineId, batchOperationId, numberOperators, DateTime.Now);
+    }
+
+    public void PauseOperationOnSubBatch(int id, int machineId, int batchOperationId, int numberOperators)
+    {
+        _subBatchService.UpdateSubBatchStatusAndOperationTimelineStart(id, machineId, batchOperationId, numberOperators, DateTime.Now);
     }
 }
