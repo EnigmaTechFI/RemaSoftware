@@ -45,10 +45,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\api\v1" />
-  </ItemGroup>
-
-  <ItemGroup>
     <_ContentIncludedByDefault Remove="wwwroot\TemplateMail\new-account-mail.html" />
     <_ContentIncludedByDefault Remove="wwwroot\MailTemplate\mail-new-account.html" />
   </ItemGroup>

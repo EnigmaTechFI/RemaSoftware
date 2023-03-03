@@ -256,7 +256,7 @@ namespace RemaSoftware.Domain.Services.Impl
                         opList.Add(op.OperationID);
                     }
 
-                    if (opList.All(operationId.Contains))
+                    if (opList.All(operationId.Contains) && opList.Count == operationId.Count)
                     {
                         return item;
                     }

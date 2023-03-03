@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NLog;
+using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Data;
 using RemaSoftware.Domain.Models;
 
@@ -51,6 +52,33 @@ public class SubBatchService : ISubBatchService
         }
     }
 
+    public void UpdateSubBatchStatusAndOperationTimelineStart(int Id, int machineId, int batchOperationId, int numbersOperator, DateTime start)
+    {
+        var sb =_dbContext.SubBatches
+            .Include(s =>s.Ddts_In)
+            .Include(s => s.OperationTimelines)
+            .SingleOrDefault(s => s.SubBatchID == Id);
+        sb.Status = OrderStatusConstants.STATUS_WORKING;
+        for (int i = 0; i < numbersOperator; i++)
+        {
+            sb.OperationTimelines.Add(new OperationTimeline()
+            {
+                BatchOperationID = batchOperationId,
+                StartDate = start,
+                EndDate = start,
+                MachineId = machineId,
+                Status = "A"
+            });
+        }
+        sb.Ddts_In = sb.Ddts_In.Select(x =>
+        {
+            x.Status = OrderStatusConstants.STATUS_WORKING;
+            return x;
+        }).ToList();
+        _dbContext.SubBatches.Update(sb);
+        _dbContext.SaveChanges();
+    }
+
     public void CreateSubBatch(SubBatch entity)
     {
         try
@@ -74,5 +102,17 @@ public class SubBatchService : ISubBatchService
             .ThenInclude(s => s.Product)
             .ThenInclude(s => s.Client)
             .ToList();
+    }
+
+    public SubBatch GetSubBatchById(int id)
+    {
+        return _dbContext.SubBatches
+            .Include(s => s.Batch)
+            .ThenInclude(s => s.BatchOperations)
+            .ThenInclude(s => s.OperationTimelines)
+            .Include(s => s.Ddts_In)
+            .ThenInclude(s => s.Product)
+            .ThenInclude(s => s.Client)
+            .SingleOrDefault(s => s.SubBatchID == id);
     }
 }
