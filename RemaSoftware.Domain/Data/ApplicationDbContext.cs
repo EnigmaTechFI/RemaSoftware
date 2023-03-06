@@ -19,7 +19,7 @@ namespace RemaSoftware.Domain.Data
         public DbSet<Batch> Batches { get; set; }
         public DbSet<SubBatch> SubBatches { get; set; }
         public DbSet<BatchOperation> BatchOperations { get; set; }
-        //public DbSet<OperationTimeline> OperationTimelines { get; set; }
+        public DbSet<OperationTimeline> OperationTimelines { get; set; }
         public DbSet<Operation> Operations { get; set; }
         public DbSet<Order> Order { get; set; }
         public DbSet<Order_Operation> Order_Operations { get; set; }
@@ -34,8 +34,8 @@ namespace RemaSoftware.Domain.Data
             modelBuilder.Entity<Ddt_Out>().HasKey(a => new { a.Ddt_Out_ID});
             modelBuilder.Entity<Ddt_Association>().HasKey(a => new { a.Ddt_In_ID, a.Ddt_Out_ID});
             // modelBuilder.Entity<OperationTimeline>().HasKey(a => new { a.SubBatchID, a.BatchOperationID});
-            // modelBuilder.Entity<OperationTimeline>().HasOne(a => a.SubBatch).WithMany(a => a.OperationTimelines).OnDelete(DeleteBehavior.NoAction);
-            // modelBuilder.Entity<OperationTimeline>().HasOne(a => a.BatchOperation).WithMany(a => a.OperationTimelines);
+            modelBuilder.Entity<OperationTimeline>().HasOne(a => a.SubBatch).WithMany(a => a.OperationTimelines).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<OperationTimeline>().HasOne(a => a.BatchOperation).WithMany(a => a.OperationTimelines);
             base.OnModelCreating(modelBuilder);
         }
         #endregion
