@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Models;

@@ -29,20 +29,16 @@
                 <tbody>
                 @foreach (var batch in Model.SubBatches)
                 {
-                    <tr style="cursor: pointer;" onclick="showDDT(@batch.SubBatchID)" id="batch-@batch.Batch.BatchId">
+                    <tr style="cursor: pointer;"  id="batch-@batch.Batch.BatchId">
                         <td>@batch.Batch.BatchId</td>
                         <td>@batch.Ddts_In[0].Product.Client.Name</td>
                         <td>@batch.Ddts_In[0].Product.SKU</td>
-                        <td>Visualizza DDT associate</td>
+                        <td onclick="showDDT(@batch.SubBatchID)">Visualizza DDT associate</td>
                         <td>@batch.Ddts_In.Sum(s=> s.Number_Piece)</td>
                         <td class="text-center">
-                            @*<a style="text-decoration: none" asp-action="NewOrder" asp-controller="Order" asp-route-productId="@product.ProductID">
-                                <i class="fas fa-file-text fa-lg pl-2" title="Registra commessa" style="cursor: pointer; color: lightgray"></i>
-                            </a>*@
-                            <a style="text-decoration: none">
-                                <i class="fas fa-pen fa-lg pl-2" title="Modifica prodotto" style="cursor: pointer; color: #6d767e"></i>
+                            <a onclick="printQRCode(@batch.SubBatchID)" style="text-decoration: none">
+                                <i class="fas fa-print fa-lg pl-2" title="Stampa etichetta" style="cursor: pointer; color: #6d767e"></i>
                             </a>
-                            <i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer; color: #6d767e" title="Elimina prodotto" data-toggle="modal" data-target="#confirm-del-modal"></i>                        
                         </td>
                     </tr>
                 }
@@ -100,8 +96,23 @@
 {
     <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
     <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="~/js/dymo.connect.framework.js" type="text/javascript" charset="UTF-8"> </script>
 
     <script>
+    function printQRCode(id){
+      var printers = dymo.label.framework.getPrinters();
+      if (printers.length == 0 || !printers[0].isConnected){
+        alert("Nessuna stampante trovata.");
+        return
+      }
+      var label = dymo.label.framework.openLabelFile("prova3.dymo")  
+      label.setObjectText("QRCodeObject", "https://localhost:44328/api/v1/SubBatch/Detail/" + id);
+      label.print(printer[0].name); 
+    } 
+    </script>
+
+    <script>
+    
     const batches = @Json.Serialize(Model.SubBatches)
     function showDDT(subbatchId) {
         var batch = batches.filter(obj => {

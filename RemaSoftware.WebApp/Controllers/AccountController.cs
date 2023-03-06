@@ -6,7 +6,7 @@ using AspNetCoreHero.ToastNotification.Abstractions;
 using NLog;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.WebApp.Models.LoginViewModel;
-using RemaSoftware.UtilityServices;
+using RemaSoftware.UtilityServices.Interface;
 using RemaSoftware.WebApp.Helper;
 using RemaSoftware.WebApp.Models.AccountingViewModel;
 

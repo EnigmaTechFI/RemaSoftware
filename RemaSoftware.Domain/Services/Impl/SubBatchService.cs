@@ -56,20 +56,22 @@ public class SubBatchService : ISubBatchService
     {
         try
         {
-            var sb = _dbContext.SubBatches.AsNoTracking()
+            var sb = _dbContext.SubBatches
+                .Include(s => s.OperationTimelines)
                 .Include(s =>s.Ddts_In)
                 .SingleOrDefault(s => s.SubBatchID == Id);
             sb.Status = OrderStatusConstants.STATUS_WORKING;
-            sb.OperationTimelines = new List<OperationTimeline>();
+            var operationTimelines = new List<OperationTimeline>();
             for (int i = 0; i < numbersOperator; i++)
             {
-                sb.OperationTimelines.Add(new OperationTimeline()
+                operationTimelines.Add(new OperationTimeline()
                 {
                     BatchOperationID = batchOperationId,
                     StartDate = start,
                     EndDate = start,
                     MachineId = machineId,
-                    Status = "A"
+                    Status = "A",
+                    SubBatch = sb
                 });
             }
             sb.Ddts_In = sb.Ddts_In.Select(x =>
@@ -77,8 +79,8 @@ public class SubBatchService : ISubBatchService
                 x.Status = OrderStatusConstants.STATUS_WORKING;
                 return x;
             }).ToList();
-            await _dbContext.SaveChangesAsync();
-            _dbContext.Update(sb);
+
+            _dbContext.AddRange(operationTimelines);
             _dbContext.SaveChanges();
             return sb.OperationTimelines.Select(s => s.OperationTimelineID).ToList();
         }

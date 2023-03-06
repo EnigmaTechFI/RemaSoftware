@@ -2,8 +2,9 @@
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using NLog;
+using RemaSoftware.UtilityServices.Interface;
 
-namespace RemaSoftware.UtilityServices
+namespace RemaSoftware.UtilityServices.Implementation
 {
     public class ImageService : IImageService
     {

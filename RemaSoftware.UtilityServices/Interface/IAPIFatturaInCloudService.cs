@@ -2,7 +2,7 @@
 using RemaSoftware.UtilityServices.Dtos;
 using UtilityServices.Dtos;
 
-namespace RemaSoftware.UtilityServices
+namespace RemaSoftware.UtilityServices.Interface
 {
     public interface IAPIFatturaInCloudService
     {

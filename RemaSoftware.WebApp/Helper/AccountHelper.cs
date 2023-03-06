@@ -1,19 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Timers;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using RemaSoftware.Domain.Services;
 using RemaSoftware.Domain.Data;
 using RemaSoftware.Domain.Models;
-using RemaSoftware.Domain.Services.Impl;
-using RemaSoftware.UtilityServices;
+using RemaSoftware.UtilityServices.Interface;
 using RemaSoftware.WebApp.Models.AccountingViewModel;
-using static RemaSoftware.WebApp.Models.AccountingViewModel.AccountingViewModel;
 
 namespace RemaSoftware.WebApp.Helper
 {

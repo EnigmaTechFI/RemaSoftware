@@ -8,12 +8,13 @@ using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification;
 using AspNetCoreHero.ToastNotification.Extensions;
-using RemaSoftware.UtilityServices;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
 using RemaSoftware.Domain.Services.Impl;
 using RemaSoftware.Domain.Data;
+using RemaSoftware.UtilityServices.Implementation;
+using RemaSoftware.UtilityServices.Interface;
 using RemaSoftware.WebApp.Helper;
 using RemaSoftware.WebApp.Validation;
 

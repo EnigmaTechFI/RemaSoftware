@@ -1,15 +1,13 @@
 using System;
-using System.Drawing;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
 using RemaSoftware.Domain.Data;
-using RemaSoftware.UtilityServices;
-using RemaSoftware.UtilityServices.Dtos;
 using UtilityServices.Dtos;
 using RemaSoftware.WebApp.Models.OrderViewModel;
 using System.Collections.Generic;
 using System.Linq;
 using RemaSoftware.Domain.Constants;
+using RemaSoftware.UtilityServices.Interface;
 
 namespace RemaSoftware.WebApp.Helper
 {

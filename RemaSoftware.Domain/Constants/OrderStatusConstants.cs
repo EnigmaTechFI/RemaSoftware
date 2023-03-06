@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace RemaSoftware.Domain.Constants
 {
     public static class OrderStatusConstants

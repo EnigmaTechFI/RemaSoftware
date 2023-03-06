@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using RemaSoftware.WebApp.Models.Common;
 using RemaSoftware.Domain.Models;
 
 namespace RemaSoftware.WebApp.Models.OrderViewModel

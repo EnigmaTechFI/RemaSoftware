@@ -1,4 +1,4 @@
-namespace RemaSoftware.UtilityServices
+namespace RemaSoftware.UtilityServices.Interface
 {
     public interface IEmailService
     {

@@ -1,7 +1,5 @@
-﻿using System;
-using RemaSoftware.Domain.Models;
+﻿using RemaSoftware.Domain.Models;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Identity;
 
 namespace RemaSoftware.WebApp.Models.ClientViewModel
 {

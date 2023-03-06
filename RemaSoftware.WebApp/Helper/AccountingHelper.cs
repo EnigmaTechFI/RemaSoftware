@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Timers;
+﻿using System.Linq;
 using RemaSoftware.Domain.Services;
-using RemaSoftware.Domain.Data;
 using RemaSoftware.WebApp.Models.AccountingViewModel;
 using static RemaSoftware.WebApp.Models.AccountingViewModel.AccountingViewModel;
 

@@ -4,12 +4,12 @@ using System.Net;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using NLog;
-using NLog.Fluent;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.UtilityServices.Dtos;
+using RemaSoftware.UtilityServices.Interface;
 using UtilityServices.Dtos;
 
-namespace RemaSoftware.UtilityServices
+namespace RemaSoftware.UtilityServices.Implementation
 {
     public class APIFatturaInCloudService : IAPIFatturaInCloudService
     {

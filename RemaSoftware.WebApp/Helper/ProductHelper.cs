@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.Configuration;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
-using RemaSoftware.UtilityServices;
 using RemaSoftware.WebApp.Models.ProductViewModel;
 using RemaSoftware.WebApp.Validation;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using RemaSoftware.UtilityServices.Interface;
 
 namespace RemaSoftware.WebApp.Helper
 {

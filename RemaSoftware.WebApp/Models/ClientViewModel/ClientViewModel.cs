@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using RemaSoftware.Domain.Models;
 
 namespace RemaSoftware.WebApp.Models.ClientViewModel
 {
