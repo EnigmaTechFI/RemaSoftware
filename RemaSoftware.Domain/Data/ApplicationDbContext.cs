@@ -35,7 +35,7 @@ namespace RemaSoftware.Domain.Data
             modelBuilder.Entity<Ddt_Association>().HasKey(a => new { a.Ddt_In_ID, a.Ddt_Out_ID});
             // modelBuilder.Entity<OperationTimeline>().HasKey(a => new { a.SubBatchID, a.BatchOperationID});
             modelBuilder.Entity<OperationTimeline>().HasOne(a => a.SubBatch).WithMany(a => a.OperationTimelines).OnDelete(DeleteBehavior.NoAction);
-            modelBuilder.Entity<OperationTimeline>().HasOne(a => a.BatchOperation).WithMany(a => a.OperationTimelines);
+            modelBuilder.Entity<OperationTimeline>().HasOne(a => a.BatchOperation).WithMany(a => a.OperationTimelines).OnDelete(DeleteBehavior.NoAction);
             base.OnModelCreating(modelBuilder);
         }
         #endregion

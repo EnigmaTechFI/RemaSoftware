@@ -57,28 +57,23 @@ public class SubBatchService : ISubBatchService
         try
         {
             var sb = _dbContext.SubBatches
-                .Include(s => s.OperationTimelines)
                 .Include(s =>s.Ddts_In)
                 .SingleOrDefault(s => s.SubBatchID == Id);
             sb.Status = OrderStatusConstants.STATUS_WORKING;
-            sb.OperationTimelines = new List<OperationTimeline>();
             for (int i = 0; i < numbersOperator; i++)
             {
-                sb.OperationTimelines.Add(new OperationTimeline()
+                _dbContext.OperationTimelines.Add(new OperationTimeline()
                 {
                     BatchOperationID = batchOperationId,
                     StartDate = start,
                     EndDate = start,
                     MachineId = machineId,
                     Status = "A",
+                    SubBatch = sb,
                     SubBatchID = sb.SubBatchID
                 });
             }
-            sb.Ddts_In = sb.Ddts_In.Select(x =>
-            {
-                x.Status = OrderStatusConstants.STATUS_WORKING;
-                return x;
-            }).ToList();
+            sb.Ddts_In.ForEach(s => s.Status = OrderStatusConstants.STATUS_WORKING);
 
             _dbContext.Update(sb);
             _dbContext.SaveChanges();
