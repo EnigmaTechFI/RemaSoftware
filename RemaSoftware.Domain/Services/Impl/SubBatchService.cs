@@ -86,38 +86,22 @@ public class SubBatchService : ISubBatchService
         }
     }
 
-    public void UpdateSubBatchStatusAndOperationTimelineEnd(int Id, int machineId, int batchOperationId, int numbersOperator,
-        DateTime end)
+    public string UpdateSubBatchStatusAndOperationTimelineEnd(int operationTimelineId, DateTime end)
     {
-        var sb =_dbContext.SubBatches
-            .Include(s =>s.Ddts_In)
-            .Include(s => s.OperationTimelines.Where(s => s.BatchOperationID == batchOperationId && s.MachineId == machineId && s.Status == "A"))
-            .SingleOrDefault(s => s.SubBatchID == Id);
-        for (int i = 0; i < numbersOperator; i++)
+        var op =_dbContext.OperationTimelines
+            .Include(s =>s.SubBatch)
+            .ThenInclude(s => s.Ddts_In)
+            .SingleOrDefault(s => s.OperationTimelineID == operationTimelineId);
+        if (op != null)
         {
-            sb.OperationTimelines[i].Status = "C";
-            sb.OperationTimelines[i].EndDate = end;
+            op.Status = "C";
+            op.EndDate = end;
+            _dbContext.OperationTimelines.Update(op);
+            _dbContext.SaveChanges();
+            return "Success";
         }
 
-        _dbContext.SubBatches.Update(sb);
-        _dbContext.SaveChanges();
-    }
-
-    public void UpdateSubBatchStatusAndOperationTimelinePause(int Id, int machineId, int batchOperationId, int numbersOperator,
-        DateTime end)
-    {
-        var sb =_dbContext.SubBatches
-            .Include(s =>s.Ddts_In)
-            .Include(s => s.OperationTimelines.Where(s => s.BatchOperationID == batchOperationId && s.MachineId == machineId && s.Status == "A"))
-            .SingleOrDefault(s => s.SubBatchID == Id);
-        for (int i = 0; i < numbersOperator; i++)
-        {
-            sb.OperationTimelines[i].Status = "B";
-            sb.OperationTimelines[i].EndDate = end;
-        }
-
-        _dbContext.SubBatches.Update(sb);
-        _dbContext.SaveChanges();
+        return "Elemento non trovato.";
     }
 
     public void CreateSubBatch(SubBatch entity)

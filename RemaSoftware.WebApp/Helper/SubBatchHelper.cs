@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
@@ -31,18 +33,14 @@ public class SubBatchHelper
         return _subBatchService.GetSubBatchById(id);
     }
 
-    public void StartOperationOnSubBatch(int id, int machineId, int batchOperationId, int numberOperators)
+    public async Task<List<int>> StartOperationOnSubBatch(int id, int machineId, int batchOperationId, int numberOperators)
     {
-        _subBatchService.UpdateSubBatchStatusAndOperationTimelineStart(id, machineId, batchOperationId, numberOperators, DateTime.Now);
+        return await _subBatchService.UpdateSubBatchStatusAndOperationTimelineStart(id, machineId, batchOperationId, numberOperators, DateTime.Now);
     }
 
-    public void EndOperationOnSubBatch(int id, int machineId, int batchOperationId, int numberOperators)
+    public string EndOperationOnSubBatch(int operationTimelineId)
     {
-        _subBatchService.UpdateSubBatchStatusAndOperationTimelineStart(id, machineId, batchOperationId, numberOperators, DateTime.Now);
+        return _subBatchService.UpdateSubBatchStatusAndOperationTimelineEnd(operationTimelineId, DateTime.Now);
     }
 
-    public void PauseOperationOnSubBatch(int id, int machineId, int batchOperationId, int numberOperators)
-    {
-        _subBatchService.UpdateSubBatchStatusAndOperationTimelineStart(id, machineId, batchOperationId, numberOperators, DateTime.Now);
-    }
 }
