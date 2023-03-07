@@ -135,9 +135,9 @@ namespace RemaSoftware.WebApp.Controllers
                     _notyfService.Error(validationResult);
                     return View(NewOrderViewModelThrow(model));
                 }
-                _orderHelper.AddNewDdtIn(model);
+                var result = _orderHelper.AddNewDdtIn(model);
                 _notyfService.Success("Commessa registrata correttamente");
-                return RedirectToAction("NewOrder", new { productId = model.Ddt_In.ProductID });
+                return RedirectToAction("ProductList", "Product", new{subBatchId = result.SubBatchID});
             }
             catch (Exception e)
             {

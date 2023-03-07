@@ -74,7 +74,24 @@
 {
     <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
     <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="~/js/dymo.connect.framework.js" type="text/javascript" charset="UTF-8"> </script>
 
+    <script>
+    if (@Model.SubBatch.SubBatchID != 0)
+    {
+        printQRCode(@Model.SubBatch.BatchID)
+    }
+    function printQRCode(id){
+      var printers = dymo.label.framework.getPrinters();
+      if (printers.length == 0 || !printers[0].isConnected){
+        alert("Nessuna stampante trovata.");
+        return
+      }
+      var label = dymo.label.framework.openLabelFile("prova3.dymo")  
+      label.setObjectText("QRCodeObject", "https://localhost:44328/api/v1/SubBatch/Detail/" + id);
+      label.print(printers[0].name); 
+    } 
+    </script>
     <script>
 
     function SetDataArticleId(elementName, articleId){
