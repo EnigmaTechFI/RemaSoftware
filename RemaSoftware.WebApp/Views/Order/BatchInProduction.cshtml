@@ -23,26 +23,22 @@
                     <th>Codice prodotto</th>
                     <th>DDT associate</th>
                     <th>Pezzi nel lotto</th>
-                    <th>Azioni</th>
+                    <th class="text-center">Azioni</th>
                 </tr>
                 </thead>
                 <tbody>
                 @foreach (var batch in Model.SubBatches)
                 {
-                    <tr style="cursor: pointer;" onclick="showDDT(@batch.SubBatchID)">
+                    <tr style="cursor: pointer;">
                         <td>@batch.Batch.BatchId</td>
                         <td>@batch.Ddts_In[0].Product.Client.Name</td>
                         <td>@batch.Ddts_In[0].Product.SKU</td>
-                        <td>Visualizza DDT associate</td>
+                        <td onclick="showDDT(@batch.SubBatchID)">Visualizza DDT associate</td>
                         <td>@batch.Ddts_In.Sum(s=> s.Number_Piece)</td>
                         <td class="text-center">
-                            @*<a style="text-decoration: none" asp-action="NewOrder" asp-controller="Order" asp-route-productId="@product.ProductID">
-                                <i class="fas fa-file-text fa-lg pl-2" title="Registra commessa" style="cursor: pointer; color: lightgray"></i>
-                            </a>*@
-                            <a style="text-decoration: none">
-                                <i class="fas fa-pen fa-lg pl-2" title="Modifica prodotto" style="cursor: pointer; color: lightgray"></i>
+                            <a style="text-decoration: none" asp-controller="Order" asp-action="SubBatchMonitoring" asp-route-id="@batch.SubBatchID">
+                                <i class="fas fa-eye fa-lg pl-2" title="Visualizza avanzamento" style="cursor: pointer; color: lightgray"></i>
                             </a>
-                            <i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer; color: lightgray" title="Elimina prodotto" data-toggle="modal" data-target="#confirm-del-modal"></i>                        
                         </td>
                     </tr>
                 }
@@ -105,7 +101,7 @@
     const batches = @Json.Serialize(Model.SubBatches)
     function showDDT(subbatchId) {
         var batch = batches.filter(obj => {
-          return obj.subBatchId === subbatchId
+          return obj.subBatchID === subbatchId
         })
         var ddt_list = ""
         batch[0].ddts_In.forEach(function(ddt) {
@@ -113,7 +109,7 @@
         })
         $("#ddt_associate").modal('show');
         document.getElementById("batch_ddt").innerHTML = ddt_list
-        document.getElementById("batchModalHeader").textContent = "DDT associate al lotto #" + batch[0].batchId;
+        document.getElementById("batchModalHeader").textContent = "DDT associate al lotto #" + batch[0].batchID;
     }
 
     function DeleteStockArticle(){

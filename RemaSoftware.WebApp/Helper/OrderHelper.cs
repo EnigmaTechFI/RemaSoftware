@@ -6,6 +6,7 @@ using UtilityServices.Dtos;
 using RemaSoftware.WebApp.Models.OrderViewModel;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.UtilityServices.Interface;
 
@@ -28,11 +29,20 @@ namespace RemaSoftware.WebApp.Helper
             _subBatchService = subBatchService;
         }
 
+        public SubBatchMonitoringViewModel GetSubBatchMonitoring(int id)
+        {
+            var test = _subBatchService.GetSubBatchById(id);
+            return new SubBatchMonitoringViewModel()
+            {
+                SubBatch = _subBatchService.GetSubBatchById(id)
+            };
+        }
+        
         public List<SubBatch> GetSubBatchesStatus(string status)
         {   
             return _subBatchService.GetSubBatchesStatus(status);
         }
-
+        
         public List<Ddt_In> GetAllDdtIn_NoPagination()
         {
             return _orderService.GetAllDdtIn();

@@ -53,6 +53,12 @@ namespace RemaSoftware.WebApp.Controllers
         }
 
         [HttpGet]
+        public IActionResult SubBatchMonitoring(int id)
+        {
+            return View(_orderHelper.GetSubBatchMonitoring(id));
+        }
+
+        [HttpGet]
         public IActionResult OrderSummary()
         {
             return View(new OrderSummaryViewModel()
