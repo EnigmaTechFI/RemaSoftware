@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Services;
 using RemaSoftware.WebApp.Models.AccountingViewModel;
 using static RemaSoftware.WebApp.Models.AccountingViewModel.AccountingViewModel;
@@ -8,12 +9,21 @@ namespace RemaSoftware.WebApp.Helper
     public class AccountingHelper
     {
         private readonly IOrderService _orderService;
+        private readonly ISubBatchService _subBatchService;
 
-        public AccountingHelper(IOrderService orderService)
+        public AccountingHelper(IOrderService orderService, ISubBatchService subBatchService)
         {
             _orderService = orderService;
+            _subBatchService = subBatchService;
         }
 
+        public ProductionAnalysisLiveViewModel GetProductionAnalysisLiveViewModel()
+        {
+            return new ProductionAnalysisLiveViewModel()
+            {
+                OperationTimeLines = _subBatchService.GetOperationTimelinesByStatus(OperationTimelineConstant.STATUS_WORKING)
+            };
+        }
         public AccountingViewModel GetAccountingViewModel()
         {
             var ordersInFactory = _orderService.GetOrdersNotCompleted()

@@ -1,7 +1,7 @@
-@model RemaSoftware.WebApp.Models.OrderViewModel.BatchInProductionViewModel
+@model RemaSoftware.WebApp.Models.OrderViewModel.BatchInDeliveryViewModel
 
 @{
-    ViewData["Title"] = "Lotti in magazzino";
+    ViewData["Title"] = "Lotti in consegna";
 }
 
 <link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
@@ -36,9 +36,6 @@
                         <td onclick="showDDT(@batch.SubBatchID)">Visualizza DDT associate</td>
                         <td>@batch.Ddts_In.Sum(s=> s.Number_Piece)</td>
                         <td class="text-center">
-                            <a style="text-decoration: none" asp-controller="Order" asp-action="SubBatchMonitoring" asp-route-id="@batch.SubBatchID">
-                                <i class="fas fa-eye fa-lg pl-2" title="Visualizza avanzamento" style="cursor: pointer; color: lightgray"></i>
-                            </a>
                         </td>
                     </tr>
                 }
@@ -73,25 +70,6 @@
     </div>
 </div>
 
-<div class="modal fade" id="confirm-del-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Conferma eliminazione</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">Sei sicuro di voler eliminare questo prodotto?</div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
-                <button class="btn btn-primary" onclick="DeleteStockArticle()">Elimina</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
 @section Scripts
 {
     <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
@@ -112,26 +90,7 @@
         document.getElementById("batchModalHeader").textContent = "DDT associate al lotto #" + batch[0].batchID;
     }
 
-    function DeleteStockArticle(){
-        var articleId = $("#confirm-del-modal").data("articleId");
-        $.ajax({
-            url: '@Url.Action("DeleteProduct", "Order")?' + $.param({"productId": articleId}),
-            type: 'GET',
-            success: function (data) {
-                if (data.result == true){
-                    table.row($("tr#product-" + articleId)).remove().draw();
-                    $("#confirm-del-modal").modal('toggle');
-                    toastNotifySuccess(data.toastMessage);
-                }else{
-                    toastNotifyError(data.toastMessage);
-                }
-            },
-            error: function (data){
-                toastNotifyError(data.toastMessage);
-            }
-        });
-    }
-
+   
     $(document).ready( function () {
         table = $('#table-batches').DataTable({
             "language": {
@@ -158,9 +117,6 @@
                 { "searchable": false, "orderable": false, "targets": 5 },
               ]
         });
-
-        
-        
     });
 
     </script>

@@ -29,9 +29,13 @@ namespace RemaSoftware.WebApp.Helper
             _subBatchService = subBatchService;
         }
 
+        public Ddt_In GetDdtInById(int id)
+        {
+            return _orderService.GetDdtInById(id);
+        }
+
         public SubBatchMonitoringViewModel GetSubBatchMonitoring(int id)
         {
-            var test = _subBatchService.GetSubBatchById(id);
             return new SubBatchMonitoringViewModel()
             {
                 SubBatch = _subBatchService.GetSubBatchById(id)

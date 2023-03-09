@@ -24,9 +24,9 @@ namespace RemaSoftware.WebApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult ProductionAnalysis()
+        public IActionResult ProductionAnalysisLive()
         {
-            return View();
+            return View(_accountingHelper.GetProductionAnalysisLiveViewModel());
         }
         
         public IActionResult Accounting()

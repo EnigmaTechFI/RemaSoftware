@@ -22,6 +22,7 @@ namespace RemaSoftware.Domain.Models
         public string FC_Ddt_In_ID { get; set; }
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]
         public int Number_Piece { get; set; }
+        public int Number_Piece_Now { get; set; }
         public int Priority { get; set;}
         [MaxLength(1)]
         public string Status { get; set; }

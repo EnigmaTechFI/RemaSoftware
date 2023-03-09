@@ -30,13 +30,13 @@
                 @foreach (var batch in Model.SubBatches)
                 {
                     <tr style="cursor: pointer;"  id="batch-@batch.Batch.BatchId">
-                        <td>@batch.Batch.BatchId</td>
+                        <td>@batch.SubBatchID</td>
                         <td>@batch.Ddts_In[0].Product.Client.Name</td>
                         <td>@batch.Ddts_In[0].Product.SKU</td>
                         <td onclick="showDDT(@batch.SubBatchID)">Visualizza DDT associate</td>
                         <td>@batch.Ddts_In.Sum(s=> s.Number_Piece)</td>
                         <td class="text-center">
-                            <a onclick="printQRCode(@batch.SubBatchID)" style="text-decoration: none">
+                            <a onclick="printQRCode('@batch.SubBatchID', '@batch.Ddts_In[0].Product.SKU', '@batch.Ddts_In.Sum(s=> s.Number_Piece)', '@batch.Ddts_In[0].Product.Client.Name')" style="text-decoration: none">
                                 <i class="fas fa-print fa-lg pl-2" title="Stampa etichetta" style="cursor: pointer; color: #6d767e"></i>
                             </a>
                         </td>
@@ -99,14 +99,15 @@
     <script src="~/js/dymo.connect.framework.js" type="text/javascript" charset="UTF-8"> </script>
 
     <script>
-    function printQRCode(id){
+    function printQRCode(id, sku, pieces, client){
       var printers = dymo.label.framework.getPrinters();
       if (printers.length == 0 || !printers[0].isConnected){
         alert("Nessuna stampante trovata.");
         return
       }
-      var label = dymo.label.framework.openLabelFile("prova3.dymo")  
+      var label = dymo.label.framework.openLabelFile("RemaStock.dymo")  
       label.setObjectText("QRCodeObject", "https://localhost:44328/api/v1/SubBatch/Detail/" + id);
+      label.setObjectText("TextObject", "Lotto: "+ id +"\nSKU: " + sku + "\nN° pezzi: " + pieces + "\nCliente: " + client);
       label.print(printers[0].name); 
     } 
     </script>

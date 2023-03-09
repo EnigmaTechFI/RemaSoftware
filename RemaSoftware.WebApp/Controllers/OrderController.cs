@@ -53,6 +53,12 @@ namespace RemaSoftware.WebApp.Controllers
         }
 
         [HttpGet]
+        public IActionResult QualityControl()
+        {
+            return View();
+        }
+
+        [HttpGet]
         public IActionResult SubBatchMonitoring(int id)
         {
             return View(_orderHelper.GetSubBatchMonitoring(id));
@@ -100,7 +106,21 @@ namespace RemaSoftware.WebApp.Controllers
             return View("../Pdf/SingleOrderSummary", vm);
         }
         
-        /*VERSIONE 2.0*/
+        [HttpGet]
+        public IActionResult EditOrder(int id)
+        {
+            var vm = new NewOrderViewModel
+            {
+                Clients = _clientService.GetAllClients(),
+                Operations = _operationService.GetAllOperations()?.Select(s=>new SelectListItem
+                {
+                    Text = s.Name,
+                    Value = $"{s.OperationID}-{s.Name}"
+                }).ToList(),
+                Ddt_In = _orderHelper.GetDdtInById(id)
+            };
+            return View(vm);
+        }
 
         [HttpGet]
         public IActionResult NewOrder(int productId)
@@ -159,6 +179,15 @@ namespace RemaSoftware.WebApp.Controllers
             return View(new BatchInStockViewModel()
             {
                 SubBatches = _orderHelper.GetSubBatchesStatus(OrderStatusConstants.STATUS_ARRIVED)
+            });
+        }
+        
+        [HttpGet]
+        public IActionResult BatchInDelivery()
+        {
+            return View(new BatchInDeliveryViewModel()
+            {
+                SubBatches = _orderHelper.GetSubBatchesStatus(OrderStatusConstants.STATUS_COMPLETED)
             });
         }
 

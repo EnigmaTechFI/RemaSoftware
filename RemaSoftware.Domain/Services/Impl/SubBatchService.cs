@@ -143,4 +143,19 @@ public class SubBatchService : ISubBatchService
             .ThenInclude(s => s.Client)
             .SingleOrDefault(s => s.SubBatchID == id);
     }
+
+    public List<OperationTimeline> GetOperationTimelinesByStatus(string status)
+    {
+        return _dbContext.OperationTimelines
+            .Include(s => s.BatchOperation)
+            .ThenInclude(s => s.Operations)
+            .Include(s => s.SubBatch)
+            .ThenInclude(s => s.Batch)
+            .Include(s => s.SubBatch)
+            .ThenInclude(s => s.Ddts_In)
+            .ThenInclude(s => s.Product)
+            .ThenInclude(s => s.Client)
+            .Where(s => s.Status == status)
+            .ToList();
+    }
 }

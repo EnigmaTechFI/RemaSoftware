@@ -87,7 +87,7 @@
         alert("Nessuna stampante trovata.");
         return
       }
-      var label = dymo.label.framework.openLabelFile("prova3.dymo")  
+      var label = dymo.label.framework.openLabelFile("RemaStock.dymo")  
       label.setObjectText("QRCodeObject", "https://localhost:44328/api/v1/SubBatch/Detail/" + id);
       label.print(printers[0].name); 
     } 
