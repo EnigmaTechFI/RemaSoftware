@@ -4,21 +4,21 @@
 }
 
 <link href="https://app.smplrspace.com/lib/smplr.css" rel="stylesheet" />
-  <script>
-  let counter=0;
-  function counterTest(){
-    setInterval(() => {
-      counter++
-    }, 1000)    
-  }
-  function getTime(seconds, id){
-    setInterval(() => {
-      var sec = parseInt(seconds) + counter;
-      var date = new Date(sec * 1000).toISOString().substring(11, 19)
-      document.getElementById("time-"+id).innerHTML= "<i>- Tempo: </i>" + date
-    }, 1000) 
-  }
-  </script>
+<script>
+let counter=0;
+function counterTest(){
+  setInterval(() => {
+    counter++
+  }, 1000)    
+}
+function getTime(seconds, id){
+  setInterval(() => {
+    var sec = parseInt(seconds) + counter;
+    var date = new Date(sec * 1000).toISOString().substring(11, 19)
+    document.getElementById("time-"+id).innerHTML= "<i>- Tempo: </i>" + date
+  }, 1000) 
+}
+</script>
 <h4 class="m-0 font-weight-bold text-primary mb-3">Analisi produzione live</h4>
 
 <div class="row">

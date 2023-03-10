@@ -88,7 +88,7 @@
         return
       }
       var label = dymo.label.framework.openLabelFile("RemaStock.dymo")  
-      label.setObjectText("QRCodeObject", "https://localhost:44328/api/v1/SubBatch/Detail/" + id);
+      label.setObjectText("QRCodeObject", "id");
       label.print(printers[0].name); 
     } 
     </script>

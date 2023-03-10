@@ -6,5 +6,6 @@ namespace RemaSoftware.Domain.Constants
         public const string Dipendente = "Dipendente";
         public const string Cliente = "Cliente";
         public const string Machine = "Macchina";
+        public const string COQ = "ControlloQualità";
     }
 }

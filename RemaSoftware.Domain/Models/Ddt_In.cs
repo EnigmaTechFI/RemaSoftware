@@ -23,6 +23,10 @@ namespace RemaSoftware.Domain.Models
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]
         public int Number_Piece { get; set; }
         public int Number_Piece_Now { get; set; }
+        
+        public int NumberMissingPiece { get; set; }
+        public int NumberWastePiece { get; set; }
+        public int NumberLostPiece { get; set; }
         public int Priority { get; set;}
         [MaxLength(1)]
         public string Status { get; set; }

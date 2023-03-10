@@ -11,6 +11,7 @@ using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
 using RemaSoftware.UtilityServices.Interface;
+using RemaSoftware.WebApp.DTOs;
 using RemaSoftware.WebApp.Helper;
 using RemaSoftware.WebApp.Models.OrderViewModel;
 using RemaSoftware.WebApp.Models.PDFViewModel;
@@ -52,10 +53,39 @@ namespace RemaSoftware.WebApp.Controllers
             _orderValidation = orderValidation;
         }
 
+        [HttpPost]
+        public JsonResult EndOrder([FromBody] SubBatchToEndDto dto)
+        {
+            try
+            {
+                return new JsonResult(new { Result = true, ToastMessage="Ordine concluso correttamente."});
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(new { Result = false, ToastMessage="Errore durante la conclusione dell'ordine."});
+            }
+        }
+
+        [HttpPost]
+        public IActionResult SubBatchAtControl(QualityControlViewModel model)
+        {
+            try
+            {
+                _orderHelper.RegisterBatchAtCOQ(model.subBatchId);
+                return RedirectToAction("QualityControl");
+            }
+            catch (Exception e)
+            {
+                _notyfService.Error("Errore durante la registrazione del sotto lotto.");
+                return RedirectToAction("QualityControl");
+            }
+            
+        }
+        
         [HttpGet]
         public IActionResult QualityControl()
         {
-            return View();
+            return View(_orderHelper.GetQualityControlViewModel());
         }
 
         [HttpGet]

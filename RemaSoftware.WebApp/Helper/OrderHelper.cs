@@ -202,5 +202,39 @@ namespace RemaSoftware.WebApp.Helper
             }
 
         }
+
+        public void RegisterBatchAtCOQ(int subBatchId)
+        {
+            var subBatch = _subBatchService.GetSubBatchById(subBatchId);
+            if (subBatch != null && subBatch.Batch.BatchOperations.Where(s => s.Operations.Name == OtherConstants.COQ).ToList().Count == 0)
+            {
+                if (subBatch.OperationTimelines == null)
+                    subBatch.OperationTimelines = new List<OperationTimeline>();
+                var now = DateTime.Now;
+                subBatch.OperationTimelines.Add(new OperationTimeline()
+                {
+                    SubBatchID = subBatchId,
+                    BatchOperation = new BatchOperation()
+                    {
+                        BatchID = subBatch.BatchID,
+                        OperationID = _dbContext.Operations.SingleOrDefault(s => s.Name == OtherConstants.COQ).OperationID,
+                        Ordering = subBatch.Batch.BatchOperations == null ? 1 : subBatch.Batch.BatchOperations.Max(s => s.Ordering)+1
+                    },
+                    Status = "A",
+                    MachineId = 99,
+                    StartDate = now,
+                    EndDate = now
+                });
+            }
+            _subBatchService.UpdateSubBatch(subBatch);
+        }
+
+        public QualityControlViewModel GetQualityControlViewModel()
+        {
+            return new QualityControlViewModel()
+            {
+                OperationTimeLine = _subBatchService.GetSubBatchAtQualityControl()
+            };
+        }
     }
 }

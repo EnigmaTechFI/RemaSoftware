@@ -150,7 +150,7 @@ namespace RemaSoftware.WebApp
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}");
             });
-            DbInitializer.SeedUsersAndRoles(userManager, roleManager);
+            DbInitializer.SeedUsersAndRoles(userManager, roleManager, context);
         }
     }
 }
