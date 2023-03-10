@@ -290,6 +290,7 @@ namespace RemaSoftware.WebApp.Helper
                             Ddt_In_ID = item.Ddt_In_ID,
                             Ddt_Out = new Ddt_Out()
                             {
+                                ClientID = item.Product.ClientID,
                                 Date = now,
                                 Status = DDTOutStatus.STATUS_PENDING
                             },
@@ -307,7 +308,7 @@ namespace RemaSoftware.WebApp.Helper
                         });
                     }
                     dto.OkPieces = 0;
-                    return;
+                    break;
                 }
                 else
                 {
@@ -319,9 +320,11 @@ namespace RemaSoftware.WebApp.Helper
                     {
                         item.Ddt_Associations.Add(new Ddt_Association()
                         {
+                            Date = now,
                             Ddt_In_ID = item.Ddt_In_ID,
                             Ddt_Out = new Ddt_Out()
                             {
+                                ClientID = item.Product.ClientID,
                                 Date = DateTime.Now,
                                 Status = DDTOutStatus.STATUS_PENDING
                             },
@@ -340,6 +343,8 @@ namespace RemaSoftware.WebApp.Helper
                 }
             }
             _subBatchService.UpdateSubBatch(subBatch);
+            
+            //TODO: La creazione delle ddt di uscita dovrrebbe essere ok, va gestito la chiusura dell'operation timeline
         }
 
     }
