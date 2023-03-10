@@ -2,6 +2,8 @@ namespace RemaSoftware.Domain.Models
 {
     public class Ddt_Association
     {
+        public int Ddt_Association_ID { get; set; }
+        public DateTime Date { get; set; }
         public Ddt_In Ddt_In { get; set; }
         public int Ddt_In_ID { get; set; }
         public Ddt_Out Ddt_Out { get; set; }

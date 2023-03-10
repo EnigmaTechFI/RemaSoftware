@@ -320,5 +320,11 @@ namespace RemaSoftware.Domain.Services.Impl
                 .ThenInclude(s => s.Client)
                 .SingleOrDefault(s => s.Ddt_In_ID == id);
         }
+
+        public List<Ddt_Out> GetDdtOutsByClientIdAndStatus(int id, string status)
+        {
+            return _dbContext.Ddts_Out
+                .Where(s => s.ClientID == id && s.Status == status).ToList();
+        }
     }
 }

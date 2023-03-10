@@ -31,5 +31,6 @@ namespace RemaSoftware.Domain.Services
         Ddt_In CreateDDtIn(Ddt_In ddt_In);
         List<Ddt_In> GetAllDdtIn();
         Ddt_In GetDdtInById(int id);
+        List<Ddt_Out> GetDdtOutsByClientIdAndStatus(int id, string status);
     }
 }

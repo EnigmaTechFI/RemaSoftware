@@ -6,4 +6,5 @@ public class SubBatchToEndDto
     public int OkPieces { get; set; }
     public int LostPieces { get; set; }
     public int WastePieces { get; set; }
+    public int MissingPieces { get; set; }
 }

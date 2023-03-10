@@ -58,11 +58,12 @@ namespace RemaSoftware.WebApp.Controllers
         {
             try
             {
+                _orderHelper.EndOrder(dto);
                 return new JsonResult(new { Result = true, ToastMessage="Ordine concluso correttamente."});
             }
             catch (Exception e)
             {
-                return new JsonResult(new { Result = false, ToastMessage="Errore durante la conclusione dell'ordine."});
+                return new JsonResult(new { Result = false, ToastMessage=e.Message});
             }
         }
 

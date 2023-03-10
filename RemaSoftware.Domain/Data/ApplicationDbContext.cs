@@ -32,7 +32,7 @@ namespace RemaSoftware.Domain.Data
             modelBuilder.Entity<UserClient>().HasKey(a => new { a.MyUserID, a.ClientID });
             modelBuilder.Entity<Ddt_In>().HasKey(a => new { a.Ddt_In_ID});
             modelBuilder.Entity<Ddt_Out>().HasKey(a => new { a.Ddt_Out_ID});
-            modelBuilder.Entity<Ddt_Association>().HasKey(a => new { a.Ddt_In_ID, a.Ddt_Out_ID});
+            modelBuilder.Entity<Ddt_Association>().HasKey(a => new { a.Ddt_Association_ID, a.Ddt_In_ID, a.Ddt_Out_ID});
             // modelBuilder.Entity<OperationTimeline>().HasKey(a => new { a.SubBatchID, a.BatchOperationID});
             modelBuilder.Entity<OperationTimeline>().HasOne(a => a.SubBatch).WithMany(a => a.OperationTimelines).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<OperationTimeline>().HasOne(a => a.BatchOperation).WithMany(a => a.OperationTimelines).OnDelete(DeleteBehavior.NoAction);

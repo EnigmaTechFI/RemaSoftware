@@ -9,6 +9,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.UtilityServices.Interface;
+using RemaSoftware.WebApp.DTOs;
 
 namespace RemaSoftware.WebApp.Helper
 {
@@ -236,5 +237,110 @@ namespace RemaSoftware.WebApp.Helper
                 OperationTimeLine = _subBatchService.GetSubBatchAtQualityControl()
             };
         }
+
+        public void EndOrder(SubBatchToEndDto dto)
+        {
+            var subBatch = _subBatchService.GetSubBatchById(dto.SubBatchId);
+            if (dto.LostPieces + dto.WastePieces + dto.OkPieces > subBatch.Ddts_In.Sum(s => s.Number_Piece_Now))
+                throw new Exception("Il totale dei pezzi inserito è maggiore dei pezzi attualmente in azineda.");
+            var ratio = subBatch.Ddts_In.Sum(s => s.Number_Piece_Now);
+            var ddts = subBatch.Ddts_In.Where(s => s.Number_Piece_Now > 0).OrderByDescending(s => s.TotalPriority)
+                .ToList();
+            var lastElement = ddts.LastOrDefault();
+            var dtoCopy = dto;
+            foreach (var item in ddts)
+            {
+                if (lastElement != item)
+                {
+                    var lost = Convert.ToInt32(dto.LostPieces * (Convert.ToDouble(item.Number_Piece) / ratio));
+                    var missing = Convert.ToInt32(dto.WastePieces * (Convert.ToDouble(item.Number_Piece) / ratio));
+                    var waste = Convert.ToInt32(dto.MissingPieces * (Convert.ToDouble(item.Number_Piece) / ratio));
+                    item.NumberLostPiece += lost;
+                    dtoCopy.LostPieces -= lost;
+                    item.NumberMissingPiece += missing;
+                    dtoCopy.MissingPieces -= missing;
+                    item.NumberWastePiece += waste;
+                    dtoCopy.WastePieces -= waste;
+                    item.Number_Piece_Now -= lost + missing + waste;
+                }
+                else
+                {
+                    item.NumberLostPiece += dtoCopy.LostPieces;
+                    item.NumberMissingPiece += dtoCopy.MissingPieces;
+                    item.NumberWastePiece += dtoCopy.WastePieces;
+                    item.Number_Piece_Now -= dtoCopy.LostPieces + dtoCopy.MissingPieces + dtoCopy.WastePieces;
+                }
+            }
+
+            var ddt_out = _orderService.GetDdtOutsByClientIdAndStatus(subBatch.Ddts_In[0].Product.ClientID, DDTOutStatus.STATUS_PENDING);
+            foreach (var item in subBatch.Ddts_In.OrderByDescending(s => s.TotalPriority).ToList())
+            {
+                var now = DateTime.Now;
+                if (item.Number_Piece_Now >= dto.OkPieces)
+                {
+                    item.Number_Piece_Now -= dto.OkPieces;
+                    
+                    item.Status = OrderStatusConstants.STATUS_COMPLETED;
+                    item.Ddt_Associations ??= new List<Ddt_Association>();
+                    if (ddt_out.Count == 0)
+                    {
+                        item.Ddt_Associations.Add(new Ddt_Association()
+                        {
+                            Date = now,
+                            Ddt_In_ID = item.Ddt_In_ID,
+                            Ddt_Out = new Ddt_Out()
+                            {
+                                Date = now,
+                                Status = DDTOutStatus.STATUS_PENDING
+                            },
+                            NumberPieces = dto.OkPieces
+                        });
+                    }
+                    else
+                    {
+                        item.Ddt_Associations.Add(new Ddt_Association()
+                        {
+                            Date = now,
+                            Ddt_In_ID = item.Ddt_In_ID,
+                            Ddt_Out_ID = ddt_out[0].Ddt_Out_ID,
+                            NumberPieces = dto.OkPieces
+                        });
+                    }
+                    dto.OkPieces = 0;
+                    return;
+                }
+                else
+                {
+                    dto.OkPieces -= item.Number_Piece_Now;
+                    item.Number_Piece_Now = 0;
+                    item.Status = OrderStatusConstants.STATUS_PARTIALLY_COMPLETED;
+                    item.Ddt_Associations ??= new List<Ddt_Association>();
+                    if (ddt_out.Count == 0)
+                    {
+                        item.Ddt_Associations.Add(new Ddt_Association()
+                        {
+                            Ddt_In_ID = item.Ddt_In_ID,
+                            Ddt_Out = new Ddt_Out()
+                            {
+                                Date = DateTime.Now,
+                                Status = DDTOutStatus.STATUS_PENDING
+                            },
+                            NumberPieces = dto.OkPieces
+                        });
+                    }
+                    else
+                    {
+                        item.Ddt_Associations.Add(new Ddt_Association()
+                        {
+                            Ddt_In_ID = item.Ddt_In_ID,
+                            Ddt_Out_ID = ddt_out[0].Ddt_Out_ID,
+                            NumberPieces = dto.OkPieces
+                        });
+                    }
+                }
+            }
+            _subBatchService.UpdateSubBatch(subBatch);
+        }
+
     }
 }
