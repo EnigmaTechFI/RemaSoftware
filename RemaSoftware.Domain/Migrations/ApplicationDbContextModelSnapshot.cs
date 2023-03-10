@@ -346,41 +346,6 @@ namespace RemaSoftware.Domain.Migrations
                     b.ToTable("Clients");
                 });
 
-            modelBuilder.Entity("RemaSoftware.Domain.Models.Ddt_Association", b =>
-                {
-                    b.Property<int>("Ddt_Association_ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Ddt_Association_ID"), 1L, 1);
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Ddt_In_ID")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Ddt_In_ID1")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Ddt_Out_ID")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Ddt_Out_ID1")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NumberPieces")
-                        .HasColumnType("int");
-
-                    b.HasKey("Ddt_Association_ID");
-
-                    b.HasIndex("Ddt_In_ID1");
-
-                    b.HasIndex("Ddt_Out_ID1");
-
-                    b.ToTable("Ddt_Associations");
-                });
-
             modelBuilder.Entity("RemaSoftware.Domain.Models.Ddt_In", b =>
                 {
                     b.Property<int>("Ddt_In_ID")
@@ -820,21 +785,6 @@ namespace RemaSoftware.Domain.Migrations
                     b.Navigation("Operations");
                 });
 
-            modelBuilder.Entity("RemaSoftware.Domain.Models.Ddt_Association", b =>
-                {
-                    b.HasOne("RemaSoftware.Domain.Models.Ddt_In", "Ddt_In")
-                        .WithMany("Ddt_Associations")
-                        .HasForeignKey("Ddt_In_ID1");
-
-                    b.HasOne("RemaSoftware.Domain.Models.Ddt_Out", "Ddt_Out")
-                        .WithMany("Ddt_Associations")
-                        .HasForeignKey("Ddt_Out_ID1");
-
-                    b.Navigation("Ddt_In");
-
-                    b.Navigation("Ddt_Out");
-                });
-
             modelBuilder.Entity("RemaSoftware.Domain.Models.Ddt_In", b =>
                 {
                     b.HasOne("RemaSoftware.Domain.Models.Product", "Product")
@@ -974,16 +924,6 @@ namespace RemaSoftware.Domain.Migrations
                     b.Navigation("Orders");
 
                     b.Navigation("UserClients");
-                });
-
-            modelBuilder.Entity("RemaSoftware.Domain.Models.Ddt_In", b =>
-                {
-                    b.Navigation("Ddt_Associations");
-                });
-
-            modelBuilder.Entity("RemaSoftware.Domain.Models.Ddt_Out", b =>
-                {
-                    b.Navigation("Ddt_Associations");
                 });
 
             modelBuilder.Entity("RemaSoftware.Domain.Models.Operation", b =>
