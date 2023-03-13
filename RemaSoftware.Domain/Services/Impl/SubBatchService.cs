@@ -95,6 +95,7 @@ public class SubBatchService : ISubBatchService
         if (op != null)
         {
             op.Status = "C";
+            op.UseForStatics = true;
             op.EndDate = end;
             _dbContext.OperationTimelines.Update(op);
             _dbContext.SaveChanges();

@@ -7,4 +7,5 @@ public class SubBatchToEndDto
     public int LostPieces { get; set; }
     public int WastePieces { get; set; }
     public int MissingPieces { get; set; }
+    public int OperationTimeLineId { get; set; }
 }

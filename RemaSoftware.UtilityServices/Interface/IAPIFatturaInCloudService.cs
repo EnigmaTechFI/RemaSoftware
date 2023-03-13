@@ -12,5 +12,7 @@ namespace RemaSoftware.UtilityServices.Interface
         public bool UpdateOrderCloud(OrderToUpdateDto order);
         public int AddClientCloud(Client client);
         public void UpdateClientCloud(Client client);
+        public (string, int) CreateDdtInCloud(Ddt_Out ddtOut);
+        public void DeleteDdtInCloudById(int id);
     }
 }

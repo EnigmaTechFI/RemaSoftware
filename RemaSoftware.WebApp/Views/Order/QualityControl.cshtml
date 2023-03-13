@@ -52,7 +52,7 @@
                             </div>
                             <hr/>
                             <div class="text-center align-items-center">
-                                <a class="text-white btn btn-primary" onclick="setSubBatchId('@item.SubBatchID', '@item.SubBatch.Ddts_In.Sum(s => s.Number_Piece_Now)')" data-toggle="modal" data-target="#end-subbatch">Concludi ordine</a>
+                                <a class="text-white btn btn-primary" onclick="setSubBatchId('@item.SubBatchID', '@item.SubBatch.Ddts_In.Sum(s => s.Number_Piece_Now)', '@item.OperationTimelineID')" data-toggle="modal" data-target="#end-subbatch">Concludi ordine</a>
                             </div>
                         </div>
                     </div>
@@ -128,6 +128,7 @@
     <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
     <script type="text/javascript">
     let subBatchToEndId;
+    let operationTimeLineId;
       let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
       scanner.addListener('scan', function (content) {
         document.getElementById("subBatchId").value = content.slice(4)
@@ -151,8 +152,9 @@
           scanner.start(camera);
       }
       
-      function setSubBatchId(id, pieces){
+      function setSubBatchId(id, pieces, opId){
           subBatchToEndId = id;
+          operationTimeLineId = opId;
           document.getElementById("actualPieces").textContent = pieces
           document.getElementById("HeaderSubBatch").textContent = id
       }
@@ -164,6 +166,7 @@
               lostPieces : document.getElementById("lost_pieces").value,
               wastePieces: document.getElementById("waste_pieces").value,
               missingPieces: document.getElementById("missing_pieces").value,
+              operationTimeLineId : operationTimeLineId
           }
     
           $.ajax({

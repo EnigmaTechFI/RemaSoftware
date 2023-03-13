@@ -1,15 +1,14 @@
-@using Microsoft.EntityFrameworkCore
-@model RemaSoftware.WebApp.Models.OrderViewModel.BatchInDeliveryViewModel
+@model RemaSoftware.WebApp.Models.OrderViewModel.DDTEmittedViewModel
 
 @{
-    ViewData["Title"] = "Lotti in consegna";
+    ViewData["Title"] = "DDT Emesse";
 }
 
 <link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
 
 <div class="card shadow mb-4" id="order-summ-content">
     <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
-        <h3 class="m-0 font-weight-bold text-primary">Ordini pronti per la consegna</h3>
+        <h3 class="m-0 font-weight-bold text-primary">DDT emesse</h3>
         @*<div>
             <button class="btn btn-primary" type="button" onclick="location.href='@Url.Action("NewProduct", "Product")'">Nuovo prodotto</button>
         </div>*@
@@ -20,33 +19,29 @@
                 <thead>
                 <tr>
                     <th>Cliente</th>
+                    <th>Data</th>
                     <th>DDT associate</th>
                     <th>N° Pezzi</th>
                     <th class="text-center">Azioni</th>
                 </tr>
                 </thead>
                 <tbody>
-                @foreach (var item in Model.DdtOuts)
+                @foreach (var item in Model.DdtOuts.OrderByDescending(s => s.Date).ToList())
                 {
-                    <tr style="cursor: pointer;">
+                    <tr id="ddt-@item.Ddt_Out_ID" style="cursor: pointer;">
                         <td>@item.Ddt_Associations[0].Ddt_In.Product.Client.Name</td>
+                        <td>@item.Date.ToString("dd/MM/yyyy")</td>
                         <td onclick="showDDT(@item.Ddt_Out_ID)">Visualizza DDT associate</td>
                         <td>@item.Ddt_Associations.Sum(s=> s.NumberPieces)</td>
                         <td class="text-center">
-                            <a style="text-decoration: none" asp-action="EmitDDT" asp-controller="Order" asp-route-id="@item.Ddt_Out_ID">
-                                <i class="fas fa-truck fa-lg pl-2" style="cursor: pointer; color: #6d767e;" title="Emetti DDT"></i>
+                            <a style="text-decoration: none" onclick="setDDTToDeleteID(@item.Ddt_Out_ID)">
+                                <i class="fas fa-trash fa-lg pl-2" style="cursor: pointer; color: #6d767e;" title="Elimina DDT"></i>
                             </a>
                         </td>
                     </tr>
                 }
                 </tbody>
             </table>
-        </div>
-        
-        <div class="row">
-            <div class="col-12 h5">
-                Totale pezzi in consegna: <b>@Model.DdtOuts.Sum(s => s.Ddt_Associations.Sum(s => s.NumberPieces))</b>
-            </div>
         </div>
     </div>
 </div>
@@ -70,6 +65,24 @@
     </div>
 </div>
 
+<div class="modal fade" id="confirm-del-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Conferma eliminazione</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Sei sicuro di voler eliminare questa ddt? I pezzi verrano riassegnati al magazzino nello stato "Pronto per la consegna"</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
+                <button class="btn btn-danger" onclick="DeleteDDT()">Elimina</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts
 {
     <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
@@ -88,13 +101,33 @@
         $("#ddt_associate").modal('show');
         document.getElementById("batch_ddt").innerHTML = ddt_list
     }
-
+    let ddtToDeleteId;
+    
+    function setDDTToDeleteID(id){
+        ddtToDeleteId = id;
+        $("#confirm-del-modal").modal('show');
+    }
+    
+    function DeleteDDT(){
+        $.ajax({
+            url: '@Url.Action("DeleteDDT", "Order")?' + $.param({"id": ddtToDeleteId}),
+            type: 'GET',
+            success: function (result) {                    
+                if (result.data != null || result.data != 0){
+                    table.row($("tr#ddt-" + result.data)).remove().draw();
+                    $("#confirm-del-modal").modal('hide');
+                    toastNotifySuccess("DDT eliminata correttamente");
+                }else{
+                    toastNotifyError("Errore durante l'eliminazione della ddt");
+                }
+            },
+            error: function (data){
+                toastNotifyError(data.toastMessage);
+            }
+        });
+    }
    
     $(document).ready( function () {
-        var url = '@Model.pdfUrl'
-        if (url != null && url != "empty"){
-            window.open(url, '_blank')
-        }
         table = $('#table-batches').DataTable({
             "language": {
                 "lengthMenu": "Mostra _MENU_ risultati per pagina",
@@ -113,9 +146,10 @@
             "product": [[0, 'asc']],
             "columnDefs": [
                 { "searchable": true, "orderable": true, "targets": 0 },
-                { "searchable": false, "orderable": false, "targets": 1 },
-                { "searchable": false, "orderable": true, "targets": 2 },
-                { "searchable": false, "orderable": false, "targets": 3 },
+                { "searchable": false, "orderable": true, "targets": 1 },
+                { "searchable": false, "orderable": false, "targets": 2 },
+                { "searchable": false, "orderable": true, "targets": 3 },
+                { "searchable": false, "orderable": false, "targets": 4 },
               ]
         });
     });

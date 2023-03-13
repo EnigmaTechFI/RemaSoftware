@@ -58,12 +58,11 @@ namespace RemaSoftware.WebApp.Controllers
         {
             try
             {
-                _orderHelper.EndOrder(dto);
-                return new JsonResult(new { Result = true, ToastMessage="Ordine concluso correttamente."});
+                return new JsonResult(new { Result = true, Data = _orderHelper.EndOrder(dto), ToastMessage="Ordine concluso correttamente."});
             }
             catch (Exception e)
             {
-                return new JsonResult(new { Result = false, ToastMessage=e.Message});
+                return new JsonResult(new { Result = false, Data = 0, ToastMessage=e.Message});
             }
         }
 
@@ -214,12 +213,46 @@ namespace RemaSoftware.WebApp.Controllers
         }
         
         [HttpGet]
-        public IActionResult BatchInDelivery()
+        public IActionResult EmitDDT(int id)
+        {
+            try
+            {
+                return RedirectToAction("BatchInDelivery", new {pdfUrl = _orderHelper.EmitDDT(id)}); 
+            }
+            catch (Exception e)
+            {
+                return RedirectToAction("BatchInDelivery");
+            }
+            
+        }
+
+        [HttpGet]
+        public IActionResult DDTEmitted()
+        {
+            return View(_orderHelper.GetDDTEmittedViewModel());
+        }
+        
+        [HttpGet]
+        public IActionResult BatchInDelivery(string pdfUrl = "empty")
         {
             return View(new BatchInDeliveryViewModel()
             {
-                SubBatches = _orderHelper.GetSubBatchesStatus(OrderStatusConstants.STATUS_COMPLETED)
+                pdfUrl = pdfUrl,
+                DdtOuts = _orderHelper.GetDdtsInDelivery()
             });
+        }
+        
+        [HttpGet]
+        public JsonResult DeleteDDT(int id)
+        {
+            try
+            {
+                return new JsonResult(new {Data = _orderHelper.DeleteDDT(id), Error = ""});
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(new {Data = "", Error = e.Message});
+            }
         }
 
         /*END VERSIONE 2.0*/

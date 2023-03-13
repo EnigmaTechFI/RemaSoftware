@@ -32,5 +32,10 @@ namespace RemaSoftware.Domain.Services
         List<Ddt_In> GetAllDdtIn();
         Ddt_In GetDdtInById(int id);
         List<Ddt_Out> GetDdtOutsByClientIdAndStatus(int id, string status);
+        Ddt_Out CreateNewDdtOut(Ddt_Out ddtOut);
+        List<Ddt_Out> GetDdtOutsByStatus(string status);
+        Ddt_Out GetDdtOutById(int id);
+        void UpdateDdtOut(Ddt_Out ddt);
+        Ddt_Out GetDdtOutsById(int id);
     }
 }

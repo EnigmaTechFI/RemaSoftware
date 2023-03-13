@@ -1,9 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using It.FattureInCloud.Sdk.Api;
+using It.FattureInCloud.Sdk.Client;
+using It.FattureInCloud.Sdk.Model;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using NLog;
+using NLog.Fluent;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.UtilityServices.Dtos;
 using RemaSoftware.UtilityServices.Interface;
@@ -28,8 +33,6 @@ namespace RemaSoftware.UtilityServices.Implementation
         {
             try
             {
-
-
                 Logger.Info("Inizio creazione cliente su ApiFattureInCloud");
                 var apiEndpoint = _configuration["ApiFattureInCloud:ApiEndpointCompanies"];
 
@@ -126,6 +129,85 @@ namespace RemaSoftware.UtilityServices.Implementation
             {
                 Logger.Error(e.Message);
                 throw new Exception("Errore durante l'aggiunta del cliente a FattureInCloud.");
+            }
+        }
+
+        public (string, int) CreateDdtInCloud(Ddt_Out ddtOut)
+        {
+            Logger.Info("Inizio invio a ApiFattureInCloud");
+            Configuration config = new Configuration();
+            config.BasePath = _configuration["ApiFattureInCloud:BasePath"];
+            config.AccessToken = _ficAccessToken;
+            var apiInstance = new IssuedDocumentsApi(config);
+            var companyId = _configuration["ApiFattureInCloud:CompanyId"];
+            var products = new List<IssuedDocumentItemsListItem>();
+            foreach (var item in ddtOut.Ddt_Associations)
+            {
+                products.Add(new IssuedDocumentItemsListItem()
+                {
+                    ProductId = Int32.Parse(item.Ddt_In.FC_Ddt_In_ID),
+                    Qty = item.NumberPieces,
+                    Name = item.Ddt_In.Product.Name,
+                    Code = item.Ddt_In.Code,
+                    Description = item.Ddt_In.Description,
+                    Stock = true,
+                    NetPrice = item.Ddt_In.SubBatch.Batch.Price_Uni,
+                    Vat = new VatType()
+                    {
+                        Id = 0,
+                        Value = 22
+                    }
+                    //TODO: Gestire iva nel caso la ddt sia una reso;
+                });
+            }
+            var createIssuedDocumentRequest = new CreateIssuedDocumentRequest()
+            {
+                Data = new IssuedDocument()
+                {
+                    Type = IssuedDocumentType.DeliveryNote,
+                    Entity = new Entity()
+                    {
+                        Name = ddtOut.Client.Name,
+                        AddressCity = ddtOut.Client.City,
+                        AddressProvince = ddtOut.Client.Province,
+                        AddressStreet = ddtOut.Client.Street + ", " + ddtOut.Client.StreetNumber,
+                        AddressPostalCode = ddtOut.Client.Cap,
+                        VatNumber = ddtOut.Client.P_Iva,
+                        TaxCode = ddtOut.Client.P_Iva
+                    },
+                    ItemsList = products,
+                }
+            };
+            try
+            {
+                CreateIssuedDocumentResponse result = apiInstance.CreateIssuedDocument(Int32.Parse(companyId), createIssuedDocumentRequest);
+                return (result.Data.DnUrl, result.Data.Id.Value);
+            }
+            catch (ApiException  e)
+            {
+                Logger.Error("Exception when calling IssuedDocumentsApi.CreateIssuedDocument: " + e.Message);
+                throw e;
+            }
+        }
+
+        public void DeleteDdtInCloudById(int id)
+        {
+            Logger.Info("Inizio invio a ApiFattureInCloud");
+            Configuration config = new Configuration();
+            config.BasePath = _configuration["ApiFattureInCloud:BasePath"];
+            config.AccessToken = _ficAccessToken;
+            var apiInstance = new IssuedDocumentsApi(config);
+            var companyId = Int32.Parse(_configuration["ApiFattureInCloud:CompanyId"]);
+            var documentId = id;
+            try
+            {
+                // Delete Issued Document
+                apiInstance.DeleteIssuedDocument(companyId, documentId);
+            }
+            catch (ApiException  e)
+            {
+                Logger.Error("Exception when calling IssuedDocumentsApi.DeleteIssuedDocument: " + e.Message);
+                throw e;
             }
         }
 

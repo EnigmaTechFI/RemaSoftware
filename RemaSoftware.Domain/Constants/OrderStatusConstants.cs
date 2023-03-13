@@ -14,7 +14,7 @@ namespace RemaSoftware.Domain.Constants
         public const string STATUS_PARTIALLY_COMPLETED = "D";
         public static readonly string STATUS_PARTIALLY_COMPLETED_DESC = "Completato parzialmente";
 
-        public const string STATUS_DELIVERED = "E";
+        public const string STATUS_DELIVERED = "F";
         public static readonly string STATUS_DELIVERED_DESC = "Consegnato";
 
         public static readonly Dictionary<string, StatusDto> OrderStatuses = new Dictionary<string, StatusDto>

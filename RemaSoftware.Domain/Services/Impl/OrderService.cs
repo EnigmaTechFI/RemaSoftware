@@ -326,5 +326,48 @@ namespace RemaSoftware.Domain.Services.Impl
             return _dbContext.Ddts_Out
                 .Where(s => s.ClientID == id && s.Status == status).ToList();
         }
+
+        public Ddt_Out CreateNewDdtOut(Ddt_Out ddtOut)
+        {
+            _dbContext.Ddts_Out.Add(ddtOut);
+            _dbContext.SaveChanges();
+            return ddtOut;
+        }
+
+        public List<Ddt_Out> GetDdtOutsByStatus(string status)
+        {
+            return _dbContext.Ddts_Out
+                .Where(s =>s.Status == status)
+                .Include(s => s.Ddt_Associations)
+                .ThenInclude(s => s.Ddt_In)
+                .ThenInclude(s => s.Product)
+                .ThenInclude(s => s.Client)
+                .ToList();
+        }
+
+        public Ddt_Out GetDdtOutById(int id)
+        {
+            return _dbContext.Ddts_Out
+                .Include(s => s.Ddt_Associations)
+                .ThenInclude(s => s.Ddt_In)
+                .ThenInclude(s => s.SubBatch)
+                .ThenInclude(s => s.Batch)
+                .Include(s => s.Ddt_Associations)
+                .ThenInclude(s => s.Ddt_In)
+                .ThenInclude(s => s.Product)
+                .ThenInclude(s => s.Client)
+                .SingleOrDefault(s => s.Ddt_Out_ID == id);
+        }
+
+        public void UpdateDdtOut(Ddt_Out ddt)
+        {
+            _dbContext.Ddts_Out.Update(ddt);
+            _dbContext.SaveChanges();
+        }
+
+        public Ddt_Out GetDdtOutsById(int id)
+        {
+            return _dbContext.Ddts_Out.SingleOrDefault(s => s.Ddt_Out_ID == id);
+        }
     }
 }

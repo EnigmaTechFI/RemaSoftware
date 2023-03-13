@@ -207,7 +207,7 @@ namespace RemaSoftware.WebApp.Helper
         public void RegisterBatchAtCOQ(int subBatchId)
         {
             var subBatch = _subBatchService.GetSubBatchById(subBatchId);
-            if (subBatch != null && subBatch.Batch.BatchOperations.Where(s => s.Operations.Name == OtherConstants.COQ).ToList().Count == 0)
+            if (subBatch != null)
             {
                 if (subBatch.OperationTimelines == null)
                     subBatch.OperationTimelines = new List<OperationTimeline>();
@@ -238,11 +238,11 @@ namespace RemaSoftware.WebApp.Helper
             };
         }
 
-        public void EndOrder(SubBatchToEndDto dto)
+        public int EndOrder(SubBatchToEndDto dto)
         {
             var subBatch = _subBatchService.GetSubBatchById(dto.SubBatchId);
             if (dto.LostPieces + dto.WastePieces + dto.OkPieces > subBatch.Ddts_In.Sum(s => s.Number_Piece_Now))
-                throw new Exception("Il totale dei pezzi inserito è maggiore dei pezzi attualmente in azineda.");
+                throw new Exception("Il totale dei pezzi inserito è maggiore dei pezzi attualmente in azienda.");
             var ratio = subBatch.Ddts_In.Sum(s => s.Number_Piece_Now);
             var ddts = subBatch.Ddts_In.Where(s => s.Number_Piece_Now > 0).OrderByDescending(s => s.TotalPriority)
                 .ToList();
@@ -272,80 +272,125 @@ namespace RemaSoftware.WebApp.Helper
                 }
             }
 
-            var ddt_out = _orderService.GetDdtOutsByClientIdAndStatus(subBatch.Ddts_In[0].Product.ClientID, DDTOutStatus.STATUS_PENDING);
+            var ddt_out_id = 0;
+            var now = DateTime.Now;
+            var ddts_out = _orderService.GetDdtOutsByClientIdAndStatus(subBatch.Ddts_In[0].Product.ClientID, DDTOutStatus.STATUS_PENDING);
+            if (ddts_out.Count == 0)
+            {
+                ddt_out_id = _orderService.CreateNewDdtOut(new Ddt_Out()
+                {
+                    ClientID = subBatch.Ddts_In[0].Product.ClientID,
+                    Date = now,
+                    Status = DDTOutStatus.STATUS_PENDING
+                }).Ddt_Out_ID;
+            }
+            else
+            {
+                ddt_out_id = ddts_out[0].Ddt_Out_ID;
+            }
             foreach (var item in subBatch.Ddts_In.OrderByDescending(s => s.TotalPriority).ToList())
             {
-                var now = DateTime.Now;
                 if (item.Number_Piece_Now >= dto.OkPieces)
                 {
                     item.Number_Piece_Now -= dto.OkPieces;
-                    
                     item.Status = OrderStatusConstants.STATUS_COMPLETED;
                     item.Ddt_Associations ??= new List<Ddt_Association>();
-                    if (ddt_out.Count == 0)
+                    item.Ddt_Associations.Add(new Ddt_Association()
                     {
-                        item.Ddt_Associations.Add(new Ddt_Association()
-                        {
-                            Date = now,
-                            Ddt_In_ID = item.Ddt_In_ID,
-                            Ddt_Out = new Ddt_Out()
-                            {
-                                ClientID = item.Product.ClientID,
-                                Date = now,
-                                Status = DDTOutStatus.STATUS_PENDING
-                            },
-                            NumberPieces = dto.OkPieces
-                        });
-                    }
-                    else
-                    {
-                        item.Ddt_Associations.Add(new Ddt_Association()
-                        {
-                            Date = now,
-                            Ddt_In_ID = item.Ddt_In_ID,
-                            Ddt_Out_ID = ddt_out[0].Ddt_Out_ID,
-                            NumberPieces = dto.OkPieces
-                        });
-                    }
+                        Date = now,
+                        Ddt_In_ID = item.Ddt_In_ID,
+                        Ddt_Out_ID = ddt_out_id,
+                        NumberPieces = dto.OkPieces
+                    });
                     dto.OkPieces = 0;
                     break;
                 }
                 else
                 {
                     dto.OkPieces -= item.Number_Piece_Now;
-                    item.Number_Piece_Now = 0;
                     item.Status = OrderStatusConstants.STATUS_PARTIALLY_COMPLETED;
                     item.Ddt_Associations ??= new List<Ddt_Association>();
-                    if (ddt_out.Count == 0)
+                    item.Ddt_Associations.Add(new Ddt_Association()
                     {
-                        item.Ddt_Associations.Add(new Ddt_Association()
-                        {
-                            Date = now,
-                            Ddt_In_ID = item.Ddt_In_ID,
-                            Ddt_Out = new Ddt_Out()
-                            {
-                                ClientID = item.Product.ClientID,
-                                Date = DateTime.Now,
-                                Status = DDTOutStatus.STATUS_PENDING
-                            },
-                            NumberPieces = dto.OkPieces
-                        });
+                        Date = now,
+                        Ddt_In_ID = item.Ddt_In_ID,
+                        Ddt_Out_ID = ddt_out_id,
+                        NumberPieces = item.Number_Piece_Now
+                    });
+                    item.Number_Piece_Now = 0;
+                }
+            }
+
+            if (subBatch.Ddts_In.All(s => s.Number_Piece_Now == 0))
+            {
+                subBatch.Status = OrderStatusConstants.STATUS_COMPLETED;
+                foreach (var item in subBatch.OperationTimelines.Where(s => s.Status != OperationTimelineConstant.STATUS_COMPLETED).ToList())
+                {
+                    
+                    if (item.MachineId == 99 && item.OperationTimelineID == dto.OperationTimeLineId)
+                    {
+                        item.EndDate = DateTime.Now;
+                        item.UseForStatics = true;
+                        item.Status = OperationTimelineConstant.STATUS_COMPLETED;
+                    }
+                    else if (item.MachineId == 99 && item.OperationTimelineID != dto.OperationTimeLineId)
+                    {
+                        continue;
                     }
                     else
                     {
-                        item.Ddt_Associations.Add(new Ddt_Association()
-                        {
-                            Ddt_In_ID = item.Ddt_In_ID,
-                            Ddt_Out_ID = ddt_out[0].Ddt_Out_ID,
-                            NumberPieces = dto.OkPieces
-                        });
+                        item.UseForStatics = false;
+                        item.Status = OperationTimelineConstant.STATUS_COMPLETED;
                     }
+                    
                 }
             }
             _subBatchService.UpdateSubBatch(subBatch);
-            
-            //TODO: La creazione delle ddt di uscita dovrrebbe essere ok, va gestito la chiusura dell'operation timeline
+            return subBatch.SubBatchID;
         }
 
+        public List<Ddt_Out> GetDdtsInDelivery()
+        {
+            return _orderService.GetDdtOutsByStatus(DDTOutStatus.STATUS_PENDING);
+        }
+
+        public string EmitDDT(int id)
+        {
+            
+            var ddtOut = _orderService.GetDdtOutById(id);
+            var result = _apiFatturaInCloudService.CreateDdtInCloud(ddtOut);
+            ddtOut.Status = DDTOutStatus.STATUS_EMITTED;
+            ddtOut.FC_Ddt_Out_ID = result.Item2;
+            ddtOut.Url = result.Item1;
+            try
+            {
+                _orderService.UpdateDdtOut(ddtOut);
+
+            }
+            catch (Exception e)
+            {
+                _apiFatturaInCloudService.DeleteDdtInCloudById(result.Item2);
+            }
+            return result.Item1;
+        }
+
+        public DDTEmittedViewModel GetDDTEmittedViewModel()
+        {
+            return new DDTEmittedViewModel()
+            {
+                DdtOuts = _orderService.GetDdtOutsByStatus(DDTOutStatus.STATUS_EMITTED)
+            };
+        }
+
+        public int DeleteDDT(int id)
+        {
+            var ddt = _orderService.GetDdtOutsById(id);
+            _apiFatturaInCloudService.DeleteDdtInCloudById(ddt.FC_Ddt_Out_ID);
+            ddt.FC_Ddt_Out_ID = 0;
+            ddt.Url = "";
+            ddt.Status = DDTOutStatus.STATUS_PENDING;
+            _orderService.UpdateDdtOut(ddt);
+            return id;
+        }
     }
 }
