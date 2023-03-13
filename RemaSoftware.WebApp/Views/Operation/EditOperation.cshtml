@@ -1,4 +1,4 @@
-﻿@model RemaSoftware.WebApp.Models.OperationViewModel.AddOperationViewModel
+@model RemaSoftware.WebApp.Models.OperationViewModel.EditOperationViewModel
 
 @{
     ViewData["Title"] = "Aggiungi Operazione";
@@ -12,12 +12,12 @@
         <h6 class="m-0 font-weight-bold text-primary">Nuova Operazione</h6>
     </div>
     <div class="card-body">
-        <form method="post" class="needs-validation" novalidate>
+        <form method="post">
             <div class="form-row">
                 <div class="col-md-4 mb-3">
                     <label for="validationTooltip01">Nome Operazione *</label>
-                    <input asp-for="Name" type="text" class="form-control" id="validationTooltip01" placeholder="Nome Operazione" required>
-                    <span asp-validation-for="Name" class="text-danger"></span>
+                    <input asp-for="@Model.Operation.Name" type="text" class="form-control" id="validationTooltip01" placeholder="Nome Operazione" required>
+                    <span asp-validation-for="@Model.Operation.Name" class="text-danger"></span>
                     <div class="valid-tooltip">
                         Looks good!
                     </div>
@@ -26,7 +26,7 @@
             <div class="form-row">
                 <div class="col-md-12 mb-3">
                     <label for="validationTooltip02">Descrizione</label>
-                    <textarea class="form-control" id="validationTooltip02" asp-for="Description" placeholder="Descrizione Operazione" rows="3"></textarea>
+                    <textarea class="form-control" id="validationTooltip02" asp-for="@Model.Operation.Description" placeholder="Descrizione Operazione" rows="3"></textarea>
                     <div class="valid-tooltip">
                         Looks good!
                     </div>
@@ -36,4 +36,3 @@
         </form>
     </div>
 </div>
-
