@@ -14,6 +14,7 @@ namespace RemaSoftware.Domain.Models
         [MaxLength(1)]
         public string Status { get; set; }
         public int FC_Ddt_Out_ID { get; set; }
+        public string Url { get; set; }
         public virtual List<Ddt_Association> Ddt_Associations { get; set; }
 
     }
