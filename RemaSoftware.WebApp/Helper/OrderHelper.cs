@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using RemaSoftware.Domain.Constants;
+using RemaSoftware.UtilityServices.Dtos;
 using RemaSoftware.UtilityServices.Interface;
 using RemaSoftware.WebApp.DTOs;
 
@@ -137,7 +138,6 @@ namespace RemaSoftware.WebApp.Helper
                 var addedOrder = _orderService.AddOrder(orderToSave);
                 try
                 {
-                    #if !DEBUG
                     var id_fatture = _apiFatturaInCloudService.AddOrderCloud(new OrderDto
                     {
                         Name = addedOrder.Name,
@@ -151,7 +151,6 @@ namespace RemaSoftware.WebApp.Helper
                     });
 
                     addedOrder.ID_FattureInCloud = id_fatture;
-                    #endif
                     _orderService.UpdateOrder(addedOrder);
 
                     transaction.Commit();
