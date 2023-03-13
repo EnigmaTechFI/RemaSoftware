@@ -1,4 +1,5 @@
-﻿@model RemaSoftware.WebApp.Models.OrderViewModel.NewOrderViewModel
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model RemaSoftware.WebApp.Models.OrderViewModel.NewOrderViewModel
 
 @{
     ViewData["Title"] = "Nuovo Ordine";
@@ -12,79 +13,57 @@
         <h6 class="m-0 font-weight-bold text-primary">Nuovo ordine</h6>
     </div>
     <div class="card-body">
-        <form method="post" id="form-new-order" enctype="multipart/form-data">
-            @Html.HiddenFor(model => model.Photo, new { @id = "Photo_base64" })
-            @Html.HiddenFor(model => model.Order.Image_URL, new { @id = "imageUrl" })
-            <div class="form-group">
-                <label for="formGroupExampleInput">Codice</label>
-                @Html.DropDownListFor(model => model.Order.SKU, new SelectList(Model.OldOrders_SKU), new { @class = "form-control select2-sku", name="antani"})
-            </div>
+        <form method="post">
+            @Html.HiddenFor(model => model.Ddt_In.ProductID)
             <div class="form-group">
                 <label for="formGroupExampleInput">Codice DDT</label>
-                <input asp-for="Order.DDT" type="text" class="form-control" id="DDT_cod" placeholder="Codice DDT">
+                <input asp-for="Ddt_In.Code" type="text" class="form-control" id="DDT_cod" placeholder="Codice DDT">
             </div>
-            <div class="row">
-                <div class="col-md-6" style="padding-top:50px;">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Vista Telecamera</div>
-                        <div class="panel-body">
-                            <div id="LiveCamera" style="margin-bottom:50px;"></div>
-                            <input type="button" class="btn btn-primary" value="Fotografa Prodotto" onClick="CaptureSnapshot()">
-
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6" style="padding-top:50px;">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Immagine Fotografata</div>
-                        <div class="panel-body">
-                            <div id="order-img-div">L'immagine apparirà qui.</div>
-                        </div>
-                        <br />
-                        <br />
-                    </div>
-                </div>
-            </div>
-            &nbsp;
-            &nbsp;
-            <div class="form-group">
-                <label>Seleziona Cliente</label>
-                @Html.DropDownListFor(model => model.Order.ClientID, new SelectList(Model.Clients, "ClientID", "Name"), "-- Seleziona Cliente --", new { @class = "form-control" })
-            </div>
-
-            <div class="form-group">
-                <label for="formGroupExampleInput">Nome</label>
-                <input asp-for="Order.Name" type="text" class="form-control" id="order_name" placeholder="Nome">
-            </div>
-
             <div class="form-group">
                 <label for="formGroupExampleInput">Numero di pezzi</label>
-                <input asp-for="Order.Number_Piece" type="number" class="form-control" id="formGroupExampleInput" placeholder="Numero di pezzi">
+                <input min="0" asp-for="Ddt_In.Number_Piece" type="number" class="form-control" id="formGroupExampleInput" placeholder="Numero di pezzi">
+            </div>
+            <div class="form-group">
+                <div class="form-check">
+                    <input asp-for="Ddt_In.IsReso" class="form-check-input" type="checkbox" id="gridCheck">
+                    <label class="form-check-label" for="gridCheck">
+                        Selezionare se si sta inserendo un reso
+                    </label>
+                </div>
             </div>
             <div class="form-group">
                 <label for="validationTooltip04">Prezzo Unitario (IVA Inclusa) *</label>
                 <div class="input-group-append">
-                    <input asp-for="uni_price" type="number" pattern="^[\d,]+$" class="form-control" id="priceUnit" placeholder="Prezzo Unitario">
+                    <input min="0" asp-for="uni_price" type="number" pattern="^[\d,]+$" class="form-control" id="priceUnit" placeholder="Prezzo Unitario">
                     <span class="input-group-text">€</span>
                 </div>
             </div>
             <div class="form-group">
                 <label>Seleziona data di consegna</label>
                 <div class='input-group date'>
-                    <input placeholder="Seleziona data di consegna" type='text' class="form-control bg-white" id='datetimepicker1' asp-for="DataOutStr" />
+                    <input placeholder="Seleziona data di consegna" type='text' class="form-control bg-white" id='datetimepicker1' asp-for="Ddt_In.DataOut" />
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
                     </span>
                 </div>
             </div>
-
+            <div class="form-group">
+                <label for="formGroupExampleInput">Seleziona priorità</label>
+                <select asp-for="Ddt_In.Priority" class="form-control">
+                  <option value="0">Minore</option>
+                  <option selected="selected" value="1">Normale</option>
+                  <option value="2">Maggiore</option>
+                  <option value="3">Critica</option>
+                  <option value="4">Bloccante</option>
+                </select>
+            </div>
             <div class="form-group">
                 <label for="desc">Descrizione</label>
-                <textarea asp-for="Order.Description" class="form-control" id="desc" rows="3"></textarea>
+                <textarea asp-for="Ddt_In.Description" class="form-control" id="desc" rows="3"></textarea>
             </div>
             <div class="form-group">
                 <label for="note">Note</label>
-                <textarea asp-for="Order.Note" class="form-control" id="note" rows="3"></textarea>
+                <textarea asp-for="Ddt_In.Note" class="form-control" id="note" rows="3"></textarea>
             </div>
             <div class="form-group">
                 <label>Seleziona operazioni:</label>
@@ -93,29 +72,11 @@
                     Model.Operations, 
                     new {multiple="multiple", @class=" form-control select2-operations", name="OperationsSelected[]", style="width:100%;"})
             </div>
+            
             <div style="width:100px; margin-top:50px;">
-                <button class="btn btn-primary" type="button" onclick="PostNewOrder()">Aggiungi</button>
+                <button class="btn btn-primary" type="submit">Aggiungi</button>
             </div>
         </form>
-    </div>
-</div>
-
-<div class="modal" tabindex="-1" role="dialog" style="background-color: rgba(255,255,255,0.7);">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Acquisizione Immagine</h5>
-                <button type="button" class="close" onclick="closeModal()" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>L'immagine è stata acquisita correttamente.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="closeModal()">Chiudi</button>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -124,7 +85,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="~/webcamjs/webcam.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/js/select2.min.js" integrity="sha512-9p/L4acAjbjIaaGXmZf0Q2bV42HetlCLbv8EP0z3rLbQED2TAFUlDvAezy7kumYqg5T8jHtDdlm1fgIsr5QzKg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
@@ -134,131 +94,15 @@
                 e.preventDefault();
             }
         });
-
-        $(".select2-sku").select2({
-            placeholder: "Seleziona uno sku o digitane uno nuovo",
-            tags: true,
-            createTag: function (tag) {
-                return {
-                    id: tag.term,
-                    text: tag.term,
-                    isNew: true
-                };
-            }
-        });
-
-        $('.select2-sku').on('select2:select', function (e) {
-            if (!e.params.data.isNew) {
-                GetOrderBySKU();
-            } else {
-                $("#Order_ClientID").prop('selectedIndex',0);
-                $("#order_name").val("");
-                $("#order-img-div").html("");
-            }
-        });
-
-        $('.select2-sku').on('select2:open', () => {
-            document.querySelector('[aria-controls="select2-Order_SKU-results"].select2-search__field').focus();
-        });
         
         $('.select2-operations').select2({
-            placeholder: "Seleziona operazioni",
-            tags: true,
-            createTag: function (tag) {
-                return {
-                    id: `0-${tag.term}`,
-                    text: tag.term,
-                    isNew: true
-                };
-            }
+            placeholder: "Seleziona operazioni"
         });
-        
-        $(".select2-operations").on("select2:select", function (evt) {
-          var element = evt.params.data.element;
-          var $element = $(element);
-          
-          $element.detach();
-          $(this).append($element);
-          $(this).trigger("change");
-        });
-
-        function PostNewOrder() {
-            ShowLoader();
-            var model = $("#form-new-order").serialize();
-            $.post('@Url.Action("NewOrder", "Order")', model, function (result){
-                if (result && result.result == true) {
-                    var aElement = document.createElement("a");
-                    aElement.setAttribute("type", "hidden");
-                    aElement.href = '@Url.Action("DownloadPdfOrder", "Order")' + "?orderId=" + result.orderId;
-                    aElement.target = "_blank";
-                    document.getElementsByTagName("body")
-                    aElement.click();
-
-                    window.location.href='@Model.RedirectUrlAfterCreation';
-                } else {
-                    toastNotifyError(result.toastMessage);
-                }
-                HideLoader();
-            }).done(function (){
-                HideLoader();
-            });
-        }
-
-        function GetOrderBySKU() {
-            var selectedSKU = $('#Order_SKU').val();
-            ShowLoader();
-            $.ajax({
-                url: '@Url.Action("GetOrderBySKU", "Order")?' + $.param({ "orderSKU": selectedSKU }),
-                type: 'GET',
-                success: function (result) {
-                    var src = '@Url.Action("GetImageByOrderId", "Order")' + "?orderId=" + result.data.orderID;
-                    document.getElementById('order-img-div').innerHTML = '<img src="' + src + '" width="376" height="282" />';
-                    $("#imageUrl").val(result.data.image_URL)
-                    $("#order_name").val(result.data.name);
-                    $("#Order_ClientID").val(result.data.clientID);
-                    toastNotifySuccess("Ordine recuperato correttamente.");
-                },
-                error: function (data) {
-                    document.getElementById('order-img-div').innerHTML = '<img src="" width="376" height="282" />';
-                    document.getElementById("Photo_base64").value = "";
-                    $("#order_name").val("");
-                    document.getElementById("inlineFormCustomSelectPref").selectedIndex = data.client_id;
-                    toastNotifyError("Errore nel recupero dell\'ordine.");
-                },
-                complete: function (){
-                    HideLoader();
-                }
-            });
-        }
-
-        function openModal() {
-            document.querySelector(".modal").style.display = "block"
-        }
-        function closeModal() {
-            document.querySelector(".modal").style.display = "none"
-        }
-
-        Webcam.set({
-            width: 376,
-            height: 282,
-            image_format: 'png',
-            jpeg_quality: 100
-        });
-        Webcam.attach('#LiveCamera');
-
-        function CaptureSnapshot() {
-            Webcam.snap(function (data) {
-                // display results in page
-                document.getElementById('order-img-div').innerHTML = '<img src="' + data + '" width="376" height="282" />';
-                document.getElementById("Photo_base64").value = data;
-
-                openModal();
-            });
-        }
 
         $("#datetimepicker1").flatpickr({
             dateFormat: "d/m/Y",
             minDate: "today",
+            defaultDate: "today",
             locale: {
                 weekdays: {
                     shorthand: ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'],

@@ -1,10 +1,4 @@
-﻿using RemaSoftware.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace RemaSoftware.WebApp.Models.OrderViewModel
+﻿namespace RemaSoftware.WebApp.Models.OrderViewModel
 {
     public class CopyOrderViewModel
     {

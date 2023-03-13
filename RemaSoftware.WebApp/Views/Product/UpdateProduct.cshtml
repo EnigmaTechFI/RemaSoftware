@@ -1,0 +1,113 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model RemaSoftware.WebApp.Models.ProductViewModel.UpdateProductViewModel
+@{
+    ViewData["Title"] = "Modifica prodotto";
+}
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h3 class="m-0 font-weight-bold text-primary">Modifica prodotto</h3>
+    </div>
+    <div class="card-body">
+        <form method="post" id="form-new-order" enctype="multipart/form-data">
+            @Html.HiddenFor(model => model.Product.ProductID)
+            @Html.HiddenFor(model => model.Photo, new { @id = "Photo_base64" })
+            @Html.HiddenFor(model => model.Product.Image_URL, new { @id = "imageUrl" })
+            <div class="form-group">
+                <label for="formGroupExampleInput">Codice</label>
+                <input asp-for="Product.SKU" type="text" class="form-control" id="DDT_cod" placeholder="Codice prodotto">
+            </div>
+            <div class="row">
+                <div class="col-md-6" style="padding-top:50px;">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Vista Telecamera</div>
+                        <div class="panel-body">
+                            <div id="LiveCamera" style="margin-bottom:50px;"></div>
+                            <input type="button" class="btn btn-primary" value="Fotografa Prodotto" onClick="CaptureSnapshot()">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" style="padding-top:50px;">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Immagine Fotografata</div>
+                        <div class="panel-body">
+                            <div id="order-img-div"><img src="@Model.Photo" width="376" height="282" /></div>
+                        </div>
+                        <br />
+                        <br />
+                    </div>
+                </div>
+            </div>
+            &nbsp;
+            &nbsp;
+            <div class="form-group">
+                <label>Seleziona Cliente</label>
+                @Html.DropDownListFor(model => model.Product.ClientID, new SelectList(Model.Clients, "ClientID", "Name"), "-- Seleziona Cliente --", new { @class = "form-control" })
+            </div>
+
+            <div class="form-group">
+                <label for="formGroupExampleInput">Nome</label>
+                <input asp-for="Product.Name" type="text" class="form-control" id="order_name" placeholder="Nome">
+            </div>
+            <div style="width:100px; margin-top:50px;">
+                <button class="btn btn-primary" type="submit">Aggiorna</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" style="background-color: rgba(255,255,255,0.7);">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Acquisizione Immagine</h5>
+                <button type="button" class="close" onclick="closeModal()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>L'immagine è stata acquisita correttamente.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="closeModal()">Chiudi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/webcamjs/webcam.js"></script>
+
+    <script>
+
+        function openModal() {
+            document.querySelector(".modal").style.display = "block"
+        }
+        function closeModal() {
+            document.querySelector(".modal").style.display = "none"
+        }
+
+        Webcam.set({
+            width: 376,
+            height: 282,
+            image_format: 'png',
+            jpeg_quality: 100
+        });
+        Webcam.attach('#LiveCamera');
+
+        function CaptureSnapshot() {
+            Webcam.snap(function (data) {
+                // display results in page
+                document.getElementById('order-img-div').innerHTML = '<img src="' + data + '" width="376" height="282" />';
+                document.getElementById("Photo_base64").value = data;
+
+                openModal();
+            });
+        }
+    </script>
+}
+
+
+
+

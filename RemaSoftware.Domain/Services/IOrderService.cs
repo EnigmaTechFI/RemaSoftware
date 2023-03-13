@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using RemaSoftware.Domain.Models;
 
 namespace RemaSoftware.Domain.Services
@@ -26,5 +25,17 @@ namespace RemaSoftware.Domain.Services
         IEnumerable<Order> GetOrdersNotCompleted();
         List<Order> GetOrdersCompleted();
         List<Operation> GetOperationsByOrderId(int orderId);
+        Batch GetBatchById(int batchId);
+        Batch GetBatchByProductIdAndOperationList(int productId, List<int> operationId);
+        Batch CreateBatch(Batch batch); 
+        Ddt_In CreateDDtIn(Ddt_In ddt_In);
+        List<Ddt_In> GetAllDdtIn();
+        Ddt_In GetDdtInById(int id);
+        List<Ddt_Out> GetDdtOutsByClientIdAndStatus(int id, string status);
+        Ddt_Out CreateNewDdtOut(Ddt_Out ddtOut);
+        List<Ddt_Out> GetDdtOutsByStatus(string status);
+        Ddt_Out GetDdtOutById(int id);
+        void UpdateDdtOut(Ddt_Out ddt);
+        Ddt_Out GetDdtOutsById(int id);
     }
 }

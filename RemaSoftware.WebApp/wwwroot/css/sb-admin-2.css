@@ -10046,6 +10046,10 @@ a:focus {
   border-left: 0.25rem solid #4e73df !important;
 }
 
+.border-right-primary {
+  border-right: 0.25rem solid #4e73df !important; 
+}
+
 .border-bottom-primary {
   border-bottom: 0.25rem solid #4e73df !important;
 }

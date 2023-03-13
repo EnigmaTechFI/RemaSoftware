@@ -1,5 +1,6 @@
 ﻿@using RemaSoftware.Domain.Models
 @using RemaSoftware.Domain.Constants
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @inject Microsoft.AspNetCore.Identity.UserManager<MyUser> _userManager
 <!DOCTYPE html>
 <html lang="en">
@@ -48,41 +49,65 @@
 
         <!-- Heading -->
         <div class="sidebar-heading">
-            Produzione
+            Inventario
         </div>
 
         <!-- Nav Item - Pages Collapse Menu -->
         <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Product" ? "active" : "")">
             <a class="nav-link" asp-action="ProductList" asp-controller="Product">
-                <i class="fas fa-fw fa-tasks"></i>
+                <i class="fas fa-tag"></i>
                 <span>Prodotti</span>
             </a>
         </li>
-        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "OrdersNotExtinguished" ? "active" : "")">
-            <a class="nav-link" asp-action="OrdersNotExtinguished" asp-controller="Order">
-                <i class="fas fa-boxes"></i>
-                <span>Lotti in magazzino</span>
-            </a>
-        </li>
-        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "OrdersNotExtinguished" ? "active" : "")">
-            <a class="nav-link" asp-action="OrdersNotExtinguished" asp-controller="Order">
-                <i class="fas fa-boxes"></i>
-                <span>Lotti in produzione</span>
-            </a>
-        </li>
-        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "OrdersNotExtinguished" ? "active" : "")">
-            <a class="nav-link" asp-action="OrdersNotExtinguished" asp-controller="Order">
-                <i class="fas fa-boxes"></i>
-                <span>Lotti in consegna</span>
+        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "OrderSummary" ? "active" : "")">
+            <a class="nav-link" asp-action="OrderSummary" asp-controller="Order">
+                <i class="fas fa-file-alt"></i>
+                <span>Ordini</span>
             </a>
         </li>
         <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Operation" ? "active" : "")">
             <a class="nav-link" asp-action="OperationList" asp-controller="Operation">
-                <i class="fas fa-boxes"></i>
+                <i class="fas fa-tools"></i>
                 <span>Operazioni</span>
             </a>
         </li>
+        <!-- Divider -->
+        <hr class="sidebar-divider">
 
+        <!-- Heading -->
+        <div class="sidebar-heading">
+            Produzione
+        </div>
+        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "BatchInStock" ? "active" : "")">
+            <a class="nav-link" asp-action="BatchInStock" asp-controller="Order">
+                <i class="fas fa-boxes"></i>
+                <span>Lotti in magazzino</span>
+            </a>
+        </li>
+        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "BatchInProduction" ? "active" : "")">
+            <a class="nav-link" asp-action="BatchInProduction" asp-controller="Order">
+                <i class="fas fa-pallet"></i>
+                <span>Lotti in produzione</span>
+            </a>
+        </li>
+        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "QualityControl" ? "active" : "")">
+            <a class="nav-link" asp-action="QualityControl" asp-controller="Order">
+                <i class="fas fa-search"></i>
+                <span>Controllo qualità</span>
+            </a>
+        </li>
+        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "BatchInDelivery" ? "active" : "")">
+            <a class="nav-link" asp-action="BatchInDelivery" asp-controller="Order">
+                <i class="fas fa-truck-loading"></i>
+                <span>Lotti in consegna</span>
+            </a>
+        </li>
+        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "DDTEmitted" ? "active" : "")">
+            <a class="nav-link" asp-action="DDTEmitted" asp-controller="Order">
+                <i class="fas fa-file"></i>
+                <span>DDT emesse</span>
+            </a>
+        </li>
         <!-- Divider -->
         <hr class="sidebar-divider">
 
@@ -134,10 +159,10 @@
                     <span>Contabilità</span>
                 </a>
             </li>
-            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Accounting" ? "active" : "")">
-                <a class="nav-link" asp-action="Accounting" asp-controller="Accounting">
+            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "ProductionAnalysisLive" ? "active" : "")">
+                <a class="nav-link" asp-action="ProductionAnalysisLive" asp-controller="Accounting">
                     <i class="fas fa-fw fa-calculator"></i>
-                    <span>Analisi produzione</span>
+                    <span>Produzione live</span>
                 </a>
             </li>
             <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Accounting" ? "active" : "")">
@@ -278,7 +303,7 @@
 <footer class="sticky-footer bg-white">
     <div class="container my-auto">
         <div class="copyright text-center my-auto">
-            <span>Copyright &copy; Re.Ma. s.r.l.s. | <a href="https://www.enigma-tech.it">ΣnigmΔ Tech</a> </span>
+            <span>Copyright &copy; 2022 Re.Ma. S.r.l. - Powered by <a href="https://www.enigma-tech.it">ΣnigmΔ Tech</a> </span>
         </div>
     </div>
 </footer>

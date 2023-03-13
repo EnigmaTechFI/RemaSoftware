@@ -225,5 +225,149 @@ namespace RemaSoftware.Domain.Services.Impl
                 .OrderBy(ob=>ob.Ordering)
                 .Select(s=>s.Operations).ToList();
         }
+
+        public Batch GetBatchById(int batchId)
+        {
+            return _dbContext.Batches
+                .Include(b => b.BatchOperations)
+                .ThenInclude(o => o.Operations)
+                .Include(s => s.SubBatches)
+                .ThenInclude(s => s.Ddts_In)
+                .SingleOrDefault(s => s.BatchId == batchId);
+        }
+
+        public Batch GetBatchByProductIdAndOperationList(int productId, List<int> operationId)
+        {
+            try
+            {
+                //TODO: Controllare!!;
+                var batchesIEnum = _dbContext.Batches
+                    .Include(s => s.SubBatches)
+                    .ThenInclude(s => s.Ddts_In)
+                    .ThenInclude(s => s.Product)
+                    .Include(b => b.BatchOperations).ToList();
+                var batches = batchesIEnum.Where(s => s.SubBatches[0].Ddts_In[0].ProductID == productId)
+                    .ToList();
+                foreach (var item in batches)
+                {
+                    var opList = new List<int>();
+                    foreach (var op in item.BatchOperations)
+                    {
+                        opList.Add(op.OperationID);
+                    }
+
+                    if (opList.All(operationId.Contains) && opList.Count == operationId.Count)
+                    {
+                        return item;
+                    }
+                }
+                return null;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public Batch CreateBatch(Batch batch)
+        {
+            try
+            {
+                var addedBatch = _dbContext.Add(batch);
+                _dbContext.SaveChanges();
+
+                return addedBatch.Entity;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Errore durante la creazione della commessa: {batch.SubBatches[0].Ddts_In[0].Code}");
+                return null;
+            }
+            
+        }
+
+        public Ddt_In CreateDDtIn(Ddt_In ddt_In)
+        {
+            try
+            {
+                var addedDdtIn = _dbContext.Add(ddt_In);
+                _dbContext.SaveChanges();
+
+                return addedDdtIn.Entity;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Errore durante la creazione della commessa: {ddt_In.Code}");
+                return null;
+            }
+        }
+
+        public List<Ddt_In> GetAllDdtIn()
+        {
+            return _dbContext.Ddts_In
+                .Include(d => d.Product)
+                .ThenInclude(s => s.Client)
+                .Include(b => b.SubBatch)
+                .ThenInclude(s => s.Batch)
+                .ThenInclude(b => b.BatchOperations)
+                .ToList();
+        }
+
+        public Ddt_In GetDdtInById(int id)
+        {
+            return _dbContext.Ddts_In
+                .Include(d => d.Product)
+                .ThenInclude(s => s.Client)
+                .SingleOrDefault(s => s.Ddt_In_ID == id);
+        }
+
+        public List<Ddt_Out> GetDdtOutsByClientIdAndStatus(int id, string status)
+        {
+            return _dbContext.Ddts_Out
+                .Where(s => s.ClientID == id && s.Status == status).ToList();
+        }
+
+        public Ddt_Out CreateNewDdtOut(Ddt_Out ddtOut)
+        {
+            _dbContext.Ddts_Out.Add(ddtOut);
+            _dbContext.SaveChanges();
+            return ddtOut;
+        }
+
+        public List<Ddt_Out> GetDdtOutsByStatus(string status)
+        {
+            return _dbContext.Ddts_Out
+                .Where(s =>s.Status == status)
+                .Include(s => s.Ddt_Associations)
+                .ThenInclude(s => s.Ddt_In)
+                .ThenInclude(s => s.Product)
+                .ThenInclude(s => s.Client)
+                .ToList();
+        }
+
+        public Ddt_Out GetDdtOutById(int id)
+        {
+            return _dbContext.Ddts_Out
+                .Include(s => s.Ddt_Associations)
+                .ThenInclude(s => s.Ddt_In)
+                .ThenInclude(s => s.SubBatch)
+                .ThenInclude(s => s.Batch)
+                .Include(s => s.Ddt_Associations)
+                .ThenInclude(s => s.Ddt_In)
+                .ThenInclude(s => s.Product)
+                .ThenInclude(s => s.Client)
+                .SingleOrDefault(s => s.Ddt_Out_ID == id);
+        }
+
+        public void UpdateDdtOut(Ddt_Out ddt)
+        {
+            _dbContext.Ddts_Out.Update(ddt);
+            _dbContext.SaveChanges();
+        }
+
+        public Ddt_Out GetDdtOutsById(int id)
+        {
+            return _dbContext.Ddts_Out.SingleOrDefault(s => s.Ddt_Out_ID == id);
+        }
     }
 }

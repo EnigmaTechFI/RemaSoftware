@@ -1,4 +1,5 @@
-﻿@model RemaSoftware.WebApp.Models.ProductViewModel.ProductListViewModel
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model RemaSoftware.WebApp.Models.ProductViewModel.ProductListViewModel
 
 @{
     ViewData["Title"] = "Lista Prodotti";
@@ -32,15 +33,15 @@
                         <td>@product.SKU</td>
                         <td>@product.Name</td>
                         <td>@product.Client.Name</td>
-                        <td>TODO</td>
+                        <td>@product.Ddts_In.Sum(s=> s.Number_Piece)</td>
                         <td class="text-center">
-                            <a style="text-decoration: none">
-                                <i class="fas fa-file-download fa-lg pl-2" title="Scarica ordine in PDF" style="cursor: pointer; color: lightgray"></i>
+                            <a style="text-decoration: none" asp-action="NewOrder" asp-controller="Order" asp-route-productId="@product.ProductID">
+                                <i class="fas fa-file-text fa-lg pl-2" title="Registra commessa" style="cursor: pointer; color:  #6d767e;"></i>
                             </a>
-                            <a style="text-decoration: none">
-                                <i class="fas fa-pen fa-lg pl-2" title="Modifica" style="cursor: pointer; color: lightgray"></i>
+                            <a style="text-decoration: none" asp-action="UpdateProduct" asp-controller="Product" asp-route-productId="@product.ProductID">
+                                <i class="fas fa-pen fa-lg pl-2" title="Modifica prodotto" style="cursor: pointer; color:  #6d767e;"></i>
                             </a>
-                            <i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer; color: lightgray" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal"></i>                        
+                            <i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer;  color: #6d767e;" title="Elimina prodotto" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDataArticleId('#confirm-del-modal', @product.ProductID)"></i>                        
                         </td>
                     </tr>
                 }
@@ -62,7 +63,7 @@
             <div class="modal-body">Sei sicuro di voler eliminare questo prodotto?</div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
-                <button class="btn btn-primary" onclick="DeleteStockArticle()">Elimina</button>
+                <button class="btn btn-danger" onclick="DeleteProduct()">Elimina</button>
             </div>
         </div>
     </div>
@@ -73,16 +74,37 @@
 {
     <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
     <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="~/js/dymo.connect.framework.js" type="text/javascript" charset="UTF-8"> </script>
 
     <script>
+    if (@Model.SubBatch.SubBatchID != 0)
+    {
+        printQRCode(@Model.SubBatch.BatchID)
+    }
+    function printQRCode(id){
+      var printers = dymo.label.framework.getPrinters();
+      if (printers.length == 0 || !printers[0].isConnected){
+        alert("Nessuna stampante trovata.");
+        return
+      }
+      var label = dymo.label.framework.openLabelFile("RemaStock.dymo")  
+      label.setObjectText("QRCodeObject", "id");
+      label.print(printers[0].name); 
+    } 
+    </script>
+    <script>
 
-    function DeleteStockArticle(){
+    function SetDataArticleId(elementName, articleId){
+        $(elementName).data("articleId", articleId );
+    }
+
+    function DeleteProduct(){
         var articleId = $("#confirm-del-modal").data("articleId");
         $.ajax({
-            url: '@Url.Action("DeleteProduct", "Order")?' + $.param({"productId": articleId}),
+            url: '@Url.Action("DeleteProduct", "Product")?' + $.param({"productId": articleId}),
             type: 'GET',
             success: function (data) {
-                if (data.result == true){
+                if (data.result == "Success"){
                     table.row($("tr#product-" + articleId)).remove().draw();
                     $("#confirm-del-modal").modal('toggle');
                     toastNotifySuccess(data.toastMessage);
@@ -121,9 +143,7 @@
                 { "searchable": false, "orderable": false, "targets": 4 },
               ]
         });
-
-        
-        
+ 
     });
 
     </script>

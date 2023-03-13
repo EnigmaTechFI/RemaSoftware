@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace UtilityServices.Dtos
 {
@@ -27,5 +25,6 @@ namespace UtilityServices.Dtos
 
         public decimal Price_Uni { get; set; }
         public decimal Price_Tot => this.Price_Uni * this.Number_Piece;
+        public string ID_FattureInCloud { get; set; }
     }
 }

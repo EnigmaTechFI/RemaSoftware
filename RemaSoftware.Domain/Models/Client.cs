@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace RemaSoftware.Domain.Models
 {
@@ -34,5 +33,6 @@ namespace RemaSoftware.Domain.Models
         public int FC_ClientID { get; set; }
         public virtual ICollection<Order> Orders { get; set; } 
         public virtual ICollection<UserClient> UserClients { get; set; } 
+        public virtual ICollection<Ddt_Out> DdtOuts { get; set; } 
     }
 }

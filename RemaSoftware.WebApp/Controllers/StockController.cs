@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Linq;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using NLog;
 using RemaSoftware.Domain.Models;
-using RemaSoftware.Domain.Services;
 using RemaSoftware.WebApp.DTOs;
 using RemaSoftware.WebApp.Helper;
 using RemaSoftware.WebApp.Models.StockViewModel;

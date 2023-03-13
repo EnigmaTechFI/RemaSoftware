@@ -8,13 +8,15 @@ using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification;
 using AspNetCoreHero.ToastNotification.Extensions;
-using RemaSoftware.UtilityServices;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
 using RemaSoftware.Domain.Services.Impl;
 using RemaSoftware.Domain.Data;
+using RemaSoftware.UtilityServices.Implementation;
+using RemaSoftware.UtilityServices.Interface;
 using RemaSoftware.WebApp.Helper;
+using RemaSoftware.WebApp.Validation;
 
 namespace RemaSoftware.WebApp
 {
@@ -96,6 +98,7 @@ namespace RemaSoftware.WebApp
             services.AddTransient<IImageService, ImageService>();
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<IOrderService, OrderService>();
+            services.AddTransient<ISubBatchService, SubBatchService>();
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<IOperationService, OperationService>();
             services.AddTransient<IClientService, ClientService>();
@@ -107,8 +110,12 @@ namespace RemaSoftware.WebApp
             services.AddTransient<IAPIFatturaInCloudService, APIFatturaInCloudService>(
                 x=> new APIFatturaInCloudService(x.GetRequiredService<IConfiguration>(), _environment.EnvironmentName));
             services.AddTransient<OrderHelper>();
+            services.AddTransient<SubBatchHelper>();
             services.AddTransient<StockHelper>();
             services.AddTransient<ClientHelper>();
+            services.AddTransient<AccountHelper>();
+            services.AddTransient<OrderValidation>();
+            services.AddTransient<ProductValidation>();
             
         }
 
@@ -143,7 +150,7 @@ namespace RemaSoftware.WebApp
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}");
             });
-            DbInitializer.SeedUsersAndRoles(userManager, roleManager);
+            DbInitializer.SeedUsersAndRoles(userManager, roleManager, context);
         }
     }
 }

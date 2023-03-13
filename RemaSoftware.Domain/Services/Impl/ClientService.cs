@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Data;
 
@@ -35,5 +33,19 @@ namespace RemaSoftware.Domain.Services.Impl
         {
             return _dbContext.Clients.Count();
         }
+
+        public void UpdateClient(Client client)
+        {
+            try
+            {
+                _dbContext.Clients.Update(client);
+                _dbContext.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Errore SQL durante l'aggiornamento.");
+            }
+        }
+        
     }
 }

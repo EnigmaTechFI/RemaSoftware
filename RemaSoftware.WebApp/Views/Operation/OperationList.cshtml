@@ -1,4 +1,5 @@
-﻿@model RemaSoftware.WebApp.Models.OperationViewModel.OperationListViewModel
+﻿@using RemaSoftware.Domain.Constants
+@model RemaSoftware.WebApp.Models.OperationViewModel.OperationListViewModel
 
     @{
         ViewData["Title"] = "Lista Operazioni";
@@ -8,7 +9,7 @@
 
 <div class="card shadow mb-4" id="order-summ-content">
     <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
-        <h4 class="m-0 font-weight-bold text-primary">Anagrafica clienti</h4>
+        <h4 class="m-0 font-weight-bold text-primary">Lista operazioni</h4>
         <div>
             <button class="btn btn-primary" type="button" onclick="location.href='@Url.Action("AddOperation", "Operation")'">Aggiungi</button>
         </div>
@@ -30,7 +31,12 @@
                         <td>@operation.Name</td>
                         <td>@operation.Description</td>
                         <td class="text-center">
-                            
+                            @if (operation.Name != OtherConstants.COQ)
+                            {
+                                <a style="text-decoration: none" asp-action="EditOperation" asp-controller="Operation" asp-route-id="@operation.OperationID">
+                                    <i class="fas fa-pen fa-lg pl-2" style="cursor: pointer; color: #6d767e;" title="Modifica"></i>
+                                </a>
+                            }
                         </td>
                     </tr>
                 }

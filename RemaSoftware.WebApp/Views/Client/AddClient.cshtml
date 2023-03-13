@@ -1,8 +1,9 @@
-﻿@model RemaSoftware.WebApp.Models.ClientViewModel.ClientViewModel
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model RemaSoftware.WebApp.Models.ClientViewModel.ClientViewModel
 
-    @{
-        ViewData["Title"] = "Aggiungi Cliente";
-    }
+@{
+    ViewData["Title"] = "Aggiungi Cliente";
+}
 
 <div class="card shadow mb-4">
     <div class="card-header py-3">
@@ -21,7 +22,7 @@
                     <input asp-for="P_Iva" type="text" class="form-control" id="validationTooltip02" placeholder="P. IVA">
                 </div>
             </div>
-             <div class="form-row">
+            <div class="form-row">
                 <div class="col-md-6 mb-3">
                     <label class="font-weight-bold" for="validationTooltip02">Via</label>
                     <input asp-for="Street" type="text" class="form-control" id="validationTooltip02" placeholder="Via">

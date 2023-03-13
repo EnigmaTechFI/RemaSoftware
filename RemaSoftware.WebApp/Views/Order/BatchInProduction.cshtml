@@ -1,0 +1,167 @@
+@model RemaSoftware.WebApp.Models.OrderViewModel.BatchInProductionViewModel
+
+@{
+    ViewData["Title"] = "Lotti in magazzino";
+}
+
+<link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
+
+<div class="card shadow mb-4" id="order-summ-content">
+    <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
+        <h3 class="m-0 font-weight-bold text-primary">Lotti in produzione</h3>
+        @*<div>
+            <button class="btn btn-primary" type="button" onclick="location.href='@Url.Action("NewProduct", "Product")'">Nuovo prodotto</button>
+        </div>*@
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" id="table-batches" width="100%" cellspacing="0">
+                <thead>
+                <tr>
+                    <th>Lotto</th>
+                    <th>Cliente</th>
+                    <th>Codice prodotto</th>
+                    <th>DDT associate</th>
+                    <th>Pezzi nel lotto</th>
+                    <th class="text-center">Azioni</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var batch in Model.SubBatches)
+                {
+                    <tr style="cursor: pointer;">
+                        <td>@batch.SubBatchID</td>
+                        <td>@batch.Ddts_In[0].Product.Client.Name</td>
+                        <td>@batch.Ddts_In[0].Product.SKU</td>
+                        <td onclick="showDDT(@batch.SubBatchID)">Visualizza DDT associate</td>
+                        <td>@batch.Ddts_In.Sum(s=> s.Number_Piece)</td>
+                        <td class="text-center">
+                            <a style="text-decoration: none" asp-controller="Order" asp-action="SubBatchMonitoring" asp-route-id="@batch.SubBatchID">
+                                <i class="fas fa-eye fa-lg pl-2" title="Visualizza avanzamento" style="cursor: pointer; color: lightgray"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="row">
+            <div class="col-12 h5">
+                Totale pezzi in produzione: <b>@Model.SubBatches.Sum(s => s.NumberPieces)</b>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ddt_associate" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="batchModalHeader"></h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="batch_ddt"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Chiudi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirm-del-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Conferma eliminazione</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Sei sicuro di voler eliminare questo prodotto?</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
+                <button class="btn btn-primary" onclick="DeleteStockArticle()">Elimina</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts
+{
+    <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <script>
+    const batches = @Json.Serialize(Model.SubBatches)
+    function showDDT(subbatchId) {
+        var batch = batches.filter(obj => {
+          return obj.subBatchID === subbatchId
+        })
+        var ddt_list = ""
+        batch[0].ddts_In.forEach(function(ddt) {
+            ddt_list = ddt_list + ddt.code + "<br/>"
+        })
+        $("#ddt_associate").modal('show');
+        document.getElementById("batch_ddt").innerHTML = ddt_list
+        document.getElementById("batchModalHeader").textContent = "DDT associate al lotto #" + batch[0].batchID;
+    }
+
+    function DeleteStockArticle(){
+        var articleId = $("#confirm-del-modal").data("articleId");
+        $.ajax({
+            url: '@Url.Action("DeleteProduct", "Order")?' + $.param({"productId": articleId}),
+            type: 'GET',
+            success: function (data) {
+                if (data.result == true){
+                    table.row($("tr#product-" + articleId)).remove().draw();
+                    $("#confirm-del-modal").modal('toggle');
+                    toastNotifySuccess(data.toastMessage);
+                }else{
+                    toastNotifyError(data.toastMessage);
+                }
+            },
+            error: function (data){
+                toastNotifyError(data.toastMessage);
+            }
+        });
+    }
+
+    $(document).ready( function () {
+        table = $('#table-batches').DataTable({
+            "language": {
+                "lengthMenu": "Mostra _MENU_ risultati per pagina",
+                "zeroRecords": "Nessun risultato trovato",
+                "info": "Pagina _PAGE_ di _PAGES_",
+                "infoEmpty": "Nessun risultato disponibile",
+                "infoFiltered": "(filtrato da _MAX_ risultati totali)",
+                "search": "Ricerca:",
+                "paginate": {
+                    "first": "Inizio",
+                    "previous": "Precedente",
+                    "next": "Successivo",
+                    "last": "Fine"
+                }                
+            },
+            "product": [[0, 'asc']],
+            "columnDefs": [
+                { "searchable": true, "orderable": true, "targets": 0 },
+                { "searchable": true, "orderable": true, "targets": 1 },
+                { "searchable": true, "orderable": true, "targets": 2 },
+                { "searchable": false, "orderable": false, "targets": 3 },
+                { "searchable": false, "orderable": false, "targets": 4 },
+                { "searchable": false, "orderable": false, "targets": 5 },
+              ]
+        });
+
+        
+        
+    });
+
+    </script>
+}

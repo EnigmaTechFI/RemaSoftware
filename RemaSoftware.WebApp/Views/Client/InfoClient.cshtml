@@ -1,0 +1,241 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model RemaSoftware.WebApp.Models.ClientViewModel.InfoClientViewModel
+
+@{
+    ViewData["Title"] = "Informazioni Cliente";
+}
+
+<link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h4 class="m-0 font-weight-bold text-primary">Informazioni Cliente</h4>
+    </div>
+    <div class="card-body">
+        <div class="form-row">
+            <div class="col-md-6 mb-3">
+                <label class="font-weight-bold">Nome Azienda</label>
+                <input asp-for="@Model.Client.Name" type="text" class="form-control" readonly>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="font-weight-bold">Partita Iva</label>
+                <input asp-for="@Model.Client.P_Iva" type="text" class="form-control" readonly>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-6 mb-3">
+                <label class="font-weight-bold">Via</label>
+                <input asp-for="@Model.Client.Street" type="text" class="form-control" readonly>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label class="font-weight-bold">N° Civico</label>
+                <input asp-for="@Model.Client.StreetNumber" type="text" class="form-control" readonly>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label class="font-weight-bold">CAP</label>
+                <input asp-for="@Model.Client.Cap" type="text" class="form-control" readonly>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-4 mb-3">
+                <label class="font-weight-bold">Città</label>
+                <input asp-for="@Model.Client.City" type="text" class="form-control" readonly>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="font-weight-bold">Provincia</label>
+                <input asp-for="@Model.Client.Province" type="text" class="form-control" readonly>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="font-weight-bold">Stato</label>
+                <input asp-for="@Model.Client.Nation" type="text" class="form-control" readonly>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-4 mb-3">
+                <label class="font-weight-bold">Email</label>
+                <input asp-for="@Model.Client.Email" type="email" class="form-control" readonly>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="font-weight-bold">Telefono</label>
+                <input asp-for="@Model.Client.PhoneNumber" type="text" class="form-control" readonly>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="font-weight-bold">Fax</label>
+                <input asp-for="@Model.Client.Fax" type="text" class="form-control" readonly>
+            </div>
+        </div>
+        
+        <button class="btn btn-primary" type="submit" onclick="ChangePage(@Model.Client.ClientID)" id="@Model.Client.ClientID">Modifica</button>
+    </div>
+</div>
+
+<div class="card shadow mb-4" id="order-summ-content">
+    <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
+        <h4 class="m-0 font-weight-bold text-primary">Account Cliente</h4>
+        <div>
+            <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#new-account" >Aggiungi account</button>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="table-accounts" width="100%" cellspacing="0">
+                <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Azioni</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var user in Model.MyUsers)
+                {
+                    <tr id="account-@user.Id">
+                        <td id="@user.Id">@user.Email</td>
+                        <td class="text-center">
+                            <i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer; color: #6d767e;" id="@user.Id" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetAccountId('#confirm-del-modal', '@user.Id')"></i>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="new-account" tabindex="-1" role="dialog" aria-labelledby="modal-head" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-head">Aggiungi nuovo account al profilo del cliente</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="pb-2 font-italic h6">Inserire la mail relativa al nuovo account:</p>
+                <div class="row">
+                    <div class="col-12">
+                        <label class="form-check-label"><b>Email</b></label>
+                        <input class="form-control" type="text" id="AccountProfileMail" placeholder="mail"/>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
+                <button  class="btn btn-primary" onclick="AddAccountClient()">Conferma</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirm-del-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Conferma eliminazione</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Sei sicuro di voler eliminare questo account?</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
+                <button class="btn btn-danger" onclick="DeleteAccount()">Elimina</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
+    
+    <script>
+        
+        var table;
+        $(document).ready( function () {
+            table = $('#table-accounts').DataTable({
+                "language": {
+                    "lengthMenu": "Mostra _MENU_ risultati per pagina",
+                    "zeroRecords": "Nessun risultato trovato",
+                    "info": "Pagina _PAGE_ di _PAGES_",
+                    "infoEmpty": "Nessun risultato disponibile",
+                    "search": "Ricerca:",
+                    "paginate": {
+                        "first": "Inizio",
+                        "previous": "Precedente",
+                        "next": "Successivo",
+                        "last": "Fine"
+                    }
+                },
+                "columnDefs": [
+                    { "searchable": true, "orderable": true, "targets": 0 },
+                    { "searchable": true, "orderable": false, "targets": 1 },                    
+              ]
+            });
+        } );
+            
+        function ChangePage(id) {
+            window.location.href = "https://localhost:5001/Client/UpdateClient?clientId=" + id;
+        }
+        
+        function SetAccountId(elementName, accountId){
+                $(elementName).data("accountId", accountId );
+            }
+       
+        function AddAccountClient(){
+            var role = "client";
+            var data = {
+                newUser: {
+                    email: document.getElementById("AccountProfileMail").value
+                },
+                role: role,
+                clientId: @Model.Client.ClientID
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '/Account/AddMember',
+                data: JSON.stringify(data),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function(response) {
+                    if (response.result) {
+                        $('#new-account').modal('hide');
+                        toastNotifySuccess("Account aggiunto correttamente");
+                        return
+                    }
+                    $('#new-account').modal('hide');
+                    toastNotifyError("Errore durante l'aggiornamento. Si prega di riprovare.");
+                },
+                error: function(response) {
+                    $('#new-account').modal('hide');
+                    toastNotifyError("Errore durante l'aggiornamento. Si prega di riprovare.");
+                }
+            })
+        }
+        
+        function DeleteAccount(){
+            var accountId = $("#confirm-del-modal").data("accountId");
+            $.ajax({
+                url: '@Url.Action("DeleteAccount", "Account")?' + $.param({"accountId": accountId}),
+                type: 'GET',
+                success: function (data) {                    
+                    if (data.result == true){
+                        table.row($("tr#account-" + accountId)).remove().draw();
+                        $("#confirm-del-modal").modal('toggle');
+                        toastNotifySuccess(data.toastMessage);
+                    }else{
+                        toastNotifyError(data.toastMessage);
+                    }
+                },
+                error: function (data){
+                    toastNotifyError(data.toastMessage);
+                }
+            });
+        }
+    </script>
+}
+
+
