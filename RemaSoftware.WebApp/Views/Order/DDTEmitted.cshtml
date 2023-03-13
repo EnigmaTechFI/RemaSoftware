@@ -82,6 +82,11 @@
         </div>
     </div>
 </div>
+<div class="loader-cont">
+    <div class="spinner-grow" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
 
 @section Scripts
 {
@@ -109,6 +114,7 @@
     }
     
     function DeleteDDT(){
+        $(".loader-cont").show()
         $.ajax({
             url: '@Url.Action("DeleteDDT", "Order")?' + $.param({"id": ddtToDeleteId}),
             type: 'GET',
@@ -120,9 +126,11 @@
                 }else{
                     toastNotifyError("Errore durante l'eliminazione della ddt");
                 }
+                $(".loader-cont").hide()
             },
             error: function (data){
                 toastNotifyError(data.toastMessage);
+                $(".loader-cont").hide()
             }
         });
     }
