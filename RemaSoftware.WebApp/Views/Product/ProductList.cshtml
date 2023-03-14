@@ -79,16 +79,18 @@
     <script>
     if (@Model.SubBatch.SubBatchID != 0)
     {
-        printQRCode(@Model.SubBatch.BatchID)
+        printQRCode('@Model.SubBatch.BatchID', '@Model.SubBatch.Ddts_In[0].Product.SKU', '@Model.SubBatch.Ddts_In[0].Product.Client.Name')
     }
-    function printQRCode(id){
+    
+    function printQRCode(id, sku, client){
       var printers = dymo.label.framework.getPrinters();
       if (printers.length == 0 || !printers[0].isConnected){
         alert("Nessuna stampante trovata.");
         return
       }
       var label = dymo.label.framework.openLabelFile("RemaStock.dymo")  
-      label.setObjectText("QRCodeObject", "id");
+      label.setObjectText("QRCodeObject", id);
+      label.setObjectText("TextObject", "Lotto: "+ id +"\nSKU: " + sku + "\nCliente: " + client);
       label.print(printers[0].name); 
     } 
     </script>

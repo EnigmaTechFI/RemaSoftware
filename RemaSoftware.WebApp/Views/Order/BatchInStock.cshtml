@@ -107,7 +107,7 @@
       }
       var label = dymo.label.framework.openLabelFile("RemaStock.dymo")  
       label.setObjectText("QRCodeObject", id);
-      label.setObjectText("TextObject", "Lotto: "+ id +"\nSKU: " + sku + "\nN° pezzi: " + pieces + "\nCliente: " + client);
+      label.setObjectText("TextObject", "Lotto: "+ id +"\nSKU: " + sku + "\nCliente: " + client);
       label.print(printers[0].name); 
     } 
     </script>

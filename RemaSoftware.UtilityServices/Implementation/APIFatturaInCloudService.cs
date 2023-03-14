@@ -40,10 +40,6 @@ namespace RemaSoftware.UtilityServices.Implementation
                 httpWebRequest.ContentType = "application/json";
                 httpWebRequest.Method = "POST";
                 httpWebRequest.Headers.Add("authorization", "Bearer " + _ficAccessToken);
-    #if !DEBUG
-                    var myProxy = new WebProxy("http://winproxy.server.lan:3128/", true);
-                    httpWebRequest.Proxy = myProxy;
-    #endif
                 ClientApi clientToSendInCloud = new ClientApi()
                 {
                     type = "company",
@@ -93,10 +89,6 @@ namespace RemaSoftware.UtilityServices.Implementation
                 httpWebRequest.ContentType = "application/json";
                 httpWebRequest.Method = "PUT";
                 httpWebRequest.Headers.Add("authorization", "Bearer " + _ficAccessToken);
-                #if !DEBUG
-                    var myProxy = new WebProxy("http://winproxy.server.lan:3128/", true);
-                    httpWebRequest.Proxy = myProxy;
-                #endif
                 ClientApi clientToSendInCloud = new ClientApi()
                 {
                     type = "company",
@@ -221,11 +213,7 @@ namespace RemaSoftware.UtilityServices.Implementation
             httpWebRequest.ContentType = "application/json";
             httpWebRequest.Method = "POST";
             httpWebRequest.Headers.Add("authorization", "Bearer " + _ficAccessToken);
-            #if !DEBUG
-                var myProxy = new WebProxy("http://winproxy.server.lan:3128/", true);
-                httpWebRequest.Proxy = myProxy;
-            #endif
-            
+
             OrderAPI orderToSendInCloud = new OrderAPI()
             {
                 code = order.DDT,
@@ -274,11 +262,7 @@ namespace RemaSoftware.UtilityServices.Implementation
                 httpWebRequest.ContentType = "application/json";
                 httpWebRequest.Method = "POST";
                 httpWebRequest.Headers.Add("authorization", "Bearer " + _ficAccessToken);
-                #if !DEBUG
-                    var myProxy = new WebProxy("http://winproxy.server.lan:3128/", true);
-                    httpWebRequest.Proxy = myProxy;
-                #endif
-                
+
                 OrderAPI orderToSendInCloud = new OrderAPI()
                 {
                     code = ddt.Code,
@@ -331,11 +315,7 @@ namespace RemaSoftware.UtilityServices.Implementation
             httpWebRequest.ContentType = "application/json";
             httpWebRequest.Method = "DELETE";
             httpWebRequest.Headers.Add("authorization", "Bearer " + _ficAccessToken);
-#if !DEBUG
-                var myProxy = new WebProxy("http://winproxy.server.lan:3128/", true);
-                httpWebRequest.Proxy = myProxy;
-#endif
-            
+
             var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
             string result;
             using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
@@ -358,11 +338,6 @@ namespace RemaSoftware.UtilityServices.Implementation
             httpWebRequest.ContentType = "application/json";
             httpWebRequest.Method = "PUT";
             httpWebRequest.Headers.Add("authorization", "Bearer " + _ficAccessToken);
-#if !DEBUG
-                var myProxy = new WebProxy("http://winproxy.server.lan:3128/", true);
-                httpWebRequest.Proxy = myProxy;
-#endif
-
             OrderAPI orderToSendInCloud = new OrderAPI()
             {
                 id = order.Id,
