@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using AspNetCoreHero.ToastNotification.Abstractions;
@@ -31,6 +32,7 @@ namespace RemaSoftware.WebApp.Controllers
         private readonly IConfiguration _configuration;
         private readonly OrderHelper _orderHelper;
         private readonly OrderValidation _orderValidation;
+        private readonly IProductService _productService;
         private readonly string _basePathForImages;
 
 
@@ -38,7 +40,7 @@ namespace RemaSoftware.WebApp.Controllers
 
         public OrderController(IOrderService orderService, IClientService clientService, IOperationService operationService,
             IImageService imageService, IAPIFatturaInCloudService apiFatturaInCloudService,
-            INotyfService notyfService, IConfiguration configuration, OrderHelper orderHelper, OrderValidation orderValidation)
+            INotyfService notyfService, IConfiguration configuration, OrderHelper orderHelper, OrderValidation orderValidation, IProductService productService)
         {
             _orderService = orderService;
             _clientService = clientService;
@@ -51,6 +53,7 @@ namespace RemaSoftware.WebApp.Controllers
             _basePathForImages =
                 (Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName + _configuration["ImagePath"]).Replace("/", "\\");
             _orderValidation = orderValidation;
+            _productService = productService;
         }
 
         [HttpPost]
@@ -155,6 +158,7 @@ namespace RemaSoftware.WebApp.Controllers
         [HttpGet]
         public IActionResult NewOrder(int productId)
         {
+            var products = productId == 0 ? _productService.GetAllProducts() : new List<Product>();
             var vm = new NewOrderViewModel
             {
                 Clients = _clientService.GetAllClients(),
@@ -166,7 +170,8 @@ namespace RemaSoftware.WebApp.Controllers
                 Ddt_In = new Ddt_In()
                 {
                     ProductID = productId,
-                }
+                },
+                Products = products
             };
             return View(vm);
         }
