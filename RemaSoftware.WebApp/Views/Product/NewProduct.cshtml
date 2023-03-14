@@ -14,7 +14,7 @@
     <div class="card-body">
         <form method="post" id="form-new-order" enctype="multipart/form-data">
             @Html.HiddenFor(model => model.Photo, new { @id = "Photo_base64" })
-            @Html.HiddenFor(model => model.Product.Image_URL, new { @id = "imageUrl" })
+            @Html.HiddenFor(model => model.Product.FileName, new { @id = "imageUrl" })
             <div class="form-group">
                 <label for="formGroupExampleInput">Codice</label>
                 <input asp-for="Product.SKU" type="text" class="form-control" id="DDT_cod" placeholder="Codice prodotto">
@@ -59,37 +59,11 @@
     </div>
 </div>
 
-<div class="modal" tabindex="-1" role="dialog" style="background-color: rgba(255,255,255,0.7);">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Acquisizione Immagine</h5>
-                <button type="button" class="close" onclick="closeModal()" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>L'immagine è stata acquisita correttamente.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="closeModal()">Chiudi</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 @section Scripts
 {
     <script src="~/webcamjs/webcam.js"></script>
 
     <script>
-
-        function openModal() {
-            document.querySelector(".modal").style.display = "block"
-        }
-        function closeModal() {
-            document.querySelector(".modal").style.display = "none"
-        }
 
         Webcam.set({
             width: 376,
@@ -105,7 +79,6 @@
                 document.getElementById('order-img-div').innerHTML = '<img src="' + data + '" width="376" height="282" />';
                 document.getElementById("Photo_base64").value = data;
 
-                openModal();
             });
         }
     </script>

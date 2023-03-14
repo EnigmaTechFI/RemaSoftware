@@ -1,7 +1,9 @@
-﻿namespace RemaSoftware.UtilityServices.Interface
+﻿using System.Threading.Tasks;
+
+namespace RemaSoftware.UtilityServices.Interface
 {
     public interface IImageService
     {
-        public string SavingOrderImage(string photo, string path);
+        public Task<string> SavingOrderImage(string photo);
     }
 }

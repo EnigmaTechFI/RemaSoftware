@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using RemaSoftware.WebApp.Helper;
 using RemaSoftware.WebApp.Models.ProductViewModel;
 using System;
+using System.Threading.Tasks;
 using RemaSoftware.Domain.Models;
 
 namespace RemaSoftware.WebApp.Controllers
@@ -48,11 +49,11 @@ namespace RemaSoftware.WebApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult NewProduct(NewProductViewModel model)
+        public async Task<IActionResult> NewProduct(NewProductViewModel model)
         {
             try
             {
-                _productHelper.AddProduct(model);
+                await _productHelper.AddProduct(model);
                 _notyfToastService.Success("Prodotto aggiunto correttamente");
                 return RedirectToAction("ProductList");
             }
@@ -85,11 +86,11 @@ namespace RemaSoftware.WebApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdateProduct(UpdateProductViewModel model)
+        public async Task<IActionResult> UpdateProduct(UpdateProductViewModel model)
         {
             try
             {
-                _productHelper.UpdateProduct(model);
+                await _productHelper.UpdateProduct(model);
                 _notyfToastService.Success("Prodotto aggiornato correttamente");
                 return RedirectToAction("ProductList");
             }

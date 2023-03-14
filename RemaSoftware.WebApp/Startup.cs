@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification;
 using AspNetCoreHero.ToastNotification.Extensions;
+using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
@@ -94,6 +95,14 @@ namespace RemaSoftware.WebApp
                 config.IsDismissable = true;
                 config.Position = NotyfPosition.TopRight;
             });
+            
+            // register azure blob storage
+            var azureBlobCs = Configuration.GetValue<string>("AzureBlobStorage:ConnectionString");
+
+            services.AddSingleton(x => new BlobServiceClient(azureBlobCs));
+            services.AddSingleton(x=> 
+                new OrderImageBlobService(new BlobServiceClient(azureBlobCs), 
+                    Configuration.GetValue<string>("AzureBlobStorage:OrderContainerName")));
 
             services.AddTransient<IImageService, ImageService>();
             services.AddTransient<IEmailService, EmailService>();
