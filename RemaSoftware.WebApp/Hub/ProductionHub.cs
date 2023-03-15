@@ -14,12 +14,25 @@ public class ProductionHub : Hub
     {
         _services = services;
     }
-    public void Send(ProductionAnalysisDto paDtos)
+    
+    public void StartOperation(ProductionAnalysisDto paDtos)
     {
         try
         {
             var ctx = _services.GetService(typeof(IHubContext<ProductionHub>)) as IHubContext<ProductionHub>;
-            ctx.Clients.All.SendAsync("broadcastMessage", paDtos);
+            ctx.Clients.All.SendAsync("startOperation", paDtos);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+    }
+    public void EndOperation(int operationTimelinId, int machineId)
+    {
+        try
+        {
+            var ctx = _services.GetService(typeof(IHubContext<ProductionHub>)) as IHubContext<ProductionHub>;
+            ctx.Clients.All.SendAsync("endOperation", operationTimelinId, machineId);
         }
         catch (Exception e)
         {

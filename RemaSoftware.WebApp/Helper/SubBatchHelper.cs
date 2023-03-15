@@ -53,14 +53,16 @@ public class SubBatchHelper
                 ClientName = item.SubBatch.Ddts_In[0].Product.Client.Name,
                 MachineId = item.MachineId
             };
-            _productionHub.Send(paDtos);
+            _productionHub.StartOperation(paDtos);
         }
         return result.Select(s => s.OperationTimelineID).ToList();
     }
 
     public string EndOperationOnSubBatch(int operationTimelineId)
     {
-        return _subBatchService.UpdateSubBatchStatusAndOperationTimelineEnd(operationTimelineId, DateTime.Now);
+        var result = _subBatchService.UpdateSubBatchStatusAndOperationTimelineEnd(operationTimelineId, DateTime.Now);
+        _productionHub.EndOperation(operationTimelineId, result.MachineId);
+        return "Success";
     }
 
 }

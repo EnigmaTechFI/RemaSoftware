@@ -5,7 +5,7 @@
 
 <link href="https://app.smplrspace.com/lib/smplr.css" rel="stylesheet" />
 <script>
-let test = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+let countOperator = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 let counter=0;
 function counterTest(){
   setInterval(() => {
@@ -17,7 +17,10 @@ function getTime(seconds, id){
   setInterval(() => {
     var sec = parseInt(seconds) + counter;
     var date = new Date(sec * 1000).toISOString().substring(11, 19)
-    document.getElementById("time-"+id).innerHTML= "<i>- Tempo: </i>" + date
+    var timeToChange = document.getElementById("time-"+id)
+    if (timeToChange){
+      timeToChange.innerHTML= "<i>- Tempo: </i>" + date
+    }
   }, 1000) 
 }
 </script>
@@ -55,10 +58,10 @@ function getTime(seconds, id){
                   {
                     index++;
                     <script>
-                      test[@i] = @index
+                      countOperator[@i] = @index
                     </script>
-                    <div>
-                      <span><strong>OPERATORE @index:</strong></span><br/>
+                    <div id="operation-timeline-@item.OperationTimelineID">
+                      <span id="macchina-@i-operatore-@index"><strong>OPERATORE @index:</strong></span><br/>
                       <span><i>- Lotto: </i>@item.SubBatchID</span><br/>
                       <span><i>- Cliente: </i>@item.SubBatch.Ddts_In[0].Product.Client.Name</span><br/>
                       <span><i>- Operazione: </i>@item.BatchOperation.Operations.Name</span><br/>
@@ -101,7 +104,7 @@ function getTime(seconds, id){
                           .build();
       
       // gli dico cosa fare quando arriva un messaggio
-      connection.on('broadcastMessage', function (operation) {
+      connection.on('startOperation', function (operation) {
           var nop = document.getElementById("noop-machine-"+ operation.machineId)
           if(nop){
             nop.remove()
@@ -114,6 +117,7 @@ function getTime(seconds, id){
           document.getElementById("icon-machine-"+ operation.machineId).classList.add("text-success")
           var div = document.getElementById("name-machine-" + operation.machineId)
           var div2 = document.createElement('div');
+          div2.id = "operation-timeline-" + operation.operationTimeLineId
           var span = document.createElement('span')
           var span1 = document.createElement('span')
           var span2 = document.createElement('span')
@@ -122,8 +126,9 @@ function getTime(seconds, id){
           span4.id = "time-" + operation.operationTimeLineId
           getTime(operation.seconds, operation.operationTimeLineId)
           var hr = document.createElement('hr');
-          test[operation.machineId]++;
-          span.innerHTML = "<strong>OPERATORE "+ test[operation.machineId] +":</strong></br>";
+          countOperator[operation.machineId]++;
+          span.id = "macchina-" + operation.machineId + "-operatore-" + countOperator[operation.machineId]
+          span.innerHTML = "<strong>OPERATORE "+ countOperator[operation.machineId] +":</strong></br>";
           span1.innerHTML = "- Lotto: " + operation.subBatchId + "</br>";
           span2.innerHTML = "- Cliente: " + operation.clientName + "</br>";
           span3.innerHTML = "- Operazione: " + operation.operationName + "</br>";
@@ -135,6 +140,36 @@ function getTime(seconds, id){
           div2.appendChild(span4)
           div2.appendChild(hr)
           div.appendChild(div2)
+          toastNotifySuccess("Una nuova lavorazione alla macchina " + operation.machineId + " è appena iniziata.");
+      });
+      
+      connection.on('endOperation', function (operationId, machineId) {
+          countOperator[machineId]--;
+          document.getElementById("operation-timeline-" + operationId).remove()
+          if (countOperator[machineId] == 0){
+            document.getElementById("title-machine-"+ machineId).classList.remove("text-success")
+            document.getElementById("title-machine-"+ machineId).classList.add("text-danger")
+            document.getElementById("bordo-machine-"+ machineId).classList.remove("border-left-success")
+            document.getElementById("bordo-machine-"+ machineId).classList.add("border-left-danger")
+            document.getElementById("icon-machine-"+ machineId).classList.remove("text-success")
+            document.getElementById("icon-machine-"+ machineId).classList.add("text-danger")
+            var div = document.getElementById("name-machine-" + machineId)
+            var div2 = document.createElement('div');
+            div2.innerHTML = '<div id="noop-machine-'+ machineId + '" class="h5 mb-0 font-weight-bold text-gray-800">Nessuna lavorazione in corso</div>'
+            div.appendChild(div2)
+          }
+          else{
+            for (var i = countOperator[machineId]+1; i >0; i--){
+               var operator = document.getElementById("macchina-" + machineId + "-operatore-" + i)
+               if (operator){
+                 operator.innerHTML = "<strong>OPERATORE "+ (i - 1) +":</strong>";
+               }
+               else{
+                 break
+               }
+            }
+          }
+          toastNotifySuccess("Lavorazione alla macchina " + machineId + " conclusa.");
       });
       
       // starto la connessione con il server

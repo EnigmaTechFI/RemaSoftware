@@ -91,7 +91,7 @@ public class SubBatchService : ISubBatchService
         }
     }
 
-    public string UpdateSubBatchStatusAndOperationTimelineEnd(int operationTimelineId, DateTime end)
+    public OperationTimeline UpdateSubBatchStatusAndOperationTimelineEnd(int operationTimelineId, DateTime end)
     {
         var op =_dbContext.OperationTimelines
             .Include(s =>s.SubBatch)
@@ -104,10 +104,10 @@ public class SubBatchService : ISubBatchService
             op.EndDate = end;
             _dbContext.OperationTimelines.Update(op);
             _dbContext.SaveChanges();
-            return "Success";
+            return op;
         }
 
-        return "Elemento non trovato.";
+        throw new Exception("Nessuna operazione trovata.");
     }
 
     public void CreateSubBatch(SubBatch entity)
