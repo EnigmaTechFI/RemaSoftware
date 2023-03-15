@@ -60,7 +60,7 @@ namespace RemaSoftware.WebApp
             })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
-            
+
             services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/Account/Login";
@@ -141,6 +141,7 @@ namespace RemaSoftware.WebApp
             app.UseSession();
 
             app.UseRouting();
+            app.UseCors(x=>x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseNotyf();

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using NLog;
 using RemaSoftware.WebApp.Helper;
 
 namespace RemaSoftware.WebApp.Controllers.api;
@@ -9,6 +12,7 @@ namespace RemaSoftware.WebApp.Controllers.api;
 public class SubBatchController : ControllerBase
 {
     private readonly SubBatchHelper _batchHelper;
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
     public SubBatchController(SubBatchHelper batchHelper)
     {
@@ -37,6 +41,8 @@ public class SubBatchController : ControllerBase
     {
         try
         {
+            var request = HttpContext.Connection.RemoteIpAddress.ToString();
+            Logger.Info($"Richiesta dettagli: {request}");
             return new JsonResult(new {Data = _batchHelper.GetSubBatchDetail(id), Error = ""});
         }
         catch (Exception e)
