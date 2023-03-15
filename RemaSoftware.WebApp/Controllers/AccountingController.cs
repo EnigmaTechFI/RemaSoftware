@@ -2,6 +2,7 @@ using System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using NLog;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.WebApp.Helper;
@@ -20,6 +21,12 @@ namespace RemaSoftware.WebApp.Controllers
         {
             _accountingHelper = accountingHelper;
             _notyfService = notyfService;
+        }
+
+        [HttpGet]
+        public IActionResult ProductionAnalysisLive()
+        {
+            return View(_accountingHelper.GetProductionAnalysisLiveViewModel());
         }
         
         public IActionResult Accounting()

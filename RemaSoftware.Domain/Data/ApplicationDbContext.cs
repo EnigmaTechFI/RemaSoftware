@@ -32,8 +32,9 @@ namespace RemaSoftware.Domain.Data
             modelBuilder.Entity<UserClient>().HasKey(a => new { a.MyUserID, a.ClientID });
             modelBuilder.Entity<Ddt_In>().HasKey(a => new { a.Ddt_In_ID});
             modelBuilder.Entity<Ddt_Out>().HasKey(a => new { a.Ddt_Out_ID});
-            modelBuilder.Entity<Ddt_Association>().HasKey(a => new { a.Ddt_In_ID, a.Ddt_Out_ID});
-            // modelBuilder.Entity<OperationTimeline>().HasKey(a => new { a.SubBatchID, a.BatchOperationID});
+            modelBuilder.Entity<Ddt_Association>().HasKey(s => new { s.Ddt_In_ID, s.Ddt_Out_ID, s.ID });
+            modelBuilder.Entity<Ddt_Association>().HasOne(a => a.Ddt_In).WithMany(a => a.Ddt_Associations).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Ddt_Association>().HasOne(a => a.Ddt_Out).WithMany(a => a.Ddt_Associations).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<OperationTimeline>().HasOne(a => a.SubBatch).WithMany(a => a.OperationTimelines).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<OperationTimeline>().HasOne(a => a.BatchOperation).WithMany(a => a.OperationTimelines).OnDelete(DeleteBehavior.NoAction);
             base.OnModelCreating(modelBuilder);

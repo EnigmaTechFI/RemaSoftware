@@ -12,7 +12,7 @@
     <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
         <h3 class="m-0 font-weight-bold text-primary">Resoconto ordini</h3>
         <div>
-            <button class="btn btn-primary" type="button">Registra ordine</button>
+            <a class="btn btn-primary text-white" asp-action="NewOrder" asp-controller="Order" type="button">Registra ordine</a>
         </div>
     </div>
     <div class="card-body">
@@ -24,6 +24,7 @@
                         <th>DDT</th>
                         <th>SKU</th>
                         <th>N° pezzi</th>
+                        <th>N° pezzi attuali</th>
                         <th>Prz. Unitario</th>
                         <th>Arrivo ordine</th>
                         <th>Scadenza ordine</th>
@@ -39,6 +40,7 @@
                         <td>@ddt.Code</td>
                         <td>@ddt.Product.SKU</td>
                         <td>@ddt.Number_Piece</td>
+                        <td>@ddt.Number_Piece_Now</td>
                         <td>&euro;@ddt.SubBatch.Batch.Price_Uni.ToString("0.00")</td>
                         <td>@ddt.DataIn.ToString("dd/MM/yy")</td>
                         <td>@ddt.DataOut.ToString("dd/MM/yy")</td>
@@ -52,13 +54,13 @@
                             }
                         </td>
                         <td class="text-center">
-                            @*<a style="text-decoration: none" target="_blank" href='@Url.Action("DownloadPdfOrder", "Order", new {orderId = order.OrderID})'>
-                                <i class="fas fa-file-download fa-lg pl-2" title="Scarica ordine in PDF" style="cursor: pointer; color: lightgray"></i>
+                            @if (ddt.Status == OrderStatusConstants.STATUS_ARRIVED)
+                            {
+                                <i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer; color: #6d767e;" id="@ddt.Ddt_In_ID" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDataArticleId('#confirm-del-modal', @ddt.Ddt_In_ID)"></i>
+                            }
+                            <a style="text-decoration: none" asp-action="EditOrder" asp-controller="Order" asp-route-id="@ddt.Ddt_In_ID">
+                                <i class="fas fa-pen fa-lg pl-2" style="cursor: pointer; color: #6d767e;" title="Modifica"></i>
                             </a>
-                            <a style="text-decoration: none" href='@Url.Action("UpdateOrder", "Order", new {Id = order.OrderID})'>
-                                <i class="fas fa-pen fa-lg pl-2" title="Modifica" style="cursor: pointer; color: lightgray"></i>
-                            </a>*@
-                            <i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer; color: #6d767e;" id="@ddt.Ddt_In_ID" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDataArticleId('#confirm-del-modal', @ddt.Ddt_In_ID)"></i>                        
                         </td>
                     </tr>
                 }
@@ -147,10 +149,11 @@
                 { "searchable": true, "orderable": true, "targets": 2 },
                 { "searchable": false, "orderable": false, "targets": 3 },
                 { "searchable": false, "orderable": false, "targets": 4 },
-                { "searchable": false, "orderable": true, "targets": 5 },
+                { "searchable": false, "orderable": false, "targets": 5 },
                 { "searchable": false, "orderable": true, "targets": 6 },
-                { "searchable": false, "orderable": false, "targets": 7 },
+                { "searchable": false, "orderable": true, "targets": 7 },
                 { "searchable": false, "orderable": false, "targets": 8 },
+                { "searchable": false, "orderable": false, "targets": 9 },
               ]
         });
 

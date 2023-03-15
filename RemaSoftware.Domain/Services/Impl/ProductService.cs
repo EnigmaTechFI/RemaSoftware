@@ -17,18 +17,9 @@ namespace RemaSoftware.Domain.Services.Impl
 
         public Product AddProduct(Product product)
         {
-            try
-            {
-                var newProduct = _dbContext.Add(product);
-                _dbContext.SaveChanges();
-
-                return newProduct.Entity;
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, $"Errore durante l'aggiunta del prodotto: {product.ToString()}");
-            }
-            return null;
+            _dbContext.Add(product);
+            _dbContext.SaveChanges();
+            return product;
         }
 
         public List<Product> GetAllProducts()

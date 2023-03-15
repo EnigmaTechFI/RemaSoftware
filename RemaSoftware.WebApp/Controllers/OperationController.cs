@@ -36,6 +36,31 @@ namespace RemaSoftware.WebApp.Controllers
             var vm = new AddOperationViewModel();
             return View(vm);
         }
+        
+        [HttpGet]
+        public IActionResult EditOperation(int id)
+        {
+            var vm = new EditOperationViewModel()
+            {
+                Operation = _operationService.GetOperationById(id)
+            };
+            return View(vm);
+        }
+        
+        [HttpPost]
+        public IActionResult EditOperation(EditOperationViewModel model)
+        {
+            try
+            {
+                _operationService.UpdateOperation(model.Operation);
+                return RedirectToAction("OperationList");
+            }
+            catch (Exception e)
+            {
+                _notyfToastService.Error("Errore durante la modifica dell'operazione.");
+                return View(model);
+            }
+        }
 
         [HttpPost]
         public IActionResult AddOperation(AddOperationViewModel model)

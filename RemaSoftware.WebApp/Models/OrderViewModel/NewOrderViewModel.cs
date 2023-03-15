@@ -11,6 +11,7 @@ namespace RemaSoftware.WebApp.Models.OrderViewModel
         public List<SelectListItem> Operations { get; set; }
         public List<string> OperationsSelected { get; set; }
         public decimal? uni_price { get; set; }
+        public List<Product> Products { get; set; }
 
         public NewOrderViewModel()
         {

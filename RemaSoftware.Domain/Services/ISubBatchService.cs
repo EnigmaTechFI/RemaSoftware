@@ -11,4 +11,6 @@ public interface ISubBatchService
     public void CreateSubBatch(SubBatch entity);
     public List<SubBatch> GetSubBatchesStatus(string status);
     public SubBatch GetSubBatchById(int id);
+    public List<OperationTimeline> GetOperationTimelinesByStatus(string status);
+    public List<OperationTimeline> GetSubBatchAtQualityControl();
 }

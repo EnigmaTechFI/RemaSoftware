@@ -10584,8 +10584,8 @@ dymo.label.framework.Label.prototype._setQRCodeObjectText = function(e, o) {
         
         dymo.xml.setElementText(r, o);
         
-        var t = dymo.xml.getElement(e, "TextDataHolder")
-            , r = dymo.xml.getElement(t, "Value");
+        var t = dymo.xml.getElement(e, "WebAddressDataHolder")
+            , r = dymo.xml.getElement(t, "DataString");
         
         dymo.xml.setElementText(r, o);
     }

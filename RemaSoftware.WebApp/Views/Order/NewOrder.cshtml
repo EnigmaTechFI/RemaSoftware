@@ -14,7 +14,22 @@
     </div>
     <div class="card-body">
         <form method="post">
-            @Html.HiddenFor(model => model.Ddt_In.ProductID)
+            @if(Model.Products.Count != 0)
+            {
+                <div class="form-group">
+                    <label for="formGroupExampleInput">Seleziona prodotto</label>
+                    <select asp-for="Ddt_In.ProductID" class="form-control">
+                        @foreach (var item in Model.Products)
+                        {
+                            <option value="@item.ProductID">@item.SKU - @item.Name</option>
+                        }
+                    </select>
+                </div>
+            }
+            else
+            {
+                @Html.HiddenFor(model => model.Ddt_In.ProductID)
+            }
             <div class="form-group">
                 <label for="formGroupExampleInput">Codice DDT</label>
                 <input asp-for="Ddt_In.Code" type="text" class="form-control" id="DDT_cod" placeholder="Codice DDT">

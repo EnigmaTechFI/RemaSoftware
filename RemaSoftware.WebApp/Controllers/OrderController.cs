@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using AspNetCoreHero.ToastNotification.Abstractions;
@@ -11,6 +12,7 @@ using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
 using RemaSoftware.UtilityServices.Interface;
+using RemaSoftware.WebApp.DTOs;
 using RemaSoftware.WebApp.Helper;
 using RemaSoftware.WebApp.Models.OrderViewModel;
 using RemaSoftware.WebApp.Models.PDFViewModel;
@@ -30,6 +32,7 @@ namespace RemaSoftware.WebApp.Controllers
         private readonly IConfiguration _configuration;
         private readonly OrderHelper _orderHelper;
         private readonly OrderValidation _orderValidation;
+        private readonly IProductService _productService;
         private readonly string _basePathForImages;
 
 
@@ -37,7 +40,7 @@ namespace RemaSoftware.WebApp.Controllers
 
         public OrderController(IOrderService orderService, IClientService clientService, IOperationService operationService,
             IImageService imageService, IAPIFatturaInCloudService apiFatturaInCloudService,
-            INotyfService notyfService, IConfiguration configuration, OrderHelper orderHelper, OrderValidation orderValidation)
+            INotyfService notyfService, IConfiguration configuration, OrderHelper orderHelper, OrderValidation orderValidation, IProductService productService)
         {
             _orderService = orderService;
             _clientService = clientService;
@@ -50,6 +53,48 @@ namespace RemaSoftware.WebApp.Controllers
             _basePathForImages =
                 (Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName + _configuration["ImagePath"]).Replace("/", "\\");
             _orderValidation = orderValidation;
+            _productService = productService;
+        }
+
+        [HttpPost]
+        public JsonResult EndOrder([FromBody] SubBatchToEndDto dto)
+        {
+            try
+            {
+                return new JsonResult(new { Result = true, Data = _orderHelper.EndOrder(dto), ToastMessage="Ordine concluso correttamente."});
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(new { Result = false, Data = 0, ToastMessage=e.Message});
+            }
+        }
+
+        [HttpPost]
+        public IActionResult SubBatchAtControl(QualityControlViewModel model)
+        {
+            try
+            {
+                _orderHelper.RegisterBatchAtCOQ(model.subBatchId);
+                return RedirectToAction("QualityControl");
+            }
+            catch (Exception e)
+            {
+                _notyfService.Error("Errore durante la registrazione del sotto lotto.");
+                return RedirectToAction("QualityControl");
+            }
+            
+        }
+        
+        [HttpGet]
+        public IActionResult QualityControl()
+        {
+            return View(_orderHelper.GetQualityControlViewModel());
+        }
+
+        [HttpGet]
+        public IActionResult SubBatchMonitoring(int id)
+        {
+            return View(_orderHelper.GetSubBatchMonitoring(id));
         }
 
         [HttpGet]
@@ -94,11 +139,26 @@ namespace RemaSoftware.WebApp.Controllers
             return View("../Pdf/SingleOrderSummary", vm);
         }
         
-        /*VERSIONE 2.0*/
+        [HttpGet]
+        public IActionResult EditOrder(int id)
+        {
+            var vm = new NewOrderViewModel
+            {
+                Clients = _clientService.GetAllClients(),
+                Operations = _operationService.GetAllOperations()?.Select(s=>new SelectListItem
+                {
+                    Text = s.Name,
+                    Value = $"{s.OperationID}-{s.Name}"
+                }).ToList(),
+                Ddt_In = _orderHelper.GetDdtInById(id)
+            };
+            return View(vm);
+        }
 
         [HttpGet]
         public IActionResult NewOrder(int productId)
         {
+            var products = productId == 0 ? _productService.GetAllProducts() : new List<Product>();
             var vm = new NewOrderViewModel
             {
                 Clients = _clientService.GetAllClients(),
@@ -110,7 +170,8 @@ namespace RemaSoftware.WebApp.Controllers
                 Ddt_In = new Ddt_In()
                 {
                     ProductID = productId,
-                }
+                },
+                Products = products
             };
             return View(vm);
         }
@@ -154,6 +215,49 @@ namespace RemaSoftware.WebApp.Controllers
             {
                 SubBatches = _orderHelper.GetSubBatchesStatus(OrderStatusConstants.STATUS_ARRIVED)
             });
+        }
+        
+        [HttpGet]
+        public IActionResult EmitDDT(int id)
+        {
+            try
+            {
+                return RedirectToAction("BatchInDelivery", new {pdfUrl = _orderHelper.EmitDDT(id)}); 
+            }
+            catch (Exception e)
+            {
+                return RedirectToAction("BatchInDelivery");
+            }
+            
+        }
+
+        [HttpGet]
+        public IActionResult DDTEmitted()
+        {
+            return View(_orderHelper.GetDDTEmittedViewModel());
+        }
+        
+        [HttpGet]
+        public IActionResult BatchInDelivery(string pdfUrl = "empty")
+        {
+            return View(new BatchInDeliveryViewModel()
+            {
+                pdfUrl = pdfUrl,
+                DdtOuts = _orderHelper.GetDdtsInDelivery()
+            });
+        }
+        
+        [HttpGet]
+        public JsonResult DeleteDDT(int id)
+        {
+            try
+            {
+                return new JsonResult(new {Data = _orderHelper.DeleteDDT(id), Error = ""});
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(new {Data = "", Error = e.Message});
+            }
         }
 
         /*END VERSIONE 2.0*/

@@ -95,6 +95,7 @@ public class SubBatchService : ISubBatchService
         if (op != null)
         {
             op.Status = "C";
+            op.UseForStatics = true;
             op.EndDate = end;
             _dbContext.OperationTimelines.Update(op);
             _dbContext.SaveChanges();
@@ -142,5 +143,35 @@ public class SubBatchService : ISubBatchService
             .ThenInclude(s => s.Product)
             .ThenInclude(s => s.Client)
             .SingleOrDefault(s => s.SubBatchID == id);
+    }
+
+    public List<OperationTimeline> GetOperationTimelinesByStatus(string status)
+    {
+        return _dbContext.OperationTimelines
+            .Include(s => s.BatchOperation)
+            .ThenInclude(s => s.Operations)
+            .Include(s => s.SubBatch)
+            .ThenInclude(s => s.Batch)
+            .Include(s => s.SubBatch)
+            .ThenInclude(s => s.Ddts_In)
+            .ThenInclude(s => s.Product)
+            .ThenInclude(s => s.Client)
+            .Where(s => s.Status == status)
+            .ToList();
+    }
+
+    public List<OperationTimeline> GetSubBatchAtQualityControl()
+    {
+        return _dbContext.OperationTimelines
+            .Include(s => s.BatchOperation)
+            .ThenInclude(s => s.Operations)
+            .Include(s => s.SubBatch)
+            .ThenInclude(s => s.Batch)
+            .Include(s => s.SubBatch)
+            .ThenInclude(s => s.Ddts_In)
+            .ThenInclude(s => s.Product)
+            .ThenInclude(s => s.Client)
+            .Where(s => s.BatchOperation.Operations.Name == OtherConstants.COQ && s.Status == OperationTimelineConstant.STATUS_WORKING)
+            .ToList();
     }
 }

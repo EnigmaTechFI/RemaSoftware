@@ -19,5 +19,6 @@ namespace RemaSoftware.Domain.Models
         public DateTime EndDate { get; set; }
         [MaxLength(1)]
         public string Status { get; set; }
+        public bool UseForStatics { get; set; }
     }
 }

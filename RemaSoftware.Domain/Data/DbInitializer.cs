@@ -6,9 +6,19 @@ namespace RemaSoftware.Domain.Data
 {
     public static class DbInitializer
     {
-        public static void SeedUsersAndRoles(UserManager<MyUser> userManager, RoleManager<IdentityRole> roleManager)
+        public static void SeedUsersAndRoles(UserManager<MyUser> userManager, RoleManager<IdentityRole> roleManager, ApplicationDbContext _context)
         {
-            string[] roleNames = { Roles.Admin, Roles.Dipendente, Roles.Cliente, Roles.Machine };
+            var op =_context.Operations.SingleOrDefault(s => s.Name == OtherConstants.COQ);
+            if (op == null)
+            {
+                _context.Add(new Operation()
+                {
+                    Name = OtherConstants.COQ,
+                    Description = OtherConstants.COQ
+                });
+            }
+            _context.SaveChanges();
+            string[] roleNames = { Roles.Admin, Roles.Dipendente, Roles.Cliente, Roles.Machine, Roles.COQ};
             IdentityResult roleResult;
 
             foreach (var roleName in roleNames)

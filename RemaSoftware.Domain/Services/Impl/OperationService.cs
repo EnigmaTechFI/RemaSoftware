@@ -37,6 +37,18 @@ namespace RemaSoftware.Domain.Services.Impl
             _dbContext.SaveChanges();
         }
 
+        public Operation GetOperationById(int id)
+        {
+            return _dbContext.Operations.SingleOrDefault(s => s.OperationID == id);
+        }
+
+        public void UpdateOperation(Operation Operation)
+        {
+            _dbContext.Operations.Update(Operation);
+            _dbContext.SaveChanges();
+        }
+        
+
         public bool EditOrderOperations(int orderId, List<int> operationToAdd, List<int> operationToRemove)
         {
             foreach (var addOperId in operationToAdd)

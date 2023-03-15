@@ -6,6 +6,8 @@ using RemaSoftware.WebApp.Validation;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
+using RemaSoftware.Domain.Services.Impl;
 using RemaSoftware.UtilityServices.Interface;
 
 namespace RemaSoftware.WebApp.Helper
@@ -17,15 +19,12 @@ namespace RemaSoftware.WebApp.Helper
         private readonly IConfiguration _configuration;
         private readonly ClientHelper _clientHelper;
         private readonly ProductValidation _productValidation;
-        private readonly string _basePathForImages;
 
         public ProductHelper(IProductService productService, IImageService imageService, IConfiguration configuration, ClientHelper clientHelper, ProductValidation productValidation)
         {
             _productService = productService;
             _imageService = imageService;
             _configuration = configuration;
-            _basePathForImages =
-                (Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName + _configuration["ImagePath"]).Replace("/", "\\");
             _clientHelper = clientHelper;
             _productValidation = productValidation;
         }
@@ -35,28 +34,13 @@ namespace RemaSoftware.WebApp.Helper
             return _productService.GetProductById(productId);
         }
 
-        public string RetrieveProductPhoto(string path)
-        {
-            try
-            {
-                var photo = File.ReadAllBytes(_basePathForImages +  path);
-                var base64 = Convert.ToBase64String(photo);
-                return String.Format("data:image/gif;base64,{0}", base64);
-            }
-            catch(Exception ex)
-            {
-                return "";
-            }
-        }
-
-        public string UpdateProduct(UpdateProductViewModel model)
+        public async Task<string> UpdateProduct(UpdateProductViewModel model)
         {
             try
             {
                 if (!string.IsNullOrEmpty(model.Photo))
                 {
-                    var imageName = _imageService.SavingOrderImage(model.Photo, _basePathForImages);
-                    model.Product.Image_URL = imageName;
+                    model.Product.FileName = await _imageService.SavingOrderImage(model.Photo);
                 }
                 _productValidation.ValidateProduct(model.Product);
                 _productService.UpdateProduct(model.Product);
@@ -70,32 +54,24 @@ namespace RemaSoftware.WebApp.Helper
         
         public UpdateProductViewModel UpdateProduct(int productId)
         {
-            var product = this.GetProductById(productId);
+            var product = GetProductById(productId);
             return new UpdateProductViewModel()
             {
                 Product = product,
                 Clients = _clientHelper.GetAllClients(),
-                Photo = RetrieveProductPhoto(product.Image_URL)
+                BasePathImages = $"{_configuration["ApplicationUrl"]}{_configuration["ImagesEndpoint"]}order/",
             };
         }
 
-        public string AddProduct(NewProductViewModel model)
+        public async Task<string> AddProduct(NewProductViewModel model)
         {
-            try
+            if (!string.IsNullOrEmpty(model.Photo))
             {
-                if (!string.IsNullOrEmpty(model.Photo))
-                {
-                    var imageName = _imageService.SavingOrderImage(model.Photo, _basePathForImages);
-                    model.Product.Image_URL = imageName;
-                }
-                _productValidation.ValidateProduct(model.Product);
-                _productService.AddProduct(model.Product);
-                return "Success";
+                model.Product.FileName = await _imageService.SavingOrderImage(model.Photo);
             }
-            catch(Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            _productValidation.ValidateProduct(model.Product);
+            _productService.AddProduct(model.Product);
+            return "Success";
 
         }
 

@@ -13,7 +13,7 @@ public class AccountingHelperTest : IClassFixture<IntegrationTestFixture>, IDisp
     public AccountingHelperTest(IntegrationTestFixture fixture)
     {
         _fixture = fixture;
-        _sut = new AccountingHelper(new OrderService(_fixture.DbContext));
+        _sut = new AccountingHelper(new OrderService(_fixture.DbContext), null);
     }
 
     [Fact]

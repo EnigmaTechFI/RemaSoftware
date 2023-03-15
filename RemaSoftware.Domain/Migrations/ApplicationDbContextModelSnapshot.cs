@@ -263,15 +263,6 @@ namespace RemaSoftware.Domain.Migrations
                     b.Property<bool?>("ExtraPriceIsPending")
                         .HasColumnType("bit");
 
-                    b.Property<int>("NumberLostPiece")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NumberMissingPiece")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NumberWastePiece")
-                        .HasColumnType("int");
-
                     b.Property<int>("OperationID")
                         .HasColumnType("int");
 
@@ -363,20 +354,18 @@ namespace RemaSoftware.Domain.Migrations
                     b.Property<int>("Ddt_Out_ID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Ddt_In_ID1")
+                    b.Property<int>("ID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Ddt_Out_ID1")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("NumberPieces")
                         .HasColumnType("int");
 
-                    b.HasKey("Ddt_In_ID", "Ddt_Out_ID");
+                    b.HasKey("Ddt_In_ID", "Ddt_Out_ID", "ID");
 
-                    b.HasIndex("Ddt_In_ID1");
-
-                    b.HasIndex("Ddt_Out_ID1");
+                    b.HasIndex("Ddt_Out_ID");
 
                     b.ToTable("Ddt_Associations");
                 });
@@ -413,7 +402,19 @@ namespace RemaSoftware.Domain.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("NumberLostPiece")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumberMissingPiece")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumberWastePiece")
+                        .HasColumnType("int");
+
                     b.Property<int>("Number_Piece")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Number_Piece_Now")
                         .HasColumnType("int");
 
                     b.Property<int>("Priority")
@@ -446,6 +447,9 @@ namespace RemaSoftware.Domain.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Ddt_Out_ID"), 1L, 1);
 
+                    b.Property<int>("ClientID")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
@@ -456,7 +460,12 @@ namespace RemaSoftware.Domain.Migrations
                         .HasMaxLength(1)
                         .HasColumnType("nvarchar(1)");
 
+                    b.Property<string>("Url")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Ddt_Out_ID");
+
+                    b.HasIndex("ClientID");
 
                     b.ToTable("Ddts_Out");
                 });
@@ -508,6 +517,9 @@ namespace RemaSoftware.Domain.Migrations
 
                     b.Property<int>("SubBatchID")
                         .HasColumnType("int");
+
+                    b.Property<bool>("UseForStatics")
+                        .HasColumnType("bit");
 
                     b.HasKey("OperationTimelineID");
 
@@ -614,7 +626,7 @@ namespace RemaSoftware.Domain.Migrations
                     b.Property<int>("ClientID")
                         .HasColumnType("int");
 
-                    b.Property<string>("Image_URL")
+                    b.Property<string>("FileName")
                         .HasMaxLength(70)
                         .HasColumnType("nvarchar(70)");
 
@@ -807,11 +819,15 @@ namespace RemaSoftware.Domain.Migrations
                 {
                     b.HasOne("RemaSoftware.Domain.Models.Ddt_In", "Ddt_In")
                         .WithMany("Ddt_Associations")
-                        .HasForeignKey("Ddt_In_ID1");
+                        .HasForeignKey("Ddt_In_ID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.HasOne("RemaSoftware.Domain.Models.Ddt_Out", "Ddt_Out")
                         .WithMany("Ddt_Associations")
-                        .HasForeignKey("Ddt_Out_ID1");
+                        .HasForeignKey("Ddt_Out_ID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("Ddt_In");
 
@@ -835,6 +851,17 @@ namespace RemaSoftware.Domain.Migrations
                     b.Navigation("Product");
 
                     b.Navigation("SubBatch");
+                });
+
+            modelBuilder.Entity("RemaSoftware.Domain.Models.Ddt_Out", b =>
+                {
+                    b.HasOne("RemaSoftware.Domain.Models.Client", "Client")
+                        .WithMany("DdtOuts")
+                        .HasForeignKey("ClientID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
                 });
 
             modelBuilder.Entity("RemaSoftware.Domain.Models.OperationTimeline", b =>
@@ -941,6 +968,8 @@ namespace RemaSoftware.Domain.Migrations
 
             modelBuilder.Entity("RemaSoftware.Domain.Models.Client", b =>
                 {
+                    b.Navigation("DdtOuts");
+
                     b.Navigation("Orders");
 
                     b.Navigation("UserClients");

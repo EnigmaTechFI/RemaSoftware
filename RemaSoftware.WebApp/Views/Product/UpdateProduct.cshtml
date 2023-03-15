@@ -11,7 +11,7 @@
         <form method="post" id="form-new-order" enctype="multipart/form-data">
             @Html.HiddenFor(model => model.Product.ProductID)
             @Html.HiddenFor(model => model.Photo, new { @id = "Photo_base64" })
-            @Html.HiddenFor(model => model.Product.Image_URL, new { @id = "imageUrl" })
+            @Html.HiddenFor(model => model.Product.FileName, new { @id = "imageUrl" })
             <div class="form-group">
                 <label for="formGroupExampleInput">Codice</label>
                 <input asp-for="Product.SKU" type="text" class="form-control" id="DDT_cod" placeholder="Codice prodotto">
@@ -31,7 +31,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">Immagine Fotografata</div>
                         <div class="panel-body">
-                            <div id="order-img-div"><img src="@Model.Photo" width="376" height="282" /></div>
+                            <div id="order-img-div"><img src="@Model.BasePathImages@Model.Product.FileName" width="376" height="282" /></div>
                         </div>
                         <br />
                         <br />

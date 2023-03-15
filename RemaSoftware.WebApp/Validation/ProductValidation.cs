@@ -10,7 +10,7 @@ namespace RemaSoftware.WebApp.Validation
 
             if (string.IsNullOrEmpty(product.SKU))
                 throw new Exception("Inserire codice prodotto.");
-            if (string.IsNullOrEmpty(product.Image_URL))
+            if (string.IsNullOrEmpty(product.FileName))
                 throw new Exception("Acquisire foto prodotto.");
             if (product.ClientID < 1 || (product.ClientID == null))
                 throw new Exception("Selezionare cliente.");
