@@ -1,19 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
+using RemaSoftware.WebApp.DTOs;
+using RemaSoftware.WebApp.Hub;
 
 namespace RemaSoftware.WebApp.Helper;
 
 public class SubBatchHelper
 {
     private readonly ISubBatchService _subBatchService;
+    private readonly ProductionHub _productionHub;
 
-    public SubBatchHelper(ISubBatchService subBatchService)
+    public SubBatchHelper(ISubBatchService subBatchService, ProductionHub productionHub)
     {
         _subBatchService = subBatchService;
+        _productionHub = productionHub;
     }
 
     public void ExitFormStock(int id)
@@ -30,12 +35,27 @@ public class SubBatchHelper
 
     public SubBatch GetSubBatchDetail(int id)
     {
-        return _subBatchService.GetSubBatchById(id);
+        var result = _subBatchService.GetSubBatchById(id);
+        return result;
     }
 
     public async Task<List<int>> StartOperationOnSubBatch(int id, int machineId, int batchOperationId, int numberOperators)
     {
-        return await _subBatchService.UpdateSubBatchStatusAndOperationTimelineStart(id, machineId, batchOperationId, numberOperators, DateTime.Now);
+        var result = await _subBatchService.UpdateSubBatchStatusAndOperationTimelineStart(id, machineId, batchOperationId, numberOperators, DateTime.Now);
+        foreach (var item in result)
+        {
+            var paDtos = new ProductionAnalysisDto()
+            {
+                SubBatchId = item.SubBatchID,
+                Seconds = (int)(DateTime.Now - item.StartDate).TotalSeconds,
+                OperationTimeLineId = item.OperationTimelineID,
+                OperationName = item.BatchOperation.Operations.Name,
+                ClientName = item.SubBatch.Ddts_In[0].Product.Client.Name,
+                MachineId = item.MachineId
+            };
+            _productionHub.Send(paDtos);
+        }
+        return result.Select(s => s.OperationTimelineID).ToList();
     }
 
     public string EndOperationOnSubBatch(int operationTimelineId)

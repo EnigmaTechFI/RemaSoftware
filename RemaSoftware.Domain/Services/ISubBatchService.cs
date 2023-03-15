@@ -6,7 +6,7 @@ public interface ISubBatchService
 {
     public void UpdateSubBatch(SubBatch entity);
     public void UpdateSubBatchStatus(int Id, string status);
-    public Task<List<int>> UpdateSubBatchStatusAndOperationTimelineStart(int Id, int machineId, int batchOperationId, int numbersOperator, DateTime start);
+    public Task<List<OperationTimeline>> UpdateSubBatchStatusAndOperationTimelineStart(int Id, int machineId, int batchOperationId, int numbersOperator, DateTime start);
     public string UpdateSubBatchStatusAndOperationTimelineEnd(int operationTimelineId, DateTime end);
     public void CreateSubBatch(SubBatch entity);
     public List<SubBatch> GetSubBatchesStatus(string status);

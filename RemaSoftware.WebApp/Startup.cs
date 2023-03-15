@@ -17,6 +17,7 @@ using RemaSoftware.Domain.Data;
 using RemaSoftware.UtilityServices.Implementation;
 using RemaSoftware.UtilityServices.Interface;
 using RemaSoftware.WebApp.Helper;
+using RemaSoftware.WebApp.Hub;
 using RemaSoftware.WebApp.Validation;
 
 namespace RemaSoftware.WebApp
@@ -103,7 +104,8 @@ namespace RemaSoftware.WebApp
             services.AddSingleton(x=> 
                 new OrderImageBlobService(new BlobServiceClient(azureBlobCs), 
                     Configuration.GetValue<string>("AzureBlobStorage:OrderContainerName")));
-
+            services.AddSignalR();
+            services.AddTransient<ProductionHub>();
             services.AddTransient<IImageService, ImageService>();
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<IOrderService, OrderService>();
@@ -159,6 +161,7 @@ namespace RemaSoftware.WebApp
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}");
+                endpoints.MapHub<ProductionHub>("/productionhub");
             });
             DbInitializer.SeedUsersAndRoles(userManager, roleManager, context);
         }

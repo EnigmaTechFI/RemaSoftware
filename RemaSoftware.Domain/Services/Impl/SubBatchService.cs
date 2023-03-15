@@ -52,12 +52,17 @@ public class SubBatchService : ISubBatchService
         }
     }
 
-    public async Task<List<int>> UpdateSubBatchStatusAndOperationTimelineStart(int Id, int machineId, int batchOperationId, int numbersOperator, DateTime start)
+    public async Task<List<OperationTimeline>> UpdateSubBatchStatusAndOperationTimelineStart(int Id, int machineId, int batchOperationId, int numbersOperator, DateTime start)
     {
         try
         {
             var sb = _dbContext.SubBatches
                 .Include(s =>s.Ddts_In)
+                .ThenInclude(s => s.Product)
+                .ThenInclude(s => s.Client)
+                .Include(s => s.Batch)
+                .ThenInclude(s => s.BatchOperations)
+                .ThenInclude(s => s.Operations)
                 .SingleOrDefault(s => s.SubBatchID == Id);
             sb.Status = OrderStatusConstants.STATUS_WORKING;
             for (int i = 0; i < numbersOperator; i++)
@@ -77,7 +82,7 @@ public class SubBatchService : ISubBatchService
 
             _dbContext.Update(sb);
             _dbContext.SaveChanges();
-            return sb.OperationTimelines.Select(s => s.OperationTimelineID).ToList();
+            return sb.OperationTimelines.ToList();
         }
         catch (Exception e)
         {

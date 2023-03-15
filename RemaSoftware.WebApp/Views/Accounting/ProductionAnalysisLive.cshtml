@@ -5,6 +5,7 @@
 
 <link href="https://app.smplrspace.com/lib/smplr.css" rel="stylesheet" />
 <script>
+let test = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 let counter=0;
 function counterTest(){
   setInterval(() => {
@@ -39,11 +40,11 @@ function getTime(seconds, id){
             css = "danger";
           }
         }
-          <div class="card border-left-@css shadow h-100 py-2">
+          <div id="bordo-machine-@i" class="card border-left-@css shadow h-100 py-2">
           <div class="card-body">
             <div class="row no-gutters align-items-center">
-              <div class="col mr-2">
-                <h5 class="text-center font-weight-bold text-@css text-uppercase mb-1">
+              <div id="name-machine-@i" class="col mr-2">
+                <h5 id="title-machine-@i" class="text-center font-weight-bold text-@css text-uppercase mb-1">
                   Macchina @i</h5>
                 <hr/>
                 @if (op.Count != 0)
@@ -53,8 +54,11 @@ function getTime(seconds, id){
                   foreach (var item in op)
                   {
                     index++;
+                    <script>
+                      test[@i] = @index
+                    </script>
                     <div>
-                      <span><strong>OPERATORE @index :</strong></span><br/>
+                      <span><strong>OPERATORE @index:</strong></span><br/>
                       <span><i>- Lotto: </i>@item.SubBatchID</span><br/>
                       <span><i>- Cliente: </i>@item.SubBatch.Ddts_In[0].Product.Client.Name</span><br/>
                       <span><i>- Operazione: </i>@item.BatchOperation.Operations.Name</span><br/>
@@ -69,12 +73,12 @@ function getTime(seconds, id){
                 }
                 else
                 {
-                  <div class="h5 mb-0 font-weight-bold text-gray-800">Nessuna lavorazione in corso</div>
+                  <div id="noop-machine-@i" class="h5 mb-0 font-weight-bold text-gray-800">Nessuna lavorazione in corso</div>
                 }
 
               </div>
               <div class="col-auto">
-                <i class="fas fa-industry fa-2x text-@css"></i>
+                <i id="icon-machine-@i" class="fas fa-industry fa-2x text-@css"></i>
               </div>
             </div>
           </div>
@@ -89,8 +93,61 @@ function getTime(seconds, id){
 </div>
 
 @section Scripts{
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+      // connessione all'hub signalr.
+      var connection = new signalR.HubConnectionBuilder()
+                          .withUrl('/productionhub')
+                          .build();
+      
+      // gli dico cosa fare quando arriva un messaggio
+      connection.on('broadcastMessage', function (operation) {
+          var nop = document.getElementById("noop-machine-"+ operation.machineId)
+          if(nop){
+            nop.remove()
+          }
+          document.getElementById("title-machine-"+ operation.machineId).classList.remove("text-danger")
+          document.getElementById("title-machine-"+ operation.machineId).classList.add("text-success")
+          document.getElementById("bordo-machine-"+ operation.machineId).classList.remove("border-left-danger")
+          document.getElementById("bordo-machine-"+ operation.machineId).classList.add("border-left-success")
+          document.getElementById("icon-machine-"+ operation.machineId).classList.remove("text-danger")
+          document.getElementById("icon-machine-"+ operation.machineId).classList.add("text-success")
+          var div = document.getElementById("name-machine-" + operation.machineId)
+          var div2 = document.createElement('div');
+          var span = document.createElement('span')
+          var span1 = document.createElement('span')
+          var span2 = document.createElement('span')
+          var span3 = document.createElement('span')
+          var span4 = document.createElement('span')
+          span4.id = "time-" + operation.operationTimeLineId
+          getTime(operation.seconds, operation.operationTimeLineId)
+          var hr = document.createElement('hr');
+          test[operation.machineId]++;
+          span.innerHTML = "<strong>OPERATORE "+ test[operation.machineId] +":</strong></br>";
+          span1.innerHTML = "- Lotto: " + operation.subBatchId + "</br>";
+          span2.innerHTML = "- Cliente: " + operation.clientName + "</br>";
+          span3.innerHTML = "- Operazione: " + operation.operationName + "</br>";
+          span4.innerHTML = "- Tempo: </br>";
+          div2.appendChild(span)
+          div2.appendChild(span1)
+          div2.appendChild(span2)
+          div2.appendChild(span3)
+          div2.appendChild(span4)
+          div2.appendChild(hr)
+          div.appendChild(div2)
+      });
+      
+      // starto la connessione con il server
+      connection.start()
+          .then(function () {
+              console.log('connection started');
+      })
+      .catch(error => {
+          console.error(error.message);
+      });
+  });
+  </script>
   <script src="../js/demo/smplr.js"></script>
-
   <script>
     const space = new smplr.Space({
       spaceId: "f76edfb4-4d73-4a2d-9af1-560eccc371f7",

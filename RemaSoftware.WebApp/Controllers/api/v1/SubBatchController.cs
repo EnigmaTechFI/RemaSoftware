@@ -51,6 +51,20 @@ public class SubBatchController : ControllerBase
         }
     }
     
+    //https://localhost:44328/api/v1/SubBatch/TestWS/1
+    [HttpGet("{id}")]
+    public JsonResult TestWS(int id)
+    {
+        try
+        {
+            return new JsonResult(new {Data = _batchHelper.GetSubBatchDetail(id), Error = ""});
+        }
+        catch (Exception e)
+        {
+            return new JsonResult(new {Data = "", Error = e.Message});
+        }
+    }
+    
     //https://localhost:44328/api/v1/SubBatch/Start?id=1&machineId=1&batchOperationId=1&numberOperators
     [HttpGet]
     public async Task<JsonResult> Start(int id, int machineId, int batchOperationId, int numberOperators)
