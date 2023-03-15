@@ -19,14 +19,16 @@ namespace RemaSoftware.WebApp.Helper
         private readonly IConfiguration _configuration;
         private readonly ClientHelper _clientHelper;
         private readonly ProductValidation _productValidation;
+        private readonly SubBatchHelper _subBatchHelper;
 
-        public ProductHelper(IProductService productService, IImageService imageService, IConfiguration configuration, ClientHelper clientHelper, ProductValidation productValidation)
+        public ProductHelper(IProductService productService, IImageService imageService, IConfiguration configuration, ClientHelper clientHelper, ProductValidation productValidation, SubBatchHelper subBatchHelper)
         {
             _productService = productService;
             _imageService = imageService;
             _configuration = configuration;
             _clientHelper = clientHelper;
             _productValidation = productValidation;
+            _subBatchHelper = subBatchHelper;
         }
 
         public Product GetProductById(int productId)
@@ -100,6 +102,29 @@ namespace RemaSoftware.WebApp.Helper
             {
                 return e.Message;
             }
+        }
+
+        public ProductListViewModel GetProductListViewModel(int? subBatchId)
+        {
+            var sub = new SubBatch();
+            var labelToPrint = new LabelToPrint()
+            {
+                Id = -1,
+                SKU = "NONE",
+                ClientName = "NONE"
+            };
+            if (subBatchId != null)
+            {
+                sub = _subBatchHelper.GetSubBatchDetail(subBatchId.Value);
+                labelToPrint.Id = subBatchId.Value;
+                labelToPrint.ClientName = sub.Ddts_In[0].Product.Client.Name;
+                labelToPrint.SKU = sub.Ddts_In[0].Product.SKU;
+            }
+            return new ProductListViewModel
+            {
+                LabelToPrint = labelToPrint,
+                Products = GetAllProducts()
+            };
         }
     }
 }

@@ -11,6 +11,7 @@ function counterTest(){
     counter++
   }, 1000)    
 }
+counterTest()
 function getTime(seconds, id){
   setInterval(() => {
     var sec = parseInt(seconds) + counter;
@@ -47,9 +48,10 @@ function getTime(seconds, id){
                 <hr/>
                 @if (op.Count != 0)
                 {
+                  var index = 0;
+
                   foreach (var item in op)
                   {
-                    var index = 0;
                     index++;
                     <div>
                       <span><strong>OPERATORE @index :</strong></span><br/>
@@ -58,9 +60,9 @@ function getTime(seconds, id){
                       <span><i>- Operazione: </i>@item.BatchOperation.Operations.Name</span><br/>
                       @{ var time = (int)(DateTime.Now - item.StartDate).TotalSeconds; }
                       <span id="time-@item.OperationTimelineID"></span><br/>
+                      <hr/>
                       <script>
                         getTime('@time', '@item.OperationTimelineID')
-                        counterTest()
                       </script>
                     </div>
                   }

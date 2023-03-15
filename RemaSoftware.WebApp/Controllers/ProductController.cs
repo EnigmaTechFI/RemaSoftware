@@ -15,26 +15,18 @@ namespace RemaSoftware.WebApp.Controllers
         private readonly ClientHelper _clientHelper;
         private readonly ProductHelper _productHelper;
         private readonly INotyfService _notyfToastService;
-        private readonly SubBatchHelper _subBatchHelper;
 
-        public ProductController(ClientHelper clientHelper, ProductHelper productHelper, INotyfService notyfToastService, SubBatchHelper subBatchHelper)
+        public ProductController(ClientHelper clientHelper, ProductHelper productHelper, INotyfService notyfToastService)
         {
             _clientHelper = clientHelper;
             _productHelper = productHelper;
             _notyfToastService = notyfToastService;
-            _subBatchHelper = subBatchHelper;
         }
 
         [HttpGet]
         public IActionResult ProductList(int? subBatchId)
         {
-            var vm = new ProductListViewModel
-            {
-                SubBatch = subBatchId != null ? _subBatchHelper.GetSubBatchDetail(subBatchId.Value) : new SubBatch(){SubBatchID = 0},
-                Products = _productHelper.GetAllProducts()
-            };
-
-            return View(vm);
+            return View(_productHelper.GetProductListViewModel(subBatchId));
         }
 
         [HttpGet]
