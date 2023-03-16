@@ -46,6 +46,10 @@ namespace RemaSoftware.Domain.Services.Impl
                 throw new Exception("Errore SQL durante l'aggiornamento.");
             }
         }
-        
+
+        public int GetClientIdByUserId(string id)
+        {
+            return _dbContext.UserClients.SingleOrDefault(s => s.MyUserID == id).ClientID;
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.AspNetCore.Identity;
+using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Data;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.UtilityServices.Interface;
@@ -40,9 +41,7 @@ namespace RemaSoftware.WebApp.Helper
 
                     if (result.Succeeded)
                     {
-                        var role = model.Role;
-
-                        _userManager.AddToRolesAsync(newUser, new[] { role });
+                        _userManager.AddToRolesAsync(newUser, new[] { Roles.Cliente });
 
                         try
                         {

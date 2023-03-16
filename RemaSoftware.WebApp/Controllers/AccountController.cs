@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.EntityFrameworkCore;
 using NLog;
+using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.WebApp.Models.LoginViewModel;
 using RemaSoftware.UtilityServices.Interface;
@@ -56,7 +58,13 @@ namespace RemaSoftware.WebApp.Controllers
                 var result = await _signInManager.PasswordSignInAsync(user, model.Input.Password, model.Input.RememberMe, lockoutOnFailure: false);
 
                 if (result.Succeeded)
+                {
+                    
+                    if((await _userManager.GetRolesAsync(user)).Contains(Roles.Cliente))
+                        return RedirectToAction("Index", "Guest"); 
                     return RedirectToAction("Index", "Home");
+                }
+                    
             }
 
             return View(model);

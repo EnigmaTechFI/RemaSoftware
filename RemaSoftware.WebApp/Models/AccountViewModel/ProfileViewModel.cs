@@ -6,7 +6,6 @@ namespace RemaSoftware.WebApp.Models.AccountingViewModel
     {
         public int ClientId { get; set; }
         public MyUser NewUser { get; set; }
-        public string Role { get; set; }
 
     }
 }

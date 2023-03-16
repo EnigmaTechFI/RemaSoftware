@@ -325,6 +325,18 @@ namespace RemaSoftware.Domain.Services.Impl
                 .ToList();
         }
 
+        public List<Ddt_In> GetDdtInWorkingByClientId(int Id)
+        {
+            return _dbContext.Ddts_In
+                .Include(d => d.Product)
+                .ThenInclude(s => s.Client)
+                .Include(b => b.SubBatch)
+                .ThenInclude(s => s.Batch)
+                .ThenInclude(b => b.BatchOperations)
+                .Where(s => s.Status == OrderStatusConstants.STATUS_WORKING && s.Product.ClientID == Id)
+                .ToList();
+        }
+
         public List<Ddt_In> GetDdtInEnded()
         {
             return _dbContext.Ddts_In
@@ -334,6 +346,18 @@ namespace RemaSoftware.Domain.Services.Impl
                 .ThenInclude(s => s.Batch)
                 .ThenInclude(b => b.BatchOperations)
                 .Where(s => s.Status == OrderStatusConstants.STATUS_COMPLETED)
+                .ToList();
+        }
+
+        public List<Ddt_In> GetDdtInStockByClientId(int Id)
+        {
+            return _dbContext.Ddts_In
+                .Include(d => d.Product)
+                .ThenInclude(s => s.Client)
+                .Include(b => b.SubBatch)
+                .ThenInclude(s => s.Batch)
+                .ThenInclude(b => b.BatchOperations)
+                .Where(s => s.Status == OrderStatusConstants.STATUS_ARRIVED && s.Product.ClientID == Id)
                 .ToList();
         }
 

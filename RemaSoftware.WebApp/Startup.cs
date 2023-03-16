@@ -125,6 +125,7 @@ namespace RemaSoftware.WebApp
             services.AddTransient<StockHelper>();
             services.AddTransient<ClientHelper>();
             services.AddTransient<AccountHelper>();
+            services.AddTransient<GuestHelper>();
             services.AddTransient<OrderValidation>();
             services.AddTransient<ProductValidation>();
             
