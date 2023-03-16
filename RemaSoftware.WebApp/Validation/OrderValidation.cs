@@ -9,6 +9,8 @@ namespace RemaSoftware.WebApp.Validation
         {
             model.Ddt_In.Status = "A";
             model.Ddt_In.DataIn = DateTime.Now;
+            model.Ddt_In.Number_Piece_Now = model.Ddt_In.Number_Piece;
+            model.uni_price = model.Ddt_In.IsReso ? 0 : model.uni_price; 
 
             if (string.IsNullOrEmpty(model.Ddt_In.Code))
                 return "Inserire Codice DDT.";

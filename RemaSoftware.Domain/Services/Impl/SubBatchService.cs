@@ -97,11 +97,58 @@ public class SubBatchService : ISubBatchService
             .Include(s =>s.SubBatch)
             .ThenInclude(s => s.Ddts_In)
             .SingleOrDefault(s => s.OperationTimelineID == operationTimelineId);
+        if (op.Status == OperationTimelineConstant.STATUS_COMPLETED)
+            throw new Exception("Lavorazione già conclusa.");
         if (op != null)
         {
-            op.Status = "C";
-            op.UseForStatics = true;
-            op.EndDate = end;
+            var controlTime = end.DayOfYear - op.StartDate.DayOfYear;
+            if ( controlTime> 0)
+            {
+                op.Status = "C";
+                op.EndDate = new DateTime(op.StartDate.Year, op.StartDate.Month, op.StartDate.Day, 17, 0, 0);
+                op.UseForStatics = true;
+                var dateRif = op.StartDate;
+                for (int i = 1; i <= controlTime; i++)
+                {
+                    dateRif = dateRif.AddDays(1);
+                    if (dateRif.DayOfWeek != DayOfWeek.Sunday && dateRif.DayOfWeek != DayOfWeek.Saturday)
+                    {
+                        _dbContext.OperationTimelines.Add(new OperationTimeline()
+                        {
+                            BatchOperationID = op.BatchOperationID,
+                            EndDate = i == controlTime
+                                ? end
+                                : new DateTime(dateRif.Year, dateRif.Month, dateRif.Day, 17, 30, 0),
+                            StartDate = new DateTime(dateRif.Year, dateRif.Month, dateRif.Day, 7, 30, 0),
+                            Status = "C",
+                            UseForStatics = true,
+                            MachineId = op.MachineId,
+                            SubBatchID = op.SubBatchID
+                        });
+                    }
+                    else if (dateRif.DayOfWeek == DayOfWeek.Saturday)
+                    {
+                        _dbContext.OperationTimelines.Add(new OperationTimeline()
+                        {
+                            BatchOperationID = op.BatchOperationID,
+                            EndDate = i == controlTime
+                                ? end
+                                : new DateTime(dateRif.Year, dateRif.Month, dateRif.Day, 12, 0, 0),
+                            StartDate = new DateTime(dateRif.Year, dateRif.Month, dateRif.Day, 8, 0, 0),
+                            Status = "C",
+                            UseForStatics = true,
+                            MachineId = op.MachineId,
+                            SubBatchID = op.SubBatchID
+                        });
+                    }
+                }
+            }
+            else
+            {
+                op.Status = "C";
+                op.UseForStatics = true;
+                op.EndDate = end;    
+            }
             _dbContext.OperationTimelines.Update(op);
             _dbContext.SaveChanges();
             return op;

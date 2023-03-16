@@ -19,22 +19,6 @@ public class SubBatchController : ControllerBase
         _batchHelper = batchHelper;
     }
 
-    //https://localhost:44328/api/v1/SubBatch/ExitFromStock/1
-    [HttpGet("{id}")]
-    public IActionResult ExitFromStock(int id)
-    {
-        try
-        {
-            _batchHelper.ExitFormStock(id);
-            return Ok();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
-    }
-    
     //https://localhost:44328/api/v1/SubBatch/Detail/1
     [HttpGet("{id}")]
     public JsonResult Detail(int id)
@@ -51,19 +35,6 @@ public class SubBatchController : ControllerBase
         }
     }
     
-    //https://localhost:44328/api/v1/SubBatch/TestWS/1
-    [HttpGet("{id}")]
-    public JsonResult TestWS(int id)
-    {
-        try
-        {
-            return new JsonResult(new {Data = _batchHelper.GetSubBatchDetail(id), Error = ""});
-        }
-        catch (Exception e)
-        {
-            return new JsonResult(new {Data = "", Error = e.Message});
-        }
-    }
     
     //https://localhost:44328/api/v1/SubBatch/Start?id=1&machineId=1&batchOperationId=1&numberOperators
     [HttpGet]
