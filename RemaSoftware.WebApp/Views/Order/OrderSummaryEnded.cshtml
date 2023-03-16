@@ -1,4 +1,4 @@
-﻿@using RemaSoftware.Domain.Constants
+@using RemaSoftware.Domain.Constants
 @using RemaSoftware.WebApp.Models.OrderViewModel
 @model RemaSoftware.WebApp.Models.OrderViewModel.OrderSummaryViewModel
 
@@ -10,10 +10,7 @@
 
 <div class="card shadow mb-4" id="order-summ-content">
     <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
-        <h3 class="m-0 font-weight-bold text-primary">Resoconto ordini attivi</h3>
-        <div>
-            <a class="btn btn-primary text-white" asp-action="NewOrder" asp-controller="Order" type="button">Registra ordine</a>
-        </div>
+        <h3 class="m-0 font-weight-bold text-primary">Resoconto ordini conclusi</h3>
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -27,9 +24,8 @@
                         <th>N° pezzi attuali</th>
                         <th>Prz. Unitario</th>
                         <th>Arrivo ordine</th>
-                        <th>Scadenza ordine</th>
+                        <th>Chiusura ordine</th>
                         <th>Status</th>
-                        <th>Azioni</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -43,7 +39,15 @@
                         <td>@ddt.Number_Piece_Now</td>
                         <td>&euro;@ddt.SubBatch.Batch.Price_Uni.ToString("0.00")</td>
                         <td>@ddt.DataIn.ToString("dd/MM/yy")</td>
-                        <td>@ddt.DataOut.ToString("dd/MM/yy")</td>
+                        <td>@{
+                                var date = "";
+                                if (ddt.DataEnd.HasValue)
+                                {
+                                    date = ddt.DataEnd.Value.ToString("dd/MM/yy");
+                                }
+                            }
+                            @date
+                        </td>
                         <td class="text-center">
                             @{
                                 if (!string.IsNullOrEmpty(ddt.Status))
@@ -51,21 +55,6 @@
                                     var statusDto = OrderStatusConstants.OrderStatuses[@ddt.Status];
                                     <i class="fas fa-circle fa-lg" style="color: @statusDto?.StatusCssClass" title="@statusDto?.StatusDescription"></i>
                                 }
-                            }
-                        </td>
-                        <td class="text-center">
-                            @if (ddt.Status == OrderStatusConstants.STATUS_ARRIVED)
-                            {
-                                <i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer; color: #6d767e;" id="@ddt.Ddt_In_ID" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDataArticleId('#confirm-del-modal', @ddt.Ddt_In_ID)"></i>
-                            }
-                            <a style="text-decoration: none" asp-action="EditOrder" asp-controller="Order" asp-route-id="@ddt.Ddt_In_ID">
-                                <i class="fas fa-pen fa-lg pl-2" style="cursor: pointer; color: #6d767e;" title="Modifica"></i>
-                            </a>
-                            @if (ddt.Status != OrderStatusConstants.STATUS_ARRIVED)
-                            {
-                                <a style="text-decoration: none" asp-controller="Order" asp-action="SubBatchMonitoring" asp-route-id="@ddt.SubBatchID">
-                                    <i class="fas fa-eye fa-lg pl-2" title="Visualizza avanzamento" style="cursor: pointer; color: #6d767e"></i>
-                                </a>
                             }
                         </td>
                     </tr>
@@ -108,30 +97,6 @@
     <script>
     let enable = true;
 
-    function SetDataArticleId(elementName, articleId){
-        $(elementName).data("articleId", articleId );
-    }
-
-    function DeleteStockArticle(){
-        var articleId = $("#confirm-del-modal").data("articleId");
-        $.ajax({
-            url: '@Url.Action("DeleteProduct", "Order")?' + $.param({"productId": articleId}),
-            type: 'GET',
-            success: function (data) {
-                if (data.result == true){
-                    table.row($("tr#product-" + articleId)).remove().draw();
-                    $("#confirm-del-modal").modal('toggle');
-                    toastNotifySuccess(data.toastMessage);
-                }else{
-                    toastNotifyError(data.toastMessage);
-                }
-            },
-            error: function (data){
-                toastNotifyError(data.toastMessage);
-            }
-        });
-    }
-
     $(document).ready( function () {
         table = $('#table-ddt').DataTable({
             "language": {
@@ -159,7 +124,6 @@
                 { "searchable": false, "orderable": true, "targets": 6 },
                 { "searchable": false, "orderable": true, "targets": 7 },
                 { "searchable": false, "orderable": false, "targets": 8 },
-                { "searchable": false, "orderable": false, "targets": 9 },
               ]
         });
 
@@ -174,60 +138,6 @@
         var yy = x.getFullYear();
         return dd +"/" + mm+"/" + yy;
      }
-
-    const asyncGetAllOrder = async () => {
-        await getAllOrder()
-    }
-
-    async function getAllOrder() {
-        if (enable) {
-            ShowLoader();
-            enable = false;
-            $.ajax({
-                url: "@Url.Action("OrderSummaryCompleted", "Order")",
-                type: "GET",
-                error: function(xhr, status, error) {
-                  var err = eval("(" + xhr.responseText + ")");
-                  alert(err.Message);
-                },
-                success: function(result) {
-                    var table = $('#table-orders').DataTable();
-                    result.orders.forEach(function(a) {
-                        var newRow = `<tr id="${a.orderID}">
-                                <td>${a.ddt}</td>
-                                <td>${a.sku}</td>
-                                <td>${a.name}</td>
-                                <td>${a.client.name}</td>
-                                <td>${formatDate(a.dataIn)}</td>
-                                <td>${formatDate(a.dataOut)}</td>
-                                <td>${a.number_Piece}</td>
-                                <td>${a.number_Pieces_InStock}</td>
-                                <td>&euro; ${a.price_Uni}</td>
-                                <td class="text-center">
-                                    <i class="fas fa-circle fa-lg" style="color: red" title="estinto"></i>
-                                </td>
-                                <td class="text-center">
-                                    <i class="fas fa-users-cog fa-lg" style="color: #858796; cursor: pointer" onclick="GetOperationsAndOpenModal(${a.orderID})" title="Visualizza / Modifica operazioni"></i>
-                                    <a style="text-decoration: none" target="_blank" href='DownloadPdfOrder/Order?orderId${a.orderID}'>
-                                        <i class="fas fa-file-download fa-lg pl-2" title="Scarica ordine in PDF" style="cursor: pointer; color: #4e73df"></i>
-                                    </a>
-                                    <a style="text-decoration: none" href='UpdateOrder/Order?orderId${a.orderID}'>
-                                        <i class="fas fa-pen fa-lg pl-2" title="Scarica ordine in PDF" style="cursor: pointer; color: yellow"></i>
-                                    </a>
-                                    <i class="fas fa-copy fa-lg pl-2" style="color: green; cursor: pointer" onclick="setOrderId(${a.orderID})" data-toggle="modal" data-target="#copy-ord-modal" title="Duplica Ordine"></i>
-                                    <i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer; color: #e74a3b" id="${a.orderID}" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDataArticleId('#confirm-del-modal', ${a.orderID})"></i>                        
-                                </td>
-                            </tr>`;
-                        table.row.add($(newRow)).draw();
-                    });
-                    $('#load-order').hide();
-                }
-            }).done(function () {
-                HideLoader();
-            });
-        }   
-        
-    }
 
     function setOrderId(OrderIdToDuplicate) {
         $("#id_ordine").val(OrderIdToDuplicate)

@@ -102,7 +102,16 @@ namespace RemaSoftware.WebApp.Controllers
         {
             return View(new OrderSummaryViewModel()
             {
-                Ddt_In = _orderHelper.GetAllDdtIn_NoPagination()
+                Ddt_In = _orderHelper.GetAllDdtInActive_NoPagination()
+            });
+        }
+        
+        [HttpGet]
+        public IActionResult OrderSummaryEnded()
+        {
+            return View(new OrderSummaryViewModel()
+            {
+                Ddt_In = _orderHelper.GetAllDdtInEnded_NoPagination()
             });
         }
 

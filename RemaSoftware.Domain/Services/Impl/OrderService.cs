@@ -313,6 +313,30 @@ namespace RemaSoftware.Domain.Services.Impl
                 .ToList();
         }
 
+        public List<Ddt_In> GetDdtInActive()
+        {
+            return _dbContext.Ddts_In
+                .Include(d => d.Product)
+                .ThenInclude(s => s.Client)
+                .Include(b => b.SubBatch)
+                .ThenInclude(s => s.Batch)
+                .ThenInclude(b => b.BatchOperations)
+                .Where(s => s.Status == OrderStatusConstants.STATUS_ARRIVED || s.Status == OrderStatusConstants.STATUS_WORKING)
+                .ToList();
+        }
+
+        public List<Ddt_In> GetDdtInEnded()
+        {
+            return _dbContext.Ddts_In
+                .Include(d => d.Product)
+                .ThenInclude(s => s.Client)
+                .Include(b => b.SubBatch)
+                .ThenInclude(s => s.Batch)
+                .ThenInclude(b => b.BatchOperations)
+                .Where(s => s.Status == OrderStatusConstants.STATUS_COMPLETED)
+                .ToList();
+        }
+
         public Ddt_In GetDdtInById(int id)
         {
             return _dbContext.Ddts_In

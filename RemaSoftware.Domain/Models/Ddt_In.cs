@@ -15,6 +15,9 @@ namespace RemaSoftware.Domain.Models
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime DataOut { get; set; }
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime? DataEnd { get; set; }
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]
         [MaxLength(50)]
         public string Code { get; set; }

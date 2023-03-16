@@ -53,6 +53,14 @@ namespace RemaSoftware.WebApp.Helper
         {
             return _orderService.GetAllDdtIn();
         }
+        public List<Ddt_In> GetAllDdtInActive_NoPagination()
+        {
+            return _orderService.GetDdtInActive();
+        }
+        public List<Ddt_In> GetAllDdtInEnded_NoPagination()
+        {
+            return _orderService.GetDdtInEnded();
+        }
 
         public Ddt_In AddNewDdtIn(NewOrderViewModel model)
         {
@@ -292,7 +300,7 @@ namespace RemaSoftware.WebApp.Helper
                 if (item.Number_Piece_Now >= dto.OkPieces)
                 {
                     item.Number_Piece_Now -= dto.OkPieces;
-                    item.Status = OrderStatusConstants.STATUS_COMPLETED;
+                    item.Status = OrderStatusConstants.STATUS_PARTIALLY_COMPLETED;
                     item.Ddt_Associations ??= new List<Ddt_Association>();
                     item.Ddt_Associations.Add(new Ddt_Association()
                     {
@@ -307,7 +315,8 @@ namespace RemaSoftware.WebApp.Helper
                 else
                 {
                     dto.OkPieces -= item.Number_Piece_Now;
-                    item.Status = OrderStatusConstants.STATUS_PARTIALLY_COMPLETED;
+                    item.Status = OrderStatusConstants.STATUS_COMPLETED;
+                    item.DataEnd = now;
                     item.Ddt_Associations ??= new List<Ddt_Association>();
                     item.Ddt_Associations.Add(new Ddt_Association()
                     {

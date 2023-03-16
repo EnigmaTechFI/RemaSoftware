@@ -30,6 +30,8 @@ namespace RemaSoftware.Domain.Services
         Batch CreateBatch(Batch batch); 
         Ddt_In CreateDDtIn(Ddt_In ddt_In);
         List<Ddt_In> GetAllDdtIn();
+        List<Ddt_In> GetDdtInActive();
+        List<Ddt_In> GetDdtInEnded();
         Ddt_In GetDdtInById(int id);
         List<Ddt_Out> GetDdtOutsByClientIdAndStatus(int id, string status);
         Ddt_Out CreateNewDdtOut(Ddt_Out ddtOut);
