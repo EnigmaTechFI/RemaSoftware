@@ -109,7 +109,7 @@ namespace RemaSoftware.Domain.Services.Impl
                 .Include(s => s.SubBatch)
                 .ThenInclude(s => s.Batch)
                 .Where(w => w.DataIn.Month == DateTime.Now.Month && w.IsReso == false)
-                .Sum(ord => ord.SubBatch.Batch.Price_Uni * ord.Number_Piece);
+                .Sum(ord => ord.Price_Uni * ord.Number_Piece);
             return (decimal) a;
         }
 

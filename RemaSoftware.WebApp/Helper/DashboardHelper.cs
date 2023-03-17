@@ -52,7 +52,7 @@ namespace RemaSoftware.WebApp.Helper
                 .ThenInclude(s => s.Batch)
                 .Where(w=>w.DataIn.Year == DateTime.Now.Year && w.IsReso == false)
                 .OrderBy(ob=>ob.DataIn.Month)
-                .Select(s=>new {Month=s.DataIn.ToString("MMMM", cultureInfo), Totals = s.SubBatch.Batch.Price_Uni*s.Number_Piece})
+                .Select(s=>new {Month=s.DataIn.ToString("MMMM", cultureInfo), Totals = s.Price_Uni*s.Number_Piece})
                 .ToList();
             
             var couples = ordersPrices

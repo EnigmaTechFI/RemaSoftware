@@ -143,7 +143,7 @@ namespace RemaSoftware.UtilityServices.Implementation
                     Code = item.Ddt_In.Code,
                     Description = item.Ddt_In.Description,
                     Stock = true,
-                    NetPrice = item.Ddt_In.SubBatch.Batch.Price_Uni,
+                    NetPrice = item.Ddt_In.Price_Uni,
                     Vat = new VatType()
                     {
                         Id = 0,

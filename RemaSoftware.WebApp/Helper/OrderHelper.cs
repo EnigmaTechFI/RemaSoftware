@@ -84,7 +84,7 @@ namespace RemaSoftware.WebApp.Helper
                     var batch = _orderService.GetBatchByProductIdAndOperationList(model.Ddt_In.ProductID,
                         operationsSelected);
                     model.Ddt_In.FC_Ddt_In_ID = _apiFatturaInCloudService.AddDdtInCloud(model.Ddt_In,
-                        _productService.GetProductById(model.Ddt_In.ProductID).SKU, model.uni_price.Value);
+                        _productService.GetProductById(model.Ddt_In.ProductID).SKU, model.Ddt_In.Price_Uni);
                     if (batch == null)
                     {
                         var ddtList = new List<Ddt_In>();
@@ -99,7 +99,6 @@ namespace RemaSoftware.WebApp.Helper
                         _orderService.CreateBatch(new Batch()
                         {
                             SubBatches = subBatches,
-                            Price_Uni = model.uni_price.Value,
                             BatchOperations = batchOperationList
                         });
                     }
