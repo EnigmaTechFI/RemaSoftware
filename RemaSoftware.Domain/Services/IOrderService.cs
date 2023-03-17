@@ -4,17 +4,15 @@ namespace RemaSoftware.Domain.Services
 {
     public interface IOrderService
     {
-        List<Order> GetAllOrders();
         Order GetOrderById(int orderId);
         Order GetOrderWithOperationsById(int orderId);
         Order AddOrder(Order order);
-        List<Order> GetOrdersByFilters();
         void AddOrderOperation(int orderId, List<int> operationId);
         int GetTotalProcessedPiecese();
         int GetCountOrdersNotExtinguished();
         decimal GetLastMonthEarnings();
-        List<Order> GetOrdersNearToDeadlineTakeTop(int topSelector);
-        List<Order> GetAllOrdersNearToDeadline();
+        List<Ddt_In> GetOrdersNearToDeadlineTakeTop(int topSelector);
+        List<Ddt_In> GetAllOrdersNearToDeadline();
         List<string> GetOldOrders_SKU();
         List<Order> GetChunkedOrders(int skip, int take);
         int GetTotalOrdersCount();

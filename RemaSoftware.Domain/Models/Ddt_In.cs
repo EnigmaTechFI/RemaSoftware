@@ -21,6 +21,7 @@ namespace RemaSoftware.Domain.Models
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]
         [MaxLength(50)]
         public string Code { get; set; }
+        public decimal Price_Uni { get; set; }
         [MaxLength(30)]
         public string FC_Ddt_In_ID { get; set; }
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]

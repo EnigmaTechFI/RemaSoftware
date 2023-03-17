@@ -35,7 +35,7 @@ public class SubBatchHelper
 
     public SubBatch GetSubBatchDetail(int id)
     {
-        var result = _subBatchService.GetSubBatchById(id);
+        var result = _subBatchService.GetSubBatchByIdForMobile(id);
         return result;
     }
 

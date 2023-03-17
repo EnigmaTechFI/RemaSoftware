@@ -16,12 +16,6 @@ namespace RemaSoftware.Domain.Services.Impl
             _dbContext = dbContext;
         }
         
-        public List<Order> GetAllOrders()
-        {
-            return _dbContext.Orders
-                .Include(i=>i.Client).ToList();
-        }
-
         public List<Order> GetChunkedOrders(int skip, int take)
         {
             var query = _dbContext.Orders
@@ -78,11 +72,6 @@ namespace RemaSoftware.Domain.Services.Impl
             return null;
         }
 
-        public List<Order> GetOrdersByFilters()
-        {
-            throw new System.NotImplementedException();
-        }
-        
         public void AddOrderOperation(int orderId, List<int> operationId)
         {
             var Order_Op = new List<Order_Operation>();
@@ -111,29 +100,34 @@ namespace RemaSoftware.Domain.Services.Impl
 
         public int GetCountOrdersNotExtinguished()
         {
-            return _dbContext.Orders.Count(ord => ord.DataOut > DateTime.Now);
+            return _dbContext.Ddts_In.Count(ord => ord.DataOut > DateTime.Now);
         }
 
         public decimal GetLastMonthEarnings()
         {
-            var a = _dbContext.Orders.Where(w => w.DataOut.Month == DateTime.Now.Month)
-                .Sum(ord => ord.Price_Uni * ord.Number_Piece);
+            var a = _dbContext.Ddts_In
+                .Include(s => s.SubBatch)
+                .ThenInclude(s => s.Batch)
+                .Where(w => w.DataIn.Month == DateTime.Now.Month && w.IsReso == false)
+                .Sum(ord => ord.SubBatch.Batch.Price_Uni * ord.Number_Piece);
             return (decimal) a;
         }
 
-        public List<Order> GetOrdersNearToDeadlineTakeTop(int topSelector)
+        public List<Ddt_In> GetOrdersNearToDeadlineTakeTop(int topSelector)
         {
-            return _dbContext.Orders
-                .Include(i=>i.Client)
+            return _dbContext.Ddts_In
+                .Include(s => s.Product)
+                .ThenInclude(i=>i.Client)
                 .Where(w=>w.DataOut >= DateTime.Now.Date).OrderBy(ob=>ob.DataOut)
                 .Take(topSelector)
                 .ToList();
         }
         
-        public List<Order> GetAllOrdersNearToDeadline()
+        public List<Ddt_In> GetAllOrdersNearToDeadline()
         {
-            return _dbContext.Orders
-                .Include(i=>i.Client)
+            return _dbContext.Ddts_In
+                .Include(s => s.Product)
+                .ThenInclude(i=>i.Client)
                 .Where(w=>w.DataOut > DateTime.Now.Date).OrderBy(ob=>ob.DataOut)
                 .ToList();
         }
@@ -372,6 +366,7 @@ namespace RemaSoftware.Domain.Services.Impl
         public List<Ddt_Out> GetDdtOutsByClientIdAndStatus(int id, string status)
         {
             return _dbContext.Ddts_Out
+                .Include(s => s.Ddt_Associations)
                 .Where(s => s.ClientID == id && s.Status == status).ToList();
         }
 

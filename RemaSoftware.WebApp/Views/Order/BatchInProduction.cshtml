@@ -23,6 +23,7 @@
                     <th>Codice prodotto</th>
                     <th>DDT associate</th>
                     <th>Pezzi nel lotto</th>
+                    <th>Pezzi rimanenti</th>
                     <th class="text-center">Azioni</th>
                 </tr>
                 </thead>
@@ -35,7 +36,11 @@
                         <td>@batch.Ddts_In[0].Product.SKU</td>
                         <td onclick="showDDT(@batch.SubBatchID)">Visualizza DDT associate</td>
                         <td>@batch.Ddts_In.Sum(s=> s.Number_Piece)</td>
+                        <td>@batch.Ddts_In.Sum(s=> s.Number_Piece_Now)</td>
                         <td class="text-center">
+                            <a onclick="printQRCode('@batch.SubBatchID', '@batch.Ddts_In[0].Product.SKU', '@batch.Ddts_In.Sum(s=> s.Number_Piece)', '@batch.Ddts_In[0].Product.Client.Name')" style="text-decoration: none">
+                                <i class="fas fa-print fa-lg pl-2" title="Stampa etichetta" style="cursor: pointer; color: #6d767e"></i>
+                            </a>
                             <a style="text-decoration: none" asp-controller="Order" asp-action="SubBatchMonitoring" asp-route-id="@batch.SubBatchID">
                                 <i class="fas fa-eye fa-lg pl-2" title="Visualizza avanzamento" style="cursor: pointer; color: #6d767e"></i>
                             </a>
@@ -96,6 +101,21 @@
 {
     <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
     <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="~/js/dymo.connect.framework.js" type="text/javascript" charset="UTF-8"> </script>
+    
+    <script>
+        function printQRCode(id, sku, pieces, client){
+          var printers = dymo.label.framework.getPrinters();
+          if (printers.length == 0 || !printers[0].isConnected){
+            alert("Nessuna stampante trovata.");
+            return
+          }
+          var label = dymo.label.framework.openLabelFile("RemaStock.dymo")  
+          label.setObjectText("QRCodeObject", id);
+          label.setObjectText("TextObject", "Lotto: "+ id +"\nSKU: " + sku + "\nCliente: " + client);
+          label.print(printers[0].name); 
+        } 
+    </script>
 
     <script>
     const batches = @Json.Serialize(Model.SubBatches)
@@ -156,6 +176,7 @@
                 { "searchable": false, "orderable": false, "targets": 3 },
                 { "searchable": false, "orderable": false, "targets": 4 },
                 { "searchable": false, "orderable": false, "targets": 5 },
+                { "searchable": false, "orderable": false, "targets": 6 },
               ]
         });
 

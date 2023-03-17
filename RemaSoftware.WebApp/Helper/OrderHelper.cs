@@ -175,42 +175,6 @@ namespace RemaSoftware.WebApp.Helper
             
         }
 
-        public Order UpdateOrderAndSendToFattureInCloud(Order orderToSave)
-        {
-            using (var transaction = _dbContext.Database.BeginTransaction())
-            {
-                var addedOrder = _orderService.UpdateOrder(orderToSave);
-                try
-                {
-                    var result = _apiFatturaInCloudService.UpdateOrderCloud(new OrderToUpdateDto
-                    {
-                        Id = orderToSave.ID_FattureInCloud,
-                        Name = orderToSave.Name,
-                        Description = orderToSave.Description,
-                        DataIn = orderToSave.DataIn,
-                        DataOut = orderToSave.DataOut,
-                        Number_Piece = orderToSave.Number_Piece,
-                        Price_Uni = orderToSave.Price_Uni,
-                        SKU = orderToSave.SKU,
-                        DDT = orderToSave.DDT,
-                        ID_FattureInCloud = orderToSave.ID_FattureInCloud
-                    });
-
-                    if (!result)
-                        throw new Exception();
-
-                    transaction.Commit();
-                    return orderToSave;
-                }
-                catch (Exception e)
-                {
-                    transaction.Rollback();
-                    throw;
-                }
-            }
-
-        }
-
         public void RegisterBatchAtCOQ(int subBatchId)
         {
             var subBatch = _subBatchService.GetSubBatchById(subBatchId);
@@ -312,21 +276,19 @@ namespace RemaSoftware.WebApp.Helper
                     dto.OkPieces = 0;
                     break;
                 }
-                else
+
+                dto.OkPieces -= item.Number_Piece_Now;
+                item.Status = OrderStatusConstants.STATUS_COMPLETED;
+                item.DataEnd = now;
+                item.Ddt_Associations ??= new List<Ddt_Association>();
+                item.Ddt_Associations.Add(new Ddt_Association()
                 {
-                    dto.OkPieces -= item.Number_Piece_Now;
-                    item.Status = OrderStatusConstants.STATUS_COMPLETED;
-                    item.DataEnd = now;
-                    item.Ddt_Associations ??= new List<Ddt_Association>();
-                    item.Ddt_Associations.Add(new Ddt_Association()
-                    {
-                        Date = now,
-                        Ddt_In_ID = item.Ddt_In_ID,
-                        Ddt_Out_ID = ddt_out_id,
-                        NumberPieces = item.Number_Piece_Now
-                    });
-                    item.Number_Piece_Now = 0;
-                }
+                    Date = now,
+                    Ddt_In_ID = item.Ddt_In_ID,
+                    Ddt_Out_ID = ddt_out_id,
+                    NumberPieces = item.Number_Piece_Now
+                });
+                item.Number_Piece_Now = 0;
             }
 
             if (subBatch.Ddts_In.All(s => s.Number_Piece_Now == 0))

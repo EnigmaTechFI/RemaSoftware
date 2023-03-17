@@ -196,6 +196,18 @@ public class SubBatchService : ISubBatchService
             .ThenInclude(s => s.Client)
             .SingleOrDefault(s => s.SubBatchID == id);
     }
+    
+    public SubBatch GetSubBatchByIdForMobile(int id)
+    {
+        return _dbContext.SubBatches
+            .Include(s => s.Batch)
+            .ThenInclude(s => s.BatchOperations.Where(s => s.Operations.Name != OtherConstants.COQ))
+            .ThenInclude(s => s.Operations)
+            .Include(s => s.Ddts_In)
+            .ThenInclude(s => s.Product)
+            .ThenInclude(s => s.Client)
+            .SingleOrDefault(s => s.SubBatchID == id);
+    }
 
     public List<OperationTimeline> GetOperationTimelinesByStatus(string status)
     {

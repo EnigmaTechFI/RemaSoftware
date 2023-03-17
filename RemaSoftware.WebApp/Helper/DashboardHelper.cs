@@ -47,10 +47,12 @@ namespace RemaSoftware.WebApp.Helper
         public List<ChartDataObject> GetDataForDashboardAreaChart()
         {
             CultureInfo cultureInfo = new CultureInfo("it-IT");
-            var ordersPrices = _dbContext.Orders
-                .Where(w=>w.DataOut.Year == DateTime.Now.Year)
-                .OrderBy(ob=>ob.DataOut.Month)
-                .Select(s=>new {Month=s.DataOut.ToString("MMMM", cultureInfo), Totals = s.Price_Uni*s.Number_Piece})
+            var ordersPrices = _dbContext.Ddts_In
+                .Include(s => s.SubBatch)
+                .ThenInclude(s => s.Batch)
+                .Where(w=>w.DataIn.Year == DateTime.Now.Year && w.IsReso == false)
+                .OrderBy(ob=>ob.DataIn.Month)
+                .Select(s=>new {Month=s.DataIn.ToString("MMMM", cultureInfo), Totals = s.SubBatch.Batch.Price_Uni*s.Number_Piece})
                 .ToList();
             
             var couples = ordersPrices
@@ -97,10 +99,10 @@ namespace RemaSoftware.WebApp.Helper
         {
             var result = 
                 _orderService.GetAllOrdersNearToDeadline()
-                .GroupBy(gb=>gb.ClientID).ToList()
+                .GroupBy(gb=>gb.Product.ClientID).ToList()
                 .Select(s=> new ChartDataObject
                 {
-                    Label = s.First().Client.Name,
+                    Label = s.First().Product.Client.Name,
                     Value = s.Sum(sum=>sum.Number_Piece).ToString()
                 })
                 .ToList();

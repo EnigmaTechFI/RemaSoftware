@@ -13,4 +13,5 @@ public interface ISubBatchService
     public SubBatch GetSubBatchById(int id);
     public List<OperationTimeline> GetOperationTimelinesByStatus(string status);
     public List<OperationTimeline> GetSubBatchAtQualityControl();
+    public SubBatch GetSubBatchByIdForMobile(int id);
 }
