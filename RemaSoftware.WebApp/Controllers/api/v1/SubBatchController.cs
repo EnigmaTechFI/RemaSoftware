@@ -63,4 +63,32 @@ public class SubBatchController : ControllerBase
             return new JsonResult(new {Data = "ERROR", Error = e.Message});
         }
     }
+    
+    //https://localhost:44328/api/v1/SubBatch/Pause?operationTimelineId=1
+    [HttpGet]
+    public JsonResult Pause(int operationTimelineId)
+    {
+        try
+        {
+            return new JsonResult(new {Data = _batchHelper.PauseOperationOnSubBatch(operationTimelineId), Error = ""});
+        }
+        catch (Exception e)
+        {
+            return new JsonResult(new {Data = "ERROR", Error = e.Message});
+        }
+    }
+    
+    //https://localhost:44328/api/v1/SubBatch/GetOperationsTimeline?machineId=1
+    [HttpGet]
+    public JsonResult GetOperationsTimeline(int machineId)
+    {
+        try
+        {
+            return new JsonResult(new {Data = _batchHelper.GetOperationsTimelineByMachineId(machineId), Error = ""});
+        }
+        catch (Exception e)
+        {
+            return new JsonResult(new {Data = "ERROR", Error = e.Message});
+        }
+    }
 }

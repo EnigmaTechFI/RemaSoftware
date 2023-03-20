@@ -60,9 +60,20 @@ public class SubBatchHelper
 
     public string EndOperationOnSubBatch(int operationTimelineId)
     {
-        var result = _subBatchService.UpdateSubBatchStatusAndOperationTimelineEnd(operationTimelineId, DateTime.Now);
+        var result = _subBatchService.UpdateSubBatchStatusAndOperationTimelineEnd(operationTimelineId, DateTime.Now, OperationTimelineConstant.STATUS_COMPLETED);
         _productionHub.EndOperation(operationTimelineId, result.MachineId);
         return "Success";
     }
 
+    public string PauseOperationOnSubBatch(int operationTimelineId)
+    {
+        var result = _subBatchService.UpdateSubBatchStatusAndOperationTimelineEnd(operationTimelineId, DateTime.Now, OperationTimelineConstant.STATUS_PAUSE);
+        _productionHub.EndOperation(operationTimelineId, result.MachineId);
+        return "Success";
+    }
+
+    public List<OperationTimeline> GetOperationsTimelineByMachineId(int machineId)
+    {
+        return _subBatchService.GetOperationTimelinesForMachine(machineId);
+    }
 }

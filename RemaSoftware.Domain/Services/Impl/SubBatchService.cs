@@ -91,7 +91,7 @@ public class SubBatchService : ISubBatchService
         }
     }
 
-    public OperationTimeline UpdateSubBatchStatusAndOperationTimelineEnd(int operationTimelineId, DateTime end)
+    public OperationTimeline UpdateSubBatchStatusAndOperationTimelineEnd(int operationTimelineId, DateTime end, string status)
     {
         var op =_dbContext.OperationTimelines
             .Include(s =>s.SubBatch)
@@ -120,7 +120,7 @@ public class SubBatchService : ISubBatchService
                                 ? end
                                 : new DateTime(dateRif.Year, dateRif.Month, dateRif.Day, 17, 30, 0),
                             StartDate = new DateTime(dateRif.Year, dateRif.Month, dateRif.Day, 7, 30, 0),
-                            Status = "C",
+                            Status = i == controlTime ? status : "C",
                             UseForStatics = true,
                             MachineId = op.MachineId,
                             SubBatchID = op.SubBatchID
@@ -135,7 +135,7 @@ public class SubBatchService : ISubBatchService
                                 ? end
                                 : new DateTime(dateRif.Year, dateRif.Month, dateRif.Day, 12, 0, 0),
                             StartDate = new DateTime(dateRif.Year, dateRif.Month, dateRif.Day, 8, 0, 0),
-                            Status = "C",
+                            Status = i == controlTime ? status : "C",
                             UseForStatics = true,
                             MachineId = op.MachineId,
                             SubBatchID = op.SubBatchID
@@ -145,7 +145,7 @@ public class SubBatchService : ISubBatchService
             }
             else
             {
-                op.Status = "C";
+                op.Status = status;
                 op.UseForStatics = true;
                 op.EndDate = end;    
             }
@@ -221,6 +221,34 @@ public class SubBatchService : ISubBatchService
             .ThenInclude(s => s.Product)
             .ThenInclude(s => s.Client)
             .Where(s => s.Status == status)
+            .ToList();
+    }
+    
+    public List<OperationTimeline> GetOperationTimelinesByMulitpleStatus(List<string> status)
+    {
+        return _dbContext.OperationTimelines
+            .Include(s => s.BatchOperation)
+            .ThenInclude(s => s.Operations)
+            .Include(s => s.SubBatch)
+            .ThenInclude(s => s.Batch)
+            .Include(s => s.SubBatch)
+            .ThenInclude(s => s.Ddts_In)
+            .ThenInclude(s => s.Product)
+            .ThenInclude(s => s.Client)
+            .Where(s => status.Contains(s.Status))
+            .ToList();
+    }
+
+    public List<OperationTimeline> GetOperationTimelinesForMachine(int machineId)
+    {
+        return _dbContext.OperationTimelines
+            .Include(s => s.BatchOperation)
+            .ThenInclude(s => s.Operations)
+            .Include(s => s.SubBatch)
+            .ThenInclude(s => s.Ddts_In)
+            .ThenInclude(s => s.Product)
+            .ThenInclude(s => s.Client)
+            .Where(s => s.Status == OperationTimelineConstant.STATUS_WORKING || s.Status == OperationTimelineConstant.STATUS_PAUSE)
             .ToList();
     }
 

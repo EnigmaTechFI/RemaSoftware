@@ -1,3 +1,4 @@
+using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Data;
 
@@ -15,6 +16,11 @@ namespace RemaSoftware.Domain.Services.Impl
         public List<Operation> GetAllOperations()
         {
             return _dbContext.Operations.ToList();
+        }
+
+        public List<Operation> GetAllOperationsWithOutCOQ()
+        {
+            return _dbContext.Operations.Where(s => s.Name != OtherConstants.COQ).ToList();
         }
 
         public void AddOperation(Operation operation)

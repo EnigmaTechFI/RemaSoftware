@@ -154,7 +154,7 @@ namespace RemaSoftware.WebApp.Controllers
             var vm = new NewOrderViewModel
             {
                 Clients = _clientService.GetAllClients(),
-                Operations = _operationService.GetAllOperations()?.Select(s=>new SelectListItem
+                Operations = _operationService.GetAllOperationsWithOutCOQ()?.Select(s=>new SelectListItem
                 {
                     Text = s.Name,
                     Value = $"{s.OperationID}-{s.Name}"
@@ -171,7 +171,7 @@ namespace RemaSoftware.WebApp.Controllers
             var vm = new NewOrderViewModel
             {
                 Clients = _clientService.GetAllClients(),
-                Operations = _operationService.GetAllOperations()?.Select(s=>new SelectListItem
+                Operations = _operationService.GetAllOperationsWithOutCOQ()?.Select(s=>new SelectListItem
                 {
                     Text = s.Name,
                     Value = $"{s.OperationID}-{s.Name}"
@@ -187,7 +187,7 @@ namespace RemaSoftware.WebApp.Controllers
 
         private NewOrderViewModel NewOrderViewModelThrow(NewOrderViewModel model)
         {
-            model.Operations = _operationService.GetAllOperations()?.Select(s => new SelectListItem
+            model.Operations = _operationService.GetAllOperationsWithOutCOQ()?.Select(s => new SelectListItem
             {
                 Text = s.Name,
                 Value = $"{s.OperationID}-{s.Name}"
@@ -284,7 +284,7 @@ namespace RemaSoftware.WebApp.Controllers
             }
             vm.OrderId = orderId;
             
-            var allAvailableOperations = _operationService.GetAllOperations();
+            var allAvailableOperations = _operationService.GetAllOperationsWithOutCOQ();
             vm.Operations = allAvailableOperations?.Select(s => new SelectListItem
             {
                 Text = s.Name,
