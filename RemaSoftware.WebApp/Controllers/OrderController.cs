@@ -476,6 +476,38 @@ namespace RemaSoftware.WebApp.Controllers
                 return new JsonResult(new { Error = e, ToastMessage = $"Errore durante l\\'eliminazione dell\\'articolo di magazzino." });
             }
         }
+        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpGet]
+        public IActionResult PartialDDT(int id, int clientId)
+        {
+            try
+            {
+                return View(_orderHelper.GetPartialDDTViewModel(id, clientId));
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.Message, e);
+                _notyfService.Error("Errore durante il recupero delle ddt.");
+                return RedirectToAction("BatchInDelivery");
+            }
+        }
+        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpPost]
+        public IActionResult PartialDDT(PartialDDTViewModel model)
+        {
+            try
+            {
+                return RedirectToAction("BatchInDelivery", new {pdfUrl = _orderHelper.EditPartialDdtIn(model)});
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.Message, e);
+                _notyfService.Error("Error durante l'emissione della ddt.");
+                return RedirectToAction("PartialDDT", new {id = model.DdtId, clientId = model.ClientId});
+            }
+        }
 
         #region Models validation
 
@@ -487,5 +519,7 @@ namespace RemaSoftware.WebApp.Controllers
         }
 
         #endregion
+
+        
     }
 }

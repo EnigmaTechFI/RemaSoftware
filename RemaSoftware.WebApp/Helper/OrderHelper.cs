@@ -24,7 +24,9 @@ namespace RemaSoftware.WebApp.Helper
         private readonly IAPIFatturaInCloudService _apiFatturaInCloudService;
         private readonly ApplicationDbContext _dbContext;
 
-        public OrderHelper(IOrderService orderService, IAPIFatturaInCloudService apiFatturaInCloudService, ApplicationDbContext dbContext, IProductService productService, ISubBatchService subBatchService, IOperationService operationService, IEmailService emailService)
+        public OrderHelper(IOrderService orderService, IAPIFatturaInCloudService apiFatturaInCloudService,
+            ApplicationDbContext dbContext, IProductService productService, ISubBatchService subBatchService,
+            IOperationService operationService, IEmailService emailService)
         {
             _orderService = orderService;
             _apiFatturaInCloudService = apiFatturaInCloudService;
@@ -47,20 +49,22 @@ namespace RemaSoftware.WebApp.Helper
                 SubBatch = _subBatchService.GetSubBatchById(id)
             };
         }
-        
+
         public List<SubBatch> GetSubBatchesStatus(string status)
-        {   
+        {
             return _subBatchService.GetSubBatchesStatus(status);
         }
-        
+
         public List<Ddt_In> GetAllDdtIn_NoPagination()
         {
             return _orderService.GetAllDdtIn();
         }
+
         public List<Ddt_In> GetAllDdtInActive_NoPagination()
         {
             return _orderService.GetDdtInActive();
         }
+
         public List<Ddt_In> GetAllDdtInEnded_NoPagination()
         {
             return _orderService.GetDdtInEnded();
@@ -145,6 +149,7 @@ namespace RemaSoftware.WebApp.Helper
                         {
                         }
                     }
+
                     transaction.Commit();
                     return model.Ddt_In;
                 }
@@ -156,7 +161,7 @@ namespace RemaSoftware.WebApp.Helper
                 }
             }
         }
-        
+
         public Order AddOrderAndSendToFattureInCloud(Order orderToSave)
         {
             using (var transaction = _dbContext.Database.BeginTransaction())
@@ -190,7 +195,7 @@ namespace RemaSoftware.WebApp.Helper
                     throw;
                 }
             }
-            
+
         }
 
         public void RegisterBatchAtCOQ(int subBatchId)
@@ -207,8 +212,11 @@ namespace RemaSoftware.WebApp.Helper
                     BatchOperation = new BatchOperation()
                     {
                         BatchID = subBatch.BatchID,
-                        OperationID = _dbContext.Operations.SingleOrDefault(s => s.Name == OtherConstants.COQ).OperationID,
-                        Ordering = subBatch.Batch.BatchOperations == null ? 1 : subBatch.Batch.BatchOperations.Max(s => s.Ordering)+1
+                        OperationID = _dbContext.Operations.SingleOrDefault(s => s.Name == OtherConstants.COQ)
+                            .OperationID,
+                        Ordering = subBatch.Batch.BatchOperations == null
+                            ? 1
+                            : subBatch.Batch.BatchOperations.Max(s => s.Ordering) + 1
                     },
                     Status = "A",
                     MachineId = 99,
@@ -216,6 +224,7 @@ namespace RemaSoftware.WebApp.Helper
                     EndDate = now
                 });
             }
+
             _subBatchService.UpdateSubBatch(subBatch);
         }
 
@@ -263,7 +272,8 @@ namespace RemaSoftware.WebApp.Helper
 
             var ddt_out_id = 0;
             var now = DateTime.Now;
-            var ddts_out = _orderService.GetDdtOutsByClientIdAndStatus(subBatch.Ddts_In[0].Product.ClientID, DDTOutStatus.STATUS_PENDING);
+            var ddts_out = _orderService.GetDdtOutsByClientIdAndStatus(subBatch.Ddts_In[0].Product.ClientID,
+                DDTOutStatus.STATUS_PENDING);
             if (ddts_out.Count == 0)
             {
                 ddt_out_id = _orderService.CreateNewDdtOut(new Ddt_Out()
@@ -277,6 +287,7 @@ namespace RemaSoftware.WebApp.Helper
             {
                 ddt_out_id = ddts_out[0].Ddt_Out_ID;
             }
+
             foreach (var item in subBatch.Ddts_In.OrderByDescending(s => s.TotalPriority).ToList())
             {
                 if (item.Number_Piece_Now >= dto.OkPieces)
@@ -312,9 +323,10 @@ namespace RemaSoftware.WebApp.Helper
             if (subBatch.Ddts_In.All(s => s.Number_Piece_Now == 0))
             {
                 subBatch.Status = OrderStatusConstants.STATUS_COMPLETED;
-                foreach (var item in subBatch.OperationTimelines.Where(s => s.Status != OperationTimelineConstant.STATUS_COMPLETED).ToList())
+                foreach (var item in subBatch.OperationTimelines
+                             .Where(s => s.Status != OperationTimelineConstant.STATUS_COMPLETED).ToList())
                 {
-                    
+
                     if (item.MachineId == 99 && item.OperationTimelineID == dto.OperationTimeLineId)
                     {
                         item.EndDate = DateTime.Now;
@@ -330,9 +342,10 @@ namespace RemaSoftware.WebApp.Helper
                         item.UseForStatics = false;
                         item.Status = OperationTimelineConstant.STATUS_COMPLETED;
                     }
-                    
+
                 }
             }
+
             _subBatchService.UpdateSubBatch(subBatch);
             return subBatch.SubBatchID;
         }
@@ -344,7 +357,7 @@ namespace RemaSoftware.WebApp.Helper
 
         public string EmitDDT(int id)
         {
-            
+
             var ddtOut = _orderService.GetDdtOutById(id);
             var result = _apiFatturaInCloudService.CreateDdtInCloud(ddtOut);
             ddtOut.Status = DDTOutStatus.STATUS_EMITTED;
@@ -358,7 +371,9 @@ namespace RemaSoftware.WebApp.Helper
             catch (Exception e)
             {
                 _apiFatturaInCloudService.DeleteDdtInCloudById(result.Item2);
+                throw e;
             }
+
             return result.Item1;
         }
 
@@ -403,6 +418,64 @@ namespace RemaSoftware.WebApp.Helper
                 {
                     transaction.Rollback();
                     throw;
+                }
+            }
+        }
+
+        public PartialDDTViewModel GetPartialDDTViewModel(int id, int clientId)
+        {
+            var ddt = _orderService.GetDdtOutById(id);
+            var partialDDtDtos = new List<PartialDdtDto>();
+            foreach (var item in ddt.Ddt_Associations)
+            {
+                partialDDtDtos.Add(new PartialDdtDto()
+                {
+                    DdtAssociation = item,
+                    ToEmit = false
+                });
+            }
+
+            return new PartialDDTViewModel()
+            {
+                DdtId = id,
+                PartialDdtDtos = partialDDtDtos,
+                ClientId = clientId
+            };
+        }
+
+        public string EditPartialDdtIn(PartialDDTViewModel model)
+        {
+            using (var transaction = _dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    if (model.PartialDdtDtos.All(s => s.ToEmit))
+                        return EmitDDT(model.DdtId);
+                    if (model.PartialDdtDtos.Any(s => s.ToEmit))
+                    {
+                        var ddtOut = _orderService.CreateDDTOut(new Ddt_Out()
+                        {
+                            ClientID = model.ClientId,
+                            Date = DateTime.Now,
+                            Url = "",
+                            Status = DDTOutStatus.STATUS_PENDING
+                        });
+                        var partial = model.PartialDdtDtos.Where(s => s.ToEmit).ToList();
+                        foreach (var item in partial)
+                        {
+                            _orderService.UpdateDdtAssociationByIdWithNewDdtOut(item.DdtAssociation.ID, ddtOut.Ddt_Out_ID);
+                        }
+                        var result = EmitDDT(ddtOut.Ddt_Out_ID);
+                        transaction.Commit();
+                        return result;
+                    }
+
+                    return "";
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    throw e;
                 }
             }
         }

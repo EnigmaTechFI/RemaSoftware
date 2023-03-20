@@ -40,5 +40,7 @@ namespace RemaSoftware.Domain.Services
         Ddt_Out GetDdtOutById(int id);
         void UpdateDdtOut(Ddt_Out ddt);
         Ddt_Out GetDdtOutsById(int id);
+        Ddt_Out CreateDDTOut(Ddt_Out ddtOut);
+        void UpdateDdtAssociationByIdWithNewDdtOut(int ddtAssociationId, int ddtOutDdtOutId);
     }
 }
