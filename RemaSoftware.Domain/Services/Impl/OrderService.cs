@@ -427,5 +427,20 @@ namespace RemaSoftware.Domain.Services.Impl
         {
             return _dbContext.Ddts_Out.SingleOrDefault(s => s.Ddt_Out_ID == id);
         }
+
+        public Ddt_Out CreateDDTOut(Ddt_Out ddtOut)
+        {
+            _dbContext.Ddts_Out.Add(ddtOut);
+            _dbContext.SaveChanges();
+            return ddtOut;
+        }
+
+        public void UpdateDdtAssociationByIdWithNewDdtOut(int ddtAssociationId, int ddtOutDdtOutId)
+        {
+            var ddt = _dbContext.Ddt_Associations.SingleOrDefault(s => s.ID == ddtAssociationId);
+            ddt.Ddt_Out_ID = ddtOutDdtOutId;
+            _dbContext.Ddt_Associations.Update(ddt);
+            _dbContext.SaveChanges();
+        }
     }
 }

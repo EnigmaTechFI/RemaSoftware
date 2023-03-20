@@ -1,0 +1,42 @@
+@model RemaSoftware.WebApp.Models.OrderViewModel.PartialDDTViewModel
+
+@{
+    ViewData["Title"] = "DDT Parziale";
+}
+
+
+<div class="card shadow mb-4" id="order-summ-content">
+<div class="d-sm-flex align-items-center justify-content-between card-header py-3">
+    <h3 class="m-0 font-weight-bold text-primary">Seleziona ordini da emettere</h3>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th class="text-center" scope="col">Seleziona per emettere</th>
+                    <th scope="col">DDT</th>
+                    <th scope="col">Prodotto</th>
+                    <th scope="col">Numero pezzi</th>
+                </tr>
+                </thead>
+                <tbody>
+                <input asp-for="@Model.DdtId" style="display: none" type="text">
+                <input asp-for="@Model.ClientId" style="display: none" type="text">
+                @for (var i = 0; i < Model.PartialDdtDtos.Count; i++)
+                {
+                    <input asp-for="@Model.PartialDdtDtos[i].DdtAssociation.ID" style="display: none" type="text">
+                    <tr>
+                        <td class="text-center"><input asp-for="@Model.PartialDdtDtos[i].ToEmit" class="form-check-input" type="checkbox" id="gridCheck"></td>
+                        <td>@Model.PartialDdtDtos[i].DdtAssociation.Ddt_In.Code</td>
+                        <td>@Model.PartialDdtDtos[i].DdtAssociation.Ddt_In.Product.SKU</td>
+                        <td>@Model.PartialDdtDtos[i].DdtAssociation.NumberPieces</td>
+                    </tr>
+                }
+                <tr></tr>
+                </tbody>
+            </table>
+            <button style="float: right" class="btn btn-primary" type="submit">Emetti selezionati</button>
+        </form>
+    </div>
+</div>

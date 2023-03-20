@@ -5,7 +5,6 @@ namespace RemaSoftware.Domain.Models
 {
     public class Ddt_Association
     {
-        [Key]
         public int ID { get; set; }
         public DateTime Date { get; set; }
         public int Ddt_In_ID { get; set; }
