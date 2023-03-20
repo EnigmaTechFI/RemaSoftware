@@ -26,19 +26,19 @@ namespace RemaSoftware.WebApp.Helper
         }
         public AccountingViewModel GetAccountingViewModel()
         {
-            var ordersInFactory = _orderService.GetOrdersNotCompleted()
-                .GroupBy(c => c.ClientID)
+            var ordersInFactory = _orderService.GetDdtInActive()
+                .GroupBy(c => c.Product.ClientID)
                 .Select(s =>
                     new OrderInFactoryGroupByClient
                     {
-                        Client = s.First().Client.Name,
-                        NumberPiecesInStock = s.Sum(sum => sum.Number_Pieces_InStock),
-                        TotPriceInStock = s.Sum(sum => sum.Price_InStock)
+                        Client = s.First().Product.Client.Name,
+                        NumberPiecesInStock = s.Sum(sum => sum.Number_Piece_Now),
+                        TotPriceInStock = s.Sum(sum => sum.Price_Uni * sum.Number_Piece_Now)
                     }).ToList();
             var vm = new AccountingViewModel
             {
                 OrdersInFactoryGroupByClient = ordersInFactory,
-                OrdersNotCompleted = _orderService.GetOrdersNotCompleted().OrderBy(s => s.Client.Name).ToList()
+                OrdersNotCompleted = _orderService.GetDdtInActive().OrderBy(s => s.Product.Client.Name).ToList()
             };
             return vm;
         }

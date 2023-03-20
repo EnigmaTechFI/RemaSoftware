@@ -84,14 +84,14 @@
                     @foreach (var order in Model.OrdersNotCompleted)
                     {
                         <tr>
-                            <td>@order.DDT</td>
-                            <td>@order.SKU</td>
-                            <td>@order.Name</td>
-                            <td>@order.Client.Name</td>
+                            <td>@order.Ddt_In_ID</td>
+                            <td>@order.Product.SKU</td>
+                            <td>@order.Product.Name</td>
+                            <td>@order.Product.Client.Name</td>
                             <td>@order.DataIn.ToString("d", new CultureInfo("it-IT"))</td>
                             <td>@order.DataOut.ToString("d", new CultureInfo("it-IT"))</td>
                             <td>@order.Number_Piece</td>
-                            <td>@order.Number_Pieces_InStock</td>
+                            <td>@order.Number_Piece_Now</td>
                             <td>@order.Price_Uni.ToString("0.00")&#8364;</td>
                             <td class="text-center">
                                 @{
@@ -112,7 +112,6 @@
 <input type="button" class="btn btn-primary" value="Stampa resoconto" onclick="PrintPDF()">
 @section Scripts
 {
-
     <script>
         function PrintPDF() {
             var aElement = document.createElement("a");
