@@ -31,7 +31,7 @@
                         <td>@operation.Name</td>
                         <td>@operation.Description</td>
                         <td class="text-center">
-                            @if (operation.Name != OtherConstants.COQ)
+                            @if (operation.Name != OtherConstants.COQ && operation.Name != OtherConstants.EXTRA)
                             {
                                 <a style="text-decoration: none" asp-action="EditOperation" asp-controller="Operation" asp-route-id="@operation.OperationID">
                                     <i class="fas fa-pen fa-lg pl-2" style="cursor: pointer; color: #6d767e;" title="Modifica"></i>

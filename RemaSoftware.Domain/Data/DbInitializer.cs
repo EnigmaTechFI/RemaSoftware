@@ -17,6 +17,16 @@ namespace RemaSoftware.Domain.Data
                     Description = OtherConstants.COQ
                 });
             }
+            
+            op =_context.Operations.SingleOrDefault(s => s.Name == OtherConstants.EXTRA);
+            if (op == null)
+            {
+                _context.Add(new Operation()
+                {
+                    Name = OtherConstants.EXTRA,
+                    Description = OtherConstants.EXTRA
+                });
+            }
             _context.SaveChanges();
             string[] roleNames = { Roles.Admin, Roles.Dipendente, Roles.Cliente, Roles.Machine, Roles.COQ};
             IdentityResult roleResult;

@@ -57,10 +57,10 @@
                             @if (ddt.Status == OrderStatusConstants.STATUS_ARRIVED)
                             {
                                 <i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer; color: #6d767e;" id="@ddt.Ddt_In_ID" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDataArticleId('#confirm-del-modal', @ddt.Ddt_In_ID)"></i>
+                                <a style="text-decoration: none" asp-action="EditOrder" asp-controller="Order" asp-route-id="@ddt.Ddt_In_ID">
+                                    <i class="fas fa-pen fa-lg pl-2" style="cursor: pointer; color: #6d767e;" title="Modifica"></i>
+                                </a>
                             }
-                            <a style="text-decoration: none" asp-action="EditOrder" asp-controller="Order" asp-route-id="@ddt.Ddt_In_ID">
-                                <i class="fas fa-pen fa-lg pl-2" style="cursor: pointer; color: #6d767e;" title="Modifica"></i>
-                            </a>
                             @if (ddt.Status != OrderStatusConstants.STATUS_ARRIVED)
                             {
                                 <a style="text-decoration: none" asp-controller="Order" asp-action="SubBatchMonitoring" asp-route-id="@ddt.SubBatchID">

@@ -24,5 +24,21 @@ namespace RemaSoftware.WebApp.Validation
                 return "Data di scadenza non valida.";
             return "";
         }
+        
+        public string ValidateEditOrderViewModelAndSetDefaultData(NewOrderViewModel model)
+        {
+            model.Ddt_In.Number_Piece_Now = model.Ddt_In.Number_Piece;
+            model.Ddt_In.Price_Uni = model.Ddt_In.IsReso ? 0 : model.Ddt_In.Price_Uni; 
+
+            if (string.IsNullOrEmpty(model.Ddt_In.Code))
+                return "Inserire Codice DDT.";
+            if (model.Ddt_In.Number_Piece <= 0)
+                return "Inserire il numero di pezzi";
+            if (string.IsNullOrEmpty(model.Ddt_In.Description))
+                return "Inserire descrizione DDT.";
+            if ((model.Ddt_In.Price_Uni < default(decimal) || (model.Ddt_In.Price_Uni == null)) && !model.Ddt_In.IsReso)
+                return "Prezzo unitario mancante.";
+            return "";
+        }
     }
 }

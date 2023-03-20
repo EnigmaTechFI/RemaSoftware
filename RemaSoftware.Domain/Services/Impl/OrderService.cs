@@ -295,6 +295,21 @@ namespace RemaSoftware.Domain.Services.Impl
                 return null;
             }
         }
+        
+        public Ddt_In UpdateDDtIn(Ddt_In ddt_In)
+        {
+            try
+            {
+                var addedDdtIn = _dbContext.Update(ddt_In);
+                _dbContext.SaveChanges();
+                return addedDdtIn.Entity;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Errore durante l'aggiornamento della commessa: {ddt_In.Code}");
+                throw e;
+            }
+        }
 
         public List<Ddt_In> GetAllDdtIn()
         {

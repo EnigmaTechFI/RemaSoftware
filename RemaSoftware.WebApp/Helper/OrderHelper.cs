@@ -17,18 +17,20 @@ namespace RemaSoftware.WebApp.Helper
     public class OrderHelper
     {
         private readonly IOrderService _orderService;
+        private readonly IOperationService _operationService;
         private readonly ISubBatchService _subBatchService;
         private readonly IProductService _productService;
         private readonly IAPIFatturaInCloudService _apiFatturaInCloudService;
         private readonly ApplicationDbContext _dbContext;
 
-        public OrderHelper(IOrderService orderService, IAPIFatturaInCloudService apiFatturaInCloudService, ApplicationDbContext dbContext, IProductService productService, ISubBatchService subBatchService)
+        public OrderHelper(IOrderService orderService, IAPIFatturaInCloudService apiFatturaInCloudService, ApplicationDbContext dbContext, IProductService productService, ISubBatchService subBatchService, IOperationService operationService)
         {
             _orderService = orderService;
             _apiFatturaInCloudService = apiFatturaInCloudService;
             _dbContext = dbContext;
             _productService = productService;
             _subBatchService = subBatchService;
+            _operationService = operationService;
         }
 
         public Ddt_In GetDdtInById(int id)
@@ -70,6 +72,7 @@ namespace RemaSoftware.WebApp.Helper
                 {
                     var operationsSelected = model.OperationsSelected.Where(w => !w.StartsWith("0"))
                         .Select(s => int.Parse(s.Split('-').First())).ToList();
+                    operationsSelected.Add(_operationService.GetOperationIdByName(OtherConstants.EXTRA));
                     var batchOperationList = new List<BatchOperation>();
                     var index = 0;
                     foreach (var operation in operationsSelected)
@@ -84,7 +87,7 @@ namespace RemaSoftware.WebApp.Helper
                     var batch = _orderService.GetBatchByProductIdAndOperationList(model.Ddt_In.ProductID,
                         operationsSelected);
                     model.Ddt_In.FC_Ddt_In_ID = _apiFatturaInCloudService.AddDdtInCloud(model.Ddt_In,
-                        _productService.GetProductById(model.Ddt_In.ProductID).SKU, model.Ddt_In.Price_Uni);
+                        _productService.GetProductById(model.Ddt_In.ProductID).SKU);
                     if (batch == null)
                     {
                         var ddtList = new List<Ddt_In>();
@@ -360,6 +363,32 @@ namespace RemaSoftware.WebApp.Helper
             ddt.Status = DDTOutStatus.STATUS_PENDING;
             _orderService.UpdateDdtOut(ddt);
             return id;
+        }
+
+        public Ddt_In EditDdtIn(NewOrderViewModel model)
+        {
+            using (var transaction = _dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    var ddt = _orderService.GetDdtInById(model.Ddt_In.Ddt_In_ID);
+                    ddt.Code = model.Ddt_In.Code;
+                    ddt.Number_Piece = model.Ddt_In.Number_Piece;
+                    ddt.NumberMissingPiece = model.Ddt_In.NumberMissingPiece;
+                    ddt.Price_Uni = model.Ddt_In.Price_Uni;
+                    ddt.Description = model.Ddt_In.Description;
+                    ddt.Note = model.Ddt_In.Note;
+                    var updatedDDT = _orderService.UpdateDDtIn(ddt);
+                    _apiFatturaInCloudService.EditDdtInCloud(updatedDDT, ddt.Product.SKU);
+                    transaction.Commit();
+                    return updatedDDT;
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
         }
     }
 }

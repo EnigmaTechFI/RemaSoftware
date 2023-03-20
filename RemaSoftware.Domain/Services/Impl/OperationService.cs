@@ -18,9 +18,9 @@ namespace RemaSoftware.Domain.Services.Impl
             return _dbContext.Operations.ToList();
         }
 
-        public List<Operation> GetAllOperationsWithOutCOQ()
+        public List<Operation> GetAllOperationsWithOutCOQAndEXTRA()
         {
-            return _dbContext.Operations.Where(s => s.Name != OtherConstants.COQ).ToList();
+            return _dbContext.Operations.Where(s => s.Name != OtherConstants.COQ && s.Name != OtherConstants.EXTRA).ToList();
         }
 
         public void AddOperation(Operation operation)
@@ -53,7 +53,12 @@ namespace RemaSoftware.Domain.Services.Impl
             _dbContext.Operations.Update(Operation);
             _dbContext.SaveChanges();
         }
-        
+
+        public int GetOperationIdByName(string name)
+        {
+            return _dbContext.Operations.SingleOrDefault(s => s.Name == OtherConstants.EXTRA).OperationID;
+        }
+
 
         public bool EditOrderOperations(int orderId, List<int> operationToAdd, List<int> operationToRemove)
         {

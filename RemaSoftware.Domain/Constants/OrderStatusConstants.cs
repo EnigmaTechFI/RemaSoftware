@@ -43,7 +43,7 @@ namespace RemaSoftware.Domain.Constants
                 {
                     Status = STATUS_PARTIALLY_COMPLETED,
                     StatusDescription = STATUS_PARTIALLY_COMPLETED_DESC,
-                    StatusCssClass = "orange"
+                    StatusCssClass = "yellow"
                 }
             },
             {

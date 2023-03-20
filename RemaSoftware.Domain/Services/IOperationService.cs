@@ -5,7 +5,7 @@ namespace RemaSoftware.Domain.Services
     public interface IOperationService
     {
         List<Operation> GetAllOperations();
-        List<Operation> GetAllOperationsWithOutCOQ();
+        List<Operation> GetAllOperationsWithOutCOQAndEXTRA();
         bool EditOrderOperations(int orderId, List<int> operationToAdd, List<int> operationToRemove);
 
         void AddOperation(Operation operation);
@@ -13,5 +13,6 @@ namespace RemaSoftware.Domain.Services
         void RemoveAllOrderOperations(int orderId);
         Operation GetOperationById(int id);
         void UpdateOperation(Operation Operation);
+        int GetOperationIdByName(string name);
     }
 }

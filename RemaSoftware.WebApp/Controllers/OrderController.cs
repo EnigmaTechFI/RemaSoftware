@@ -153,16 +153,34 @@ namespace RemaSoftware.WebApp.Controllers
         {
             var vm = new NewOrderViewModel
             {
-                Clients = _clientService.GetAllClients(),
-                Operations = _operationService.GetAllOperationsWithOutCOQ()?.Select(s=>new SelectListItem
-                {
-                    Text = s.Name,
-                    Value = $"{s.OperationID}-{s.Name}"
-                }).ToList(),
                 Ddt_In = _orderHelper.GetDdtInById(id)
             };
             return View(vm);
         }
+        
+        
+        [HttpPost]
+        public IActionResult EditOrder(NewOrderViewModel model)
+        {
+            try {
+                var validationResult = _orderValidation.ValidateEditOrderViewModelAndSetDefaultData(model);
+                if (validationResult != "")
+                {
+                    _notyfService.Error(validationResult);
+                    return View(NewOrderViewModelThrow(model));
+                }
+                var result = _orderHelper.EditDdtIn(model);
+                _notyfService.Success("Commessa aggiornata correttamente");
+                return RedirectToAction("ProductList", "Product");
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                _notyfService.Error("Errore durante la creazione dell'ordine.");
+                return View(NewOrderViewModelThrow(model));
+            }
+        }
+
 
         [HttpGet]
         public IActionResult NewOrder(int productId)
@@ -171,7 +189,7 @@ namespace RemaSoftware.WebApp.Controllers
             var vm = new NewOrderViewModel
             {
                 Clients = _clientService.GetAllClients(),
-                Operations = _operationService.GetAllOperationsWithOutCOQ()?.Select(s=>new SelectListItem
+                Operations = _operationService.GetAllOperationsWithOutCOQAndEXTRA()?.Select(s=>new SelectListItem
                 {
                     Text = s.Name,
                     Value = $"{s.OperationID}-{s.Name}"
@@ -187,7 +205,7 @@ namespace RemaSoftware.WebApp.Controllers
 
         private NewOrderViewModel NewOrderViewModelThrow(NewOrderViewModel model)
         {
-            model.Operations = _operationService.GetAllOperationsWithOutCOQ()?.Select(s => new SelectListItem
+            model.Operations = _operationService.GetAllOperationsWithOutCOQAndEXTRA()?.Select(s => new SelectListItem
             {
                 Text = s.Name,
                 Value = $"{s.OperationID}-{s.Name}"
@@ -284,7 +302,7 @@ namespace RemaSoftware.WebApp.Controllers
             }
             vm.OrderId = orderId;
             
-            var allAvailableOperations = _operationService.GetAllOperationsWithOutCOQ();
+            var allAvailableOperations = _operationService.GetAllOperationsWithOutCOQAndEXTRA();
             vm.Operations = allAvailableOperations?.Select(s => new SelectListItem
             {
                 Text = s.Name,
