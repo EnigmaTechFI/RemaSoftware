@@ -64,6 +64,10 @@ public class SubBatchService : ISubBatchService
                 .ThenInclude(s => s.BatchOperations)
                 .ThenInclude(s => s.Operations)
                 .SingleOrDefault(s => s.SubBatchID == Id);
+            if (sb.Status == OrderStatusConstants.STATUS_COMPLETED || sb.Status == OrderStatusConstants.STATUS_DELIVERED)
+                throw new Exception("Ordine già concluso.");
+            if (sb == null)
+                throw new Exception("Ordine non presente");
             sb.Status = OrderStatusConstants.STATUS_WORKING;
             for (int i = 0; i < numbersOperator; i++)
             {

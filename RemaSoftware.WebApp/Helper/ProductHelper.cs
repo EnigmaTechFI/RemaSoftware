@@ -60,7 +60,6 @@ namespace RemaSoftware.WebApp.Helper
             return new UpdateProductViewModel()
             {
                 Product = product,
-                Clients = _clientHelper.GetAllClients(),
                 BasePathImages = $"{_configuration["ApplicationUrl"]}{_configuration["ImagesEndpoint"]}order/",
             };
         }

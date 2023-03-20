@@ -17,13 +17,14 @@ namespace RemaSoftware.WebApp.Helper
     public class OrderHelper
     {
         private readonly IOrderService _orderService;
+        private readonly IEmailService _emailService;
         private readonly IOperationService _operationService;
         private readonly ISubBatchService _subBatchService;
         private readonly IProductService _productService;
         private readonly IAPIFatturaInCloudService _apiFatturaInCloudService;
         private readonly ApplicationDbContext _dbContext;
 
-        public OrderHelper(IOrderService orderService, IAPIFatturaInCloudService apiFatturaInCloudService, ApplicationDbContext dbContext, IProductService productService, ISubBatchService subBatchService, IOperationService operationService)
+        public OrderHelper(IOrderService orderService, IAPIFatturaInCloudService apiFatturaInCloudService, ApplicationDbContext dbContext, IProductService productService, ISubBatchService subBatchService, IOperationService operationService, IEmailService emailService)
         {
             _orderService = orderService;
             _apiFatturaInCloudService = apiFatturaInCloudService;
@@ -31,6 +32,7 @@ namespace RemaSoftware.WebApp.Helper
             _productService = productService;
             _subBatchService = subBatchService;
             _operationService = operationService;
+            _emailService = emailService;
         }
 
         public Ddt_In GetDdtInById(int id)
@@ -127,6 +129,20 @@ namespace RemaSoftware.WebApp.Helper
                                 NumberPieces = model.Ddt_In.Number_Piece
                             };
                             _subBatchService.CreateSubBatch(subBatch);
+                        }
+                    }
+
+                    if (model.Ddt_In.NumberMissingPiece != 0)
+                    {
+                        try
+                        {
+                            var product = _productService.GetProductById(model.Ddt_In.ProductID);
+                            _emailService.SendEmailMissingPieces(product.Client.Email, model.Ddt_In.NumberMissingPiece,
+                                model.Ddt_In.Number_Piece, model.Ddt_In.Code, product.Client.Name, product.SKU,
+                                product.Name);
+                        }
+                        catch (Exception e)
+                        {
                         }
                     }
                     transaction.Commit();

@@ -88,7 +88,6 @@ namespace RemaSoftware.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                model.Clients = _clientHelper.GetAllClients();
                 _notyfToastService.Error(ex.Message);
                 return View(model);
             }
