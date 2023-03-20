@@ -5,11 +5,12 @@ using RemaSoftware.WebApp.Helper;
 using RemaSoftware.WebApp.Models.ProductViewModel;
 using System;
 using System.Threading.Tasks;
+using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Models;
 
 namespace RemaSoftware.WebApp.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
     public class ProductController : Controller
     {
         private readonly ClientHelper _clientHelper;

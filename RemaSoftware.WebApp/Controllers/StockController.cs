@@ -3,6 +3,7 @@ using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
+using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.WebApp.DTOs;
 using RemaSoftware.WebApp.Helper;
@@ -10,7 +11,7 @@ using RemaSoftware.WebApp.Models.StockViewModel;
 
 namespace RemaSoftware.WebApp.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
     public class StockController : Controller
     {
         private readonly StockHelper _stockHelper;

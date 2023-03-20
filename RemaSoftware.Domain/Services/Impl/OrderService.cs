@@ -330,7 +330,7 @@ namespace RemaSoftware.Domain.Services.Impl
                 .Include(b => b.SubBatch)
                 .ThenInclude(s => s.Batch)
                 .ThenInclude(b => b.BatchOperations)
-                .Where(s => s.Status == OrderStatusConstants.STATUS_ARRIVED || s.Status == OrderStatusConstants.STATUS_WORKING)
+                .Where(s => s.Status == OrderStatusConstants.STATUS_ARRIVED || s.Status == OrderStatusConstants.STATUS_WORKING || s.Status == OrderStatusConstants.STATUS_PARTIALLY_COMPLETED)
                 .ToList();
         }
 

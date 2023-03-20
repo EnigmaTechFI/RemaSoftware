@@ -30,126 +30,158 @@
 
         <!-- Sidebar - Brand -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center">
-            <div class="sidebar-brand-text mx-3 text-white">RE.MA. Web-App</div>
+            <div class="sidebar-brand-text mx-3 text-white">RE.MA. Software</div>
         </a>
 
-        <!-- Divider -->
-        <hr class="sidebar-divider my-0">
+        @if (User.IsInRole(Roles.Admin))
+        {
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
 
-        <!-- Nav Item - Dashboard -->
-        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")">
-            <a asp-controller="Home" asp-action="Index" class="nav-link">
-                <i class="fas fa-fw fa-tachometer-alt"></i>
-                <span>Dashboard</span>
-            </a>
-        </li>
+            <!-- Nav Item - Dashboard -->
+            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")">
+                <a asp-controller="Home" asp-action="Index" class="nav-link">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+        }
+        @if (User.IsInRole(Roles.Cliente))
+        {
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
 
-        <!-- Divider -->
-        <hr class="sidebar-divider">
+            <!-- Nav Item - Dashboard -->
+            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")">
+                <a asp-controller="Guest" asp-action="Index" class="nav-link">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+        }
+        @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente))
+        {
+            <!-- Divider -->
+            <hr class="sidebar-divider">
 
-        <!-- Heading -->
-        <div class="sidebar-heading">
-            Inventario
-        </div>
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Inventario
+            </div>
 
-        <!-- Nav Item - Pages Collapse Menu -->
-        <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Product" ? "active" : "")">
-            <a class="nav-link" asp-action="ProductList" asp-controller="Product">
-                <i class="fas fa-tag"></i>
-                <span>Prodotti</span>
-            </a>
-        </li>
-        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "OrderSummary" ? "active" : "")">
-            <a class="nav-link" asp-action="OrderSummary" asp-controller="Order">
-                <i class="fas fa-file-alt"></i>
-                <span>Ordini attivi</span>
-            </a>
-        </li>
-        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "OrderSummaryEnded" ? "active" : "")">
-            <a class="nav-link" asp-action="OrderSummaryEnded" asp-controller="Order">
-                <i class="fas fa-file-archive"></i>
-                <span>Ordini conclusi</span>
-            </a>
-        </li>
-        <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Operation" ? "active" : "")">
-            <a class="nav-link" asp-action="OperationList" asp-controller="Operation">
-                <i class="fas fa-tools"></i>
-                <span>Operazioni</span>
-            </a>
-        </li>
-        <!-- Divider -->
-        <hr class="sidebar-divider">
+            <!-- Nav Item - Pages Collapse Menu -->
+            <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Product" ? "active" : "")">
+                <a class="nav-link" asp-action="ProductList" asp-controller="Product">
+                    <i class="fas fa-tag"></i>
+                    <span>Prodotti</span>
+                </a>
+            </li>
+            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "OrderSummary" ? "active" : "")">
+                <a class="nav-link" asp-action="OrderSummary" asp-controller="Order">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Ordini attivi</span>
+                </a>
+            </li>
+            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "OrderSummaryEnded" ? "active" : "")">
+                <a class="nav-link" asp-action="OrderSummaryEnded" asp-controller="Order">
+                    <i class="fas fa-file-archive"></i>
+                    <span>Ordini conclusi</span>
+                </a>
+            </li>
+            <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Operation" ? "active" : "")">
+                <a class="nav-link" asp-action="OperationList" asp-controller="Operation">
+                    <i class="fas fa-tools"></i>
+                    <span>Operazioni</span>
+                </a>
+            </li>
+        }
+        @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente) || User.IsInRole(Roles.COQ))
+        {
+            <!-- Divider -->
+            <hr class="sidebar-divider">
 
-        <!-- Heading -->
-        <div class="sidebar-heading">
-            Produzione
-        </div>
-        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "BatchInStock" ? "active" : "")">
-            <a class="nav-link" asp-action="BatchInStock" asp-controller="Order">
-                <i class="fas fa-boxes"></i>
-                <span>Lotti in magazzino</span>
-            </a>
-        </li>
-        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "BatchInProduction" ? "active" : "")">
-            <a class="nav-link" asp-action="BatchInProduction" asp-controller="Order">
-                <i class="fas fa-pallet"></i>
-                <span>Lotti in produzione</span>
-            </a>
-        </li>
-        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "QualityControl" ? "active" : "")">
-            <a class="nav-link" asp-action="QualityControl" asp-controller="Order">
-                <i class="fas fa-search"></i>
-                <span>Controllo qualità</span>
-            </a>
-        </li>
-        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "BatchInDelivery" ? "active" : "")">
-            <a class="nav-link" asp-action="BatchInDelivery" asp-controller="Order">
-                <i class="fas fa-truck-loading"></i>
-                <span>Lotti in consegna</span>
-            </a>
-        </li>
-        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "DDTEmitted" ? "active" : "")">
-            <a class="nav-link" asp-action="DDTEmitted" asp-controller="Order">
-                <i class="fas fa-file"></i>
-                <span>DDT emesse</span>
-            </a>
-        </li>
-        <!-- Divider -->
-        <hr class="sidebar-divider">
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Produzione
+            </div>
+        }
+        @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente))
+        {
+            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "BatchInStock" ? "active" : "")">
+                    <a class="nav-link" asp-action="BatchInStock" asp-controller="Order">
+                        <i class="fas fa-boxes"></i>
+                        <span>Lotti in magazzino</span>
+                    </a>
+                </li>
+            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "BatchInProduction" ? "active" : "")">
+                <a class="nav-link" asp-action="BatchInProduction" asp-controller="Order">
+                    <i class="fas fa-pallet"></i>
+                    <span>Lotti in produzione</span>
+                </a>
+            </li>
+        }
+        @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente) || User.IsInRole(Roles.COQ))
+        {
+            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "QualityControl" ? "active" : "")">
+                <a class="nav-link" asp-action="QualityControl" asp-controller="Order">
+                    <i class="fas fa-search"></i>
+                    <span>Controllo qualità</span>
+                </a>
+            </li>
+        }
+        @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente))
+        {
+            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "BatchInDelivery" ? "active" : "")">
+                <a class="nav-link" asp-action="BatchInDelivery" asp-controller="Order">
+                    <i class="fas fa-truck-loading"></i>
+                    <span>Lotti in consegna</span>
+                </a>
+            </li>
+            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "DDTEmitted" ? "active" : "")">
+                <a class="nav-link" asp-action="DDTEmitted" asp-controller="Order">
+                    <i class="fas fa-file"></i>
+                    <span>DDT emesse</span>
+                </a>
+            </li>
+        
+            <!-- Divider -->
+            <hr class="sidebar-divider">
 
-        <!-- Heading -->
-        <div class="sidebar-heading">
-            Anagrafiche
-        </div>
-        <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Client" ? "active" : "")">
-            <a class="nav-link" asp-action="ClientList" asp-controller="Client">
-                <i class="fas fa-fw fa-address-card"></i>
-                <span>Clienti</span>
-            </a>
-        </li>
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Anagrafiche
+            </div>
+            <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Client" ? "active" : "")">
+                <a class="nav-link" asp-action="ClientList" asp-controller="Client">
+                    <i class="fas fa-fw fa-address-card"></i>
+                    <span>Clienti</span>
+                </a>
+            </li>
 
-        <!-- Divider -->
-        <hr class="sidebar-divider">
+            <!-- Divider -->
+            <hr class="sidebar-divider">
 
-        <!-- Heading -->
-        <div class="sidebar-heading">
-            Magazzino
-        </div>
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Magazzino
+            </div>
+            
 
-
-        <!-- Nav Item - Tables -->
-        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Stock" ? "active" : "")">
-            <a class="nav-link" asp-action="Stock" asp-controller="Stock">
-                <i class="fas fa-fw fa-warehouse"></i>
-                <span>Giacenze</span>
-            </a>
-        </li>
-        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "AddProduct" ? "active" : "")">
-            <a class="nav-link" asp-action="AddProduct" asp-controller="Stock">
-                <i class="fas fa-fw fa-pallet"></i>
-                <span>Aggiungi Prodotto</span>
-            </a>
-        </li>
+            <!-- Nav Item - Tables -->
+            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Stock" ? "active" : "")">
+                <a class="nav-link" asp-action="Stock" asp-controller="Stock">
+                    <i class="fas fa-fw fa-warehouse"></i>
+                    <span>Giacenze</span>
+                </a>
+            </li>
+            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "AddProduct" ? "active" : "")">
+                <a class="nav-link" asp-action="AddProduct" asp-controller="Stock">
+                    <i class="fas fa-fw fa-pallet"></i>
+                    <span>Aggiungi Prodotto</span>
+                </a>
+            </li>
+            
+        }
         @if (User.IsInRole("Admin"))
         {
             <!-- Divider -->
@@ -205,30 +237,6 @@
 
                 <!-- Topbar Navbar -->
                 <ul class="navbar-nav ml-auto">
-
-                    <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-                    <li class="nav-item dropdown no-arrow d-sm-none">
-                        <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-search fa-fw"></i>
-                        </a>
-                        <!-- Dropdown - Messages -->
-                        <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-                             aria-labelledby="searchDropdown">
-                            <form class="form-inline mr-auto w-100 navbar-search">
-                                <div class="input-group">
-                                    <input type="text" class="form-control bg-light border-0 small"
-                                           placeholder="Search for..." aria-label="Search"
-                                           aria-describedby="basic-addon2">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-primary" type="button">
-                                            <i class="fas fa-search fa-sm"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </li>
 
                     <div class="topbar-divider d-none d-sm-block"></div>
 

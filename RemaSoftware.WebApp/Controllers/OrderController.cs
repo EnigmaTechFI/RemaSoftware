@@ -20,7 +20,7 @@ using RemaSoftware.WebApp.Validation;
 
 namespace RemaSoftware.WebApp.Controllers
 {
-    [Authorize]
+    
     public class OrderController : Controller
     {
         private readonly IOrderService _orderService;
@@ -56,6 +56,7 @@ namespace RemaSoftware.WebApp.Controllers
             _productService = productService;
         }
 
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente +"," +Roles.COQ)]
         [HttpPost]
         public JsonResult EndOrder([FromBody] SubBatchToEndDto dto)
         {
@@ -68,7 +69,8 @@ namespace RemaSoftware.WebApp.Controllers
                 return new JsonResult(new { Result = false, Data = 0, ToastMessage=e.Message});
             }
         }
-
+        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente +"," +Roles.COQ)]
         [HttpPost]
         public IActionResult SubBatchAtControl(QualityControlViewModel model)
         {
@@ -84,19 +86,19 @@ namespace RemaSoftware.WebApp.Controllers
             }
             
         }
-        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente+"," +Roles.COQ)]
         [HttpGet]
         public IActionResult QualityControl()
         {
             return View(_orderHelper.GetQualityControlViewModel());
         }
-
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpGet]
         public IActionResult SubBatchMonitoring(int id)
         {
             return View(_orderHelper.GetSubBatchMonitoring(id));
         }
-
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpGet]
         public IActionResult OrderSummary()
         {
@@ -105,7 +107,7 @@ namespace RemaSoftware.WebApp.Controllers
                 Ddt_In = _orderHelper.GetAllDdtInActive_NoPagination()
             });
         }
-        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpGet]
         public IActionResult OrderSummaryEnded()
         {
@@ -114,14 +116,14 @@ namespace RemaSoftware.WebApp.Controllers
                 Ddt_In = _orderHelper.GetAllDdtInEnded_NoPagination()
             });
         }
-
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpGet]
         public JsonResult OrderSummaryCompleted()
         {
             var orders = _orderService.GetOrdersCompleted();
             return new JsonResult(new { Orders = orders });
         }
-
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         public IActionResult DownloadPdfOrder(int orderId)
         {
             var vm = new PDFViewModel();
@@ -147,7 +149,7 @@ namespace RemaSoftware.WebApp.Controllers
             } 
             return View("../Pdf/SingleOrderSummary", vm);
         }
-        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpGet]
         public IActionResult EditOrder(int id)
         {
@@ -158,7 +160,7 @@ namespace RemaSoftware.WebApp.Controllers
             return View(vm);
         }
         
-        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpPost]
         public IActionResult EditOrder(NewOrderViewModel model)
         {
@@ -181,7 +183,7 @@ namespace RemaSoftware.WebApp.Controllers
             }
         }
 
-
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpGet]
         public IActionResult NewOrder(int productId)
         {
@@ -202,7 +204,6 @@ namespace RemaSoftware.WebApp.Controllers
             };
             return View(vm);
         }
-
         private NewOrderViewModel NewOrderViewModelThrow(NewOrderViewModel model)
         {
             model.Operations = _operationService.GetAllOperationsWithOutCOQAndEXTRA()?.Select(s => new SelectListItem
@@ -212,7 +213,7 @@ namespace RemaSoftware.WebApp.Controllers
             }).ToList();
             return model;
         }
-
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpPost]
         public IActionResult NewOrder(NewOrderViewModel model)
         {
@@ -234,7 +235,7 @@ namespace RemaSoftware.WebApp.Controllers
                 return View(NewOrderViewModelThrow(model));
             }
         }
-
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpGet]
         public IActionResult BatchInStock()
         {
@@ -243,7 +244,7 @@ namespace RemaSoftware.WebApp.Controllers
                 SubBatches = _orderHelper.GetSubBatchesStatus(OrderStatusConstants.STATUS_ARRIVED)
             });
         }
-        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpGet]
         public IActionResult EmitDDT(int id)
         {
@@ -257,13 +258,13 @@ namespace RemaSoftware.WebApp.Controllers
             }
             
         }
-
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpGet]
         public IActionResult DDTEmitted()
         {
             return View(_orderHelper.GetDDTEmittedViewModel());
         }
-        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpGet]
         public IActionResult BatchInDelivery(string pdfUrl = "empty")
         {
@@ -273,7 +274,7 @@ namespace RemaSoftware.WebApp.Controllers
                 DdtOuts = _orderHelper.GetDdtsInDelivery()
             });
         }
-        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpGet]
         public JsonResult DeleteDDT(int id)
         {
@@ -426,7 +427,7 @@ namespace RemaSoftware.WebApp.Controllers
                 return NotFound();
             }
         }
-
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpGet]
         public IActionResult BatchInProduction()
         {
@@ -435,7 +436,7 @@ namespace RemaSoftware.WebApp.Controllers
                 SubBatches = _orderHelper.GetSubBatchesStatus(OrderStatusConstants.STATUS_WORKING)
             });
         }
-
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpPost]
         public IActionResult UpdateOrderStatus(int orderId, string currentStatus, int outgoing_orders)
         {
@@ -451,7 +452,7 @@ namespace RemaSoftware.WebApp.Controllers
 
             return BadRequest();
         }
-
+        
         public JsonResult DeleteProduct(int productId)
         {
             try

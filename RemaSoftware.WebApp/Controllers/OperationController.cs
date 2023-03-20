@@ -2,6 +2,8 @@
 using System;
 using NLog;
 using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Authorization;
+using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
 using RemaSoftware.WebApp.Models.OperationViewModel;
@@ -9,6 +11,7 @@ using RemaSoftware.WebApp.Validation;
 
 namespace RemaSoftware.WebApp.Controllers
 {
+    [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
     public class OperationController : Controller
     {
         private readonly IOperationService _operationService;

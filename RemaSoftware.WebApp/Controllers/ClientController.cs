@@ -4,12 +4,13 @@ using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
+using RemaSoftware.Domain.Constants;
 using RemaSoftware.WebApp.Models.ClientViewModel;
 using RemaSoftware.WebApp.Helper;
 
 namespace RemaSoftware.WebApp.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
     public class ClientController : Controller
     {
         private readonly ClientHelper _clientHelper;

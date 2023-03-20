@@ -59,9 +59,14 @@ namespace RemaSoftware.WebApp.Controllers
 
                 if (result.Succeeded)
                 {
-                    
-                    if((await _userManager.GetRolesAsync(user)).Contains(Roles.Cliente))
-                        return RedirectToAction("Index", "Guest"); 
+
+                    var roles = await _userManager.GetRolesAsync(user);
+                    if(roles.Contains(Roles.Cliente))
+                        return RedirectToAction("Index", "Guest");
+                    if (roles.Contains(Roles.COQ))
+                        return RedirectToAction("QualityControl", "Order");
+                    if (roles.Contains(Roles.Dipendente))
+                        return RedirectToAction("OrderSummary", "Order");
                     return RedirectToAction("Index", "Home");
                 }
                     

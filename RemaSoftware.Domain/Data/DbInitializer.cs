@@ -48,7 +48,7 @@ namespace RemaSoftware.Domain.Data
                 };
 
                 IdentityResult result = userManager.CreateAsync(adm1, "Antani123!").Result;
-                var addedRole = userManager.AddToRolesAsync(adm1, new [] { Roles.Admin, Roles.Dipendente }).Result;
+                var addedRole = userManager.AddToRolesAsync(adm1, new [] { Roles.Admin }).Result;
                 
             }
             
@@ -63,7 +63,7 @@ namespace RemaSoftware.Domain.Data
 
                 IdentityResult result = userManager.CreateAsync(adm2, "RemaSrls2021!").Result;
                 
-                var addedRole = userManager.AddToRolesAsync(adm2, new [] { Roles.Admin, Roles.Dipendente }).Result;
+                var addedRole = userManager.AddToRolesAsync(adm2, new [] { Roles.Admin}).Result;
             }
             
             var dip1 = userManager.FindByEmailAsync("rema.pul.user@gmail.com").Result;
@@ -78,6 +78,20 @@ namespace RemaSoftware.Domain.Data
                 IdentityResult result = userManager.CreateAsync(dip1, "RemaPul2022!").Result;
                 
                 var addedRole = userManager.AddToRolesAsync(dip1, new [] { Roles.Dipendente }).Result;
+            }
+            
+            var dip2 = userManager.FindByEmailAsync("info@enigma-tech.it").Result;
+            if (dip2 == null)
+            {
+                dip2 = new MyUser
+                {
+                    UserName = "enigma-tech",
+                    Email = "info@enigma-tech.it"
+                };
+
+                IdentityResult result = userManager.CreateAsync(dip2, "RemaPul2022!").Result;
+                
+                var addedRole = userManager.AddToRolesAsync(dip2,new [] { Roles.COQ }).Result;
             }
         }
     }
