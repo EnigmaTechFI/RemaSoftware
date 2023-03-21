@@ -14,5 +14,6 @@ namespace RemaSoftware.WebApp.Models.ProductViewModel
         public int Id { get; set; }
         public string SKU { get; set; }
         public string ClientName { get; set; }
+        public string OperationList { get; set; }
     }
 }

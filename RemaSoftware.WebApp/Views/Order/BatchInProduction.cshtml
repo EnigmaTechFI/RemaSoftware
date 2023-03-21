@@ -1,3 +1,5 @@
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using RemaSoftware.Domain.Constants
 @model RemaSoftware.WebApp.Models.OrderViewModel.BatchInProductionViewModel
 
 @{
@@ -38,7 +40,16 @@
                         <td>@batch.Ddts_In.Sum(s=> s.Number_Piece)</td>
                         <td>@batch.Ddts_In.Sum(s=> s.Number_Piece_Now)</td>
                         <td class="text-center">
-                            <a onclick="printQRCode('@batch.SubBatchID', '@batch.Ddts_In[0].Product.SKU', '@batch.Ddts_In.Sum(s=> s.Number_Piece)', '@batch.Ddts_In[0].Product.Client.Name')" style="text-decoration: none">
+                            @{
+                                
+                                var operation = "";
+                                foreach (var op in batch.Batch.BatchOperations)
+                                {
+                                    if(op.Operations.Name != OtherConstants.COQ && op.Operations.Name != OtherConstants.EXTRA)
+                                        operation += "," +op.Operations.Name;
+                                }
+                            }
+                            <a onclick="printQRCode('@batch.SubBatchID', '@batch.Ddts_In[0].Product.SKU', '@batch.Ddts_In.Sum(s => s.Number_Piece)', '@batch.Ddts_In[0].Product.Client.Name', '@operation')" style="text-decoration: none">
                                 <i class="fas fa-print fa-lg pl-2" title="Stampa etichetta" style="cursor: pointer; color: #6d767e"></i>
                             </a>
                             <a style="text-decoration: none" asp-controller="Order" asp-action="SubBatchMonitoring" asp-route-id="@batch.SubBatchID">
@@ -104,7 +115,7 @@
     <script src="~/js/dymo.connect.framework.js" type="text/javascript" charset="UTF-8"> </script>
     
     <script>
-        function printQRCode(id, sku, pieces, client){
+        function printQRCode(id, sku, pieces, client, operations){
           var printers = dymo.label.framework.getPrinters();
           if (printers.length == 0 || !printers[0].isConnected){
             alert("Nessuna stampante trovata.");
@@ -112,7 +123,7 @@
           }
           var label = dymo.label.framework.openLabelFile("RemaStock.dymo")  
           label.setObjectText("QRCodeObject", id);
-          label.setObjectText("TextObject", "Lotto: "+ id +"\nSKU: " + sku + "\nCliente: " + client);
+          label.setObjectText("TextObject", "LOTTO: "+ id +"\nSKU: " + sku + "\nCLIENTE: " + client + "\nOPERAZIONI: " + operations.replaceAll(",", "\n"));
           label.print(printers[0].name); 
         } 
     </script>

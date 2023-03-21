@@ -79,10 +79,10 @@
     <script>
     if (@Model.LabelToPrint.Id > 0)
     {
-        printQRCode('@Model.LabelToPrint.Id', '@Model.LabelToPrint.SKU', '@Model.LabelToPrint.ClientName')
+        printQRCode('@Model.LabelToPrint.Id', '@Model.LabelToPrint.SKU', '@Model.LabelToPrint.ClientName', '@Model.LabelToPrint.OperationList')
     }
     
-    function printQRCode(id, sku, client){
+    function printQRCode(id, sku, client, operations){
       var printers = dymo.label.framework.getPrinters();
       if (printers.length == 0 || !printers[0].isConnected){
         alert("Nessuna stampante trovata.");
@@ -90,7 +90,7 @@
       }
       var label = dymo.label.framework.openLabelFile("RemaStock.dymo")  
       label.setObjectText("QRCodeObject", id);
-      label.setObjectText("TextObject", "Lotto: "+ id +"\nSKU: " + sku + "\nCliente: " + client);
+      label.setObjectText("TextObject", "LOTTO: "+ id +"\nSKU: " + sku + "\nCLIENTE: " + client + "\nOPERAZIONI: " + operations.replaceAll(",", "\n"));
       label.print(printers[0].name); 
     } 
     </script>
