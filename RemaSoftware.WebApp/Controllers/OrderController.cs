@@ -508,6 +508,21 @@ namespace RemaSoftware.WebApp.Controllers
                 return RedirectToAction("PartialDDT", new {id = model.DdtId, clientId = model.ClientId});
             }
         }
+        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpGet]
+        public IActionResult StockSummary()
+        {
+            try
+            {
+                return View(_orderHelper.GetStockSummaryViewModel());
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.Message, e);
+                return RedirectToAction("BatchInStock", "Order");
+            }
+        }
 
         #region Models validation
 
@@ -520,6 +535,5 @@ namespace RemaSoftware.WebApp.Controllers
 
         #endregion
 
-        
     }
 }

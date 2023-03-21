@@ -54,44 +54,55 @@ public class SubBatchService : ISubBatchService
 
     public async Task<List<OperationTimeline>> UpdateSubBatchStatusAndOperationTimelineStart(int Id, int machineId, int batchOperationId, int numbersOperator, DateTime start)
     {
-        try
+        using (var transaction = _dbContext.Database.BeginTransaction())
         {
-            var sb = _dbContext.SubBatches
-                .Include(s =>s.Ddts_In)
-                .ThenInclude(s => s.Product)
-                .ThenInclude(s => s.Client)
-                .Include(s => s.Batch)
-                .ThenInclude(s => s.BatchOperations)
-                .ThenInclude(s => s.Operations)
-                .SingleOrDefault(s => s.SubBatchID == Id);
-            if (sb.Status == OrderStatusConstants.STATUS_COMPLETED || sb.Status == OrderStatusConstants.STATUS_DELIVERED)
-                throw new Exception("Ordine già concluso.");
-            if (sb == null)
-                throw new Exception("Ordine non presente");
-            sb.Status = OrderStatusConstants.STATUS_WORKING;
-            for (int i = 0; i < numbersOperator; i++)
+            try
             {
-                _dbContext.OperationTimelines.Add(new OperationTimeline()
+                
+                var sb = _dbContext.SubBatches
+                    .Include(s => s.Ddts_In)
+                    .ThenInclude(s => s.Product)
+                    .ThenInclude(s => s.Client)
+                    .Include(s => s.OperationTimelines)
+                    .ThenInclude(s => s.BatchOperation)
+                    .ThenInclude(s => s.Operations)
+                    .SingleOrDefault(s => s.SubBatchID == Id);
+                if (sb.Status == OrderStatusConstants.STATUS_COMPLETED ||
+                    sb.Status == OrderStatusConstants.STATUS_DELIVERED)
+                    throw new Exception("Ordine già concluso.");
+                if (sb == null)
+                    throw new Exception("Ordine non presente");
+                sb.Status = OrderStatusConstants.STATUS_WORKING;
+                var op = new List<OperationTimeline>();
+                for (int i = 0; i < numbersOperator; i++)
                 {
-                    BatchOperationID = batchOperationId,
-                    StartDate = start,
-                    EndDate = start,
-                    MachineId = machineId,
-                    Status = "A",
-                    SubBatch = sb,
-                    SubBatchID = sb.SubBatchID
-                });
-            }
-            sb.Ddts_In.ForEach(s => s.Status = OrderStatusConstants.STATUS_WORKING);
+                    op.Add(new OperationTimeline()
+                    {
+                        BatchOperation = _dbContext.BatchOperations.Include(s => s.Operations).SingleOrDefault(s => s.BatchOperationID == batchOperationId),
+                        BatchOperationID = batchOperationId,
+                        StartDate = start,
+                        EndDate = start,
+                        MachineId = machineId,
+                        Status = "A",
+                        SubBatch = sb,
+                        SubBatchID = sb.SubBatchID
+                    });
+                }
 
-            _dbContext.Update(sb);
-            _dbContext.SaveChanges();
-            return sb.OperationTimelines.ToList();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw e;
+                _dbContext.OperationTimelines.AddRange(op);
+                sb.Ddts_In.ForEach(s => s.Status = OrderStatusConstants.STATUS_WORKING);
+
+                _dbContext.Update(sb);
+                _dbContext.SaveChanges();
+                transaction.Commit();
+                return op;
+            }
+            catch (Exception e)
+            {
+                transaction.Rollback();
+                Console.WriteLine(e);
+                throw e;
+            }
         }
     }
 

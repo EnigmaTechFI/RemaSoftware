@@ -11,6 +11,7 @@ using RemaSoftware.Domain.Constants;
 using RemaSoftware.UtilityServices.Dtos;
 using RemaSoftware.UtilityServices.Interface;
 using RemaSoftware.WebApp.DTOs;
+using RemaSoftware.WebApp.Hub;
 
 namespace RemaSoftware.WebApp.Helper
 {
@@ -23,10 +24,11 @@ namespace RemaSoftware.WebApp.Helper
         private readonly IProductService _productService;
         private readonly IAPIFatturaInCloudService _apiFatturaInCloudService;
         private readonly ApplicationDbContext _dbContext;
+        private readonly ProductionHub _productionHub;
 
         public OrderHelper(IOrderService orderService, IAPIFatturaInCloudService apiFatturaInCloudService,
             ApplicationDbContext dbContext, IProductService productService, ISubBatchService subBatchService,
-            IOperationService operationService, IEmailService emailService)
+            IOperationService operationService, IEmailService emailService, ProductionHub productionHub)
         {
             _orderService = orderService;
             _apiFatturaInCloudService = apiFatturaInCloudService;
@@ -35,6 +37,7 @@ namespace RemaSoftware.WebApp.Helper
             _subBatchService = subBatchService;
             _operationService = operationService;
             _emailService = emailService;
+            _productionHub = productionHub;
         }
 
         public Ddt_In GetDdtInById(int id)
@@ -76,6 +79,7 @@ namespace RemaSoftware.WebApp.Helper
             {
                 try
                 {
+                    var newSubbatch = false;
                     var operationsSelected = model.OperationsSelected.Where(w => !w.StartsWith("0"))
                         .Select(s => int.Parse(s.Split('-').First())).ToList();
                     operationsSelected.Add(_operationService.GetOperationIdByName(OtherConstants.EXTRA));
@@ -105,6 +109,7 @@ namespace RemaSoftware.WebApp.Helper
                             Status = "A",
                             NumberPieces = model.Ddt_In.Number_Piece,
                         });
+                        newSubbatch = true;
                         _orderService.CreateBatch(new Batch()
                         {
                             SubBatches = subBatches,
@@ -133,6 +138,7 @@ namespace RemaSoftware.WebApp.Helper
                                 NumberPieces = model.Ddt_In.Number_Piece
                             };
                             _subBatchService.CreateSubBatch(subBatch);
+                            newSubbatch = true;
                         }
                     }
 
@@ -151,6 +157,8 @@ namespace RemaSoftware.WebApp.Helper
                     }
 
                     transaction.Commit();
+                    if(newSubbatch)
+                        _productionHub.NewSubBatchInStock();
                     return model.Ddt_In;
                 }
                 catch (Exception e)
@@ -479,5 +487,38 @@ namespace RemaSoftware.WebApp.Helper
                 }
             }
         }
+
+        public StockSummaryViewModel GetStockSummaryViewModel()
+        {
+            var subBatches = _subBatchService.GetSubBatchesStatus(OrderStatusConstants.STATUS_ARRIVED);
+            var orderSB = new List<(SubBatch, long)>();
+            foreach (var item in subBatches)
+            {
+                long Totvalue = 0;
+                foreach (var ddt in item.Ddts_In)
+                {
+                    long value = 0;
+                    value = Int64.Parse(GetTimestamp(ddt.DataOut)) / ddt.Priority;
+                    if (ddt.IsPrompted)
+                        value /= OtherConstants.PROMPTVALUE;
+                    Totvalue += value;
+                }
+
+                Totvalue /= subBatches.Count; 
+                orderSB.Add((item, Totvalue));
+            }
+            
+            return new StockSummaryViewModel()
+            {
+                SubBatches = orderSB.OrderBy(s => s.Item2).Select(s => s.Item1).ToList()
+            };
+        }
+        
+        private static String GetTimestamp(DateTime value)
+        {  
+            return value.ToString("yyyyMMddHHmmssffff");
+        }
     }
+    
+    
 }

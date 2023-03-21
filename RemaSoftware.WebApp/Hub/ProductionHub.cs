@@ -15,6 +15,19 @@ public class ProductionHub : Hub
         _services = services;
     }
     
+    public void NewSubBatchInStock()
+    {
+        try
+        {
+            var ctx = _services.GetService(typeof(IHubContext<ProductionHub>)) as IHubContext<ProductionHub>;
+            ctx.Clients.All.SendAsync("newSubBatchInStock");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+    }
+    
     public void StartOperation(ProductionAnalysisDto paDtos)
     {
         try

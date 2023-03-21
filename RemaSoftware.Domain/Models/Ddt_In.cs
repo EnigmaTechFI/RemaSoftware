@@ -38,6 +38,7 @@ namespace RemaSoftware.Domain.Models
         public string Note { get; set; }
         public string Description { get; set; }
         public SubBatch SubBatch { get; set; }
+        public bool IsPrompted { get; set; }
         public decimal TotalPriority => (DateTime.Now.DayOfYear - this.DataOut.DayOfYear) * this.Priority;
         public virtual List<Ddt_Association> Ddt_Associations { get; set; }
     }
