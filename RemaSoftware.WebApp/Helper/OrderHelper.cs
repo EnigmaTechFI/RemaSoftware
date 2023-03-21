@@ -146,6 +146,21 @@ namespace RemaSoftware.WebApp.Helper
                         try
                         {
                             var product = _productService.GetProductById(model.Ddt_In.ProductID);
+                            var association = new List<Ddt_Association>();
+                            association.Add(new Ddt_Association()
+                            {
+                                Date = DateTime.Now,
+                                Ddt_In_ID = model.Ddt_In.Ddt_In_ID,
+                                NumberPieces = model.Ddt_In.NumberMissingPiece,
+                                TypePieces = PiecesType.MANCANTI
+                            });
+                            _orderService.CreateNewDdtOut(new Ddt_Out()
+                            {
+                                ClientID = product.ClientID,
+                                Date = DateTime.Now,
+                                Status = DDTOutStatus.STATUS_PENDING,
+                                Ddt_Associations = association
+                            });
                             _emailService.SendEmailMissingPieces(product.Client.Email, model.Ddt_In.NumberMissingPiece,
                                 model.Ddt_In.Number_Piece, model.Ddt_In.Code, product.Client.Name, product.SKU,
                                 product.Name);
@@ -204,7 +219,7 @@ namespace RemaSoftware.WebApp.Helper
         {
             return new QualityControlViewModel()
             {
-                OperationTimeLine = _subBatchService.GetSubBatchAtQualityControl()
+                OperationTimeLine = _subBatchService.GetSubBatchAtQualityControl() ?? new List<OperationTimeline>()
             };
         }
 
@@ -218,32 +233,10 @@ namespace RemaSoftware.WebApp.Helper
                 .ToList();
             var lastElement = ddts.LastOrDefault();
             var dtoCopy = dto;
-            foreach (var item in ddts)
-            {
-                if (lastElement != item)
-                {
-                    var lost = Convert.ToInt32(dto.LostPieces * (Convert.ToDouble(item.Number_Piece) / ratio));
-                    var missing = Convert.ToInt32(dto.WastePieces * (Convert.ToDouble(item.Number_Piece) / ratio));
-                    var waste = Convert.ToInt32(dto.MissingPieces * (Convert.ToDouble(item.Number_Piece) / ratio));
-                    item.NumberLostPiece += lost;
-                    dtoCopy.LostPieces -= lost;
-                    item.NumberMissingPiece += missing;
-                    dtoCopy.MissingPieces -= missing;
-                    item.NumberWastePiece += waste;
-                    dtoCopy.WastePieces -= waste;
-                    item.Number_Piece_Now -= lost + missing + waste;
-                }
-                else
-                {
-                    item.NumberLostPiece += dtoCopy.LostPieces;
-                    item.NumberMissingPiece += dtoCopy.MissingPieces;
-                    item.NumberWastePiece += dtoCopy.WastePieces;
-                    item.Number_Piece_Now -= dtoCopy.LostPieces + dtoCopy.MissingPieces + dtoCopy.WastePieces;
-                }
-            }
-
-            var ddt_out_id = 0;
             var now = DateTime.Now;
+            
+            var ddt_out_id = 0;
+            
             var ddts_out = _orderService.GetDdtOutsByClientIdAndStatus(subBatch.Ddts_In[0].Product.ClientID,
                 DDTOutStatus.STATUS_PENDING);
             if (ddts_out.Count == 0)
@@ -259,8 +252,64 @@ namespace RemaSoftware.WebApp.Helper
             {
                 ddt_out_id = ddts_out[0].Ddt_Out_ID;
             }
+            foreach (var item in ddts)
+            {
+                item.Ddt_Associations ??= new List<Ddt_Association>();
+                if (lastElement != item)
+                {
+                    var lost = Convert.ToInt32(dto.LostPieces * (Convert.ToDouble(item.Number_Piece) / ratio));
+                    var waste = Convert.ToInt32(dto.WastePieces * (Convert.ToDouble(item.Number_Piece) / ratio));
+                    item.NumberLostPiece += lost;
+                    dtoCopy.LostPieces -= lost;
+                    item.NumberWastePiece += waste;
+                    dtoCopy.WastePieces -= waste;
+                    item.Number_Piece_Now -= lost + waste;
+                    
+                    item.Ddt_Associations.Add(new Ddt_Association()
+                    {
+                        Date = now,
+                        Ddt_In_ID = item.Ddt_In_ID,
+                        Ddt_Out_ID = ddt_out_id,
+                        NumberPieces = lost,
+                        TypePieces = PiecesType.PERSI
+                    });
+                    
+                    item.Ddt_Associations.Add(new Ddt_Association()
+                    {
+                        Date = now,
+                        Ddt_In_ID = item.Ddt_In_ID,
+                        Ddt_Out_ID = ddt_out_id,
+                        NumberPieces = waste,
+                        TypePieces = PiecesType.SCARTI
+                    });
+                }
+                else
+                {
+                    item.NumberLostPiece += dtoCopy.LostPieces;
+                    item.NumberWastePiece += dtoCopy.WastePieces;
+                    item.Number_Piece_Now -= dtoCopy.LostPieces + dtoCopy.WastePieces;
+                    item.Ddt_Associations.Add(new Ddt_Association()
+                    {
+                        Date = now,
+                        Ddt_In_ID = item.Ddt_In_ID,
+                        Ddt_Out_ID = ddt_out_id,
+                        NumberPieces = dtoCopy.LostPieces,
+                        TypePieces = PiecesType.PERSI
+                    });
+                    
+                    item.Ddt_Associations.Add(new Ddt_Association()
+                    {
+                        Date = now,
+                        Ddt_In_ID = item.Ddt_In_ID,
+                        Ddt_Out_ID = ddt_out_id,
+                        NumberPieces = dtoCopy.WastePieces,
+                        TypePieces = PiecesType.SCARTI
+                    });
+                }
+            }
 
-            foreach (var item in subBatch.Ddts_In.OrderByDescending(s => s.TotalPriority).ToList())
+
+            foreach (var item in subBatch.Ddts_In.OrderBy(s => s.DataOut).ToList())
             {
                 if (item.Number_Piece_Now >= dto.OkPieces)
                 {
@@ -272,7 +321,8 @@ namespace RemaSoftware.WebApp.Helper
                         Date = now,
                         Ddt_In_ID = item.Ddt_In_ID,
                         Ddt_Out_ID = ddt_out_id,
-                        NumberPieces = dto.OkPieces
+                        NumberPieces = dto.OkPieces,
+                        TypePieces = PiecesType.BUONI
                     });
                     dto.OkPieces = 0;
                     break;
@@ -287,7 +337,8 @@ namespace RemaSoftware.WebApp.Helper
                     Date = now,
                     Ddt_In_ID = item.Ddt_In_ID,
                     Ddt_Out_ID = ddt_out_id,
-                    NumberPieces = item.Number_Piece_Now
+                    NumberPieces = item.Number_Piece_Now,
+                    TypePieces = PiecesType.BUONI
                 });
                 item.Number_Piece_Now = 0;
             }

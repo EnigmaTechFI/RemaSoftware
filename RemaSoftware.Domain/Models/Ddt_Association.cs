@@ -9,5 +9,6 @@ namespace RemaSoftware.Domain.Models
         public int Ddt_Out_ID { get; set; }
         public Ddt_Out Ddt_Out { get; set; }
         public int NumberPieces { get; set; }
+        public string TypePieces { get; set; }
     }
 }

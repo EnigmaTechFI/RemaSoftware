@@ -18,6 +18,7 @@
                     <th scope="col">DDT</th>
                     <th scope="col">Prodotto</th>
                     <th scope="col">Numero pezzi</th>
+                    <th scope="col">Tipo</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -31,6 +32,7 @@
                         <td>@Model.PartialDdtDtos[i].DdtAssociation.Ddt_In.Code</td>
                         <td>@Model.PartialDdtDtos[i].DdtAssociation.Ddt_In.Product.SKU</td>
                         <td>@Model.PartialDdtDtos[i].DdtAssociation.NumberPieces</td>
+                        <td>@Model.PartialDdtDtos[i].DdtAssociation.TypePieces</td>
                     </tr>
                 }
                 <tr></tr>

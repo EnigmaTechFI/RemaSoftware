@@ -8,6 +8,7 @@ using It.FattureInCloud.Sdk.Model;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using NLog;
+using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.UtilityServices.Dtos;
 using RemaSoftware.UtilityServices.Interface;
@@ -140,9 +141,9 @@ namespace RemaSoftware.UtilityServices.Implementation
                     Qty = item.NumberPieces,
                     Name = item.Ddt_In.Product.Name,
                     Code = item.Ddt_In.Code,
-                    Description = item.Ddt_In.Description,
-                    Stock = true,
-                    NetPrice = item.Ddt_In.Price_Uni,
+                    Description = item.TypePieces == PiecesType.BUONI ? item.Ddt_In.Description : item.Ddt_In.Description + " - " + item.TypePieces,
+                    Stock = item.TypePieces != PiecesType.MANCANTI,
+                    NetPrice = item.TypePieces == PiecesType.BUONI ? item.Ddt_In.Price_Uni : 0,
                     Vat = new VatType()
                     {
                         Id = 0,

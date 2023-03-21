@@ -1,3 +1,4 @@
+@using RemaSoftware.Domain.Constants
 @model RemaSoftware.WebApp.Models.OrderViewModel.BatchInDeliveryViewModel
 
 @{
@@ -21,6 +22,9 @@
                     <th>Cliente</th>
                     <th>DDT associate</th>
                     <th>N° Pezzi</th>
+                    <th>N° Scarti</th>
+                    <th>N° Persi</th>
+                    <th>N° Mancanti</th>
                     <th class="text-center">Azioni</th>
                 </tr>
                 </thead>
@@ -30,7 +34,10 @@
                     <tr style="cursor: pointer;">
                         <td>@item.Ddt_Associations[0].Ddt_In.Product.Client.Name</td>
                         <td onclick="showDDT(@item.Ddt_Out_ID)">Visualizza DDT associate</td>
-                        <td>@item.Ddt_Associations.Sum(s=> s.NumberPieces)</td>
+                        <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.BUONI).Sum(s=> s.NumberPieces)</td>
+                        <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.SCARTI).Sum(s=> s.NumberPieces)</td>
+                        <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.PERSI).Sum(s=> s.NumberPieces)</td>
+                        <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.MANCANTI).Sum(s=> s.NumberPieces)</td>
                         <td class="text-center">
                             <a style="text-decoration: none" asp-action="EmitDDT" asp-controller="Order" asp-route-id="@item.Ddt_Out_ID">
                                 <i class="fas fa-truck fa-lg pl-2" style="cursor: pointer; color: #6d767e;" title="Emetti DDT"></i>
@@ -50,9 +57,6 @@
                 Totale pezzi in consegna: <b>@Model.DdtOuts.Sum(s => s.Ddt_Associations.Sum(s => s.NumberPieces))</b>
             </div>
         </div>
-    </div>
-    <div>
-        <a class="btn btn-primary text-white" asp-action="StockSummary" asp-controller="Order" type="button">Prelievi da magazzino</a>
     </div>
 </div>
 
@@ -88,7 +92,7 @@
         })
         var ddt_list = ""
         ddt[0].ddt_Associations.forEach(function(ddt) {
-            ddt_list = ddt_list + "<strong>Codice: </strong>" +  ddt.ddt_In.code + " - <strong>N° pezzi:</strong> "+ ddt.numberPieces  + "<br/>"
+            ddt_list = ddt_list + "<strong>Codice: </strong>" +  ddt.ddt_In.code + " - <strong>N° pezzi:</strong> "+ ddt.numberPieces + " - <strong>Tipo: </strong> " + ddt.typePieces + "<br/>"
         })
         $("#ddt_associate").modal('show');
         document.getElementById("batch_ddt").innerHTML = ddt_list
@@ -120,7 +124,10 @@
                 { "searchable": true, "orderable": true, "targets": 0 },
                 { "searchable": false, "orderable": false, "targets": 1 },
                 { "searchable": false, "orderable": true, "targets": 2 },
-                { "searchable": false, "orderable": false, "targets": 3 },
+                { "searchable": false, "orderable": true, "targets": 3 },
+                { "searchable": false, "orderable": true, "targets": 4 },
+                { "searchable": false, "orderable": true, "targets": 5 },
+                { "searchable": false, "orderable": false, "targets": 6 },
               ]
         });
     });
