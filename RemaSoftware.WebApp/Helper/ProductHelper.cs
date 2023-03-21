@@ -5,11 +5,9 @@ using RemaSoftware.WebApp.Models.ProductViewModel;
 using RemaSoftware.WebApp.Validation;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using RemaSoftware.Domain.Constants;
-using RemaSoftware.Domain.Services.Impl;
 using RemaSoftware.UtilityServices.Interface;
 
 namespace RemaSoftware.WebApp.Helper

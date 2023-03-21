@@ -6,7 +6,6 @@ using RemaSoftware.WebApp.Models.ProductViewModel;
 using System;
 using System.Threading.Tasks;
 using RemaSoftware.Domain.Constants;
-using RemaSoftware.Domain.Models;
 
 namespace RemaSoftware.WebApp.Controllers
 {

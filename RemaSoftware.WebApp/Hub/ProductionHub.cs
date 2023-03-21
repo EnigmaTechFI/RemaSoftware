@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using RemaSoftware.Domain.Models;
 using RemaSoftware.WebApp.DTOs;
 
 namespace RemaSoftware.WebApp.Hub;

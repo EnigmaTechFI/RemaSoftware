@@ -8,7 +8,6 @@ using It.FattureInCloud.Sdk.Model;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using NLog;
-using NLog.Fluent;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.UtilityServices.Dtos;
 using RemaSoftware.UtilityServices.Interface;

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
-using Microsoft.EntityFrameworkCore;
 using NLog;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Models;

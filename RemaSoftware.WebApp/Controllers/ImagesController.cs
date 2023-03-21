@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using NLog;
-using RemaSoftware.Domain.Services;
 using RemaSoftware.Domain.Services.Impl;
 
 namespace RemaSoftware.WebApp.Controllers;

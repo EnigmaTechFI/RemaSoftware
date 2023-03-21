@@ -2,7 +2,6 @@ using System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AspNetCoreHero.ToastNotification.Abstractions;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using NLog;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.WebApp.Helper;

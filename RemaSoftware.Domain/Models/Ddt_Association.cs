@@ -1,6 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace RemaSoftware.Domain.Models
 {
     public class Ddt_Association

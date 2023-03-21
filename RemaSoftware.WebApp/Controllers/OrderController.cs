@@ -11,7 +11,6 @@ using Microsoft.Extensions.Configuration;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
-using RemaSoftware.UtilityServices.Interface;
 using RemaSoftware.WebApp.DTOs;
 using RemaSoftware.WebApp.Helper;
 using RemaSoftware.WebApp.Models.OrderViewModel;

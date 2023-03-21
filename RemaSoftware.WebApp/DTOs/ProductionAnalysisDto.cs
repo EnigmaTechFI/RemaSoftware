@@ -1,6 +1,3 @@
-using System;
-using Microsoft.EntityFrameworkCore.Storage;
-
 namespace RemaSoftware.WebApp.DTOs;
 
 public class ProductionAnalysisDto
