@@ -22,6 +22,8 @@ namespace RemaSoftware.WebApp.Validation
                 return "Prezzo unitario mancante.";
             if (model.Ddt_In.DataOut <= DateTime.Now)
                 return "Data di scadenza non valida.";
+            if (model.OperationsSelected.Count == 0)
+                return "Nessuna operazione inserita.";
             return "";
         }
         

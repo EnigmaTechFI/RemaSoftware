@@ -15,29 +15,6 @@ namespace RemaSoftware.Domain.Services.Impl
         {
             _dbContext = dbContext;
         }
-        
-        public List<Order> GetChunkedOrders(int skip, int take)
-        {
-            var query = _dbContext.Orders
-                .Include(i => i.Client)
-                .OrderByDescending(ob=>ob.DataOut)
-                .AsQueryable();
-            if (skip > 0)
-                query = query.Skip(skip);
-            if (take > 0)
-                query = query.Take(take);
-            return query.ToList();
-        }
-
-        public int GetTotalOrdersCount()
-        {
-            return _dbContext.Orders.Count();
-        }
-
-        public Order GetOrderById(int orderId)
-        {
-            return _dbContext.Orders.Include(i=>i.Client).SingleOrDefault(sd => sd.OrderID == orderId);
-        }
 
         public Order GetOrderWithOperationsById(int orderId)
         {
@@ -52,24 +29,6 @@ namespace RemaSoftware.Domain.Services.Impl
             
             order.Order_Operation = order.Order_Operation.OrderBy(ob => ob.Ordering).ToList();
             return order;
-        }
-
-        public Order AddOrder(Order order)
-        {
-            if(order == null)
-                throw new Exception("Ordine vuoto.");
-            try
-            {
-                var addedOrder = _dbContext.Add(order);
-                _dbContext.SaveChanges();
-
-                return addedOrder.Entity;
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, $"Errore durante l'aggiunta dell'ordine: {order.ToString()}");
-            }
-            return null;
         }
 
         public void AddOrderOperation(int orderId, List<int> operationId)
@@ -132,46 +91,9 @@ namespace RemaSoftware.Domain.Services.Impl
                 .ToList();
         }
 
-        public List<string> GetOldOrders_SKU()
-        {
-            return _dbContext.Orders.Select(s => s.SKU).ToList();
-        }
-
         public Order GetOrderBySKU(string sku)
         {
             return _dbContext.Orders.Include(c => c.Client).Where(s => s.SKU == sku).FirstOrDefault();
-        }
-
-        public bool UpdateOrder(Order order)
-        {
-            try
-            {
-                _dbContext.Orders.Update(order);
-                _dbContext.SaveChanges();
-                return true;
-
-            }
-            catch(Exception ex)
-            {
-                return false;
-            }
-        }
-
-        public bool DeleteOrderByID(int OrderID)
-        {
-            try
-            {
-                var order = _dbContext.Orders.SingleOrDefault(i => i.OrderID == OrderID);
-                _dbContext.Remove(order);
-                _dbContext.SaveChanges();
-                return true;
-            }
-            catch
-            {
-                Logger.Error($"[Eliminazione Ordine] Ordine non presente. ID: {OrderID}");
-                return false;
-            }
-            
         }
 
         public void UpdateOrderStatus(int orderId, int outgoing_orders)
@@ -375,6 +297,7 @@ namespace RemaSoftware.Domain.Services.Impl
             return _dbContext.Ddts_In
                 .Include(d => d.Product)
                 .ThenInclude(s => s.Client)
+                .Include(s => s.SubBatch)
                 .SingleOrDefault(s => s.Ddt_In_ID == id);
         }
 
@@ -440,6 +363,24 @@ namespace RemaSoftware.Domain.Services.Impl
             var ddt = _dbContext.Ddt_Associations.SingleOrDefault(s => s.ID == ddtAssociationId);
             ddt.Ddt_Out_ID = ddtOutDdtOutId;
             _dbContext.Ddt_Associations.Update(ddt);
+            _dbContext.SaveChanges();
+        }
+
+        public void DeleteDDT(Ddt_In ddt)
+        {
+            _dbContext.Ddts_In.Remove(ddt);
+            _dbContext.SaveChanges();
+        }
+
+        public void DeleteSubBatch(SubBatch subBatch)
+        {
+            _dbContext.SubBatches.Remove(subBatch);
+            _dbContext.SaveChanges();
+        }
+
+        public void DeleteBatch(Batch batch)
+        {
+            _dbContext.Batches.Remove(batch);
             _dbContext.SaveChanges();
         }
     }

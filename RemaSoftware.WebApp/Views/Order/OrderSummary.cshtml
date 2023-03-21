@@ -118,8 +118,8 @@
             url: '@Url.Action("DeleteProduct", "Order")?' + $.param({"productId": articleId}),
             type: 'GET',
             success: function (data) {
-                if (data.result == true){
-                    table.row($("tr#product-" + articleId)).remove().draw();
+                if (data.data != 0){
+                    table.row($("tr#ddt-" + articleId)).remove().draw();
                     $("#confirm-del-modal").modal('toggle');
                     toastNotifySuccess(data.toastMessage);
                 }else{

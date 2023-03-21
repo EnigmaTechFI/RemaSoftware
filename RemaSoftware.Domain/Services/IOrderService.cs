@@ -4,21 +4,14 @@ namespace RemaSoftware.Domain.Services
 {
     public interface IOrderService
     {
-        Order GetOrderById(int orderId);
         Order GetOrderWithOperationsById(int orderId);
-        Order AddOrder(Order order);
         void AddOrderOperation(int orderId, List<int> operationId);
         int GetTotalProcessedPiecese();
         int GetCountOrdersNotExtinguished();
         decimal GetLastMonthEarnings();
         List<Ddt_In> GetOrdersNearToDeadlineTakeTop(int topSelector);
         List<Ddt_In> GetAllOrdersNearToDeadline();
-        List<string> GetOldOrders_SKU();
-        List<Order> GetChunkedOrders(int skip, int take);
-        int GetTotalOrdersCount();
         Order GetOrderBySKU(string sku);
-        bool UpdateOrder(Order order);
-        bool DeleteOrderByID(int OrderID);
         void UpdateOrderStatus(int orderId, int outgoing_orders);
         IEnumerable<Order> GetOrdersNotCompleted();
         List<Order> GetOrdersCompleted();
@@ -42,5 +35,8 @@ namespace RemaSoftware.Domain.Services
         Ddt_Out GetDdtOutsById(int id);
         Ddt_Out CreateDDTOut(Ddt_Out ddtOut);
         void UpdateDdtAssociationByIdWithNewDdtOut(int ddtAssociationId, int ddtOutDdtOutId);
+        void DeleteDDT(Ddt_In ddt);
+        void DeleteSubBatch(SubBatch subBatch);
+        void DeleteBatch(Batch batch);
     }
 }

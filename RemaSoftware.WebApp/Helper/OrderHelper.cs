@@ -25,10 +25,11 @@ namespace RemaSoftware.WebApp.Helper
         private readonly IAPIFatturaInCloudService _apiFatturaInCloudService;
         private readonly ApplicationDbContext _dbContext;
         private readonly ProductionHub _productionHub;
+        private readonly IAPIFatturaInCloudService _apiFatturaInCloud;
 
         public OrderHelper(IOrderService orderService, IAPIFatturaInCloudService apiFatturaInCloudService,
             ApplicationDbContext dbContext, IProductService productService, ISubBatchService subBatchService,
-            IOperationService operationService, IEmailService emailService, ProductionHub productionHub)
+            IOperationService operationService, IEmailService emailService, ProductionHub productionHub, IAPIFatturaInCloudService apiFatturaInCloud)
         {
             _orderService = orderService;
             _apiFatturaInCloudService = apiFatturaInCloudService;
@@ -38,6 +39,7 @@ namespace RemaSoftware.WebApp.Helper
             _operationService = operationService;
             _emailService = emailService;
             _productionHub = productionHub;
+            _apiFatturaInCloud = apiFatturaInCloud;
         }
 
         public Ddt_In GetDdtInById(int id)
@@ -163,47 +165,12 @@ namespace RemaSoftware.WebApp.Helper
                 }
                 catch (Exception e)
                 {
-                    /*TODO: Eliminazione Ddt da fatture_in_cloud*/
+                    if(model.Ddt_In.FC_Ddt_In_ID != "" && model.Ddt_In.FC_Ddt_In_ID != null)
+                        _apiFatturaInCloud.DeleteOrder(model.Ddt_In.FC_Ddt_In_ID);
                     transaction.Rollback();
                     throw;
                 }
             }
-        }
-
-        public Order AddOrderAndSendToFattureInCloud(Order orderToSave)
-        {
-            using (var transaction = _dbContext.Database.BeginTransaction())
-            {
-                var addedOrder = _orderService.AddOrder(orderToSave);
-                try
-                {
-                    var id_fatture = _apiFatturaInCloudService.AddOrderCloud(new OrderDto
-                    {
-                        Name = addedOrder.Name,
-                        Description = addedOrder.Description ?? string.Empty,
-                        DataIn = addedOrder.DataIn,
-                        DataOut = addedOrder.DataOut,
-                        Number_Piece = addedOrder.Number_Piece,
-                        Price_Uni = addedOrder.Price_Uni,
-                        SKU = addedOrder.SKU,
-                        DDT = addedOrder.DDT
-                    });
-
-                    addedOrder.ID_FattureInCloud = id_fatture;
-                    _orderService.UpdateOrder(addedOrder);
-
-                    transaction.Commit();
-                    return addedOrder;
-                }
-                catch (Exception e)
-                {
-                    transaction.Rollback();
-                    _orderService.DeleteOrderByID(addedOrder.OrderID);
-                    transaction.Commit();
-                    throw;
-                }
-            }
-
         }
 
         public void RegisterBatchAtCOQ(int subBatchId)
@@ -517,6 +484,28 @@ namespace RemaSoftware.WebApp.Helper
         private static String GetTimestamp(DateTime value)
         {  
             return value.ToString("yyyyMMddHHmmssffff");
+        }
+
+        public int DeleteOrder(int ddtId)
+        {
+            using (var transaction = _dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    var ddt = _orderService.GetDdtInById(ddtId);
+                    _orderService.DeleteDDT(ddt);
+                    if (ddt.SubBatch.Ddts_In.Count == 0)
+                        _orderService.DeleteSubBatch(ddt.SubBatch);
+                    _apiFatturaInCloud.DeleteOrder(ddt.FC_Ddt_In_ID);
+                    transaction.Commit();
+                    return ddtId;
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    throw e;
+                }
+            }
         }
     }
     
