@@ -26,23 +26,6 @@ namespace RemaSoftware.WebApp.Helper
             _dbContext = dbContext;
             _orderService = orderService;
         }
-
-        public List<ChartDataObject> GetDataForDashboardPieChart()
-        {
-            var customers = _dbContext.Clients
-                .Include(i=>i.Orders)
-                .Where(w=>w.Orders.Count > 0)
-                .OrderByDescending(ob => ob.Orders.Count())
-                .Take(5).Select(s => 
-                    new ChartDataObject
-                    {
-                        Label = s.Name,
-                        Value = s.Orders.Count.ToString()
-                    })
-                .ToList();
-            this.SetBackgroundColorsForPieChart(ref customers);
-            return customers;
-        }
         
         public List<ChartDataObject> GetDataForDashboardAreaChart()
         {

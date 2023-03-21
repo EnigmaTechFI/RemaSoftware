@@ -16,45 +16,9 @@ namespace RemaSoftware.Domain.Services.Impl
             _dbContext = dbContext;
         }
 
-        public Order GetOrderWithOperationsById(int orderId)
-        {
-            var order = _dbContext.Orders
-                .Include(i=>i.Client)
-                .Include(i=>i.Order_Operation)
-                .ThenInclude(ti=>ti.Operations)
-                .SingleOrDefault(sd => sd.OrderID == orderId);
-            
-            if (order == null)
-                throw new Exception($"Order not found with Id: {orderId}");
-            
-            order.Order_Operation = order.Order_Operation.OrderBy(ob => ob.Ordering).ToList();
-            return order;
-        }
-
-        public void AddOrderOperation(int orderId, List<int> operationId)
-        {
-            var Order_Op = new List<Order_Operation>();
-
-            var counterOrdering = 1;
-            foreach(var id in operationId)
-            {
-                Order_Operation op = new Order_Operation
-                {
-                    OrderID = orderId,
-                    OperationID = id,
-                    Ordering = counterOrdering
-                };
-                Order_Op.Add(op);
-                counterOrdering++;
-            }
-
-            _dbContext.AddRange(Order_Op);
-            _dbContext.SaveChanges();
-        }
-
         public int GetTotalProcessedPiecese()
         {
-            return _dbContext.Orders.Where(w => w.DataOut < DateTime.Now).Sum(s => s.Number_Piece);
+            return _dbContext.Ddts_In.Where(w => w.DataOut < DateTime.Now).Sum(s => s.Number_Piece);
         }
 
         public int GetCountOrdersNotExtinguished()
@@ -89,57 +53,6 @@ namespace RemaSoftware.Domain.Services.Impl
                 .ThenInclude(i=>i.Client)
                 .Where(w=>w.DataOut > DateTime.Now.Date).OrderBy(ob=>ob.DataOut)
                 .ToList();
-        }
-
-        public Order GetOrderBySKU(string sku)
-        {
-            return _dbContext.Orders.Include(c => c.Client).Where(s => s.SKU == sku).FirstOrDefault();
-        }
-
-        public void UpdateOrderStatus(int orderId, int outgoing_orders)
-        {
-            var order = _dbContext.Orders.SingleOrDefault(sd => sd.OrderID == orderId);
-            if (order == null)
-                throw new Exception($"Ordine non trovato con id: {orderId}.");
-
-            order.Number_Pieces_InStock = order.Number_Pieces_InStock - outgoing_orders;
-
-            if (order.Number_Pieces_InStock < 0)
-                throw new Exception($"Numero pezzi attuale minore rispetto a numero pezzi in uscita ({outgoing_orders})");
-
-            else if(order.Number_Pieces_InStock == 0 )
-            {
-                order.Status = "C";
-            }
-
-            else if(order.Number_Pieces_InStock > 0)
-            {
-                order.Status = "B";
-            }
-
-            _dbContext.Orders.Update(order);
-            _dbContext.SaveChanges();
-        }
-
-        public IEnumerable<Order> GetOrdersNotCompleted()
-        {
-            return _dbContext.Orders
-                .Include(i=>i.Client)
-                .Where(w => w.Status != OrderStatusConstants.STATUS_COMPLETED).AsEnumerable();
-        }
-
-        public List<Order> GetOrdersCompleted()
-        {
-            return _dbContext.Orders
-                .Include(i => i.Client)
-                .Where(w => w.Status == OrderStatusConstants.STATUS_COMPLETED).ToList();
-        }
-
-        public List<Operation> GetOperationsByOrderId(int orderId)
-        {
-            return _dbContext.Order_Operations.Where(w => w.OrderID == orderId)
-                .OrderBy(ob=>ob.Ordering)
-                .Select(s=>s.Operations).ToList();
         }
 
         public Batch GetBatchById(int batchId)

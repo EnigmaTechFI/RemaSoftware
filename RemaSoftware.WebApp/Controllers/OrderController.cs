@@ -111,14 +111,8 @@ namespace RemaSoftware.WebApp.Controllers
                 Ddt_In = _orderHelper.GetAllDdtInEnded_NoPagination()
             });
         }
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
-        [HttpGet]
-        public JsonResult OrderSummaryCompleted()
-        {
-            var orders = _orderService.GetOrdersCompleted();
-            return new JsonResult(new { Orders = orders });
-        }
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        
+        /*[Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         public IActionResult DownloadPdfOrder(int orderId)
         {
             var vm = new PDFViewModel();
@@ -143,7 +137,8 @@ namespace RemaSoftware.WebApp.Controllers
                 }
             } 
             return View("../Pdf/SingleOrderSummary", vm);
-        }
+        }*/
+        
         [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpGet]
         public IActionResult EditOrder(int id)
@@ -296,87 +291,6 @@ namespace RemaSoftware.WebApp.Controllers
             }
         }
 
-        /*END VERSIONE 2.0*/
-
-        [HttpGet]
-        public IActionResult GetEditOrderOperationsModal(int orderId)
-        {
-            var vm = new EditOrderOperationsViewModel();
-            
-            var order = _orderService.GetOrderWithOperationsById(orderId);
-            if (order == null)
-            {
-                Logger.Error($"GetOperationsForEdit - order not found for id: {orderId}");
-                return new JsonResult(new { Result = false, ToastMessage="Ordine non trovato."});
-            }
-            vm.OrderId = orderId;
-            
-            var allAvailableOperations = _operationService.GetAllOperationsWithOutCOQAndEXTRA();
-            vm.Operations = allAvailableOperations?.Select(s => new SelectListItem
-            {
-                Text = s.Name,
-                Value = $"{s.OperationID}-{s.Name}"
-            }).ToList();
-            
-            vm.OperationsSelected = order.Order_Operation.Select(s => $"{s.OperationID}-{s.Operations.Name}").ToList();
-            
-            return PartialView("_EditOrderOperationsModal", vm);
-        }
-        
-        public JsonResult GetOperationsByOrderId(int orderId)
-        {
-            var ops = _orderService.GetOperationsByOrderId(orderId)
-                .Select(s=>$"{s.OperationID}-{s.Name}").ToArray();
-            return new JsonResult(new { Result = ops});
-        }
-
-        public JsonResult EditOrderOperations(EditOrderOperationsViewModel model)
-        {
-            try
-            {
-                var operationsFromUser = model.OperationsSelected.Select((s, index) => new Operation
-                {
-                    OperationID = int.Parse(s.Split("-").First()),
-                    Name = s.Split("-").Last()
-                }).ToList();
-                
-                var newOperationsToCreate = operationsFromUser.Where(w => w.OperationID == 0).ToList();
-                
-                var addedOps = _operationService.AddOperations(
-                    newOperationsToCreate
-                );
-                
-                foreach (var opAdded in addedOps)
-                {
-                    var aa = operationsFromUser.Single(s => s.Name == opAdded.Name);
-                    aa.OperationID = opAdded.OperationID;
-                }
-                
-                // rimuovo tutte le operazioni per quell'ordine e le riaggiungo
-                _operationService.RemoveAllOrderOperations(model.OrderId);
-                _orderService.AddOrderOperation(model.OrderId, operationsFromUser.Select(s=>s.OperationID).ToList());
-                
-                return new JsonResult(new { Result = true, ToastMessage="Operazioni modificate correttamente."});
-            }
-            catch (Exception e)
-            {
-                Logger.Error($"Errore durante la modifica delle operazioni dell'ordine: {model.OrderId}.");
-                return new JsonResult(new { Result = false, ToastMessage="Errore durante la modifica delle operazioni dell'ordine."});
-            }
-        }
-        
-        public JsonResult GetOrderBySKU(string orderSKU)
-        {
-            var order = _orderService.GetOrderBySKU(orderSKU);
-
-            if (order == null || orderSKU == null)
-            {
-                return new JsonResult(new {ToastMessage = $"Errore durante il recupero dell\\'ordine." });
-            }
-            
-            return new JsonResult(new {Result = true, Data = order});
-        }
-
         [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpGet]
         public IActionResult BatchInProduction()
@@ -385,22 +299,6 @@ namespace RemaSoftware.WebApp.Controllers
             {
                 SubBatches = _orderHelper.GetSubBatchesStatus(OrderStatusConstants.STATUS_WORKING)
             });
-        }
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
-        [HttpPost]
-        public IActionResult UpdateOrderStatus(int orderId, string currentStatus, int outgoing_orders)
-        {
-            try
-            {
-                _orderService.UpdateOrderStatus(orderId, outgoing_orders);
-                _notyfService.Success("Numero pezzi modificato correttamente");
-            }
-            catch(Exception e)
-            {
-                _notyfService.Error(e.Message);
-            }
-
-            return BadRequest();
         }
         
         public JsonResult DeleteProduct(int productId)

@@ -6,11 +6,8 @@ namespace RemaSoftware.Domain.Services
     {
         List<Operation> GetAllOperations();
         List<Operation> GetAllOperationsWithOutCOQAndEXTRA();
-        bool EditOrderOperations(int orderId, List<int> operationToAdd, List<int> operationToRemove);
-
         void AddOperation(Operation operation);
         List<Operation> AddOperations(List<Operation> operations);
-        void RemoveAllOrderOperations(int orderId);
         Operation GetOperationById(int id);
         void UpdateOperation(Operation Operation);
         int GetOperationIdByName(string name);

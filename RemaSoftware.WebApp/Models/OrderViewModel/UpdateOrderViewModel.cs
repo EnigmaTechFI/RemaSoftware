@@ -7,7 +7,6 @@ namespace RemaSoftware.WebApp.Models.OrderViewModel
     public class UpdateOrderViewModel
     {
         public List<Client> Clients { get; set; }
-        public Order Order { get; set; }
         public string DataOutStr { get; set; }
         public decimal? uni_price { get; set; }
         public List<string> OldOrders_SKU { get; set; }

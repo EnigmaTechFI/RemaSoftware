@@ -36,13 +36,6 @@ namespace RemaSoftware.Domain.Services.Impl
             return operations;
         }
 
-        public void RemoveAllOrderOperations(int orderId)
-        {
-            var orderOperations = _dbContext.Order_Operations.Where(w => w.OrderID == orderId);
-            _dbContext.Order_Operations.RemoveRange(orderOperations);
-            _dbContext.SaveChanges();
-        }
-
         public Operation GetOperationById(int id)
         {
             return _dbContext.Operations.SingleOrDefault(s => s.OperationID == id);
@@ -59,18 +52,5 @@ namespace RemaSoftware.Domain.Services.Impl
             return _dbContext.Operations.SingleOrDefault(s => s.Name == OtherConstants.EXTRA).OperationID;
         }
 
-
-        public bool EditOrderOperations(int orderId, List<int> operationToAdd, List<int> operationToRemove)
-        {
-            foreach (var addOperId in operationToAdd)
-                _dbContext.Order_Operations.Add(new Order_Operation {OrderID = orderId, OperationID = addOperId});
-            
-            _dbContext.SaveChanges();
-            var opersToRemove = _dbContext.Order_Operations.Where(w => operationToRemove.Contains(w.OperationID) && w.OrderID == orderId);
-            _dbContext.RemoveRange(opersToRemove);
-
-            _dbContext.SaveChanges();
-            return true;
-        }
     }
 }

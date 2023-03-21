@@ -541,91 +541,6 @@ namespace RemaSoftware.Domain.Migrations
                     b.ToTable("OperationTimelines");
                 });
 
-            modelBuilder.Entity("RemaSoftware.Domain.Models.Order", b =>
-                {
-                    b.Property<int>("OrderID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderID"), 1L, 1);
-
-                    b.Property<int>("ClientID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("DDT")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime>("DataIn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DataOut")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ID_FattureInCloud")
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("Image_URL")
-                        .IsRequired()
-                        .HasMaxLength(70)
-                        .HasColumnType("nvarchar(70)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Number_Piece")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Number_Pieces_InStock")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Price_Uni")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("SKU")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Status")
-                        .HasMaxLength(1)
-                        .HasColumnType("nvarchar(1)");
-
-                    b.HasKey("OrderID");
-
-                    b.HasIndex("ClientID");
-
-                    b.ToTable("Order");
-                });
-
-            modelBuilder.Entity("RemaSoftware.Domain.Models.Order_Operation", b =>
-                {
-                    b.Property<int>("OrderID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OperationID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Ordering")
-                        .HasColumnType("int");
-
-                    b.HasKey("OrderID", "OperationID");
-
-                    b.HasIndex("OperationID");
-
-                    b.ToTable("Order_Operations");
-                });
-
             modelBuilder.Entity("RemaSoftware.Domain.Models.Product", b =>
                 {
                     b.Property<int>("ProductID")
@@ -894,36 +809,6 @@ namespace RemaSoftware.Domain.Migrations
                     b.Navigation("SubBatch");
                 });
 
-            modelBuilder.Entity("RemaSoftware.Domain.Models.Order", b =>
-                {
-                    b.HasOne("RemaSoftware.Domain.Models.Client", "Client")
-                        .WithMany("Orders")
-                        .HasForeignKey("ClientID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Client");
-                });
-
-            modelBuilder.Entity("RemaSoftware.Domain.Models.Order_Operation", b =>
-                {
-                    b.HasOne("RemaSoftware.Domain.Models.Operation", "Operations")
-                        .WithMany("Order_Operation")
-                        .HasForeignKey("OperationID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RemaSoftware.Domain.Models.Order", "Orders")
-                        .WithMany("Order_Operation")
-                        .HasForeignKey("OrderID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Operations");
-
-                    b.Navigation("Orders");
-                });
-
             modelBuilder.Entity("RemaSoftware.Domain.Models.Product", b =>
                 {
                     b.HasOne("RemaSoftware.Domain.Models.Client", "Client")
@@ -981,8 +866,6 @@ namespace RemaSoftware.Domain.Migrations
                 {
                     b.Navigation("DdtOuts");
 
-                    b.Navigation("Orders");
-
                     b.Navigation("UserClients");
                 });
 
@@ -999,13 +882,6 @@ namespace RemaSoftware.Domain.Migrations
             modelBuilder.Entity("RemaSoftware.Domain.Models.Operation", b =>
                 {
                     b.Navigation("BatchOperations");
-
-                    b.Navigation("Order_Operation");
-                });
-
-            modelBuilder.Entity("RemaSoftware.Domain.Models.Order", b =>
-                {
-                    b.Navigation("Order_Operation");
                 });
 
             modelBuilder.Entity("RemaSoftware.Domain.Models.Product", b =>

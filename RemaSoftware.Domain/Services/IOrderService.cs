@@ -4,18 +4,11 @@ namespace RemaSoftware.Domain.Services
 {
     public interface IOrderService
     {
-        Order GetOrderWithOperationsById(int orderId);
-        void AddOrderOperation(int orderId, List<int> operationId);
         int GetTotalProcessedPiecese();
         int GetCountOrdersNotExtinguished();
         decimal GetLastMonthEarnings();
         List<Ddt_In> GetOrdersNearToDeadlineTakeTop(int topSelector);
         List<Ddt_In> GetAllOrdersNearToDeadline();
-        Order GetOrderBySKU(string sku);
-        void UpdateOrderStatus(int orderId, int outgoing_orders);
-        IEnumerable<Order> GetOrdersNotCompleted();
-        List<Order> GetOrdersCompleted();
-        List<Operation> GetOperationsByOrderId(int orderId);
         Batch GetBatchById(int batchId);
         Batch GetBatchByProductIdAndOperationList(int productId, List<int> operationId);
         Batch CreateBatch(Batch batch); 
