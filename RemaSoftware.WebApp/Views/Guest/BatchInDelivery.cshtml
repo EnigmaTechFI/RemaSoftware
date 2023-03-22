@@ -1,0 +1,41 @@
+@model RemaSoftware.WebApp.Models.GuestViewModel.DDTInDeliveryViewModel
+
+@{
+    ViewData["Title"] = "Lotti in consegna";
+}
+
+
+<div class="card shadow mb-4" id="order-summ-content">
+<div class="d-sm-flex align-items-center justify-content-between card-header py-3">
+    <h3 class="m-0 font-weight-bold text-primary">DDT in consegna</h3>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">DDT</th>
+                    <th scope="col">Prodotto</th>
+                    <th scope="col">Numero pezzi</th>
+                    <th scope="col">Tipo</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach(var ddt in Model.DdtOut)
+                {
+                    foreach (var item in ddt.Ddt_Associations)
+                    {
+                        <tr>
+                            <td>@item.Ddt_In.Code</td>
+                            <td>@item.Ddt_In.Product.SKU</td>
+                            <td>@item.NumberPieces</td>
+                            <td>@item.TypePieces</td>
+                        </tr>
+                    }
+                }
+                <tr></tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>

@@ -269,6 +269,19 @@ public class SubBatchService : ISubBatchService
             .ToList();
     }
 
+    public List<SubBatch> GetSubBatchesStatusAndClientId(string status, int clientId)
+    {
+        return _dbContext.SubBatches
+            .Include(s => s.Batch)
+            .ThenInclude(s => s.BatchOperations)
+            .ThenInclude(s => s.Operations)
+            .Include(s => s.Ddts_In)
+            .ThenInclude(s => s.Product)
+            .ThenInclude(s => s.Client)
+            .Where(s => s.Status == status && s.Ddts_In.All(s => s.Product.ClientID == clientId))
+            .ToList();
+    }
+
     public List<OperationTimeline> GetSubBatchAtQualityControl()
     {
         return _dbContext.OperationTimelines

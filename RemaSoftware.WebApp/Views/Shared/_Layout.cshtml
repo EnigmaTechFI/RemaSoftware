@@ -59,7 +59,7 @@
                 </a>
             </li>
         }
-        @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente))
+        @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente) || User.IsInRole(Roles.Cliente))
         {
             <!-- Divider -->
             <hr class="sidebar-divider">
@@ -68,7 +68,25 @@
             <div class="sidebar-heading">
                 Inventario
             </div>
-
+        }
+        @if (User.IsInRole(Roles.Cliente))
+        {
+            
+            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "OrdersActive" ? "active" : "")">
+                <a class="nav-link" asp-action="OrdersActive" asp-controller="Guest">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Ordini attivi</span>
+                </a>
+            </li>
+            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "OrdersEnded" ? "active" : "")">
+                <a class="nav-link" asp-action="OrdersEnded" asp-controller="Guest">
+                    <i class="fas fa-file-archive"></i>
+                    <span>Ordini conclusi</span>
+                </a>
+            </li>
+        }
+        @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente))
+        {
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Product" ? "active" : "")">
                 <a class="nav-link" asp-action="ProductList" asp-controller="Product">
@@ -95,7 +113,7 @@
                 </a>
             </li>
         }
-        @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente) || User.IsInRole(Roles.COQ))
+        @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente) || User.IsInRole(Roles.COQ) || User.IsInRole((Roles.Cliente)))
         {
             <!-- Divider -->
             <hr class="sidebar-divider">
@@ -117,6 +135,33 @@
                 <a class="nav-link" asp-action="BatchInProduction" asp-controller="Order">
                     <i class="fas fa-pallet"></i>
                     <span>Lotti in produzione</span>
+                </a>
+            </li>
+        }
+        @if (User.IsInRole(Roles.Cliente))
+        {
+            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "BatchInStock" ? "active" : "")">
+                <a class="nav-link" asp-action="BatchInStock" asp-controller="Guest">
+                    <i class="fas fa-boxes"></i>
+                    <span>Lotti in magazzino</span>
+                </a>
+            </li>
+            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "BatchInProduction" ? "active" : "")">
+                <a class="nav-link" asp-action="BatchInProduction" asp-controller="Guest">
+                    <i class="fas fa-pallet"></i>
+                    <span>Lotti in produzione</span>
+                </a>
+            </li>
+            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "BatchInDelivery" ? "active" : "")">
+                <a class="nav-link" asp-action="BatchInDelivery" asp-controller="Guest">
+                    <i class="fas fa-truck-loading"></i>
+                    <span>Lotti in consegna</span>
+                </a>
+            </li>
+            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "DDTEmitted" ? "active" : "")">
+                <a class="nav-link" asp-action="DDTEmitted" asp-controller="Guest">
+                    <i class="fas fa-file"></i>
+                    <span>DDT emesse</span>
                 </a>
             </li>
         }
@@ -317,7 +362,7 @@
 <footer class="sticky-footer bg-white">
     <div class="container my-auto">
         <div class="copyright text-center my-auto">
-            <span>Copyright &copy; 2022 Re.Ma. S.r.l. - Powered by <a href="https://www.enigma-tech.it">ΣnigmΔ Tech</a> </span>
+            <span>Copyright &copy; 2023 Re.Ma. S.r.l. - Powered by <a href="https://www.enigma-tech.it">Enigma Tech</a> </span>
         </div>
     </div>
 </footer>

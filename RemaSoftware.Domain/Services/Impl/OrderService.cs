@@ -220,6 +220,8 @@ namespace RemaSoftware.Domain.Services.Impl
         {
             return _dbContext.Ddts_Out
                 .Include(s => s.Ddt_Associations)
+                .ThenInclude(s => s.Ddt_In)
+                .ThenInclude(s => s.Product)
                 .Where(s => s.ClientID == id && s.Status == status).ToList();
         }
 
@@ -297,6 +299,30 @@ namespace RemaSoftware.Domain.Services.Impl
         {
             _dbContext.Batches.Remove(batch);
             _dbContext.SaveChanges();
+        }
+
+        public List<Ddt_In> GetDdtInActiveByClientId(int clientId)
+        {
+            return _dbContext.Ddts_In
+                .Include(d => d.Product)
+                .ThenInclude(s => s.Client)
+                .Include(b => b.SubBatch)
+                .ThenInclude(s => s.Batch)
+                .ThenInclude(b => b.BatchOperations)
+                .Where(s => s.Product.ClientID == clientId && s.Status == OrderStatusConstants.STATUS_ARRIVED || s.Status == OrderStatusConstants.STATUS_WORKING || s.Status == OrderStatusConstants.STATUS_PARTIALLY_COMPLETED)
+                .ToList();
+        }
+
+        public List<Ddt_In> GetDdtInEndedByClientId(int clientId)
+        {
+            return _dbContext.Ddts_In
+                .Include(d => d.Product)
+                .ThenInclude(s => s.Client)
+                .Include(b => b.SubBatch)
+                .ThenInclude(s => s.Batch)
+                .ThenInclude(b => b.BatchOperations)
+                .Where(s => s.Product.ClientID == clientId && s.Status == OrderStatusConstants.STATUS_COMPLETED)
+                .ToList();
         }
     }
 }
