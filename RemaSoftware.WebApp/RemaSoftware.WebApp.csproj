@@ -43,6 +43,9 @@
     <Content Update="wwwroot\MailTemplate\pezzi-mancanti.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Update="wwwroot\MailTemplate\sollecito-ddt.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
