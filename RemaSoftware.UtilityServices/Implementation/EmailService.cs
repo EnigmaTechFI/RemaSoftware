@@ -156,6 +156,43 @@ namespace RemaSoftware.UtilityServices.Implementation
             }
             return false;
         }
+
+        public void SendEmailPrompt(string email, string ddtCode)
+        {
+           try
+            {
+                MailMessage mailMessage = new MailMessage();
+                var mailAddressSender = _configuration["EmailConfig:EmailAddress"];
+                mailMessage.From = new MailAddress(mailAddressSender);
+                mailMessage.To.Add(new MailAddress(email));
+                mailMessage.Subject = "Sollecito DDT N° " + ddtCode;
+                mailMessage.IsBodyHtml = true;
+                string FilePath = "wwwroot/MailTemplate/sollecito-ddt.html";  
+                StreamReader str = new StreamReader(FilePath);  
+                string MailText = str.ReadToEnd();  
+                str.Close();  
+                MailText = MailText.Replace("[CodiceDDT]", ddtCode);  
+                mailMessage.Body =  MailText;
+                SmtpClient client = new SmtpClient();
+                var mailPwd = _configuration["EmailConfig:Password"];
+                client.Credentials = new System.Net.NetworkCredential(mailAddressSender, mailPwd);
+                client.Host = _configuration["EmailConfig:SmtpServer"];
+                client.Port = int.Parse(_configuration["EmailConfig:Port"]);
+                client.EnableSsl = true;
+                try
+                {
+                    client.Send(mailMessage);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, "Errore durante l'invio della mail per la comunicazione dell'account.");
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Errore durante l'invio della mail per la comunicazione dell'account.");
+            }
+        }
     }
 
 }

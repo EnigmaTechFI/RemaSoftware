@@ -15,15 +15,16 @@
         <div class="table-responsive">
             <table class="table table-bordered" id="table-ddt" width="100%" cellspacing="0">
                 <thead>
-                    <tr>
-                        <th>DDT</th>
-                        <th>SKU</th>
-                        <th>N° pezzi</th>
-                        <th>N° pezzi rimanenti</th>
-                        <th>Arrivo ordine</th>
-                        <th>Status</th>
-                        <th>Azioni</th>
-                    </tr>
+                <tr>
+                    <th>DDT</th>
+                    <th>SKU</th>
+                    <th>N° pezzi</th>
+                    <th>N° pezzi rimanenti</th>
+                    <th>Arrivo ordine</th>
+                    <th>Status</th>
+                    <th>Sollecitata</th>
+                    <th>Azioni</th>
+                </tr>
                 </thead>
                 <tbody>
                 @foreach (var ddt in Model.Ddt_In)
@@ -34,6 +35,20 @@
                         <td>@ddt.Number_Piece</td>
                         <td>@ddt.Number_Piece_Now</td>
                         <td>@ddt.DataIn.ToString("dd/MM/yy")</td>
+                        <td id="sollecito-text-@ddt.Ddt_In_ID">
+                            @{
+                                var text = "";
+                                if (ddt.IsPrompted)
+                                {
+                                    text = "SI";
+                                }
+                                else
+                                {
+                                    text = "NO";
+                                }
+                            }
+                            @text
+                        </td>
                         <td class="text-center">
                             @{
                                 if (!string.IsNullOrEmpty(ddt.Status))
@@ -44,10 +59,13 @@
                             }
                         </td>
                         <td class="text-center">
-                            @if (ddt.Status == OrderStatusConstants.STATUS_WORKING || ddt.Status == OrderStatusConstants.STATUS_PARTIALLY_COMPLETED)
+                            <a style="text-decoration: none" asp-controller="Guest" asp-action="SubBatchMonitoring" asp-route-id="@ddt.SubBatchID">
+                                <i class="fas fa-eye fa-lg pl-2" title="Visualizza avanzamento" style="cursor: pointer; color: #6d767e"></i>
+                            </a>
+                            @if (!ddt.IsPrompted)
                             {
-                                <a style="text-decoration: none" asp-controller="Order" asp-action="SubBatchMonitoring" asp-route-id="@ddt.SubBatchID">
-                                    <i class="fas fa-eye fa-lg pl-2" title="Visualizza avanzamento" style="cursor: pointer; color: #6d767e"></i>
+                                <a id="sollecito-@ddt.Ddt_In_ID" style="text-decoration: none" onclick="setDdtId('@ddt.Ddt_In_ID')">
+                                    <i class="fas fa-bell fa-lg pl-2" title="Sollecita" style="cursor: pointer; color: #6d767e"></i>
                                 </a>
                             }
                         </td>
@@ -55,6 +73,25 @@
                 }
                 </tbody>
             </table>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="confirm-prompt" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Conferma sollecito</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Sei sicuro di voler sollecitare questa DDT?</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
+                <button class="btn btn-danger" onclick="SendPrompt()">Conferma</button>
+            </div>
         </div>
     </div>
 </div>
@@ -69,6 +106,33 @@
     <script src="https://cdn.datatables.net/plug-ins/1.10.11/sorting/date-eu.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
+    let ddtId;
+    
+    function setDdtId(id){
+        ddtId = id;
+        $("#confirm-prompt").modal('show');
+    }
+    
+    function SendPrompt() {
+        $.ajax({
+            url: '@Url.Action("PromptDdt", "Guest")?' + $.param({"id": ddtId}),
+            type: 'GET',
+            success: function (data) {                    
+                if (data.result == true){
+                    $("#confirm-prompt").modal('toggle');
+                    document.getElementById("sollecito-" + ddtId).remove();
+                    document.getElementById("sollecito-text-" + ddtId).textContent = "SI"
+                    toastNotifySuccess(data.error);
+                }else{
+                    toastNotifyError(data.error);
+                }
+            },
+            error: function (data){
+                toastNotifyError(data.error);
+            }
+        });  
+    }
+    
     $(document).ready( function () {
         table = $('#table-ddt').DataTable({
             "language": {

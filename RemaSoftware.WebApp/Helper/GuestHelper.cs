@@ -3,6 +3,7 @@ using System.Linq;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
+using RemaSoftware.UtilityServices.Interface;
 using RemaSoftware.WebApp.Models.GuestViewModel;
 
 namespace RemaSoftware.WebApp.Helper;
@@ -12,12 +13,13 @@ public class GuestHelper
     private readonly IOrderService _orderService;
     private readonly IClientService _clientService;
     private readonly ISubBatchService _subBatchService;
-
-    public GuestHelper(IClientService clientService, IOrderService orderService, ISubBatchService subBatchService)
+    private readonly IEmailService _emailService;
+    public GuestHelper(IClientService clientService, IOrderService orderService, ISubBatchService subBatchService, IEmailService emailService)
     {
         _clientService = clientService;
         _orderService = orderService;
         _subBatchService = subBatchService;
+        _emailService = emailService;
     }
 
     public IndexViewModel GetIndexViewModel(string userId)
@@ -79,10 +81,27 @@ public class GuestHelper
     public DDTInDeliveryViewModel GetBatchInDeliveryViewModel(string userId)
     {
         var clientId = _clientService.GetClientIdByUserId(userId);
-        var a = _orderService.GetDdtOutsByClientIdAndStatus(clientId, DDTOutStatus.STATUS_PENDING);
         return new DDTInDeliveryViewModel()
         {
             DdtOut = _orderService.GetDdtOutsByClientIdAndStatus(clientId, DDTOutStatus.STATUS_PENDING)
         };
+    }
+
+    public GuestSubBatchMonitoringViewModel GetSubBatchMonitoring(int id, string userId)
+    {
+        var clientId = _clientService.GetClientIdByUserId(userId);
+        return new GuestSubBatchMonitoringViewModel()
+        {
+            SubBatch = _subBatchService.GetSubBatchByIdAndClientId(id, clientId)?? new SubBatch()
+        };
+    }
+
+    public void SendPrompt(int ddtId)
+    {
+        var ddt = _orderService.GetDdtInById(ddtId);
+        ddt.IsPrompted = true;
+        _orderService.UpdateDDtIn(ddt);
+        //TODO: Get all mail of Admin 
+        _emailService.SendEmailPrompt("lore98.vettori@gmail.com", ddt.Code);
     }
 }

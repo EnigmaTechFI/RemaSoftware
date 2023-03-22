@@ -17,4 +17,5 @@ public interface ISubBatchService
     public List<OperationTimeline> GetOperationTimelinesByMulitpleStatus(List<string> status);
     public List<OperationTimeline> GetOperationTimelinesForMachine(int machineId);
     public List<SubBatch> GetSubBatchesStatusAndClientId(string status, int clientId);
+    public SubBatch GetSubBatchByIdAndClientId(int id, int clientId);
 }

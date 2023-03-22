@@ -98,10 +98,33 @@ public class GuestController : Controller
             return RedirectToAction("Index");
         }
     }
-
+    
     [HttpGet]
-    public IActionResult DdtEmitted()
+    public async Task<IActionResult> SubBatchMonitoring(int id)
     {
-        throw new System.NotImplementedException();
+        try
+        {
+            return View(_guestHelper.GetSubBatchMonitoring(id, (await _userManager.GetUserAsync(this.User)).Id));
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e, e.Message);
+            return RedirectToAction("Index");
+        }
+    }
+    
+    [HttpGet]
+    public async Task<JsonResult> PromptDdt(int id)
+    {
+        try
+        {
+            _guestHelper.SendPrompt(id);
+            return new JsonResult(new {Result = true, Error = "DDT sollecitata correttamente."});
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e.Message, e);
+            return new JsonResult(new {Result = true, Error = "Errore durante l'invio del sollecito. Si prega di riprovare."});
+        }
     }
 }
