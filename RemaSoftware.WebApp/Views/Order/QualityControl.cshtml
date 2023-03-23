@@ -140,11 +140,11 @@
       var label = dymo.label.framework.openLabelFile("RemaDDT.dymo")  
       var etichetta = "LOTTO: "+ id + "\nCLIENTE: " + client  + "\nSKU: " + SKU 
       if (parseInt(ok))
-          etichetta += "\nPezzi: " + ok
+          etichetta += "\nPEZZI: " + ok
       if (parseInt(persi))
-          etichetta += "\nPersi: " + persi
+          etichetta += "\nPERSI: " + persi
       if (parseInt(scarti))
-          etichetta += "\nScarti: " + scarti
+          etichetta += "\nSCARTI: " + scarti
       label.setObjectText("TextObject",  etichetta);
       label.print(printers[0].name); 
       location.reload()
