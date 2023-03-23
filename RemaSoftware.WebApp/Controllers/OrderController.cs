@@ -196,7 +196,8 @@ namespace RemaSoftware.WebApp.Controllers
         }
         private NewOrderViewModel NewOrderViewModelThrow(NewOrderViewModel model)
         {
-            model.Operations = _operationService.GetAllOperationsWithOutCOQAndEXTRA()?.Select(s => new SelectListItem
+            var op = _operationService.GetAllOperationsWithOutCOQAndEXTRA();
+            model.Operations = op?.Select(s => new SelectListItem
             {
                 Text = s.Name,
                 Value = $"{s.OperationID}-{s.Name}"
@@ -220,7 +221,10 @@ namespace RemaSoftware.WebApp.Controllers
         [HttpPost]
         public IActionResult NewOrder(NewOrderViewModel model)
         {
-            try {
+            try
+            {
+                model.Ddt_In.DataOut = new DateTime(model.Ddt_In.DataOut.Year, model.Ddt_In.DataOut.Month,
+                    model.Ddt_In.DataOut.Day, 23, 00, 00);
                 var validationResult = _orderValidation.ValidateNewOrderViewModelAndSetDefaultData(model);
                 if (validationResult != "")
                 {

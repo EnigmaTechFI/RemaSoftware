@@ -170,6 +170,9 @@ namespace RemaSoftware.WebApp.Controllers
         {
             try
             {
+                var user = await _userManager.FindByEmailAsync(model.NewUser.Email);
+                if (user != null)
+                    throw new Exception("Email già utilizzata.");
                 return Json(new { Result = true, Data = _accountHelper.AddSubAccount(model)});
             }
             catch (Exception e)

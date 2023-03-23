@@ -265,7 +265,7 @@ public class SubBatchService : ISubBatchService
             .ThenInclude(s => s.Ddts_In)
             .ThenInclude(s => s.Product)
             .ThenInclude(s => s.Client)
-            .Where(s => s.Status == OperationTimelineConstant.STATUS_WORKING || s.Status == OperationTimelineConstant.STATUS_PAUSE)
+            .Where(s => s.MachineId == machineId && (s.Status == OperationTimelineConstant.STATUS_WORKING || s.Status == OperationTimelineConstant.STATUS_PAUSE))
             .ToList();
     }
 

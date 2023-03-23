@@ -32,7 +32,7 @@ namespace RemaSoftware.WebApp.Helper
                     var userClient = new UserClient();
                     userClient.ClientID = model.ClientId;
                     newUser.UserClient = userClient;
-                    newUser.UserName = "Account-" + model.NewUser.Email;
+                    newUser.UserName = model.NewUser.Email;
                     newUser.Email = model.NewUser.Email;
 
                     var password = PasswordGenerator();

@@ -206,12 +206,11 @@
                         toastNotifySuccess("Account aggiunto correttamente");
                         return
                     }
-                    $('#new-account').modal('hide');
-                    toastNotifyError("Errore durante l'aggiornamento. Si prega di riprovare.");
+                    toastNotifyError(response.message);
                 },
                 error: function(response) {
                     $('#new-account').modal('hide');
-                    toastNotifyError("Errore durante l'aggiornamento. Si prega di riprovare.");
+                    toastNotifyError("Errore durante l'aggiunta di un nuovo utente. Si prega di riprovare.");
                 }
             })
         }

@@ -93,6 +93,8 @@ namespace RemaSoftware.Domain.Data
                 
                 var addedRole = userManager.AddToRolesAsync(dip2,new [] { Roles.COQ }).Result;
             }
+            
+            //TODO: CAMBIARE EMAIL ACCOUNT
         }
     }
 }
