@@ -204,10 +204,6 @@ namespace RemaSoftware.WebApp.Controllers
             }).ToList();
             if (model.Ddt_In.ProductID != 0)
             {
-                model.Ddt_In = new Ddt_In()
-                {
-                    ProductID = model.Ddt_In.ProductID,
-                };
                 model.Products = new List<Product>();
             }
             else

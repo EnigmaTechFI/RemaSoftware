@@ -65,7 +65,7 @@
             </div>
         </div>
         
-        <button class="btn btn-primary" type="submit" onclick="ChangePage(@Model.Client.ClientID)" id="@Model.Client.ClientID">Modifica</button>
+        <a class="btn btn-primary text-white" asp-action="UpdateClient" asp-controller="Client" asp-route-clientId="@Model.Client.ClientID" id="@Model.Client.ClientID">Modifica</a>
     </div>
 </div>
 
@@ -175,10 +175,6 @@
               ]
             });
         } );
-            
-        function ChangePage(id) {
-            window.location.href = "https://localhost:5001/Client/UpdateClient?clientId=" + id;
-        }
         
         function SetAccountId(elementName, accountId){
                 $(elementName).data("accountId", accountId );

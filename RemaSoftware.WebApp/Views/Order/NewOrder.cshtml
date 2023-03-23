@@ -89,7 +89,7 @@
                 @Html.DropDownListFor(
                     model=>model.OperationsSelected,
                     Model.Operations, 
-                    new {multiple="multiple", @class=" form-control select2-operations", name="OperationsSelected[]", style="width:100%;"})
+                    new {multiple="multiple", @class=" form-control select2-operations", id="OperationsSelected", name="OperationsSelected[]", style="width:100%;"})
             </div>
             
             <div style="width:100px; margin-top:50px;">
@@ -114,14 +114,25 @@
             }
         });
         
-        $('.select2-operations').select2({
+        var ddtEditOperations = $('.select2-operations').select2({
             placeholder: "Seleziona operazioni"
         });
-
+    
+        var data = @Json.Serialize(Model.OperationsSelected)
+        
+        if(data.length != 0){
+            ddtEditOperations.val(data).trigger("change");
+        }
+        
+        var date = "today";
+        if (@Model.Ddt_In.DataOut.CompareTo(@DateTime.Now) > 0){
+           date = '@Model.Ddt_In.DataOut.ToString("dd/MM/yyyy")'
+        }
+        
         $("#datetimepicker1").flatpickr({
             dateFormat: "d/m/Y",
             minDate: "today",
-            defaultDate: "today",
+            defaultDate: date,
             locale: {
                 weekdays: {
                     shorthand: ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'],

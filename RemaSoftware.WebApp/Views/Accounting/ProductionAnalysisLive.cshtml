@@ -146,7 +146,10 @@ function getTime(seconds, id){
       
       connection.on('endOperation', function (operationId, machineId) {
           countOperator[machineId]--;
-          document.getElementById("operation-timeline-" + operationId).remove()
+          var ele = document.getElementById("operation-timeline-" + operationId)
+          var opId = ele.childNodes[1].id.split("-")
+          var opNumber = parseInt(opId.slice(-1))
+          ele.remove()
           if (countOperator[machineId] == 0){
             document.getElementById("title-machine-"+ machineId).classList.remove("text-success")
             document.getElementById("title-machine-"+ machineId).classList.add("text-danger")
@@ -160,7 +163,7 @@ function getTime(seconds, id){
             div.appendChild(div2)
           }
           else{
-            for (var i = countOperator[machineId]+1; i >0; i--){
+            for (var i = countOperator[machineId]+1; i > opNumber; i--){
                var operator = document.getElementById("macchina-" + machineId + "-operatore-" + i)
                if (operator){
                  operator.innerHTML = "<strong>OPERATORE "+ (i - 1) +":</strong>";

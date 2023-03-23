@@ -44,12 +44,12 @@ namespace RemaSoftware.UtilityServices.Implementation
                 {
                     type = "company",
                     name = client.Name,
-                    addressCity = client.City,
-                    addressStreet = client.Street + ", " + client.StreetNumber,
-                    addressProvince = client.Province,
-                    addressPostalCode = client.Cap,
-                    taxCode = client.P_Iva,
-                    vatNumber = client.P_Iva,
+                    address_city = client.City,
+                    address_street = client.Street + ", " + client.StreetNumber,
+                    address_province = client.Province,
+                    address_postal_code = client.Cap,
+                    tax_code = client.P_Iva,
+                    vat_number = client.P_Iva,
                 };
                 string stringjson = JsonConvert.SerializeObject(new { data = clientToSendInCloud });
 
@@ -80,8 +80,6 @@ namespace RemaSoftware.UtilityServices.Implementation
         {
             try
             {
-
-
                 Logger.Info("Inizio aggiornamento cliente su ApiFattureInCloud");
                 var apiEndpoint = _configuration["ApiFattureInCloud:ApiEndpointCompanies"] + "/" + client.FC_ClientID;
 
@@ -93,12 +91,12 @@ namespace RemaSoftware.UtilityServices.Implementation
                 {
                     type = "company",
                     name = client.Name,
-                    addressCity = client.City,
-                    addressStreet = client.Street + ", " + client.StreetNumber,
-                    addressProvince = client.Province,
-                    addressPostalCode = client.Cap,
-                    taxCode = client.P_Iva,
-                    vatNumber = client.P_Iva,
+                    address_city = client.City,
+                    address_street = client.Street + ", " + client.StreetNumber,
+                    address_province = client.Province,
+                    address_postal_code = client.Cap,
+                    tax_code = client.P_Iva,
+                    vat_number = client.P_Iva,
                 };
                 string stringjson = JsonConvert.SerializeObject(new { data = clientToSendInCloud });
 
@@ -120,7 +118,7 @@ namespace RemaSoftware.UtilityServices.Implementation
             catch (Exception e)
             {
                 Logger.Error(e.Message);
-                throw new Exception("Errore durante l'aggiunta del cliente a FattureInCloud.");
+                throw new Exception("Errore durante l'aggiornamento del cliente a FattureInCloud.");
             }
         }
 
@@ -466,12 +464,12 @@ namespace RemaSoftware.UtilityServices.Implementation
     {
         public string type { get; set; }
         public string name { get; set; }
-        public string vatNumber { get; set; }
-        public string taxCode { get; set; }
-        public string addressStreet { get; set; }
-        public string addressPostalCode { get; set; }
-        public string addressCity { get; set; }
-        public string addressProvince { get; set; }
+        public string vat_number { get; set; }
+        public string tax_code { get; set; }
+        public string address_street { get; set; }
+        public string address_postal_code { get; set; }
+        public string address_city { get; set; }
+        public string address_province { get; set; }
         
     }
 }

@@ -86,7 +86,7 @@ namespace RemaSoftware.WebApp.Controllers
             catch (Exception ex)
             {
                 Logger.Error(ex, "Errore durante l'aggiunta del Cliente.");
-                _notyfToastService.Error("Errore durante la creazione del Cliente.");
+                _notyfToastService.Error(ex.Message);
             }
             return View(model);
         }
