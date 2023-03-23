@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RemaSoftware.Domain.Data;
 
@@ -11,9 +12,10 @@ using RemaSoftware.Domain.Data;
 namespace RemaSoftware.Domain.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230323112433_PricePendingInDdt")]
+    partial class PricePendingInDdt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -427,9 +429,6 @@ namespace RemaSoftware.Domain.Migrations
 
                     b.Property<int>("Number_Piece_Now")
                         .HasColumnType("int");
-
-                    b.Property<decimal>("PendingPrice")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("PriceIsPending")
                         .HasColumnType("bit");

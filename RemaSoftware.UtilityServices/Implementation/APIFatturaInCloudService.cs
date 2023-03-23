@@ -201,53 +201,6 @@ namespace RemaSoftware.UtilityServices.Implementation
             }
         }
 
-        public string AddOrderCloud(OrderDto order)
-        {
-            Logger.Info("Inizio invio a ApiFattureInCloud");
-
-            var apiEndpoint = _configuration["ApiFattureInCloud:ApiEndpointNewProduct"];
-
-            var httpWebRequest = (HttpWebRequest)WebRequest.Create(apiEndpoint);
-            httpWebRequest.ContentType = "application/json";
-            httpWebRequest.Method = "POST";
-            httpWebRequest.Headers.Add("authorization", "Bearer " + _ficAccessToken);
-
-            OrderAPI orderToSendInCloud = new OrderAPI()
-            {
-                code = order.DDT,
-                name = order.SKU,
-                description = order.Description,
-                prezzo_ivato = false,
-                net_price = order.Price_Uni.ToString("0.##"),
-                gross_price = "0",
-                net_cost = "0",
-                
-                measure = "",
-                category = "",
-                notes = "",
-                in_stock = true,
-                stock_initial = order.Number_Piece
-            };
-
-            string stringjson = JsonConvert.SerializeObject(new { data=orderToSendInCloud });
-
-            using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
-            {
-                streamWriter.Write(stringjson);
-            }
-
-            var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-            string result;
-            using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-            {
-                result = streamReader.ReadToEnd();
-            }
-
-            Logger.Info($"Creazione - Risposta da FattureInCloud: {result}");
-            var obj = JsonConvert.DeserializeObject<dynamic>(result);
-            return obj.data.id;
-        }
-
         public string AddDdtInCloud(Ddt_In ddt, string SKU)
         {
             try
@@ -270,7 +223,6 @@ namespace RemaSoftware.UtilityServices.Implementation
                     net_price = ddt.Price_Uni.ToString("0.##"),
                     gross_price = "0",
                     net_cost = "0",
-                    
                     measure = "",
                     category = "",
                     notes = "",

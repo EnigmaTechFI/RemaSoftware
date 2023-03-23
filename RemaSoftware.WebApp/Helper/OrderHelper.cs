@@ -382,6 +382,16 @@ namespace RemaSoftware.WebApp.Helper
         {
 
             var ddtOut = _orderService.GetDdtOutById(id);
+            if (ddtOut.Ddt_Associations.Any(s => s.Ddt_In.PriceIsPending))
+            {
+                var ddts = "";
+                foreach (var item in ddtOut.Ddt_Associations)
+                {
+                    ddts += (item.Ddt_In.PriceIsPending && item.TypePieces == PiecesType.BUONI) ? item.Ddt_In.Code + " | " : "";
+                }
+                throw new Exception($"Attenzione contattare l&#39;amministrazione! Le seguenti DDT hanno il prezzo da confermare: {ddts}");
+            }
+
             var result = _apiFatturaInCloudService.CreateDdtInCloud(ddtOut);
             ddtOut.Status = DDTOutStatus.STATUS_EMITTED;
             ddtOut.FC_Ddt_Out_ID = result.Item2;

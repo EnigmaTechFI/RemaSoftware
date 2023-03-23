@@ -297,6 +297,20 @@ public class SubBatchService : ISubBatchService
             .SingleOrDefault(s => s.SubBatchID == id && s.Ddts_In.All(s => s.Product.ClientID == clientId));
     }
 
+    public List<SubBatch> GetSubBatchesWithExtras()
+    {
+        return _dbContext.SubBatches
+            .Include(s => s.Batch)
+            .ThenInclude(s => s.BatchOperations)
+            .ThenInclude(s => s.Operations)
+            .Include(s => s.Ddts_In)
+            .ThenInclude(s => s.Product)
+            .ThenInclude(s => s.Client)
+            .Where(s => s.Batch.BatchOperations.Any(s => s.Operations.Name == OtherConstants.EXTRA) &&
+                        s.Status == OrderStatusConstants.STATUS_WORKING)
+            .ToList();
+    }
+
     public List<OperationTimeline> GetSubBatchAtQualityControl()
     {
         return _dbContext.OperationTimelines

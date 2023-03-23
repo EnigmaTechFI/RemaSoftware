@@ -193,6 +193,40 @@ namespace RemaSoftware.UtilityServices.Implementation
                 Logger.Error(e, "Errore durante l'invio della mail per la comunicazione dell'account.");
             }
         }
+
+        public void SendEmailPriceVariation(decimal price, string mail, string message, string ddtCode, string cliente)
+        {
+            try
+            {
+                MailMessage mailMessage = new MailMessage();
+                var mailAddressSender = _configuration["EmailConfig:EmailAddress"];
+                mailMessage.From = new MailAddress(mailAddressSender);
+                mailMessage.To.Add(new MailAddress(mail));
+                mailMessage.Subject = "Richiesta variazione prezzo DDT N° " + ddtCode;
+                mailMessage.IsBodyHtml = true;
+                string FilePath = "wwwroot/MailTemplate/variazione-prezzo.html";  
+                StreamReader str = new StreamReader(FilePath);  
+                string MailText = str.ReadToEnd();  
+                str.Close();  
+                MailText = MailText.Replace("[CodiceDDT]", ddtCode);  
+                MailText = MailText.Replace("[CorpoMessaggio]", message);  
+                MailText = MailText.Replace("[Cliente]", cliente);  
+                MailText = MailText.Replace("[PrezzoNuovo]", price.ToString("0.00"));  
+                mailMessage.Body =  MailText;
+                SmtpClient client = new SmtpClient();
+                var mailPwd = _configuration["EmailConfig:Password"];
+                client.Credentials = new System.Net.NetworkCredential(mailAddressSender, mailPwd);
+                client.Host = _configuration["EmailConfig:SmtpServer"];
+                client.Port = int.Parse(_configuration["EmailConfig:Port"]);
+                client.EnableSsl = true;
+                client.Send(mailMessage);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Errore durante l'invio della mail per variazione prezzo DDT.");
+                throw new Exception("Errore durante l&#39;invio della mail per variazione prezzo DDT.");
+            }
+        }
     }
 
 }

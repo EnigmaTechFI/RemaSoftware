@@ -28,6 +28,7 @@ namespace RemaSoftware.WebApp.Controllers
             return View(_accountingHelper.GetProductionAnalysisLiveViewModel());
         }
         
+        [HttpGet]
         public IActionResult Accounting()
         {
             var vm = new AccountingViewModel();
@@ -56,6 +57,62 @@ namespace RemaSoftware.WebApp.Controllers
                 Logger.Error(ex, "Errore durante la generazione del pdf.");
                 _notyfService.Error("Errore durante la generazione del pdf.");
                 return RedirectToAction("Accounting");
+            }
+        }
+        
+        [HttpGet]
+        public IActionResult DdtVariation()
+        {
+            try
+            {
+                return View(_accountingHelper.GetDdtVariationViewModel());
+            }
+            catch (Exception e)
+            {
+                _notyfService.Error("Errore nel caricamento dei lotti.");
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        [HttpGet]
+        public JsonResult ConfirmVariation(int id)
+        {
+            try
+            {
+                _accountingHelper.ConfirmVariation(id);
+                return Json(new { Result = true, Message = "Prezzo ddt aggiornato correttamente."});
+            }
+            catch (Exception e)
+            {
+                return Json(new { Result = false, Message = "Errore aggiornamento DDT." });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult DeleteVariation(int id)
+        {
+            try
+            {
+                _accountingHelper.DeleteVariation(id);
+                return Json(new { Result = true, Message = "Variazione ddt annullata."});
+            }
+            catch (Exception e)
+            {
+                return Json(new { Result = false, Message = "Errore aggiornamento DDT. Si prega di riprovare" });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult RequestVariation(int id, decimal price, string mail, string message)
+        {
+            try
+            {
+                _accountingHelper.RequestVariation(id, price, mail, message);
+                return Json(new { Result = true, Message = "Richiesta inviata."});
+            }
+            catch (Exception e)
+            {
+                return Json(new { Result = false, Message = e.Message });
             }
         }
     }

@@ -8,5 +8,6 @@ namespace RemaSoftware.UtilityServices.Interface
             string factoryName, string productSKU, string productName);
 
         void SendEmailPrompt(string email, string ddtCode);
+        public void SendEmailPriceVariation(decimal price, string mail, string message, string ddtCode, string cliente);
     }
 }

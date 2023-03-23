@@ -46,6 +46,9 @@
     <Content Update="wwwroot\MailTemplate\sollecito-ddt.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Update="wwwroot\MailTemplate\variazione-prezzo.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

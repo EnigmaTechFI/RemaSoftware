@@ -257,6 +257,7 @@ namespace RemaSoftware.WebApp.Controllers
             }
             catch (Exception e)
             {
+                _notyfService.Error(e.Message);
                 return RedirectToAction("BatchInDelivery");
             }
             
@@ -341,7 +342,7 @@ namespace RemaSoftware.WebApp.Controllers
             catch (Exception e)
             {
                 Logger.Error(e.Message, e);
-                _notyfService.Error("Error durante l'emissione della ddt.");
+                _notyfService.Error(e.Message);
                 return RedirectToAction("PartialDDT", new {id = model.DdtId, clientId = model.ClientId});
             }
         }
