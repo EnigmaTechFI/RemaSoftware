@@ -143,24 +143,35 @@ namespace RemaSoftware.WebApp.Helper
 
                     if (model.Ddt_In.NumberMissingPiece != 0)
                     {
-                        try
+                        var product = _productService.GetProductById(model.Ddt_In.ProductID);
+                        var associations = new List<Ddt_Association>();
+                        var ass = new Ddt_Association()
                         {
-                            var product = _productService.GetProductById(model.Ddt_In.ProductID);
-                            var association = new List<Ddt_Association>();
-                            association.Add(new Ddt_Association()
-                            {
-                                Date = DateTime.Now,
-                                Ddt_In_ID = model.Ddt_In.Ddt_In_ID,
-                                NumberPieces = model.Ddt_In.NumberMissingPiece,
-                                TypePieces = PiecesType.MANCANTI
-                            });
+                            Date = DateTime.Now,
+                            Ddt_In_ID = model.Ddt_In.Ddt_In_ID,
+                            NumberPieces = model.Ddt_In.NumberMissingPiece,
+                            TypePieces = PiecesType.MANCANTI
+                        };
+                        var ddtOut = _orderService.GetDdtOutsByClientIdAndStatus(product.ClientID,
+                            DDTOutStatus.STATUS_PENDING);
+                        if (ddtOut.Count > 0)
+                        {
+                            ass.Ddt_Out_ID = ddtOut[0].Ddt_Out_ID;
+                            _orderService.CreateDDTAssociation(ass);
+                        }
+                        else
+                        {
+                            associations.Add(ass);
                             _orderService.CreateNewDdtOut(new Ddt_Out()
                             {
                                 ClientID = product.ClientID,
                                 Date = DateTime.Now,
                                 Status = DDTOutStatus.STATUS_PENDING,
-                                Ddt_Associations = association
+                                Ddt_Associations = associations
                             });
+                        }
+                        try
+                        {
                             _emailService.SendEmailMissingPieces(product.Client.Email, model.Ddt_In.NumberMissingPiece,
                                 model.Ddt_In.Number_Piece, model.Ddt_In.Code, product.Client.Name, product.SKU,
                                 product.Name);
@@ -438,6 +449,46 @@ namespace RemaSoftware.WebApp.Helper
                     var ddt = _orderService.GetDdtInById(model.Ddt_In.Ddt_In_ID);
                     ddt.Code = model.Ddt_In.Code;
                     ddt.Number_Piece = model.Ddt_In.Number_Piece;
+                    if (model.Ddt_In.NumberMissingPiece > 0 &&
+                        ddt.NumberMissingPiece != model.Ddt_In.NumberMissingPiece)
+                    {
+                        var product = ddt.Product;
+                        var associations = ddt.Ddt_Associations?? new List<Ddt_Association>();
+                        var ass = new Ddt_Association()
+                        {
+                            Date = DateTime.Now,
+                            Ddt_In_ID = model.Ddt_In.Ddt_In_ID,
+                            NumberPieces = model.Ddt_In.NumberMissingPiece - ddt.NumberMissingPiece,
+                            TypePieces = PiecesType.MANCANTI
+                        };
+                        var ddtOut = _orderService.GetDdtOutsByClientIdAndStatus(product.ClientID,
+                            DDTOutStatus.STATUS_PENDING);
+                        if (ddtOut.Count > 0)
+                        {
+                            ass.Ddt_Out_ID = ddtOut[0].Ddt_Out_ID;
+                            _orderService.CreateDDTAssociation(ass);
+                        }
+                        else
+                        {
+                            associations.Add(ass);
+                            _orderService.CreateNewDdtOut(new Ddt_Out()
+                            {
+                                ClientID = product.ClientID,
+                                Date = DateTime.Now,
+                                Status = DDTOutStatus.STATUS_PENDING,
+                                Ddt_Associations = associations
+                            });
+                        }
+                        try
+                        {
+                            _emailService.SendEmailMissingPieces(product.Client.Email, ass.NumberPieces,
+                                model.Ddt_In.Number_Piece, model.Ddt_In.Code, product.Client.Name, product.SKU,
+                                product.Name);
+                        }
+                        catch (Exception e)
+                        {
+                        }
+                    }
                     ddt.NumberMissingPiece = model.Ddt_In.NumberMissingPiece;
                     ddt.Price_Uni = model.Ddt_In.Price_Uni;
                     ddt.Description = model.Ddt_In.Description;

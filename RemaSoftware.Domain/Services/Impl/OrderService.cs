@@ -326,5 +326,11 @@ namespace RemaSoftware.Domain.Services.Impl
                 .Where(s => s.Product.ClientID == clientId && s.Status == OrderStatusConstants.STATUS_COMPLETED)
                 .ToList();
         }
+
+        public void CreateDDTAssociation(Ddt_Association ass)
+        {
+            _dbContext.Ddt_Associations.Add(ass);
+            _dbContext.SaveChanges();
+        }
     }
 }

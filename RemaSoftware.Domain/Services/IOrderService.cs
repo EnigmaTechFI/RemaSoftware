@@ -33,5 +33,6 @@ namespace RemaSoftware.Domain.Services
         void DeleteBatch(Batch batch);
         List<Ddt_In> GetDdtInActiveByClientId(int clientId);
         List<Ddt_In> GetDdtInEndedByClientId(int clientId);
+        void CreateDDTAssociation(Ddt_Association ass);
     }
 }
