@@ -139,9 +139,9 @@ namespace RemaSoftware.UtilityServices.Implementation
                     Qty = item.NumberPieces,
                     Name = item.Ddt_In.Product.Name,
                     Code = item.Ddt_In.Code,
-                    Description = item.TypePieces == PiecesType.BUONI ? item.Ddt_In.Description : item.Ddt_In.Description + " - " + item.TypePieces,
+                    Description = item.TypePieces == PiecesType.BUONI || item.TypePieces == PiecesType.SCARTI ? item.Ddt_In.Description : item.Ddt_In.Description + " - " + item.TypePieces,
                     Stock = item.TypePieces != PiecesType.MANCANTI,
-                    NetPrice = item.TypePieces == PiecesType.BUONI ? item.Ddt_In.Price_Uni : 0,
+                    NetPrice = item.TypePieces == PiecesType.BUONI || item.TypePieces == PiecesType.SCARTI ? item.Ddt_In.Price_Uni : 0,
                     Vat = new VatType()
                     {
                         Id = 0,
