@@ -631,9 +631,6 @@ namespace RemaSoftware.Domain.Migrations
                     b.Property<int>("BatchID")
                         .HasColumnType("int");
 
-                    b.Property<int>("NumberPieces")
-                        .HasColumnType("int");
-
                     b.Property<string>("Status")
                         .HasMaxLength(1)
                         .HasColumnType("nvarchar(1)");

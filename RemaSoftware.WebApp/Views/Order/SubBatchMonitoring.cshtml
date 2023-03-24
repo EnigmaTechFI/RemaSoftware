@@ -30,7 +30,7 @@
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                             Numero pezzi</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.SubBatch.NumberPieces</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.SubBatch.Ddts_In.Sum(s => s.Number_Piece)</div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-hashtag fa-2x text-gray-300"></i>

@@ -222,7 +222,7 @@ namespace RemaSoftware.UtilityServices.Implementation
                     name = SKU,
                     description = ddt.Description,
                     prezzo_ivato = false,
-                    net_price = ddt.Price_Uni.ToString("0.##"),
+                    net_price = ddt.Price_Uni,
                     gross_price = "0",
                     net_cost = "0",
                     measure = "",
@@ -276,7 +276,7 @@ namespace RemaSoftware.UtilityServices.Implementation
                     name = SKU,
                     description = ddt.Description,
                     prezzo_ivato = false,
-                    net_price = ddt.Price_Uni.ToString("0.##"),
+                    net_price = ddt.Price_Uni,
                     gross_price = "0",
                     net_cost = "0",
                     measure = "",
@@ -333,52 +333,6 @@ namespace RemaSoftware.UtilityServices.Implementation
             var obj = JsonConvert.DeserializeObject<dynamic>(result);
             return obj.error_code;
         }
-
-        public bool UpdateOrderCloud(OrderToUpdateDto order)
-        {
-            Logger.Info("Inizio aggiornamento prodotto su ApiFattureInCloud");
-
-            var apiEndpoint = _configuration["ApiFattureInCloud:ApiEndpointUpdateProduct"];
-
-            var httpWebRequest = (HttpWebRequest)WebRequest.Create(apiEndpoint + order.ID_FattureInCloud);
-            httpWebRequest.ContentType = "application/json";
-            httpWebRequest.Method = "PUT";
-            httpWebRequest.Headers.Add("authorization", "Bearer " + _ficAccessToken);
-            OrderAPI orderToSendInCloud = new OrderAPI()
-            {
-                id = order.Id,
-                code = order.DDT,
-                name = order.SKU,
-                description = order.Description,
-                prezzo_ivato = false,
-                net_price = order.Price_Uni.ToString("0.##"),
-                gross_price = "0",
-                net_cost = "0",
-                cod_iva = 0,
-                measure = "",
-                category = "",
-                notes = "",
-                in_stock = true,
-                stock_initial = order.Number_Piece
-            };
-
-            string stringjson = JsonConvert.SerializeObject(new {data=orderToSendInCloud});
-
-            using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
-            {
-                streamWriter.Write(stringjson);
-            }
-
-            var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-            string result;
-            using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-            {
-                result = streamReader.ReadToEnd();
-            }
-
-            Logger.Info($"Creazione - Risposta da FattureInCloud: {result}");
-            return true;
-        }
     }
 
     class OrderAPI
@@ -390,7 +344,7 @@ namespace RemaSoftware.UtilityServices.Implementation
         public string name { get; set; }
         public string description { get; set; }
         public bool prezzo_ivato { get; set; }
-        public string net_price { get; set; }
+        public decimal net_price { get; set; }
         public string gross_price { get; set; }
         public string net_cost { get; set; }
         public int cod_iva { get; set; }

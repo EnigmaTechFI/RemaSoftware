@@ -106,7 +106,6 @@ namespace RemaSoftware.WebApp.Helper
                         {
                             Ddts_In = ddtList,
                             Status = "A",
-                            NumberPieces = model.Ddt_In.Number_Piece,
                         });
                         newSubbatch = true;
                         _orderService.CreateBatch(new Batch()
@@ -122,7 +121,6 @@ namespace RemaSoftware.WebApp.Helper
                         if (subBatchInStock != null)
                         {
                             subBatchInStock.Ddts_In.Add(model.Ddt_In);
-                            subBatchInStock.NumberPieces += model.Ddt_In.Number_Piece;
                             _subBatchService.UpdateSubBatch(subBatchInStock);
                         }
                         else
@@ -134,7 +132,6 @@ namespace RemaSoftware.WebApp.Helper
                                 BatchID = batch.BatchId,
                                 Ddts_In = ddts,
                                 Status = OrderStatusConstants.STATUS_ARRIVED,
-                                NumberPieces = model.Ddt_In.Number_Piece
                             };
                             _subBatchService.CreateSubBatch(subBatch);
                             newSubbatch = true;

@@ -161,14 +161,14 @@ namespace RemaSoftware.WebApp.Controllers
                     _notyfService.Error(validationResult);
                     return View(NewOrderViewModelThrow(model));
                 }
-                var result = _orderHelper.EditDdtIn(model);
+                _orderHelper.EditDdtIn(model);
                 _notyfService.Success("Commessa aggiornata correttamente");
-                return RedirectToAction("ProductList", "Product");
+                return RedirectToAction("OrderSummary", "Order");
             }
             catch (Exception e)
             {
                 Logger.Error(e, e.Message);
-                _notyfService.Error("Errore durante la creazione dell'ordine.");
+                _notyfService.Error("Errore durante l&#39;aggiornamento dell&#39;ordine.");
                 return View(NewOrderViewModelThrow(model));
             }
         }
