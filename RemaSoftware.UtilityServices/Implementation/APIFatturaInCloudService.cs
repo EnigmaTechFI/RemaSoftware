@@ -44,6 +44,7 @@ namespace RemaSoftware.UtilityServices.Implementation
                 {
                     type = "company",
                     name = client.Name,
+                    email = client.Email,
                     address_city = client.City,
                     address_street = client.Street + ", " + client.StreetNumber,
                     address_province = client.Province,
@@ -91,6 +92,7 @@ namespace RemaSoftware.UtilityServices.Implementation
                 {
                     type = "company",
                     name = client.Name,
+                    email = client.Email,
                     address_city = client.City,
                     address_street = client.Street + ", " + client.StreetNumber,
                     address_province = client.Province,
@@ -277,7 +279,6 @@ namespace RemaSoftware.UtilityServices.Implementation
                     net_price = ddt.Price_Uni.ToString("0.##"),
                     gross_price = "0",
                     net_cost = "0",
-                    
                     measure = "",
                     category = "",
                     notes = "",
@@ -416,6 +417,7 @@ namespace RemaSoftware.UtilityServices.Implementation
     {
         public string type { get; set; }
         public string name { get; set; }
+        public string email { get; set; }
         public string vat_number { get; set; }
         public string tax_code { get; set; }
         public string address_street { get; set; }

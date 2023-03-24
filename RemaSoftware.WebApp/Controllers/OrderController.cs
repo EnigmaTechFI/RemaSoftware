@@ -361,6 +361,21 @@ namespace RemaSoftware.WebApp.Controllers
                 return RedirectToAction("BatchInStock", "Order");
             }
         }
+        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpGet]
+        public JsonResult StockVariation(int id, int pieces)
+        {
+            try
+            {
+                _orderHelper.StockVariation(id, pieces);
+                return new JsonResult(new { Result = true,  Message = "Variazione inventario effettuata correttamente." });
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(new { Result = false, Message=e.Message});
+            }
+        }
 
         #region Models validation
 

@@ -616,6 +616,33 @@ namespace RemaSoftware.WebApp.Helper
                 }
             }
         }
+
+        public void StockVariation(int id, int pieces)
+        {
+            using (var transaction = _dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    var ddt = _orderService.GetDdtInById(id);
+                    if (ddt == null)
+                        throw new Exception("DDT non torvata. Si prega di riporovare.");
+                    if (pieces < 0)
+                        throw new Exception("Valore inserito non valido");
+                    var diff = pieces - ddt.Number_Piece_Now;
+                    ddt.Number_Piece_Now = pieces;
+                    ddt.Number_Piece += diff;
+                    ddt.Status = pieces == 0 ? OrderStatusConstants.STATUS_COMPLETED : ddt.Status;
+                    _orderService.UpdateDDtIn(ddt);
+                    _apiFatturaInCloud.EditDdtInCloud(ddt, ddt.Product.SKU);
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    throw e;
+                }
+            }
+        }
     }
     
     

@@ -19,18 +19,18 @@
         <div class="table-responsive">
             <table class="table table-bordered" id="table-ddt" width="100%" cellspacing="0">
                 <thead>
-                    <tr>
-                        <th>Cliente</th>
-                        <th>DDT</th>
-                        <th>SKU</th>
-                        <th>N° pezzi</th>
-                        <th>N° pezzi attuali</th>
-                        <th>Prz. Unitario</th>
-                        <th>Arrivo ordine</th>
-                        <th>Scadenza ordine</th>
-                        <th>Status</th>
-                        <th>Azioni</th>
-                    </tr>
+                <tr>
+                    <th>Cliente</th>
+                    <th>DDT</th>
+                    <th>SKU</th>
+                    <th>N° pezzi</th>
+                    <th>N° pezzi attuali</th>
+                    <th>Prz. Unitario</th>
+                    <th>Arrivo ordine</th>
+                    <th>Scadenza ordine</th>
+                    <th>Status</th>
+                    <th>Azioni</th>
+                </tr>
                 </thead>
                 <tbody>
                 @foreach (var ddt in Model.Ddt_In)
@@ -39,8 +39,8 @@
                         <td>@ddt.Product.Client.Name</td>
                         <td>@ddt.Code</td>
                         <td>@ddt.Product.SKU</td>
-                        <td>@ddt.Number_Piece</td>
-                        <td>@ddt.Number_Piece_Now</td>
+                        <td id="pieces-number-@ddt.Ddt_In_ID">@ddt.Number_Piece</td>
+                        <td id="pieces-number-now-@ddt.Ddt_In_ID">@ddt.Number_Piece_Now</td>
                         <td>&euro;@ddt.Price_Uni.ToString("0.00")</td>
                         <td>@ddt.DataIn.ToString("dd/MM/yy")</td>
                         <td>@ddt.DataOut.ToString("dd/MM/yy")</td>
@@ -54,6 +54,9 @@
                             }
                         </td>
                         <td class="text-center">
+                            <a style="text-decoration: none" onclick="setInventaryDdtId(@ddt.Ddt_In_ID)">
+                                <i class="fas fa-boxes fa-lg pl-2" title="Inventario" style="cursor: pointer; color: #6d767e"></i>
+                            </a>
                             @if (ddt.Status == OrderStatusConstants.STATUS_ARRIVED)
                             {
                                 <i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer; color: #6d767e;" id="@ddt.Ddt_In_ID" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDataArticleId('#confirm-del-modal', @ddt.Ddt_In_ID)"></i>
@@ -61,7 +64,7 @@
                                     <i class="fas fa-pen fa-lg pl-2" style="cursor: pointer; color: #6d767e;" title="Modifica"></i>
                                 </a>
                             }
-                            @if (ddt.Status != OrderStatusConstants.STATUS_ARRIVED)
+                            else
                             {
                                 <a style="text-decoration: none" asp-controller="Order" asp-action="SubBatchMonitoring" asp-route-id="@ddt.SubBatchID">
                                     <i class="fas fa-eye fa-lg pl-2" title="Visualizza avanzamento" style="cursor: pointer; color: #6d767e"></i>
@@ -72,6 +75,31 @@
                 }
                 </tbody>
             </table>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="inventary-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Inventario</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h5>Registra il numero di pezzi attualmente in azienda</h5>
+                <div class="form-group">
+                    <label for="pieces">Numero pezzi</label>
+                    <input type="number" class="form-control" id="pieces" placeholder="Numero pezzi"/>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
+                <button class="btn btn-danger" onclick="ConfirmStockVariation()">Conferma</button>
+            </div>
         </div>
     </div>
 </div>
@@ -93,6 +121,11 @@
         </div>
     </div>
 </div>
+<div class="loader-cont">
+    <div class="spinner-grow" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
 
 @{await Html.RenderPartialAsync("../Order/_CopyOrderModal", new CopyOrderViewModel());}
 
@@ -106,6 +139,50 @@
     <script src="https://cdn.datatables.net/plug-ins/1.10.11/sorting/date-eu.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
+    let ddtId;
+    function setInventaryDdtId(param) {
+        ddtId = param
+        $("#inventary-modal").modal('toggle');
+    }
+    
+    function ConfirmStockVariation() {
+        $(".loader-cont").show()
+        var pieces = document.getElementById("pieces").value
+        if (pieces == ""){
+            toastNotifyError("Inserire il valore.");
+            $(".loader-cont").hide()
+            return;
+        }
+        $.ajax({
+            url: '@Url.Action("StockVariation", "Order")?' 
+            + $.param({"id": ddtId}) + "&" 
+            + $.param({"pieces": pieces}),
+            type: 'GET',
+            success: function (response) {
+                if (response.result){
+                    $("#inventary-modal").modal('toggle');
+                    if (pieces == 0){
+                        table.row($("tr#ddt-" + ddtId)).remove().draw();
+                    }
+                    else{
+                        var diff = parseInt(pieces) - parseInt(document.getElementById("pieces-number-now-" + ddtId).textContent) ;
+                        var nPieces = parseInt(document.getElementById("pieces-number-" + ddtId).textContent) + diff;
+                        document.getElementById("pieces-number-" + ddtId).textContent = nPieces
+                        document.getElementById("pieces-number-now-" + ddtId).textContent = pieces;
+                    }
+                    toastNotifySuccess(response.message);
+                }else{
+                    toastNotifyError(response.message);
+                }
+                $(".loader-cont").hide()
+            },
+            error: function (data){
+                toastNotifyError(data.toastMessage);
+                $(".loader-cont").hide()
+            }
+        });
+    }
+    
     let enable = true;
 
     function SetDataArticleId(elementName, articleId){
@@ -113,6 +190,7 @@
     }
 
     function DeleteStockArticle(){
+        $(".loader-cont").show()
         var articleId = $("#confirm-del-modal").data("articleId");
         $.ajax({
             url: '@Url.Action("DeleteProduct", "Order")?' + $.param({"productId": articleId}),
@@ -125,9 +203,11 @@
                 }else{
                     toastNotifyError(data.toastMessage);
                 }
+                $(".loader-cont").hide()
             },
             error: function (data){
                 toastNotifyError(data.toastMessage);
+                $(".loader-cont").hide()
             }
         });
     }
