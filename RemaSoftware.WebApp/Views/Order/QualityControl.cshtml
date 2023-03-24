@@ -61,7 +61,45 @@
         </div>
     </div>
 </div>
-
+<div class="card shadow mb-4" id="order-summ-content">
+<div class="d-sm-flex align-items-center justify-content-between card-header py-3">
+    <h3 class="m-0 font-weight-bold text-primary">Ultime etichette stampate</h3>
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+            <tr>
+                <th class="text-center" scope="col">Lotto</th>
+                <th scope="col">Cliente</th>
+                <th scope="col">Prodotto</th>
+                <th scope="col">Pezzi buoni</th>
+                <th scope="col">Scarti</th>
+                <th scope="col">Persi</th>
+                <th scope="col">Stampa</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach(var item in Model.Label)
+            {
+                <tr>
+                    <td>@item.SubBatchCode</td>
+                    <td>@item.Client</td>
+                    <td>@item.SKU</td>
+                    <td>@item.OkPieces</td>
+                    <td>@item.WastePieces</td>
+                    <td>@item.LostPieces</td>
+                    <td>
+                        <a onclick="printOldLabel('@item.SubBatchCode', '@item.OkPieces', '@item.LostPieces', '@item.WastePieces', '@item.Client', '@item.SKU')" style="text-decoration: none">
+                            <i class="fas fa-print fa-lg pl-2" title="Stampa etichetta" style="cursor: pointer; color: #6d767e"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+            <tr></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 <div class="modal fade" id="add-subbatch" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -139,6 +177,26 @@
       }
       var label = dymo.label.framework.openLabelFile("RemaDDT.dymo")  
       var etichetta = "LOTTO: "+ id + "\nCLIENTE: " + client  + "\nSKU: " + SKU 
+      if (parseInt(ok))
+          etichetta += "\nPEZZI: " + ok
+      if (parseInt(persi))
+          etichetta += "\nPERSI: " + persi
+      if (parseInt(scarti))
+          etichetta += "\nSCARTI: " + scarti
+      label.setObjectText("TextObject",  etichetta);
+      label.print(printers[0].name); 
+      location.reload()
+    } 
+    </script>
+    <script>
+    function printOldLabel(id, ok, persi, scarti, cliente, product){
+      var printers = dymo.label.framework.getPrinters();
+      if (printers.length == 0 || !printers[0].isConnected){
+        alert("Nessuna stampante trovata.");
+        return
+      }
+      var label = dymo.label.framework.openLabelFile("RemaDDT.dymo")  
+      var etichetta = "LOTTO: "+ id + "\nCLIENTE: " + cliente  + "\nSKU: " + product 
       if (parseInt(ok))
           etichetta += "\nPEZZI: " + ok
       if (parseInt(persi))

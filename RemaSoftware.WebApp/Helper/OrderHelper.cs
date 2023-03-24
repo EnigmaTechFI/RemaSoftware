@@ -252,7 +252,7 @@ namespace RemaSoftware.WebApp.Helper
                         Client = subBatch.Ddts_In[0].Product.Client.Name,
                         Date = DateTime.Now,
                         LostPieces = dto.LostPieces,
-                        OkPieces = dto.LostPieces,
+                        OkPieces = dto.OkPieces,
                         SKU = subBatch.Ddts_In[0].Product.SKU,
                         SubBatchCode = subBatch.SubBatchID,
                         WastePieces = dto.WastePieces
