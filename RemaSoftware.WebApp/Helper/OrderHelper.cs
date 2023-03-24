@@ -204,10 +204,9 @@ namespace RemaSoftware.WebApp.Helper
                 if (subBatch.OperationTimelines == null)
                     subBatch.OperationTimelines = new List<OperationTimeline>();
                 var now = DateTime.Now;
-                subBatch.OperationTimelines.Add(new OperationTimeline()
-                {
-                    SubBatchID = subBatchId,
-                    BatchOperation = new BatchOperation()
+                var batchOp =
+                    subBatch.Batch.BatchOperations.SingleOrDefault(s => s.Operations.Name == OtherConstants.COQ) ??
+                    new BatchOperation()
                     {
                         BatchID = subBatch.BatchID,
                         OperationID = _dbContext.Operations.SingleOrDefault(s => s.Name == OtherConstants.COQ)
@@ -215,12 +214,18 @@ namespace RemaSoftware.WebApp.Helper
                         Ordering = subBatch.Batch.BatchOperations == null
                             ? 1
                             : subBatch.Batch.BatchOperations.Max(s => s.Ordering) + 1
-                    },
+                    };
+                subBatch.OperationTimelines.Add(new OperationTimeline()
+                {
+                    SubBatchID = subBatchId,
+                    BatchOperation = batchOp,
                     Status = "A",
                     MachineId = 99,
                     StartDate = now,
                     EndDate = now
                 });
+                subBatch.Status = OrderStatusConstants.STATUS_WORKING;
+                subBatch.Ddts_In.ForEach(s => s.Status = OrderStatusConstants.STATUS_WORKING);
             }
 
             _subBatchService.UpdateSubBatch(subBatch);
@@ -275,24 +280,30 @@ namespace RemaSoftware.WebApp.Helper
                     item.NumberWastePiece += waste;
                     dtoCopy.WastePieces -= waste;
                     item.Number_Piece_Now -= lost + waste;
-                    
-                    item.Ddt_Associations.Add(new Ddt_Association()
+
+                    if (lost > 0)
                     {
-                        Date = now,
-                        Ddt_In_ID = item.Ddt_In_ID,
-                        Ddt_Out_ID = ddt_out_id,
-                        NumberPieces = lost,
-                        TypePieces = PiecesType.PERSI
-                    });
-                    
-                    item.Ddt_Associations.Add(new Ddt_Association()
+                        item.Ddt_Associations.Add(new Ddt_Association()
+                        {
+                            Date = now,
+                            Ddt_In_ID = item.Ddt_In_ID,
+                            Ddt_Out_ID = ddt_out_id,
+                            NumberPieces = lost,
+                            TypePieces = PiecesType.PERSI
+                        });
+                    }
+
+                    if (waste > 0)
                     {
-                        Date = now,
-                        Ddt_In_ID = item.Ddt_In_ID,
-                        Ddt_Out_ID = ddt_out_id,
-                        NumberPieces = waste,
-                        TypePieces = PiecesType.SCARTI
-                    });
+                        item.Ddt_Associations.Add(new Ddt_Association()
+                        {
+                            Date = now,
+                            Ddt_In_ID = item.Ddt_In_ID,
+                            Ddt_Out_ID = ddt_out_id,
+                            NumberPieces = waste,
+                            TypePieces = PiecesType.SCARTI
+                        });
+                    }
                 }
                 else
                 {
@@ -322,7 +333,7 @@ namespace RemaSoftware.WebApp.Helper
 
             foreach (var item in subBatch.Ddts_In.OrderBy(s => s.DataOut).ToList())
             {
-                if (item.Number_Piece_Now >= dto.OkPieces)
+                if (item.Number_Piece_Now > dto.OkPieces)
                 {
                     item.Number_Piece_Now -= dto.OkPieces;
                     item.Status = OrderStatusConstants.STATUS_PARTIALLY_COMPLETED;
