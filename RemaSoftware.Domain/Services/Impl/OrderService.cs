@@ -23,7 +23,7 @@ namespace RemaSoftware.Domain.Services.Impl
 
         public int GetCountOrdersNotExtinguished()
         {
-            return _dbContext.Ddts_In.Count(ord => ord.DataOut > DateTime.Now);
+            return _dbContext.Ddts_In.Where(s => s.Status != OrderStatusConstants.STATUS_COMPLETED && s.Status != OrderStatusConstants.STATUS_DELIVERED).Count(ord => ord.DataOut > DateTime.Now);
         }
 
         public decimal GetLastMonthEarnings()
@@ -41,7 +41,7 @@ namespace RemaSoftware.Domain.Services.Impl
             return _dbContext.Ddts_In
                 .Include(s => s.Product)
                 .ThenInclude(i=>i.Client)
-                .Where(w=>w.DataOut >= DateTime.Now.Date).OrderBy(ob=>ob.DataOut)
+                .Where(w=> w.Status != OrderStatusConstants.STATUS_COMPLETED && w.Status != OrderStatusConstants.STATUS_DELIVERED).OrderBy(ob=>ob.DataOut)
                 .Take(topSelector)
                 .ToList();
         }
@@ -51,7 +51,7 @@ namespace RemaSoftware.Domain.Services.Impl
             return _dbContext.Ddts_In
                 .Include(s => s.Product)
                 .ThenInclude(i=>i.Client)
-                .Where(w=>w.DataOut > DateTime.Now.Date).OrderBy(ob=>ob.DataOut)
+                .Where(w=> w.Status != OrderStatusConstants.STATUS_COMPLETED && w.Status != OrderStatusConstants.STATUS_DELIVERED).OrderBy(ob=>ob.DataOut)
                 .ToList();
         }
 
@@ -73,7 +73,6 @@ namespace RemaSoftware.Domain.Services.Impl
         {
             try
             {
-                //TODO: Controllare!!;
                 var batchesIEnum = _dbContext.Batches
                     .Include(s => s.SubBatches)
                     .ThenInclude(s => s.Ddts_In)
@@ -217,6 +216,8 @@ namespace RemaSoftware.Domain.Services.Impl
                 .Include(d => d.Product)
                 .ThenInclude(s => s.Client)
                 .Include(s => s.SubBatch)
+                .ThenInclude(s => s.Batch)
+                .ThenInclude(s => s.BatchOperations)
                 .Include(s => s.Ddt_Associations)
                 .ThenInclude(s => s.Ddt_Out)
                 .SingleOrDefault(s => s.Ddt_In_ID == id);
@@ -303,6 +304,7 @@ namespace RemaSoftware.Domain.Services.Impl
 
         public void DeleteBatch(Batch batch)
         {
+            _dbContext.BatchOperations.RemoveRange(batch.BatchOperations);
             _dbContext.Batches.Remove(batch);
             _dbContext.SaveChanges();
         }
@@ -355,6 +357,7 @@ namespace RemaSoftware.Domain.Services.Impl
                 .ThenInclude(s => s.Ddts_In)
                 .ThenInclude(s => s.Product)
                 .ThenInclude(s => s.Client)
+                .Where(s => s.SubBatches.Count > 0)
                 .ToList();
         }
     }

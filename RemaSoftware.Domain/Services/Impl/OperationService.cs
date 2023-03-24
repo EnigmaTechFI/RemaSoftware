@@ -49,7 +49,7 @@ namespace RemaSoftware.Domain.Services.Impl
 
         public int GetOperationIdByName(string name)
         {
-            return _dbContext.Operations.SingleOrDefault(s => s.Name == OtherConstants.EXTRA).OperationID;
+            return _dbContext.Operations.SingleOrDefault(s => s.Name == name).OperationID;
         }
 
     }

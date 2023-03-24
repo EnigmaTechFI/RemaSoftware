@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.AspNetCore.Identity;
+using NLog;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Data;
 using RemaSoftware.Domain.Models;
@@ -14,6 +15,7 @@ namespace RemaSoftware.WebApp.Helper
         private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<MyUser> _userManager;
         private readonly IEmailService _emailService;
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public AccountHelper(ApplicationDbContext dbContext, UserManager<MyUser> userManager, IEmailService emailService)
         {
@@ -49,7 +51,7 @@ namespace RemaSoftware.WebApp.Helper
                         }
                         catch (Exception e)
                         {
-                            //TODO: Loggare
+                            Logger.Error(e.Message, e);
                         }
 
                         transaction.Commit();

@@ -45,14 +45,14 @@
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            Prezzo medio
+                            Prezzo medio vendita
                         </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
                             @{
                                 var totEur = new decimal();
                                 foreach (var item in @Model.Batch.SubBatches)
                                 {
-                                    totEur += item.Ddts_In.Sum(s => s.Price_Uni);
+                                    totEur += item.Ddts_In.Sum(s => s.Price_Uni * s.Number_Piece);
                                 }
                                 var avgPrice = totEur / tot;
                             }
@@ -199,7 +199,7 @@
         </div>
     </div>
 </div>
-<div class="card shadow mb-4" id="order-summ-content">
+@*<div class="card shadow mb-4" id="order-summ-content">
     <div class="d-sm-flex align-items-center justify-content-between card-header py-3 mb-1">
         <h3 class="m-0 font-weight-bold text-primary">Andamento per operazione</h3>
     </div>
@@ -208,7 +208,7 @@
             <canvas id="opChart" height="100%"></canvas>
         </div>
     </div>
-</div>
+</div>*@
 @section Scripts
 {
     <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
@@ -245,7 +245,7 @@
     
     </script>
     <script src="~/vendor/chart.js/Chart.js"></script>
-    <script>
+    @*<script>
         var speedCanvas = document.getElementById("opChart");
         
         var dataFirst = {
@@ -285,7 +285,7 @@
           data: speedData,
           options: chartOptions
         });
-    </script>
+    </script>*@
     <script>
         var batchCanvas = document.getElementById("batchChart");
         var dataChart = @Json.Serialize(Model.AvgTime)

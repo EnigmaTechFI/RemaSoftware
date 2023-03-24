@@ -20,7 +20,7 @@ namespace RemaSoftware.WebApp.Validation
                 return "Inserire descrizione DDT.";
             if ((model.Ddt_In.Price_Uni < default(decimal) || (model.Ddt_In.Price_Uni == null)) && !model.Ddt_In.IsReso)
                 return "Prezzo unitario mancante.";
-            if (model.Ddt_In.DataOut <= DateTime.Now)
+            if (model.Ddt_In.DataOut.Date < DateTime.Now.Date)
                 return "Data di scadenza non valida.";
             if (model.OperationsSelected.Count == 0)
                 return "Nessuna operazione inserita.";
@@ -40,6 +40,8 @@ namespace RemaSoftware.WebApp.Validation
                 return "Inserire descrizione DDT.";
             if ((model.Ddt_In.Price_Uni < default(decimal) || (model.Ddt_In.Price_Uni == null)) && !model.Ddt_In.IsReso)
                 return "Prezzo unitario mancante.";
+            if (model.Ddt_In.DataOut.Date < DateTime.Now.Date)
+                return "Data di scadenza non valida.";
             return "";
         }
     }

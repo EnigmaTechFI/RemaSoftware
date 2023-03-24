@@ -86,7 +86,7 @@ namespace RemaSoftware.WebApp.Helper
                 .Select(s=> new ChartDataObject
                 {
                     Label = s.First().Product.Client.Name,
-                    Value = s.Sum(sum=>sum.Number_Piece).ToString()
+                    Value = s.Sum(sum=>sum.Number_Piece_Now).ToString()
                 })
                 .ToList();
             return result;

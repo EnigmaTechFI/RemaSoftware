@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
@@ -96,12 +97,11 @@ public class GuestHelper
         };
     }
 
-    public void SendPrompt(int ddtId)
+    public void SendPrompt(int ddtId, IList<MyUser> users)
     {
         var ddt = _orderService.GetDdtInById(ddtId);
         ddt.IsPrompted = true;
         _orderService.UpdateDDtIn(ddt);
-        //TODO: Get all mail of Admin 
-        _emailService.SendEmailPrompt("lore98.vettori@gmail.com", ddt.Code);
+        _emailService.SendEmailPrompt(users.Select(s => s.Email).ToList(), ddt.Code);
     }
 }

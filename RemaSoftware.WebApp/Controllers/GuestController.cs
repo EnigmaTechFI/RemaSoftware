@@ -118,7 +118,8 @@ public class GuestController : Controller
     {
         try
         {
-            _guestHelper.SendPrompt(id);
+            var users = await _userManager.GetUsersInRoleAsync(Roles.Admin);
+            _guestHelper.SendPrompt(id, users);
             return new JsonResult(new {Result = true, Error = "DDT sollecitata correttamente."});
         }
         catch (Exception e)

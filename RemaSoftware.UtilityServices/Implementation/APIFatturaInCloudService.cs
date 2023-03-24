@@ -149,7 +149,7 @@ namespace RemaSoftware.UtilityServices.Implementation
                         Id = 0,
                         Value = 22
                     }
-                    //TODO: Gestire iva nel caso la ddt sia una reso;
+                    
                 });
             }
             var createIssuedDocumentRequest = new CreateIssuedDocumentRequest()

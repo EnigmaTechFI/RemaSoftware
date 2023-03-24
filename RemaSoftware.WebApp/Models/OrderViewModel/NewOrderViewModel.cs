@@ -8,6 +8,7 @@ namespace RemaSoftware.WebApp.Models.OrderViewModel
     {
         public List<Client> Clients { get; set; }
         public Ddt_In Ddt_In { get; set; }
+        public string Date { get; set; }
         public List<SelectListItem> Operations { get; set; }
         public List<string> OperationsSelected { get; set; }
         public List<Product> Products { get; set; }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using AspNetCoreHero.ToastNotification.Abstractions;
@@ -144,9 +145,11 @@ namespace RemaSoftware.WebApp.Controllers
         [HttpGet]
         public IActionResult EditOrder(int id)
         {
+            var ddt = _orderHelper.GetDdtInById(id);
             var vm = new NewOrderViewModel
             {
-                Ddt_In = _orderHelper.GetDdtInById(id)
+                Ddt_In = ddt,
+                Date = ddt.DataOut.ToString()
             };
             return View(vm);
         }
@@ -156,6 +159,7 @@ namespace RemaSoftware.WebApp.Controllers
         public IActionResult EditOrder(NewOrderViewModel model)
         {
             try {
+                model.Ddt_In.DataOut = DateTime.Parse(model.Date, new CultureInfo("it-IT"));
                 var validationResult = _orderValidation.ValidateEditOrderViewModelAndSetDefaultData(model);
                 if (validationResult != "")
                 {
@@ -220,10 +224,7 @@ namespace RemaSoftware.WebApp.Controllers
         {
             try
             {
-                Logger.Info("Nuovo ordine");
-                Logger.Info($"DATA ARRIVATA: {model.Ddt_In.DataOut.ToString()}");
-                model.Ddt_In.DataOut = new DateTime(model.Ddt_In.DataOut.Year, model.Ddt_In.DataOut.Month,
-                    model.Ddt_In.DataOut.Day, 23, 00, 00);
+                model.Ddt_In.DataOut = DateTime.Parse(model.Date, new CultureInfo("it-IT"));
                 var validationResult = _orderValidation.ValidateNewOrderViewModelAndSetDefaultData(model);
                 if (validationResult != "")
                 {

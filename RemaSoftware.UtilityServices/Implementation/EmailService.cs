@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Mail;
 using Microsoft.Extensions.Configuration;
@@ -157,14 +158,16 @@ namespace RemaSoftware.UtilityServices.Implementation
             return false;
         }
 
-        public void SendEmailPrompt(string email, string ddtCode)
+        public void SendEmailPrompt(List<string> email, string ddtCode)
         {
            try
             {
                 MailMessage mailMessage = new MailMessage();
                 var mailAddressSender = _configuration["EmailConfig:EmailAddress"];
                 mailMessage.From = new MailAddress(mailAddressSender);
-                mailMessage.To.Add(new MailAddress(email));
+                mailMessage.To.Add(new MailAddress(email[0]));
+                for(int i = 1; i< email.Count; i++)
+                    mailMessage.CC.Add(email[i]);
                 mailMessage.Subject = "Sollecito DDT N° " + ddtCode;
                 mailMessage.IsBodyHtml = true;
                 string FilePath = "wwwroot/MailTemplate/sollecito-ddt.html";  
