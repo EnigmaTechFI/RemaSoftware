@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NLog;
 using Microsoft.Extensions.Configuration;
+using NLog.Fluent;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
@@ -76,7 +77,7 @@ namespace RemaSoftware.WebApp.Controllers
             }
             catch (Exception e)
             {
-                _notyfService.Error("Errore durante la registrazione del sotto lotto.");
+                _notyfService.Error(e.Message);
                 return RedirectToAction("QualityControl");
             }
             
@@ -219,7 +220,8 @@ namespace RemaSoftware.WebApp.Controllers
         {
             try
             {
-                Logger.Info("DATA ARRIVATA: " + model.Ddt_In.DataOut);
+                Logger.Info("Nuovo ordine");
+                Logger.Info($"DATA ARRIVATA: {model.Ddt_In.DataOut.ToString()}");
                 model.Ddt_In.DataOut = new DateTime(model.Ddt_In.DataOut.Year, model.Ddt_In.DataOut.Month,
                     model.Ddt_In.DataOut.Day, 23, 00, 00);
                 var validationResult = _orderValidation.ValidateNewOrderViewModelAndSetDefaultData(model);

@@ -1,0 +1,322 @@
+@using RemaSoftware.Domain.Constants
+@model RemaSoftware.WebApp.Models.AccountingViewModel.BatchAnalsysisViewModel
+
+@{
+    ViewData["Title"] = "Lotti in magazzino";
+}
+<script>
+    function getTime(seconds, id){
+        var sec = parseInt(seconds);
+        var date = new Date(sec * 1000).toISOString().substring(11, 19)
+        document.getElementById("time-"+id).textContent = date
+    }
+</script>
+<link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
+<h4 class="m-0 font-weight-bold text-primary mb-3">Analisi lotto #@Model.Batch.BatchId</h4>
+<div class="row">
+    <div class="col-xl-2 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Numero pezzi</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            @{
+                                var tot = 0;
+                                foreach (var item in @Model.Batch.SubBatches)
+                                {
+                                    tot += item.Ddts_In.Sum(s => s.Number_Piece);
+                                }
+                            }
+                            @tot
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-hashtag fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-2 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Prezzo medio
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            @{
+                                var totEur = new decimal();
+                                foreach (var item in @Model.Batch.SubBatches)
+                                {
+                                    totEur += item.Ddts_In.Sum(s => s.Price_Uni);
+                                }
+                                var avgPrice = totEur / tot;
+                            }
+                            @avgPrice.ToString("N")€
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-euro fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-2 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Codice prodotto</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Batch.SubBatches[0].Ddts_In[0].Product.SKU</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-barcode fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-2 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Nome prodotto</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Batch.SubBatches[0].Ddts_In[0].Product.Name</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-info fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-2 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Cliente</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Batch.SubBatches[0].Ddts_In[0].Product.Client.Name</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-user fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-2 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            N° Operazioni
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Batch.BatchOperations.Count</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-gears fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow mb-4" id="order-summ-content">
+    <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
+        <h3 class="m-0 font-weight-bold text-primary">DDT associate al lotto</h3>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" id="table-ddts">
+                <thead>
+                <tr>
+                    <th>DDT</th>
+                    <th>N° Pezzi</th>
+                    <th>N° Pezzi attuale</th>
+                    <th>Data arrivo</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Tempo di lavorazione</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var sb in Model.Batch.SubBatches)
+                {
+                    foreach (var ddt in sb.Ddts_In.OrderByDescending(s => s.DataIn))
+                    {
+                        <tr style="cursor: pointer;">
+                            <td>@ddt.Code</td>
+                            <td>@ddt.Number_Piece</td>
+                            <td>@ddt.Number_Piece_Now</td>
+                            <td>@ddt.DataIn.ToString("dd/MM/yy")</td>
+                            <td class="text-center">
+                                @{
+                                    if (!string.IsNullOrEmpty(ddt.Status))
+                                    {
+                                        var statusDto = OrderStatusConstants.OrderStatuses[@ddt.Status];
+                                        <i class="fas fa-circle fa-lg" style="color: @statusDto?.StatusCssClass" title="@statusDto?.StatusDescription"></i>
+                                    }
+                                }
+                            </td>
+                            <td class="text-center" id="time-@ddt.Ddt_In_ID">
+                                @{
+                                    var totTime = new double();
+                                    totTime = sb.OperationTimelines.Sum(s => (s.EndDate - s.StartDate).TotalSeconds);
+                                    var avgTime = 0;
+                                    avgTime = (int)((totTime / sb.Ddts_In.Sum(s => s.Number_Piece)) * ddt.Number_Piece);
+                                }
+                                <script>
+                                    getTime(@avgTime, @ddt.Ddt_In_ID)
+                                </script>
+                            </td>
+                        </tr>
+                    }
+                    
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="card shadow mb-4" id="order-summ-content">
+    <div class="d-sm-flex align-items-center justify-content-between card-header py-3 mb-1">
+        <h3 class="m-0 font-weight-bold text-primary">Andamento tempo totale</h3>
+    </div>
+    <div class="card shadow mb-1">
+        <div class="chart-area-2">
+            <canvas id="batchChart" height="100%"></canvas>
+        </div>
+    </div>
+</div>
+<div class="card shadow mb-4" id="order-summ-content">
+    <div class="d-sm-flex align-items-center justify-content-between card-header py-3 mb-1">
+        <h3 class="m-0 font-weight-bold text-primary">Andamento per operazione</h3>
+    </div>
+    <div class="card shadow mb-1">
+        <div class="chart-area-2">
+            <canvas id="opChart" height="100%"></canvas>
+        </div>
+    </div>
+</div>
+@section Scripts
+{
+    <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <script>
+     $(document).ready( function () {
+            table = $('#table-ddts').DataTable({
+                "language": {
+                    "lengthMenu": "Mostra _MENU_ risultati per pagina",
+                    "zeroRecords": "Nessun risultato trovato",
+                    "info": "Pagina _PAGE_ di _PAGES_",
+                    "infoEmpty": "Nessun risultato disponibile",
+                    "infoFiltered": "(filtrato da _MAX_ risultati totali)",
+                    "search": "Ricerca:",
+                    "paginate": {
+                        "first": "Inizio",
+                        "previous": "Precedente",
+                        "next": "Successivo",
+                        "last": "Fine"
+                    }                
+                },
+                "product": [[0, 'asc']],
+                "columnDefs": [
+                    { "searchable": true, "orderable": true, "targets": 0 },
+                    { "searchable": false, "orderable": false, "targets": 1 },
+                    { "searchable": false, "orderable": false, "targets": 2 },
+                    { "searchable": false, "orderable": false, "targets": 3 },
+                    { "searchable": false, "orderable": false, "targets": 4 },
+                    { "searchable": false, "orderable": false, "targets": 5 },
+                  ]
+            });
+        });
+    
+    </script>
+    <script src="~/vendor/chart.js/Chart.js"></script>
+    <script>
+        var speedCanvas = document.getElementById("opChart");
+        
+        var dataFirst = {
+            label: "Car A - Speed (mph)",
+            data: [0, 59, 75, 20, 20, 55, 40],
+            lineTension: 0,
+            fill: false,
+            borderColor: 'red'
+          };
+        
+        var dataSecond = {
+            label: "Car B - Speed (mph)",
+            data: [20, 15, 60, 60, 65, 30, 70],
+            lineTension: 0,
+            fill: false,
+          borderColor: 'blue'
+          };
+        
+        var speedData = {
+          labels: ["0s", "10s", "20s", "30s", "40s", "50s", "60s"],
+          datasets: [dataFirst, dataSecond]
+        };
+        
+        var chartOptions = {
+          legend: {
+            display: true,
+            position: 'top',
+            labels: {
+              boxWidth: 10,
+              fontColor: 'black'
+            }
+          }
+        };
+        
+        var lineChart = new Chart(speedCanvas, {
+          type: 'line',
+          data: speedData,
+          options: chartOptions
+        });
+    </script>
+    <script>
+        var batchCanvas = document.getElementById("batchChart");
+        var dataChart = @Json.Serialize(Model.AvgTime)
+        var batchData = {
+            label: "Car A - Speed (mph)",
+            data: [0, 59, 75, 20, 20, 55, 40],
+            lineTension: 0,
+            fill: false,
+            borderColor: 'red'
+          };
+        
+        var batchCode = {
+          labels: ["0s", "10s", "20s", "30s", "40s", "50s", "60s"],
+          datasets: [batchData]
+        };
+        
+        var chartOptions = {
+          legend: {
+            display: true,
+            position: 'top',
+            labels: {
+              boxWidth: 10,
+              fontColor: 'black'
+            }
+          }
+        };
+        
+        var lineChart = new Chart(batchCanvas, {
+          type: 'line',
+          data: batchCode,
+          options: chartOptions
+        });
+    </script>
+}

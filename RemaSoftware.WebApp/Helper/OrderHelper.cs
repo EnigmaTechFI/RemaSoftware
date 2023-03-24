@@ -82,6 +82,7 @@ namespace RemaSoftware.WebApp.Helper
                     var operationsSelected = model.OperationsSelected.Where(w => !w.StartsWith("0"))
                         .Select(s => int.Parse(s.Split('-').First())).ToList();
                     operationsSelected.Add(_operationService.GetOperationIdByName(OtherConstants.EXTRA));
+                    operationsSelected.Add(_operationService.GetOperationIdByName(OtherConstants.COQ));
                     var batchOperationList = new List<BatchOperation>();
                     var index = 0;
                     foreach (var operation in operationsSelected)
@@ -195,7 +196,18 @@ namespace RemaSoftware.WebApp.Helper
 
         public void RegisterBatchAtCOQ(int subBatchId)
         {
-            var subBatch = _subBatchService.GetSubBatchById(subBatchId);
+            var subBatch = new SubBatch();
+            try
+            {
+                subBatch = _subBatchService.GetSubBatchById(subBatchId);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Errore nel recuper del lotto.");
+            }
+            if (subBatch.Status == OrderStatusConstants.STATUS_COMPLETED)
+                throw new Exception("Lotto già completato.");
+
             if (subBatch != null)
             {
                 if (subBatch.OperationTimelines == null)
@@ -224,7 +236,6 @@ namespace RemaSoftware.WebApp.Helper
                 subBatch.Status = OrderStatusConstants.STATUS_WORKING;
                 subBatch.Ddts_In.ForEach(s => s.Status = OrderStatusConstants.STATUS_WORKING);
             }
-
             _subBatchService.UpdateSubBatch(subBatch);
         }
 

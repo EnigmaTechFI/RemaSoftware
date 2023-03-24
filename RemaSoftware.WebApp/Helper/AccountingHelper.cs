@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Data;
+using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
 using RemaSoftware.UtilityServices.Interface;
 using RemaSoftware.WebApp.Models.AccountingViewModel;
@@ -109,6 +111,58 @@ namespace RemaSoftware.WebApp.Helper
                     throw e;
                 }
             }
+        }
+
+        public PreliminarViewModel GetPreliminarViewModel()
+        {
+            var test = _orderService.GetAllBatch();
+            return new PreliminarViewModel()
+            {
+                Batches = _orderService.GetAllBatch()
+            };
+        }
+
+        public BatchAnalsysisViewModel GetBatchAnalsysisViewModel(int id)
+        {
+            var batch = _orderService.GetBatchById(id);
+            var batchChart = GetBatchChart(batch); 
+            return new BatchAnalsysisViewModel()
+            {
+                Batch = batch,
+                AvgTime = batchChart
+            };
+        }
+
+        private List<OperationChartSubBatch> GetBatchChart(Batch batch)
+        {
+            var chart = new List<OperationChartSubBatch>();
+            foreach (var item in batch.SubBatches.OrderByDescending(s => s.BatchID))
+            {
+                var obj = new OperationChartSubBatch()
+                {
+                    Id = item.SubBatchID,
+                    Time = item.OperationTimelines.Where(s =>
+                            s.Status == OperationTimelineConstant.STATUS_COMPLETED && s.UseForStatics)
+                        .Sum(s => (int)(s.EndDate - s.StartDate).TotalSeconds)
+                };
+                obj.Time /= item.Ddts_In.Sum(s => s.Number_Piece);
+                chart.Add(obj);
+            }
+
+            return chart;
+        }
+
+        private List<OperationChart> GetOperationChartAnalysis(Batch batch)
+        {
+            var opCharts = new List<OperationChart>();
+
+            foreach (var sb in batch.BatchOperations)
+            {
+                var boh = sb.OperationTimelines.GroupBy(s => s.BatchOperationID).ToList();
+                
+            }
+
+            return opCharts;
         }
     }
 }

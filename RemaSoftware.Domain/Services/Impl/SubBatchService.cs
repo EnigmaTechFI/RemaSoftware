@@ -294,7 +294,7 @@ public class SubBatchService : ISubBatchService
             .Include(s => s.Ddts_In)
             .ThenInclude(s => s.Product)
             .ThenInclude(s => s.Client)
-            .SingleOrDefault(s => s.SubBatchID == id && s.Ddts_In.All(s => s.Product.ClientID == clientId));
+            .SingleOrDefault(s => s.SubBatchID == id);
     }
 
     public List<SubBatch> GetSubBatchesWithExtras()

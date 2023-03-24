@@ -29,6 +29,7 @@ public class SubBatchController : ControllerBase
         }
         catch (Exception e)
         {
+            Logger.Error($"Detail Operation API: {e.Message}", e);
             return new JsonResult(new {Data = "", Error = e.Message});
         }
     }
@@ -44,6 +45,7 @@ public class SubBatchController : ControllerBase
         }
         catch (Exception e)
         {
+            Logger.Error($"Start Operation API: {e.Message}", e);
             return new JsonResult(new {Data = "ERROR", Error = e.Message});
         }
     }
@@ -58,6 +60,7 @@ public class SubBatchController : ControllerBase
         }
         catch (Exception e)
         {
+            Logger.Error($"End Operation API: {e.Message}", e);
             return new JsonResult(new {Data = "ERROR", Error = e.Message});
         }
     }
@@ -72,6 +75,7 @@ public class SubBatchController : ControllerBase
         }
         catch (Exception e)
         {
+            Logger.Error($"Pause Operation API: {e.Message}", e);
             return new JsonResult(new {Data = "ERROR", Error = e.Message});
         }
     }

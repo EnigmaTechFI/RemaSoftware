@@ -92,7 +92,7 @@ public class GuestHelper
         var clientId = _clientService.GetClientIdByUserId(userId);
         return new GuestSubBatchMonitoringViewModel()
         {
-            SubBatch = _subBatchService.GetSubBatchByIdAndClientId(id, clientId)?? new SubBatch()
+            SubBatch = _subBatchService.GetSubBatchByIdAndClientId(id, clientId)?? new SubBatch() //TODO: Controllare cliente;
         };
     }
 

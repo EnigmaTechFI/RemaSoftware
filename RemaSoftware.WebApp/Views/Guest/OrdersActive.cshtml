@@ -35,6 +35,15 @@
                         <td>@ddt.Number_Piece</td>
                         <td>@ddt.Number_Piece_Now</td>
                         <td>@ddt.DataIn.ToString("dd/MM/yy")</td>
+                        <td class="text-center">
+                            @{
+                                if (!string.IsNullOrEmpty(ddt.Status))
+                                {
+                                    var statusDto = OrderStatusConstants.OrderStatuses[@ddt.Status];
+                                    <i class="fas fa-circle fa-lg" style="color: @statusDto?.StatusCssClass" title="@statusDto?.StatusDescription"></i>
+                                }
+                            }
+                        </td>
                         <td id="sollecito-text-@ddt.Ddt_In_ID">
                             @{
                                 var text = "";
@@ -48,15 +57,6 @@
                                 }
                             }
                             @text
-                        </td>
-                        <td class="text-center">
-                            @{
-                                if (!string.IsNullOrEmpty(ddt.Status))
-                                {
-                                    var statusDto = OrderStatusConstants.OrderStatuses[@ddt.Status];
-                                    <i class="fas fa-circle fa-lg" style="color: @statusDto?.StatusCssClass" title="@statusDto?.StatusDescription"></i>
-                                }
-                            }
                         </td>
                         <td class="text-center">
                             <a style="text-decoration: none" asp-controller="Guest" asp-action="SubBatchMonitoring" asp-route-id="@ddt.SubBatchID">

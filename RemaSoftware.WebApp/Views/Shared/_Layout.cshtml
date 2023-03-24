@@ -236,15 +236,21 @@
                     <span>Contabilità</span>
                 </a>
             </li>
+            @*<li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Preliminar" ? "active" : "")">
+                <a class="nav-link" asp-action="Preliminar" asp-controller="Accounting">
+                    <i class="fas fa-fw fa-area-chart"></i>
+                    <span>Analisi lotti</span>
+                </a>
+            </li>*@
             <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "ProductionAnalysisLive" ? "active" : "")">
                 <a class="nav-link" asp-action="ProductionAnalysisLive" asp-controller="Accounting">
-                    <i class="fas fa-fw fa-calculator"></i>
+                    <i class="fas fa-fw fa-industry"></i>
                     <span>Produzione live</span>
                 </a>
             </li>
             <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "DDTVariation" ? "active" : "")">
                 <a class="nav-link" asp-action="DDTVariation" asp-controller="Accounting">
-                    <i class="fas fa-fw fa-calculator"></i>
+                    <i class="fas fa-fw fa-handshake-o"></i>
                     <span>Variazioni DDT</span>
                 </a>
             </li>

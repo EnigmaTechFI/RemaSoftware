@@ -36,5 +36,6 @@ namespace RemaSoftware.Domain.Services
         void CreateDDTAssociation(Ddt_Association ass);
         List<Label> GetLastLabelOut();
         void CreateNewLabelOut(Label label);
+        List<Batch> GetAllBatch();
     }
 }

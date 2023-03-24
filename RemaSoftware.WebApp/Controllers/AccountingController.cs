@@ -23,6 +23,19 @@ namespace RemaSoftware.WebApp.Controllers
         }
 
         [HttpGet]
+        public IActionResult Preliminar()
+        {
+            try
+            {
+                return View(_accountingHelper.GetPreliminarViewModel());
+            }
+            catch (Exception e)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        [HttpGet]
         public IActionResult ProductionAnalysisLive()
         {
             return View(_accountingHelper.GetProductionAnalysisLiveViewModel());
@@ -113,6 +126,19 @@ namespace RemaSoftware.WebApp.Controllers
             catch (Exception e)
             {
                 return Json(new { Result = false, Message = e.Message });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult BatchAnalysis(int id)
+        {
+            try
+            {
+                return View(_accountingHelper.GetBatchAnalsysisViewModel(id));
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Preliminar");
             }
         }
     }

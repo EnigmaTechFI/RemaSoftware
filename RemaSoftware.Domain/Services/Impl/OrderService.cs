@@ -61,7 +61,11 @@ namespace RemaSoftware.Domain.Services.Impl
                 .Include(b => b.BatchOperations)
                 .ThenInclude(o => o.Operations)
                 .Include(s => s.SubBatches)
+                .ThenInclude(s => s.OperationTimelines)
+                .Include(s => s.SubBatches)
                 .ThenInclude(s => s.Ddts_In)
+                .ThenInclude(s => s.Product)
+                .ThenInclude(s => s.Client)
                 .SingleOrDefault(s => s.BatchId == batchId);
         }
 
@@ -342,6 +346,16 @@ namespace RemaSoftware.Domain.Services.Impl
         {
             _dbContext.Label.Add(label);
             _dbContext.SaveChanges();
+        }
+
+        public List<Batch> GetAllBatch()
+        {
+            return _dbContext.Batches
+                .Include(s => s.SubBatches)
+                .ThenInclude(s => s.Ddts_In)
+                .ThenInclude(s => s.Product)
+                .ThenInclude(s => s.Client)
+                .ToList();
         }
     }
 }
