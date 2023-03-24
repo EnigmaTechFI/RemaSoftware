@@ -50,7 +50,14 @@
         
         <div class="row">
             <div class="col-12 h5">
-                Totale pezzi in produzione: <b>@Model.SubBatches.Sum(s => s.NumberPieces)</b>
+                @{
+                    var tot = 0;
+                    foreach (var item in @Model.SubBatches)
+                    {
+                        tot += item.Ddts_In.Sum(s => s.Number_Piece_Now);
+                    }
+                }
+                Totale pezzi in produzione: <b>@tot</b>
             </div>
         </div>
     </div>
