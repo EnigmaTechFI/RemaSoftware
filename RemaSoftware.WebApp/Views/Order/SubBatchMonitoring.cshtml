@@ -186,7 +186,7 @@
     {
         <div class="card shadow mb-1">
             <!-- Card Header - Accordion -->
-            <a href="#collapse-@item.OperationID" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapse-@item.OperationID">
+            <a href="#collapse-@item.OperationID" class="d-block card-header py-3 collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapse-@item.OperationID">
                 @{
                     var operationList = item.OperationTimelines.Where(s => s.BatchOperationID == item.BatchOperationID).ToList();
                     var status = "";

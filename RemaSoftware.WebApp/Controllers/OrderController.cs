@@ -219,6 +219,7 @@ namespace RemaSoftware.WebApp.Controllers
         {
             try
             {
+                Logger.Info("DATA ARRIVATA: " + model.Ddt_In.DataOut);
                 model.Ddt_In.DataOut = new DateTime(model.Ddt_In.DataOut.Year, model.Ddt_In.DataOut.Month,
                     model.Ddt_In.DataOut.Day, 23, 00, 00);
                 var validationResult = _orderValidation.ValidateNewOrderViewModelAndSetDefaultData(model);
