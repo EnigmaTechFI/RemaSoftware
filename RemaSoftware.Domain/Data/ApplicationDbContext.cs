@@ -21,6 +21,7 @@ namespace RemaSoftware.Domain.Data
         public DbSet<OperationTimeline> OperationTimelines { get; set; }
         public DbSet<Operation> Operations { get; set; }
         public DbSet<Warehouse_Stock> Warehouse_Stocks { get; set; }
+        public DbSet<Label> Label { get; set; }
         
         #region Required
         protected override void OnModelCreating(ModelBuilder modelBuilder)
