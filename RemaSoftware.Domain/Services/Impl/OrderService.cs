@@ -332,5 +332,16 @@ namespace RemaSoftware.Domain.Services.Impl
             _dbContext.Ddt_Associations.Add(ass);
             _dbContext.SaveChanges();
         }
+
+        public List<Label> GetLastLabelOut()
+        {
+            return _dbContext.Label.OrderByDescending(s => s.Date).Take(10).ToList();
+        }
+
+        public void CreateNewLabelOut(Label label)
+        {
+            _dbContext.Label.Add(label);
+            _dbContext.SaveChanges();
+        }
     }
 }

@@ -490,6 +490,40 @@ namespace RemaSoftware.Domain.Migrations
                     b.ToTable("Ddts_Out");
                 });
 
+            modelBuilder.Entity("RemaSoftware.Domain.Models.Label", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Client")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("LostPieces")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OkPieces")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SKU")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SubBatchCode")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WastePieces")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Label");
+                });
+
             modelBuilder.Entity("RemaSoftware.Domain.Models.Operation", b =>
                 {
                     b.Property<int>("OperationID")

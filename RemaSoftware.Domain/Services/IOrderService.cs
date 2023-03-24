@@ -34,5 +34,7 @@ namespace RemaSoftware.Domain.Services
         List<Ddt_In> GetDdtInActiveByClientId(int clientId);
         List<Ddt_In> GetDdtInEndedByClientId(int clientId);
         void CreateDDTAssociation(Ddt_Association ass);
+        List<Label> GetLastLabelOut();
+        void CreateNewLabelOut(Label label);
     }
 }
