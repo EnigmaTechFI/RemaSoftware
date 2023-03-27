@@ -78,7 +78,8 @@ namespace RemaSoftware.WebApp.Helper
             var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             var minusc = "abcdefghijklmnopqrstuvwxyz";
             var num = "0123456789";
-            var stringChars = new char[8];
+            var specialChar = "!$&()=?^*@#";
+            var stringChars = new char[9];
             var random = new Random();
 
             for (int i = 0; i < 2; i++)
@@ -93,6 +94,7 @@ namespace RemaSoftware.WebApp.Helper
             {
                 stringChars[i] = num[random.Next(num.Length)];
             }
+            stringChars[8] = specialChar[random.Next(num.Length)];
 
             return new String(stringChars);
         }
