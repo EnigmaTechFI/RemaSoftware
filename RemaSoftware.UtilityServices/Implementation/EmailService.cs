@@ -77,9 +77,12 @@ namespace RemaSoftware.UtilityServices.Implementation
                 StreamReader str = new StreamReader(FilePath);  
                 string MailText = str.ReadToEnd();  
                 str.Close();  
+                string login =  _configuration["ApplicationUrl"] + "login";
+                
                 
                 MailText = MailText.Replace("[email]", email);  
-                MailText = MailText.Replace("[password]", password);  
+                MailText = MailText.Replace("[password]", password);
+                MailText = MailText.Replace("[login]", login);
                 
                 mailMessage.Body =  MailText;
                 
@@ -123,6 +126,8 @@ namespace RemaSoftware.UtilityServices.Implementation
                 StreamReader str = new StreamReader(FilePath);  
                 string MailText = str.ReadToEnd();  
                 str.Close();  
+                string login =  _configuration["ApplicationUrl"] + "login";
+
                 
                 MailText = MailText.Replace("[Azienda]", factoryName);  
                 MailText = MailText.Replace("[CodiceDDT]", DDT);  
@@ -130,6 +135,8 @@ namespace RemaSoftware.UtilityServices.Implementation
                 MailText = MailText.Replace("[ProdottoNAME]", productName);  
                 MailText = MailText.Replace("[Mancanti]", missingPieces.ToString());  
                 MailText = MailText.Replace("[Arrivati]", arrivedPieces.ToString());  
+                MailText = MailText.Replace("[login]", login);
+
                 
                 mailMessage.Body =  MailText;
                 
@@ -174,7 +181,12 @@ namespace RemaSoftware.UtilityServices.Implementation
                 StreamReader str = new StreamReader(FilePath);  
                 string MailText = str.ReadToEnd();  
                 str.Close();  
+                string login =  _configuration["ApplicationUrl"] + "login";
+
+                
                 MailText = MailText.Replace("[CodiceDDT]", ddtCode);  
+                MailText = MailText.Replace("[login]", login);
+
                 mailMessage.Body =  MailText;
                 SmtpClient client = new SmtpClient();
                 var mailPwd = _configuration["EmailConfig:Password"];

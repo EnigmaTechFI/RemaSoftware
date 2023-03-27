@@ -6,8 +6,8 @@
 
 
 <div class="card shadow mb-4" id="order-summ-content">
-<div class="d-sm-flex align-items-center justify-content-between card-header py-3">
-    <h3 class="m-0 font-weight-bold text-primary">Seleziona ordini da emettere</h3>
+    <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
+        <h3 class="m-0 font-weight-bold text-primary">Seleziona ordini da emettere</h3>
     </div>
     <div class="card-body">
         <form method="post">
@@ -38,7 +38,35 @@
                 <tr></tr>
                 </tbody>
             </table>
-            <button style="float: right" class="btn btn-primary" type="submit">Emetti selezionati</button>
+            <button style="float: right" class="btn btn-primary" type="submit" onclick="clickEvent()">Emetti selezionati</button>
         </form>
     </div>
 </div>
+
+<div class="loader-cont">
+    <div class="spinner-grow" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+
+<script>
+
+    var clicked = false;
+
+    function clickEvent() {
+    $(".loader-cont").show()
+    if(!clicked)
+    {
+        clicked = true;
+        setTimeout(function(){
+            clicked = false;
+        }, 1500);
+    }
+    }
+    
+    $('#priceUnit').keypress(function (e) {
+        if (e.which == 46) {
+            e.preventDefault();
+        }
+    });
+</script>

@@ -93,9 +93,15 @@
             </div>
             
             <div style="width:100px; margin-top:50px;">
-                <button class="btn btn-primary" type="submit">Aggiungi</button>
+                <button class="btn btn-primary" type="submit" onclick="clickEvent()">Aggiungi</button>
             </div>
         </form>
+    </div>
+</div>
+
+<div class="loader-cont">
+    <div class="spinner-grow" role="status">
+        <span class="sr-only">Loading...</span>
     </div>
 </div>
 
@@ -107,6 +113,19 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/js/select2.min.js" integrity="sha512-9p/L4acAjbjIaaGXmZf0Q2bV42HetlCLbv8EP0z3rLbQED2TAFUlDvAezy7kumYqg5T8jHtDdlm1fgIsr5QzKg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
+    
+        var clicked = false;
+        
+        function clickEvent() {
+        $(".loader-cont").show()
+        if(!clicked)
+        {
+            clicked = true;
+            setTimeout(function(){
+                clicked = false;
+            }, 1500);
+        }
+        }
 
         $('#priceUnit').keypress(function (e) {
             if (e.which == 46) {
