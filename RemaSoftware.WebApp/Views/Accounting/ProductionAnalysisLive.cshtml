@@ -104,6 +104,8 @@ function getTime(seconds, id){
                           .withUrl('/productionhub')
                           .build();
       
+      connection.serverTimeoutInMilliseconds = 900000;
+      
       // gli dico cosa fare quando arriva un messaggio
       connection.on('startOperation', function (operation) {
           var nop = document.getElementById("noop-machine-"+ operation.machineId)

@@ -63,32 +63,33 @@
     <script>
     document.addEventListener('DOMContentLoaded', function () {
           // connessione all'hub signalr.
-          var connection = new signalR.HubConnectionBuilder()
-                              .withUrl('/productionhub')
-                              .build();
-          
-          // gli dico cosa fare quando arriva un messaggio
-          connection.on('startOperation', function (operation) {
-              var row = document.getElementById("sub-" + operation.subBatchId)
-              if (row){
-                  row.remove();
-              }
-              toastNotifySuccess("Il lotto "+ operation.subBatchId + " è entrato in produzione alla macchina" + operation.machineId);
-          });
-          
-          // gli dico cosa fare quando arriva un messaggio
-          connection.on('newSubBatchInStock', function () {
-              location.reload();
-          });
-          
-          // starto la connessione con il server
-          connection.start()
-              .then(function () {
-                  console.log('connection started');
-          })
-          .catch(error => {
-              console.error(error.message);
-          });
+        var connection = new signalR.HubConnectionBuilder()
+                          .withUrl('/productionhub')
+                          .build();
+        connection.serverTimeoutInMilliseconds = 900000;
+        
+        // gli dico cosa fare quando arriva un messaggio
+        connection.on('startOperation', function (operation) {
+          var row = document.getElementById("sub-" + operation.subBatchId)
+          if (row){
+              row.remove();
+          }
+          toastNotifySuccess("Il lotto "+ operation.subBatchId + " è entrato in produzione alla macchina" + operation.machineId);
+        });
+        
+        // gli dico cosa fare quando arriva un messaggio
+        connection.on('newSubBatchInStock', function () {
+          location.reload();
+        });
+        
+        // starto la connessione con il server
+        connection.start()
+          .then(function () {
+              console.log('connection started');
+        })
+        .catch(error => {
+          console.error(error.message);
+        });
     });      
     </script>
     <script>
