@@ -116,7 +116,7 @@ namespace RemaSoftware.WebApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult RequestVariation(int id, decimal price, string mail, string message)
+        public IActionResult RequestVariation(int id, string price, string mail, string message)
         {
             try
             {

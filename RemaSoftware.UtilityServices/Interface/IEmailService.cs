@@ -10,6 +10,6 @@ namespace RemaSoftware.UtilityServices.Interface
             string factoryName, string productSKU, string productName);
 
         void SendEmailPrompt(List<string> email, string ddtCode);
-        public void SendEmailPriceVariation(decimal price, string mail, string message, string ddtCode, string cliente);
+        public void SendEmailPriceVariation(string price, string mail, string message, string ddtCode, string cliente);
     }
 }

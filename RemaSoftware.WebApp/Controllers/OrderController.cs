@@ -148,6 +148,7 @@ namespace RemaSoftware.WebApp.Controllers
             var ddt = _orderHelper.GetDdtInById(id);
             var vm = new NewOrderViewModel
             {
+                Price = ddt.Price_Uni.ToString("0.00"),
                 Ddt_In = ddt,
                 Date = ddt.DataOut.ToString()
             };
@@ -224,7 +225,7 @@ namespace RemaSoftware.WebApp.Controllers
         {
             try
             {
-                model.Ddt_In.DataOut = DateTime.Parse(model.Date, new CultureInfo("it-IT"));
+                
                 var validationResult = _orderValidation.ValidateNewOrderViewModelAndSetDefaultData(model);
                 if (validationResult != "")
                 {
