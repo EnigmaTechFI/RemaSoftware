@@ -18,12 +18,14 @@ namespace RemaSoftware.Domain.Services.Impl
 
         public int GetTotalProcessedPiecese()
         {
-            return _dbContext.Ddts_In.Where(w => w.DataOut < DateTime.Now).Sum(s => s.Number_Piece);
+            return _dbContext.Ddts_In
+                .Where(s => s.Status != OrderStatusConstants.STATUS_COMPLETED && s.Status != OrderStatusConstants.STATUS_DELIVERED)
+                .Sum(s => s.Number_Piece);
         }
 
         public int GetCountOrdersNotExtinguished()
         {
-            return _dbContext.Ddts_In.Where(s => s.Status != OrderStatusConstants.STATUS_COMPLETED && s.Status != OrderStatusConstants.STATUS_DELIVERED).Count(ord => ord.DataOut > DateTime.Now);
+            return _dbContext.Ddts_In.Count(s => s.Status != OrderStatusConstants.STATUS_COMPLETED && s.Status != OrderStatusConstants.STATUS_DELIVERED);
         }
 
         public decimal GetLastMonthEarnings()

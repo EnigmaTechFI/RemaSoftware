@@ -46,6 +46,7 @@ namespace RemaSoftware.WebApp.Helper
 
         public SubBatchMonitoringViewModel GetSubBatchMonitoring(int id)
         {
+            var test = _subBatchService.GetSubBatchById(id);
             return new SubBatchMonitoringViewModel()
             {
                 SubBatch = _subBatchService.GetSubBatchById(id)
@@ -618,7 +619,7 @@ namespace RemaSoftware.WebApp.Helper
 
         public StockSummaryViewModel GetStockSummaryViewModel()
         {
-            var subBatches = _subBatchService.GetSubBatchesStatus(OrderStatusConstants.STATUS_ARRIVED);
+            var subBatches = _subBatchService.GetSubBatchesStatusForOrderSummary(OrderStatusConstants.STATUS_ARRIVED);
             var orderSB = new List<(SubBatch, long)>();
             foreach (var item in subBatches)
             {

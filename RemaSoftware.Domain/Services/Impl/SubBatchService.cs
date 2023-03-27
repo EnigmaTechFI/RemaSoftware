@@ -199,6 +199,16 @@ public class SubBatchService : ISubBatchService
             .ToList();
     }
 
+    public List<SubBatch> GetSubBatchesStatusForOrderSummary(string status)
+    {
+        return _dbContext.SubBatches
+            .Where(s => s.Status == status)
+            .Include(s => s.Ddts_In)
+            .ThenInclude(s => s.Product)
+            .ThenInclude(s => s.Client)
+            .ToList();
+    }
+
     public SubBatch GetSubBatchById(int id)
     {
         return _dbContext.SubBatches

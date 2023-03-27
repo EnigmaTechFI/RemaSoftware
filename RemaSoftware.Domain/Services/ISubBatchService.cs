@@ -10,6 +10,7 @@ public interface ISubBatchService
     public OperationTimeline UpdateSubBatchStatusAndOperationTimelineEnd(int operationTimelineId, DateTime end, string status);
     public void CreateSubBatch(SubBatch entity);
     public List<SubBatch> GetSubBatchesStatus(string status);
+    public List<SubBatch> GetSubBatchesStatusForOrderSummary(string status);
     public SubBatch GetSubBatchById(int id);
     public List<OperationTimeline> GetOperationTimelinesByStatus(string status);
     public List<OperationTimeline> GetSubBatchAtQualityControl();
