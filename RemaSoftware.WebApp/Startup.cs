@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -10,6 +11,7 @@ using AspNetCoreHero.ToastNotification;
 using AspNetCoreHero.ToastNotification.Extensions;
 using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.SignalR;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
 using RemaSoftware.Domain.Services.Impl;
@@ -104,7 +106,14 @@ namespace RemaSoftware.WebApp
             services.AddSingleton(x=> 
                 new OrderImageBlobService(new BlobServiceClient(azureBlobCs), 
                     Configuration.GetValue<string>("AzureBlobStorage:OrderContainerName")));
-            services.AddSignalR();
+            services.AddSignalR().AddHubOptions<ProductionHub>(SetConfig);
+
+            // Local function to set hub configuration
+            void SetConfig(HubOptions<ProductionHub> options)
+            {
+                options.ClientTimeoutInterval = TimeSpan.FromMinutes(30);
+                options.KeepAliveInterval = TimeSpan.FromMinutes(15);
+            };
             services.AddTransient<ProductionHub>();
             services.AddTransient<IImageService, ImageService>();
             services.AddTransient<IEmailService, EmailService>();
