@@ -179,7 +179,7 @@
             <!-- Card Header - Accordion -->
             <a class="d-block card-header py-3" role="button">
                 @{
-                    var operationList = item.OperationTimelines.Where(s => s.BatchOperationID == item.BatchOperationID).ToList();
+                    var operationList = item.OperationTimelines.Where(s => s.BatchOperationID == item.BatchOperationID && s.SubBatchID == @Model.SubBatch.SubBatchID).ToList();
                     var status = "";
                     var css = "";
                     if (operationList.Count == 0)

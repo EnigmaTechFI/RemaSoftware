@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Data;
@@ -92,14 +93,22 @@ namespace RemaSoftware.WebApp.Helper
             _orderService.UpdateDDtIn(ddt);
         }
 
-        public void RequestVariation(int id, decimal price, string mail, string message)
+        public void RequestVariation(int id, string price, string mail, string message)
         {
             using (var transaction = _dbContext.Database.BeginTransaction())
             {
                 try
                 {
                     var ddt = _orderService.GetDdtInById(id);
-                    ddt.PendingPrice = price;
+                    try
+                    {
+                        ddt.PendingPrice = Decimal.Parse(price, new CultureInfo("it-IT"));
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                        throw new Exception("Prezzo inserito non corretto.");
+                    }
                     ddt.PriceIsPending = true;
                     _orderService.UpdateDDtIn(ddt);
                     _emailService.SendEmailPriceVariation(price, mail, message, ddt.Code, ddt.Product.Client.Name);

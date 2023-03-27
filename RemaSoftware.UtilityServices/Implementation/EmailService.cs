@@ -209,7 +209,7 @@ namespace RemaSoftware.UtilityServices.Implementation
             }
         }
 
-        public void SendEmailPriceVariation(decimal price, string mail, string message, string ddtCode, string cliente)
+        public void SendEmailPriceVariation(string price, string mail, string message, string ddtCode, string cliente)
         {
             try
             {
@@ -226,7 +226,7 @@ namespace RemaSoftware.UtilityServices.Implementation
                 MailText = MailText.Replace("[CodiceDDT]", ddtCode);  
                 MailText = MailText.Replace("[CorpoMessaggio]", message);  
                 MailText = MailText.Replace("[Cliente]", cliente);  
-                MailText = MailText.Replace("[PrezzoNuovo]", price.ToString("0.00"));  
+                MailText = MailText.Replace("[PrezzoNuovo]", price);  
                 mailMessage.Body =  MailText;
                 SmtpClient client = new SmtpClient();
                 var mailPwd = _configuration["EmailConfig:Password"];
