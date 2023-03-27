@@ -148,7 +148,7 @@ namespace RemaSoftware.WebApp.Controllers
             var ddt = _orderHelper.GetDdtInById(id);
             var vm = new NewOrderViewModel
             {
-                Price = ddt.Price_Uni.ToString("0.00"),
+                Price = ddt.Price_Uni.ToString("0,00"),
                 Ddt_In = ddt,
                 Date = ddt.DataOut.ToString()
             };
