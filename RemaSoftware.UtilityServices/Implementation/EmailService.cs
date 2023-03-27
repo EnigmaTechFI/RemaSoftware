@@ -77,7 +77,7 @@ namespace RemaSoftware.UtilityServices.Implementation
                 StreamReader str = new StreamReader(FilePath);  
                 string MailText = str.ReadToEnd();  
                 str.Close();  
-                string login =  _configuration["ApplicationUrl"] + "login";
+                string login =  _configuration["ApplicationUrl"] + "Account/Login";
                 
                 
                 MailText = MailText.Replace("[email]", email);  
@@ -126,7 +126,7 @@ namespace RemaSoftware.UtilityServices.Implementation
                 StreamReader str = new StreamReader(FilePath);  
                 string MailText = str.ReadToEnd();  
                 str.Close();  
-                string login =  _configuration["ApplicationUrl"] + "login";
+                string login =  _configuration["ApplicationUrl"] + "Account/Login";
 
                 
                 MailText = MailText.Replace("[Azienda]", factoryName);  
@@ -181,7 +181,7 @@ namespace RemaSoftware.UtilityServices.Implementation
                 StreamReader str = new StreamReader(FilePath);  
                 string MailText = str.ReadToEnd();  
                 str.Close();  
-                string login =  _configuration["ApplicationUrl"] + "login";
+                string login =  _configuration["ApplicationUrl"] + "Account/Login";
 
                 
                 MailText = MailText.Replace("[CodiceDDT]", ddtCode);  
