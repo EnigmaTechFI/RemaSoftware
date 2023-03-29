@@ -85,7 +85,7 @@ namespace RemaSoftware.Domain.Data
             {
                 dip2 = new MyUser
                 {
-                    UserName = "Controllo qualità",
+                    UserName = "Controllo",
                     Email = "coq.rema.pul@gmail.com"
                 };
 
