@@ -207,11 +207,15 @@ namespace RemaSoftware.WebApp.Helper
             try
             {
                 subBatch = _subBatchService.GetSubBatchById(subBatchId);
+                
             }
             catch (Exception e)
             {
                 throw new Exception("Errore nel recuper del lotto.");
             }
+            if (subBatch.OperationTimelines.Any(s =>
+                    s.MachineId == 99 && s.Status == OrderStatusConstants.STATUS_ARRIVED))
+                throw new Exception("Lotto già registrato al controllo qualità.");
             if (subBatch.Status == OrderStatusConstants.STATUS_COMPLETED)
                 throw new Exception("Lotto già completato.");
 
