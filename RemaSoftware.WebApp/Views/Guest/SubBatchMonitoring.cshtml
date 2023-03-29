@@ -173,8 +173,12 @@
     <div class="d-sm-flex align-items-center justify-content-between card-header py-3 mb-1">
         <h3 class="m-0 font-weight-bold text-primary">Stato di avanzamento produzione</h3>
     </div>
+    @{
+        var index = 0;
+    }
     @foreach (var item in Model.SubBatch.Batch.BatchOperations.Where(s => s.Operations.Name != OtherConstants.EXTRA).ToList())
     {
+        index++;
         <div class="card shadow mb-1">
             <!-- Card Header - Accordion -->
             <a class="d-block card-header py-3" role="button">
@@ -198,7 +202,7 @@
                         css = " badge-warning";
                     }
                 }
-                <h6 class="m-0 font-weight-bold text-primary">@(item.Ordering + 1)) - @item.Operations.Name.ToUpper() - <small class="badge @css"><i class="fas fa-clock"></i> @status</small></h6>
+                <h6 class="m-0 font-weight-bold text-primary">@index - @item.Operations.Name.ToUpper() - <small class="badge @css"><i class="fas fa-clock"></i> @status</small></h6>
             </a>
         </div>
     }

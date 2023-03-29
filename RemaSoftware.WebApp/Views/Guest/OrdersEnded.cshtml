@@ -18,6 +18,7 @@
                         <th>DDT</th>
                         <th>SKU</th>
                         <th>N° pezzi</th>
+                        <th>Arrivo ordine</th>
                         <th>Conclusione ordine</th>
                     </tr>
                 </thead>
@@ -28,7 +29,8 @@
                         <td>@ddt.Code</td>
                         <td>@ddt.Product.SKU</td>
                         <td>@ddt.Number_Piece</td>
-                        <td>@ddt.DataEnd.Value.ToString("dd/MM/yy")</td>
+                        <td>@ddt.DataIn.ToString("dd/MM/yy HH:mm")</td>
+                        <td>@ddt.DataEnd.Value.ToString("dd/MM/yy HH:mm")</td>
                     </tr>
                 }
                 </tbody>
@@ -69,6 +71,7 @@
                 { "searchable": true, "orderable": true, "targets": 1 },
                 { "searchable": false, "orderable": true, "targets": 2 },
                 { "searchable": false, "orderable": true, "targets": 3 },
+                { "searchable": false, "orderable": true, "targets": 4 },
               ]
         });
     });

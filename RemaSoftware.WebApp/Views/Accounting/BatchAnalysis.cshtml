@@ -191,7 +191,7 @@
 </div>
 <div class="card shadow mb-4" id="order-summ-content">
     <div class="d-sm-flex align-items-center justify-content-between card-header py-3 mb-1">
-        <h3 class="m-0 font-weight-bold text-primary">Andamento tempo totale</h3>
+        <h3 class="m-0 font-weight-bold text-primary">Analisi tempistiche medie di lavorazione pezzo singolo</h3>
     </div>
     <div class="card shadow mb-1">
         <div class="chart-area-2">
@@ -199,7 +199,7 @@
         </div>
     </div>
 </div>
-@*<div class="card shadow mb-4" id="order-summ-content">
+<div class="card shadow mb-4" id="order-summ-content">
     <div class="d-sm-flex align-items-center justify-content-between card-header py-3 mb-1">
         <h3 class="m-0 font-weight-bold text-primary">Andamento per operazione</h3>
     </div>
@@ -208,7 +208,7 @@
             <canvas id="opChart" height="100%"></canvas>
         </div>
     </div>
-</div>*@
+</div>
 @section Scripts
 {
     <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
@@ -245,28 +245,55 @@
     
     </script>
     <script src="~/vendor/chart.js/Chart.js"></script>
-    @*<script>
+    <script>
         var speedCanvas = document.getElementById("opChart");
-        
-        var dataFirst = {
-            label: "Car A - Speed (mph)",
-            data: [0, 59, 75, 20, 20, 55, 40],
-            lineTension: 0,
-            fill: false,
-            borderColor: 'red'
-          };
-        
-        var dataSecond = {
-            label: "Car B - Speed (mph)",
-            data: [20, 15, 60, 60, 65, 30, 70],
-            lineTension: 0,
-            fill: false,
-          borderColor: 'blue'
-          };
+        var dataOp = []
+        var operationChartData = @Json.Serialize(Model.AnalysisOperationCharts)
+        operationChartData.forEach(function(item){
+            if (dataOp.length == 0){
+                var dataFirst = {
+                      label: item.operationName,
+                      date: item.dateSubBatch,
+                      data: [],
+                      lineTension: 0,
+                      fill: true,
+                      borderColor: '#' + Math.floor(Math.random()*16777215).toString(16)
+                };
+                dataFirst.data.push(item.avgTime)
+                dataOp.push(dataFirst)
+            }
+            else{
+                var itemInData;
+                itemInData = dataOp.filter(
+                   function(data){ 
+                      return data.label == item.operationName
+                });
+                
+                if (itemInData.length == 0){
+                    var dataFirst = {
+                          label: item.operationName,
+                          date: item.dateSubBatch,
+                          data: [],
+                          lineTension: 0,
+                          fill: true,
+                          borderColor: '#' + Math.floor(Math.random()*16777215).toString(16)
+                    };
+                    dataFirst.data.push(item.avgTime)
+                    dataOp.push(dataFirst)
+                }
+                else{
+                    itemInData[0].data.push(item.avgTime)
+                }
+            }
+        })
+        var label = [];
+        dataOp.forEach(function (date){
+           label.push(date.date) 
+        });
         
         var speedData = {
-          labels: ["0s", "10s", "20s", "30s", "40s", "50s", "60s"],
-          datasets: [dataFirst, dataSecond]
+          labels: label,
+          datasets: dataOp
         };
         
         var chartOptions = {
@@ -285,20 +312,26 @@
           data: speedData,
           options: chartOptions
         });
-    </script>*@
+    </script>
     <script>
         var batchCanvas = document.getElementById("batchChart");
         var dataChart = @Json.Serialize(Model.AvgTime)
+        var time = [];
+        var legend = [];
+        dataChart.forEach(function (item){
+            time.push(item.avgTime)
+            legend.push(item.date + " - " + item.id)
+        })
         var batchData = {
-            label: "Car A - Speed (mph)",
-            data: [0, 59, 75, 20, 20, 55, 40],
+            label: "Tempo realizzazione pezzo in secondi",
+            data: time,
             lineTension: 0,
-            fill: false,
-            borderColor: 'red'
+            fill: true,
+            borderColor: 'blue'
           };
         
         var batchCode = {
-          labels: ["0s", "10s", "20s", "30s", "40s", "50s", "60s"],
+          labels: legend,
           datasets: [batchData]
         };
         
