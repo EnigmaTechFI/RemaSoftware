@@ -106,14 +106,12 @@ namespace RemaSoftware.WebApp
             services.AddSingleton(x=> 
                 new OrderImageBlobService(new BlobServiceClient(azureBlobCs), 
                     Configuration.GetValue<string>("AzureBlobStorage:OrderContainerName")));
-            services.AddSignalR().AddHubOptions<ProductionHub>(SetConfig);
-
-            // Local function to set hub configuration
-            void SetConfig(HubOptions<ProductionHub> options)
+            
+            services.AddSignalR().AddHubOptions<ProductionHub>(options =>
             {
-                options.ClientTimeoutInterval = TimeSpan.FromMinutes(30);
-                options.KeepAliveInterval = TimeSpan.FromMinutes(15);
-            };
+                options.ClientTimeoutInterval = TimeSpan.FromSeconds(1800);
+                options.KeepAliveInterval = TimeSpan.FromSeconds(900);
+            });
             services.AddTransient<ProductionHub>();
             services.AddTransient<IImageService, ImageService>();
             services.AddTransient<IEmailService, EmailService>();
