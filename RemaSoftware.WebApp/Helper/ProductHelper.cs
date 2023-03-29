@@ -103,27 +103,10 @@ namespace RemaSoftware.WebApp.Helper
             }
         }
 
-        public ProductListViewModel GetProductListViewModel(int? subBatchId)
+        public ProductListViewModel GetProductListViewModel()
         {
-            var sub = new SubBatch();
-            var labelToPrint = new LabelToPrint()
-            {
-                Id = -1,
-                SKU = "NONE",
-                ClientName = "NONE"
-            };
-            if (subBatchId != null)
-            {
-                sub = _subBatchHelper.GetSubBatchDetail(subBatchId.Value);
-                labelToPrint.Id = subBatchId.Value;
-                labelToPrint.ClientName = sub.Ddts_In[0].Product.Client.Name;
-                labelToPrint.SKU = sub.Ddts_In[0].Product.SKU;
-                foreach (var op in sub.Batch.BatchOperations.Where(s => s.Operations.Name != OtherConstants.COQ && s.Operations.Name != OtherConstants.EXTRA).ToList())
-                    labelToPrint.OperationList +=  "," + op.Operations.Name;
-            }
             return new ProductListViewModel
             {
-                LabelToPrint = labelToPrint,
                 Products = GetAllProducts()
             };
         }

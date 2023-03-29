@@ -24,9 +24,9 @@ namespace RemaSoftware.WebApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult ProductList(int? subBatchId)
+        public IActionResult ProductList()
         {
-            return View(_productHelper.GetProductListViewModel(subBatchId));
+            return View(_productHelper.GetProductListViewModel());
         }
 
         [HttpGet]

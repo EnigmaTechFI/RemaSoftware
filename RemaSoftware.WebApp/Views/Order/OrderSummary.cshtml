@@ -145,6 +145,15 @@
         $("#inventary-modal").modal('toggle');
     }
     
+    if (@Model.SubBatchId > 0){
+        var aElement = document.createElement("a");
+        aElement.setAttribute("type", "hidden");
+        aElement.href = '@Url.Action("DownloadPdfOrder", "Order")' + "?id=" + @Model.SubBatchId;
+        aElement.target = "_blank";
+        document.getElementsByTagName("body")
+        aElement.click();
+    }
+    
     function ConfirmStockVariation() {
         $(".loader-cont").show()
         var pieces = document.getElementById("pieces").value

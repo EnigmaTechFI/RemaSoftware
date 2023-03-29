@@ -33,13 +33,13 @@ namespace RemaSoftware.WebApp.Controllers
         private readonly OrderHelper _orderHelper;
         private readonly OrderValidation _orderValidation;
         private readonly IProductService _productService;
-        private readonly string _basePathForImages;
+        private readonly ISubBatchService _subBatchService;
 
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public OrderController(IOrderService orderService, IClientService clientService, IOperationService operationService,
-            INotyfService notyfService, IConfiguration configuration, OrderHelper orderHelper, OrderValidation orderValidation, IProductService productService)
+            INotyfService notyfService, IConfiguration configuration, OrderHelper orderHelper, OrderValidation orderValidation, IProductService productService, ISubBatchService subBatchService)
         {
             _orderService = orderService;
             _clientService = clientService;
@@ -47,10 +47,9 @@ namespace RemaSoftware.WebApp.Controllers
             _notyfService = notyfService;
             _configuration = configuration;
             _orderHelper = orderHelper;
-            _basePathForImages =
-                (Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName + _configuration["ImagePath"]).Replace("/", "\\");
             _orderValidation = orderValidation;
             _productService = productService;
+            _subBatchService = subBatchService;
         }
 
         [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente +"," +Roles.COQ)]
@@ -97,11 +96,12 @@ namespace RemaSoftware.WebApp.Controllers
         }
         [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpGet]
-        public IActionResult OrderSummary()
+        public IActionResult OrderSummary(int subBatchId = 0)
         {
             return View(new OrderSummaryViewModel()
             {
-                Ddt_In = _orderHelper.GetAllDdtInActive_NoPagination()
+                Ddt_In = _orderHelper.GetAllDdtInActive_NoPagination(),
+                SubBatchId = subBatchId
             });
         }
         [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
@@ -118,11 +118,11 @@ namespace RemaSoftware.WebApp.Controllers
         [HttpGet]
         public IActionResult DownloadPdfOrder(int id)
         {
-            var ddt = _orderService.GetDdtInById(id);
+            var subBatch = _subBatchService.GetSubBatchById(id);
             var vm = new PDFViewModel()
             {
-                QRCode = _orderHelper.CreateQRCode(ddt.SubBatchID),
-                DdtIn = ddt,
+                QRCode = _orderHelper.CreateQRCode(id),
+                SubBatch = subBatch,
                 BasePathImages = $"{_configuration["ApplicationUrl"]}{_configuration["ImagesEndpoint"]}order/"
             };
             return View("../Pdf/SingleOrderSummary", vm);
@@ -154,9 +154,9 @@ namespace RemaSoftware.WebApp.Controllers
                     _notyfService.Error(validationResult);
                     return View(NewOrderViewModelThrow(model));
                 }
-                _orderHelper.EditDdtIn(model);
+                var result = _orderHelper.EditDdtIn(model);
                 _notyfService.Success("Commessa aggiornata correttamente");
-                return RedirectToAction("OrderSummary", "Order");
+                return RedirectToAction("OrderSummary", "Order", new {subBatchId = result.SubBatchID});
             }
             catch (Exception e)
             {
@@ -212,7 +212,6 @@ namespace RemaSoftware.WebApp.Controllers
         {
             try
             {
-                
                 var validationResult = _orderValidation.ValidateNewOrderViewModelAndSetDefaultData(model);
                 if (validationResult != "")
                 {
@@ -221,7 +220,7 @@ namespace RemaSoftware.WebApp.Controllers
                 }
                 var result = _orderHelper.AddNewDdtIn(model);
                 _notyfService.Success("Commessa registrata correttamente");
-                return RedirectToAction("ProductList", "Product", new{subBatchId = result.SubBatchID});
+                return RedirectToAction("OrderSummary", "Order", new{subBatchId = result.SubBatchID});
             }
             catch (Exception e)
             {

@@ -33,7 +33,7 @@
                         <td>@product.SKU</td>
                         <td>@product.Name</td>
                         <td>@product.Client.Name</td>
-                        <td>@product.Ddts_In.Sum(s=> s.Number_Piece)</td>
+                        <td>@product.Ddts_In.Sum(s=> s.Number_Piece_Now)</td>
                         <td class="text-center">
                             <a style="text-decoration: none" asp-action="NewOrder" asp-controller="Order" asp-route-productId="@product.ProductID">
                                 <i class="fas fa-file-text fa-lg pl-2" title="Registra commessa" style="cursor: pointer; color:  #6d767e;"></i>
@@ -73,59 +73,37 @@
 {
     <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
     <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
-    <script src="~/js/dymo.connect.framework.js" type="text/javascript" charset="UTF-8"> </script>
-
     <script>
-    if (@Model.LabelToPrint.Id > 0)
-    {
-        printQRCode('@Model.LabelToPrint.Id', '@Model.LabelToPrint.SKU', '@Model.LabelToPrint.ClientName', '@Model.LabelToPrint.OperationList')
-    }
+        function SetDataArticleId(elementName, articleId){
+            $(elementName).data("articleId", articleId );
+        }
     
-    function printQRCode(id, sku, client, operations){
-      var printers = dymo.label.framework.getPrinters();
-      if (printers.length == 0 || !printers[0].isConnected){
-        alert("Nessuna stampante trovata.");
-        return
-      }
-      var label = dymo.label.framework.openLabelFile("RemaStock.dymo")  
-      label.setObjectText("QRCodeObject", id);
-      label.setObjectText("TextObject", "LOTTO: "+ id +"\nSKU: " + sku + "\nCLIENTE: " + client + "\nOPERAZIONI: " + operations.replaceAll(",", "\n"));
-      label.print(printers[0].name); 
-    } 
-    </script>
-    <script>
-
-    function SetDataArticleId(elementName, articleId){
-        $(elementName).data("articleId", articleId );
-    }
-
-    $(document).ready( function () {
-        table = $('#table-products').DataTable({
-            "language": {
-                "lengthMenu": "Mostra _MENU_ risultati per pagina",
-                "zeroRecords": "Nessun risultato trovato",
-                "info": "Pagina _PAGE_ di _PAGES_",
-                "infoEmpty": "Nessun risultato disponibile",
-                "infoFiltered": "(filtrato da _MAX_ risultati totali)",
-                "search": "Ricerca:",
-                "paginate": {
-                    "first": "Inizio",
-                    "previous": "Precedente",
-                    "next": "Successivo",
-                    "last": "Fine"
-                }                
-            },
-            "product": [[0, 'asc']],
-            "columnDefs": [
-                { "searchable": true, "orderable": true, "targets": 0 },
-                { "searchable": true, "orderable": true, "targets": 1 },
-                { "searchable": true, "orderable": true, "targets": 2 },
-                { "searchable": false, "orderable": false, "targets": 3 },
-                { "searchable": false, "orderable": false, "targets": 4 },
-              ]
+        $(document).ready( function () {
+            table = $('#table-products').DataTable({
+                "language": {
+                    "lengthMenu": "Mostra _MENU_ risultati per pagina",
+                    "zeroRecords": "Nessun risultato trovato",
+                    "info": "Pagina _PAGE_ di _PAGES_",
+                    "infoEmpty": "Nessun risultato disponibile",
+                    "infoFiltered": "(filtrato da _MAX_ risultati totali)",
+                    "search": "Ricerca:",
+                    "paginate": {
+                        "first": "Inizio",
+                        "previous": "Precedente",
+                        "next": "Successivo",
+                        "last": "Fine"
+                    }                
+                },
+                "product": [[0, 'asc']],
+                "columnDefs": [
+                    { "searchable": true, "orderable": true, "targets": 0 },
+                    { "searchable": true, "orderable": true, "targets": 1 },
+                    { "searchable": true, "orderable": true, "targets": 2 },
+                    { "searchable": false, "orderable": false, "targets": 3 },
+                    { "searchable": false, "orderable": false, "targets": 4 },
+                  ]
+            });
+     
         });
- 
-    });
-
     </script>
 }

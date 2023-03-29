@@ -39,16 +39,16 @@
             </div>
             <div class="col-sm-6 text-right" style="font-size: large">
                 <b>Dati cliente:</b><br>
-                @Model.DdtIn.Product.Client.Name,<br>
-                @Model.DdtIn.Product.Client.Street, @Model.DdtIn.Product.Client.StreetNumber<br>
-                @Model.DdtIn.Product.Client.Cap, @Model.DdtIn.Product.Client.City, @Model.DdtIn.Product.Client.Province, @Model.DdtIn.Product.Client.Nation<br>
-                P.IVA @Model.DdtIn.Product.Client.P_Iva
+                @Model.SubBatch.Ddts_In[0].Product.Client.Name,<br>
+                @Model.SubBatch.Ddts_In[0].Product.Client.Street, @Model.SubBatch.Ddts_In[0].Product.Client.StreetNumber<br>
+                @Model.SubBatch.Ddts_In[0].Product.Client.Cap, @Model.SubBatch.Ddts_In[0].Product.Client.City, @Model.SubBatch.Ddts_In[0].Product.Client.Province, @Model.SubBatch.Ddts_In[0].Product.Client.Nation<br>
+                P.IVA @Model.SubBatch.Ddts_In[0].Product.Client.P_Iva
             </div>
         </div>
         <center><hr style="width: 80%" /></center>
         
         <br>
-        <b>Descrizione dell'ordine: </b>@Model.DdtIn.Description  <br>
+        <b>Descrizione dell'ordine: </b>@Model.SubBatch.Ddts_In[0].Description  <br>
 
         <br />
         <b>Immagine del prodotto:</b>
@@ -57,7 +57,7 @@
         <br />
 
         <div class="text-center">
-            <img src="@Model.BasePathImages@Model.DdtIn.Product.FileName" style='width: 376px; height: 282px' />
+            <img src="@Model.BasePathImages@Model.SubBatch.Ddts_In[0].Product.FileName" style='width: 376px; height: 282px' />
         </div>
 
         <br>
@@ -68,29 +68,29 @@
                     <table border="1" width="95%" cellpadding="5">
                         <tr>
                             <td width="60%"><b>Nome prodotto: </b></td>
-                            <td width="40%">@Model.DdtIn.Product.Name</td>
+                            <td width="40%">@Model.SubBatch.Ddts_In[0].Product.Name</td>
                         </tr>
                         <tr>
                             <td width="60%"><b>Codice prodotto: </b></td>
-                            <td width="40%">@Model.DdtIn.Product.SKU</td>
+                            <td width="40%">@Model.SubBatch.Ddts_In[0].Product.SKU</td>
                         </tr>
                         <tr>
                             <td width="60%"><b>Codice DDT: </b></td>
-                            <td width="40%">@Model.DdtIn.Code</td>
+                            <td width="40%">@Model.SubBatch.Ddts_In[0].Code</td>
                         </tr>
                         <tr>
                             <td width="60%"><b>Data di consegna dell'ordine: </b></td>
-                            <td width="40%">@Model.DdtIn.DataOut.ToString("dd/MM/yyyy")</td>
+                            <td width="40%">@Model.SubBatch.Ddts_In[0].DataOut.ToString("dd/MM/yyyy")</td>
                         </tr>
                         <tr>
                             <td width="60%"><b>Numero di pezzi richiesti: </b></td>
-                            <td width="40%">@Model.DdtIn.Number_Piece</td>
+                            <td width="40%">@Model.SubBatch.Ddts_In[0].Number_Piece</td>
                         </tr>
                         <tr>
                             <td width="60%"><b>Operazioni richiste sull'ordine: : </b></td>
                             <td width="40%">
                                 <ul>
-                                    @foreach (var operation in Model.DdtIn.SubBatch.Batch.BatchOperations.Where(s => s.Operations.Name != OtherConstants.EXTRA).ToList())
+                                    @foreach (var operation in Model.SubBatch.Ddts_In[0].SubBatch.Batch.BatchOperations.Where(s => s.Operations.Name != OtherConstants.EXTRA).ToList())
                                     {
                                         <li>@operation.Operations.Name</li>
                                     }
@@ -99,7 +99,7 @@
                         </tr>
                         <tr>
                             <td width="60%"><b>Note: </b></td>
-                            <td width="40%">@Model.DdtIn.Note</td>
+                            <td width="40%">@Model.SubBatch.Ddts_In[0].Note</td>
                         </tr>
                     </table>
                 </center>
