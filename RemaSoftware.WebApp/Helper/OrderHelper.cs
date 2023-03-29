@@ -4,7 +4,11 @@ using RemaSoftware.Domain.Services;
 using RemaSoftware.Domain.Data;
 using RemaSoftware.WebApp.Models.OrderViewModel;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
+using QRCoder;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.UtilityServices.Interface;
 using RemaSoftware.WebApp.DTOs;
@@ -696,7 +700,15 @@ namespace RemaSoftware.WebApp.Helper
                 }
             }
         }
+
+        public string CreateQRCode(int ddtSubBatchId)
+        {
+            QRCodeGenerator QrGenerator = new QRCodeGenerator();
+            QRCodeData QrCodeInfo = QrGenerator.CreateQrCode($"URL:{ddtSubBatchId}", QRCodeGenerator.ECCLevel.Q);
+            BitmapByteQRCode QrCode = new BitmapByteQRCode(QrCodeInfo);
+            byte[] BitmapArray = QrCode.GetGraphic(60);
+            return string.Format("data:image/png;base64,{0}", Convert.ToBase64String(BitmapArray));
+        }
     }
-    
-    
+
 }

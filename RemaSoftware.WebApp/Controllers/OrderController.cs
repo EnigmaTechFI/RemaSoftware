@@ -114,32 +114,19 @@ namespace RemaSoftware.WebApp.Controllers
             });
         }
         
-        /*[Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
-        public IActionResult DownloadPdfOrder(int orderId)
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpGet]
+        public IActionResult DownloadPdfOrder(int id)
         {
-            var vm = new PDFViewModel();
-                
-            var order = _orderService.GetOrderWithOperationsById(orderId);
-            vm.Order = order;
-            if (!string.IsNullOrEmpty(order.Image_URL))
+            var ddt = _orderService.GetDdtInById(id);
+            var vm = new PDFViewModel()
             {
-                var path = Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName + _configuration["ImagePath"] + order.Image_URL;
-                try
-                {
-                    var photo = System.IO.File.ReadAllBytes(path);
-                    var base64 = Convert.ToBase64String(photo);
-                    var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
-                    vm.Photo = imgSrc;
-                }
-                catch (Exception e)
-                {
-                    Logger.Error(e, $"Immagine non trovata. Path: {path}");
-                    _notyfService.Error("Errore durante la generazione del pdf.");
-                    return RedirectToAction("OrderSummary");
-                }
-            } 
+                QRCode = _orderHelper.CreateQRCode(ddt.SubBatchID),
+                DdtIn = ddt,
+                BasePathImages = $"{_configuration["ApplicationUrl"]}{_configuration["ImagesEndpoint"]}order/"
+            };
             return View("../Pdf/SingleOrderSummary", vm);
-        }*/
+        }
         
         [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpGet]

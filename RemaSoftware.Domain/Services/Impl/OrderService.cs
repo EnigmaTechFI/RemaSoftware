@@ -220,6 +220,7 @@ namespace RemaSoftware.Domain.Services.Impl
                 .Include(s => s.SubBatch)
                 .ThenInclude(s => s.Batch)
                 .ThenInclude(s => s.BatchOperations)
+                .ThenInclude(s => s.Operations)
                 .Include(s => s.Ddt_Associations)
                 .ThenInclude(s => s.Ddt_Out)
                 .SingleOrDefault(s => s.Ddt_In_ID == id);
