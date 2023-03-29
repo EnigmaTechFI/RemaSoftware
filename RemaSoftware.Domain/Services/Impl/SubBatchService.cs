@@ -113,7 +113,7 @@ public class SubBatchService : ISubBatchService
             .ThenInclude(s => s.Ddts_In)
             .SingleOrDefault(s => s.OperationTimelineID == operationTimelineId);
         if (op.Status == OperationTimelineConstant.STATUS_COMPLETED)
-            throw new Exception("Lavorazione già conclusa.");
+            return null;
         if (op != null)
         {
             var controlTime = end.DayOfYear - op.StartDate.DayOfYear;

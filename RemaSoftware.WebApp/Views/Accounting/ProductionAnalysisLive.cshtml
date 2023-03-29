@@ -196,6 +196,7 @@ function getTime(seconds, id){
                var operator = document.getElementById("macchina-" + machineId + "-operatore-" + i)
                if (operator){
                  operator.innerHTML = "<strong>OPERATORE "+ (i - 1) +":</strong>";
+                 document.getElementById("macchina-" + machineId + "-operatore-" + i).id = "macchina-" + machineId + "-operatore-" + parseInt(i -1)
                }
                else{
                  break
