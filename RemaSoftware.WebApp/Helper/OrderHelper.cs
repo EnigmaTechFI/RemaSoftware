@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using NLog;
 using QRCoder;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.UtilityServices.Interface;
@@ -27,6 +28,7 @@ namespace RemaSoftware.WebApp.Helper
         private readonly ApplicationDbContext _dbContext;
         private readonly ProductionHub _productionHub;
         private readonly IAPIFatturaInCloudService _apiFatturaInCloud;
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public OrderHelper(IOrderService orderService, IAPIFatturaInCloudService apiFatturaInCloudService,
             ApplicationDbContext dbContext, IProductService productService, ISubBatchService subBatchService,
@@ -708,6 +710,50 @@ namespace RemaSoftware.WebApp.Helper
             BitmapByteQRCode QrCode = new BitmapByteQRCode(QrCodeInfo);
             byte[] BitmapArray = QrCode.GetGraphic(60);
             return string.Format("data:image/png;base64,{0}", Convert.ToBase64String(BitmapArray));
+        }
+
+        public void DeleteDdtAssociation(int id)
+        {
+            using (var transaction = _dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    var ddtAssociation = _orderService.GetDDTAssociationById(id);
+                    switch (ddtAssociation.TypePieces)
+                    {
+                        case PiecesType.BUONI:
+                            ddtAssociation.Ddt_In.Number_Piece_Now += ddtAssociation.NumberPieces;
+                            break;
+                        case PiecesType.PERSI:
+                            ddtAssociation.Ddt_In.Number_Piece_Now += ddtAssociation.NumberPieces;
+                            ddtAssociation.Ddt_In.NumberLostPiece -= ddtAssociation.NumberPieces;
+                            break;
+                        case PiecesType.SCARTI: 
+                            ddtAssociation.Ddt_In.Number_Piece_Now += ddtAssociation.NumberPieces;
+                            ddtAssociation.Ddt_In.NumberWastePiece -= ddtAssociation.NumberPieces;
+                            break;
+                    }
+
+                    ddtAssociation.Ddt_In.SubBatch.Status = OrderStatusConstants.STATUS_WORKING;
+                    ddtAssociation.Ddt_In.Status =
+                        ddtAssociation.Ddt_In.Number_Piece == ddtAssociation.Ddt_In.Number_Piece_Now
+                            ? OrderStatusConstants.STATUS_WORKING
+                            : OrderStatusConstants.STATUS_PARTIALLY_COMPLETED;
+                    _orderService.UpdateDDtIn(ddtAssociation.Ddt_In);
+                    _orderService.DeleteDDTAssociation(ddtAssociation);
+                    if (ddtAssociation.Ddt_Out.Ddt_Associations.Count == 0)
+                    {
+                        _orderService.DeleteDDTOut(ddtAssociation.Ddt_Out);
+                    }
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    Logger.Error(e, e.Message);
+                    throw new Exception("Errore durante l'annullamento della DDT.");
+                }
+            }
         }
     }
 

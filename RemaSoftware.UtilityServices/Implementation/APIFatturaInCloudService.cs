@@ -72,7 +72,7 @@ namespace RemaSoftware.UtilityServices.Implementation
             }
             catch (Exception e)
             {
-                Logger.Error(e.Message);
+                Logger.Error(e, e.Message);
                 throw new Exception("Errore durante l'aggiunta del cliente a FattureInCloud.");
             }
         }
@@ -119,7 +119,7 @@ namespace RemaSoftware.UtilityServices.Implementation
             }
             catch (Exception e)
             {
-                Logger.Error(e.Message);
+                Logger.Error(e, e.Message);
                 throw new Exception("Errore durante l'aggiornamento del cliente a FattureInCloud.");
             }
         }
@@ -252,7 +252,7 @@ namespace RemaSoftware.UtilityServices.Implementation
             }
             catch (Exception e)
             {
-                Logger.Error(e.Message);
+                Logger.Error(e, e.Message);
                 throw new Exception("Errore durante l'invio a fatture in cloud.");
             }
         }
@@ -306,7 +306,7 @@ namespace RemaSoftware.UtilityServices.Implementation
             }
             catch (Exception e)
             {
-                Logger.Error(e.Message);
+                Logger.Error(e, e.Message);
                 throw new Exception("Errore durante l'invio a fatture in cloud.");
             }
         }

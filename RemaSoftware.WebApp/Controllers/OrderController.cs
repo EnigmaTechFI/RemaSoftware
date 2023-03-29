@@ -367,6 +367,22 @@ namespace RemaSoftware.WebApp.Controllers
                 return new JsonResult(new { Result = false, Message=e.Message});
             }
         }
+        
+        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpGet]
+        public JsonResult DeleteDdtAssociation(int id)
+        {
+            try
+            {
+                _orderHelper.DeleteDdtAssociation(id);
+                return new JsonResult(new { Result = true, Data = id,  Message = "DDT di uscita annullata correttamente." });
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(new { Result = false, Data = 0, Message=e.Message});
+            }
+        }
 
         #region Models validation
 
@@ -378,6 +394,5 @@ namespace RemaSoftware.WebApp.Controllers
         }
 
         #endregion
-
     }
 }

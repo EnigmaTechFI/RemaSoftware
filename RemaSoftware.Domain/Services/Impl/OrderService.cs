@@ -363,5 +363,28 @@ namespace RemaSoftware.Domain.Services.Impl
                 .Where(s => s.SubBatches.Count > 0)
                 .ToList();
         }
+
+        public Ddt_Association GetDDTAssociationById(int id)
+        {
+            return _dbContext.Ddt_Associations
+                .Include(s => s.Ddt_In)
+                .ThenInclude(s => s.SubBatch)
+                .Include(s => s.Ddt_Out)
+                .ThenInclude(s => s.Ddt_Associations)
+                .SingleOrDefault(s => s.ID == id);
+
+        }
+
+        public void DeleteDDTAssociation(Ddt_Association ddtAssociation)
+        {
+            _dbContext.Ddt_Associations.Remove(ddtAssociation);
+            _dbContext.SaveChanges();
+        }
+
+        public void DeleteDDTOut(Ddt_Out ddtOut)
+        {
+            _dbContext.Ddts_Out.Remove(ddtOut);
+            _dbContext.SaveChanges();
+        }
     }
 }

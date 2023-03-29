@@ -11,7 +11,7 @@
     </div>
     <div class="card-body">
         <form method="post">
-            <table class="table">
+            <table id="partialDDTTable" class="table">
                 <thead>
                 <tr>
                     <th class="text-center" scope="col">Seleziona per emettere</th>
@@ -19,6 +19,7 @@
                     <th scope="col">Prodotto</th>
                     <th scope="col">Numero pezzi</th>
                     <th scope="col">Tipo</th>
+                    <th class="text-center" scope="col">Annulla</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -27,12 +28,13 @@
                 @for (var i = 0; i < Model.PartialDdtDtos.Count; i++)
                 {
                     <input asp-for="@Model.PartialDdtDtos[i].DdtAssociation.ID" style="display: none" type="text">
-                    <tr>
+                    <tr id="ddt-out-@Model.PartialDdtDtos[i].DdtAssociation.ID">
                         <td class="text-center"><input asp-for="@Model.PartialDdtDtos[i].ToEmit" class="form-check-input" type="checkbox" id="gridCheck"></td>
                         <td>@Model.PartialDdtDtos[i].DdtAssociation.Ddt_In.Code</td>
                         <td>@Model.PartialDdtDtos[i].DdtAssociation.Ddt_In.Product.SKU</td>
                         <td>@Model.PartialDdtDtos[i].DdtAssociation.NumberPieces</td>
                         <td>@Model.PartialDdtDtos[i].DdtAssociation.TypePieces</td>
+                        <td class="text-center"><i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer; color: #6d767e;" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDDTAssociationId('@Model.PartialDdtDtos[i].DdtAssociation.ID')"></i></td>
                     </tr>
                 }
                 <tr></tr>
@@ -43,6 +45,23 @@
     </div>
 </div>
 
+<div class="modal fade" id="confirm-del-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Conferma eliminazione</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Sei sicuro di voler annullare? I pezzi verrano riassegnati al magazzino nello stato "In lavorazione"</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
+                <button class="btn btn-danger" onclick="DeleteDDTAssociation()">Elimina</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="loader-cont">
     <div class="spinner-grow" role="status">
         <span class="sr-only">Loading...</span>
@@ -50,23 +69,43 @@
 </div>
 
 <script>
-
-    var clicked = false;
-
-    function clickEvent() {
-    $(".loader-cont").show()
-    if(!clicked)
-    {
-        clicked = true;
-        setTimeout(function(){
-            clicked = false;
-        }, 1500);
+    let ddtIdTodelete;
+    function SetDDTAssociationId(ddtAssId){
+        ddtIdTodelete = ddtAssId;
     }
+    var table = document.getElementById("partialDDTTable");
+    function DeleteDDTAssociation(){
+        $(".loader-cont").show()
+        $.ajax({
+            url: '@Url.Action("DeleteDDTAssociation", "Order")?' + $.param({"id": ddtIdTodelete}),
+            type: 'GET',
+            success: function (result) {                    
+                if (result.data != null || result.data > 0){
+                    document.getElementById("ddt-out-" + result.data).remove()
+                    $("#confirm-del-modal").modal('hide');
+                    toastNotifySuccess("DDT eliminata correttamente");
+                }else{
+                    toastNotifyError("Errore durante l'eliminazione della ddt");
+                }
+                $(".loader-cont").hide()
+            },
+            error: function (data){
+                toastNotifyError(data.toastMessage);
+                $(".loader-cont").hide()
+            }
+        });
     }
     
-    $('#priceUnit').keypress(function (e) {
-        if (e.which == 46) {
-            e.preventDefault();
+    var clicked = false;
+    
+    function clickEvent() {
+        $(".loader-cont").show()
+        if(!clicked)
+        {
+            clicked = true;
+            setTimeout(function(){
+                clicked = false;
+            }, 1500);
         }
-    });
+    }
 </script>

@@ -37,5 +37,8 @@ namespace RemaSoftware.Domain.Services
         List<Label> GetLastLabelOut();
         void CreateNewLabelOut(Label label);
         List<Batch> GetAllBatch();
+        Ddt_Association GetDDTAssociationById(int id);
+        void DeleteDDTAssociation(Ddt_Association ddtAssociation);
+        void DeleteDDTOut(Ddt_Out ddtOut);
     }
 }

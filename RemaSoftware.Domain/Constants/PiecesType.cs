@@ -2,8 +2,8 @@ namespace RemaSoftware.Domain.Constants;
 
 public class PiecesType
 {
-    public readonly static string BUONI = "Buoni";
-    public readonly static string PERSI = "Persi";
-    public readonly static string SCARTI = "Scarti lavorati";
-    public readonly static string MANCANTI = "Mancanti";
+    public const string BUONI = "Buoni";
+    public const string PERSI = "Persi";
+    public const string SCARTI = "Scarti lavorati";
+    public const string MANCANTI = "Mancanti";
 }

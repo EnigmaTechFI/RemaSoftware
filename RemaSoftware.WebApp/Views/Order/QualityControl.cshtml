@@ -82,7 +82,7 @@
             @foreach(var item in Model.Label)
             {
                 <tr>
-                    <td>@item.SubBatchCode</td>
+                    <td class="text-center">@item.SubBatchCode</td>
                     <td>@item.Client</td>
                     <td>@item.SKU</td>
                     <td>@item.OkPieces</td>
@@ -176,7 +176,7 @@
         return
       }
       var label = dymo.label.framework.openLabelFile("RemaDDT.dymo")  
-      var etichetta = "LOTTO: "+ id + "\nCLIENTE: " + client  + "\nSKU: " + SKU 
+      var etichetta = "CLIENTE: " + client  + "\nLOTTO: "+ id + "\nSKU: " + SKU 
       if (parseInt(ok))
           etichetta += "\nPEZZI: " + ok
       if (parseInt(persi))
@@ -196,7 +196,7 @@
         return
       }
       var label = dymo.label.framework.openLabelFile("RemaDDT.dymo")  
-      var etichetta = "LOTTO: "+ id + "\nCLIENTE: " + cliente  + "\nSKU: " + product 
+      var etichetta = "CLIENTE: " + cliente  + "\nLOTTO: "+ id +  "\nSKU: " + product 
       if (parseInt(ok))
           etichetta += "\nPEZZI: " + ok
       if (parseInt(persi))
