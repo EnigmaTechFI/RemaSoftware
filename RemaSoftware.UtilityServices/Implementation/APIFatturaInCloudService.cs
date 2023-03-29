@@ -51,6 +51,7 @@ namespace RemaSoftware.UtilityServices.Implementation
                     address_postal_code = client.Cap,
                     tax_code = client.P_Iva,
                     vat_number = client.P_Iva,
+                    ei_code = client.SDI
                 };
                 string stringjson = JsonConvert.SerializeObject(new { data = clientToSendInCloud });
 
@@ -99,6 +100,7 @@ namespace RemaSoftware.UtilityServices.Implementation
                     address_postal_code = client.Cap,
                     tax_code = client.P_Iva,
                     vat_number = client.P_Iva,
+                    ei_code = client.SDI
                 };
                 string stringjson = JsonConvert.SerializeObject(new { data = clientToSendInCloud });
 
@@ -378,6 +380,7 @@ namespace RemaSoftware.UtilityServices.Implementation
         public string address_postal_code { get; set; }
         public string address_city { get; set; }
         public string address_province { get; set; }
+        public string ei_code { get; set; }
         
     }
 }

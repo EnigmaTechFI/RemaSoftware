@@ -52,7 +52,8 @@ public class ClientHelper
                 Email = model.Email,
                 Fax = model.Fax ?? "",
                 PhoneNumber = model.PhoneNumber,
-                Nation_ISO = ""
+                Nation_ISO = "",
+                SDI = model.SDI
             };
 
 

@@ -12,7 +12,7 @@ namespace RemaSoftware.Domain.Models
         public string P_Iva { get; set; }
         [MaxLength(200)]
         public string Street { get; set; }
-        [MaxLength(10)]
+        [MaxLength(20)]
         public string StreetNumber { get; set; }
         [MaxLength(6)]
         public string Cap { get; set; }
@@ -30,6 +30,8 @@ namespace RemaSoftware.Domain.Models
         public string PhoneNumber { get; set; }
         [MaxLength(15)]
         public string Fax { get; set; }
+        [MaxLength(15)]
+        public string SDI { get; set; }
         public int FC_ClientID { get; set; }
         public virtual ICollection<UserClient> UserClients { get; set; } 
         public virtual ICollection<Ddt_Out> DdtOuts { get; set; } 

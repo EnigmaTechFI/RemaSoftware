@@ -64,6 +64,12 @@
                 <input asp-for="@Model.Client.Fax" type="text" class="form-control" readonly>
             </div>
         </div>
+        <div class="form-row">
+            <div class="col-md-4 mb-3">
+                <label class="font-weight-bold">SDI</label>
+                <input asp-for="@Model.Client.SDI" type="email" class="form-control" readonly>
+            </div>
+        </div>
         
         <a class="btn btn-primary text-white" asp-action="UpdateClient" asp-controller="Client" asp-route-clientId="@Model.Client.ClientID" id="@Model.Client.ClientID">Modifica</a>
     </div>
