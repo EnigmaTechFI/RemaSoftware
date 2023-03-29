@@ -273,8 +273,9 @@ namespace RemaSoftware.WebApp.Helper
                         WastePieces = dto.WastePieces
                     });
                     if (dto.LostPieces + dto.WastePieces + dto.OkPieces > subBatch.Ddts_In.Sum(s => s.Number_Piece_Now))
-                        throw new Exception(
-                            "Il totale dei pezzi inserito è maggiore dei pezzi attualmente in azienda.");
+                        throw new Exception("Il totale dei pezzi inserito è maggiore dei pezzi attualmente in azienda.");
+                    if (dto.LostPieces + dto.WastePieces + dto.OkPieces <= 0)
+                        throw new Exception("Nessun pezzo inserito.");
                     var ratio = subBatch.Ddts_In.Sum(s => s.Number_Piece_Now);
                     var ddts = subBatch.Ddts_In.Where(s => s.Number_Piece_Now > 0)
                         .OrderByDescending(s => s.TotalPriority)
