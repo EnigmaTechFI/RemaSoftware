@@ -23,14 +23,12 @@ public class SubBatchController : ControllerBase
     {
         try
         {
-            var request = HttpContext.Connection.RemoteIpAddress.ToString();
-            Logger.Info($"Richiesta dettagli: {request}");
             return new JsonResult(new {Data = _batchHelper.GetSubBatchDetail(id), Error = ""});
         }
         catch (Exception e)
         {
             Logger.Error(e, $"Detail Operation API: {e.Message}");
-            return new JsonResult(new {Data = "", Error = e.Message});
+            return new JsonResult(new {Data = "ERORR", Error = e.Message});
         }
     }
     
@@ -72,7 +70,8 @@ public class SubBatchController : ControllerBase
     {
         try
         {
-            return new JsonResult(new {Data = _batchHelper.PauseOperationOnSubBatch(operationTimelineId), Error = ""});
+            _batchHelper.PauseOperationOnSubBatch(operationTimelineId);
+            return new JsonResult(new {Data = "SUCCESS", Error = ""});
         }
         catch (Exception e)
         {
@@ -91,6 +90,7 @@ public class SubBatchController : ControllerBase
         }
         catch (Exception e)
         {
+            Logger.Error(e,$"Get Operations Timeline API: {e.Message}");
             return new JsonResult(new {Data = "ERROR", Error = e.Message});
         }
     }
