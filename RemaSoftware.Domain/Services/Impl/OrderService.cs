@@ -405,5 +405,10 @@ namespace RemaSoftware.Domain.Services.Impl
             _dbContext.DdtSupplierAssociations.AddRange(ddtSupplierAssociations);
             _dbContext.SaveChanges();
         }
+
+        public void UpdateDDtSupplier(Ddt_Supplier ddtSupplier)
+        {
+            _dbContext.Ddt_Suppliers.Update(ddtSupplier);
+        }
     }
 }

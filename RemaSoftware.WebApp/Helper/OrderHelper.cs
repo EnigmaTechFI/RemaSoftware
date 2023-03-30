@@ -52,11 +52,12 @@ namespace RemaSoftware.WebApp.Helper
             return _orderService.GetDdtInById(id);
         }
 
-        public SubBatchMonitoringViewModel GetSubBatchMonitoring(int id)
+        public SubBatchMonitoringViewModel GetSubBatchMonitoring(int id, string url)
         {
             var test = _subBatchService.GetSubBatchById(id);
             return new SubBatchMonitoringViewModel()
             {
+                DdtSupplierUrl = url,
                 SubBatch = _subBatchService.GetSubBatchById(id)
             };
         }
@@ -774,7 +775,7 @@ namespace RemaSoftware.WebApp.Helper
             };
         }
 
-        public void RegisterExitSubBatch(ExitToSupplierViewModel model)
+        public string RegisterExitSubBatch(ExitToSupplierViewModel model)
         {
             using (var transaction = _dbContext.Database.BeginTransaction())
             {
@@ -783,6 +784,8 @@ namespace RemaSoftware.WebApp.Helper
                 try
                 {
                     var subBatch = _subBatchService.GetSubBatchById(model.SubBatch.SubBatchID);
+                    if (model.DdtSupplier.Number_Piece > subBatch.Ddts_In.Sum(s => s.Number_Piece_Now))
+                        throw new Exception("Pezzi inseriti maggiore di quelli attuali.");
                     if (subBatch.Status == OrderStatusConstants.STATUS_ARRIVED)
                     {
                         subBatch.Status = OrderStatusConstants.STATUS_WORKING;
@@ -843,10 +846,18 @@ namespace RemaSoftware.WebApp.Helper
                     _orderService.CreateNewDdtSuppliersAssociation(ddtSupplierAssociations);
                     var supplier = _supplierService.GetSupplierById(model.DdtSupplier.SupplierID);
                     var result = _apiFatturaInCloud.CreateDdtSupplierCloud(ddtSupplier, supplier);
+                    ddtSupplier.Code = result.Item2;
+                    ddtSupplier.FC_Ddt_Supplier_ID = result.Item3.ToString();
+                    ddtSupplier.Url = result.Item1;
+                    _orderService.UpdateDDtSupplier(ddtSupplier);
+                    transaction.Commit();
+                    return result.Item1;
                 }
                 catch (Exception e)
                 {
-                    throw e;
+                    transaction.Rollback();
+                    Logger.Error(e, e.Message);
+                    throw new Exception(e.Message);
                 }
             }
             

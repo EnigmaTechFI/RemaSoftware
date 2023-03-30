@@ -62,5 +62,24 @@ namespace RemaSoftware.WebApp.Validation
                 return "Data di scadenza non valida.";
             return "";
         }
+
+        public string ValidateDDTSupplier(ExitToSupplierViewModel model)
+        {
+            try
+            {
+                model.DdtSupplier.Cost_Uni = Decimal.Parse(model.CostUni, new CultureInfo("it-IT")); 
+            }
+            catch (Exception e)
+            {
+                return "Prezzo inserito non valido.";
+            }
+            if (model.DdtSupplier.Number_Piece <= 0)
+                return "Nessun pezzo inserito";
+            if (model.DdtSupplier.SupplierID <= 0)
+                return "Inserire fornitore.";
+            if (model.BatchOperationID <= 0)
+                return "Selezionare operazione";
+            return "";
+        }
     }
 }

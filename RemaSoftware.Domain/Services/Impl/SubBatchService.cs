@@ -218,6 +218,8 @@ public class SubBatchService : ISubBatchService
             .Include(s => s.Batch)
             .ThenInclude(s => s.BatchOperations)
             .ThenInclude(s => s.OperationTimelines)
+            .ThenInclude(s => s.DdtSupplier)
+            .ThenInclude(s => s.Supplier)
             .Include(s => s.Ddts_In)
             .ThenInclude(s => s.Product)
             .ThenInclude(s => s.Client)

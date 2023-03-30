@@ -5,6 +5,10 @@
     ViewData["Title"] = "Lotti in magazzino";
 }
 <script>
+    var url = '@Model.DdtSupplierUrl'
+    if (url != null && url != ""){
+        window.open(url, '_blank')
+    }
   let counter=0;
   function counterTest(){
     setInterval(() => {
@@ -144,6 +148,7 @@
                     <th>DDT</th>
                     <th>N° Pezzi</th>
                     <th>N° Pezzi attuale</th>
+                    <th>N° Pezzi da fornitore</th>
                     <th>Data arrivo</th>
                     <th>Data scadenza</th>
                     <th>Priorità</th>
@@ -159,6 +164,7 @@
                         <td>@ddt.Code</td>
                         <td>@ddt.Number_Piece</td>
                         <td>@ddt.Number_Piece_Now</td>
+                        <td>@ddt.Number_Piece_ToSupplier</td>
                         <td>@ddt.DataIn.ToString("dd/MM/yy")</td>
                         <td>@ddt.DataOut.ToString("dd/MM/yy")</td>
                         <td>@OrderPriorityConstant.OrderPriority[@ddt.Priority]</td>
@@ -234,7 +240,14 @@
                                 {
                                     var end = op.Status == @OperationTimelineConstant.STATUS_WORKING ? "In corso" : op.EndDate.ToString("dd/MM/yy HH:mm");
                                     var tot = op.Status == @OperationTimelineConstant.STATUS_WORKING ? (int)(DateTime.Now - op.StartDate).TotalMinutes : (int)(op.EndDate - op.StartDate).TotalMinutes;
-                                    <div><span><strong>Macchinario NR°:</strong> @op.MachineId | <strong>Inizio:</strong> @op.StartDate.ToString("dd/MM/yy HH:mm") | <strong>Fine:</strong> @end</span> | <span id="time-@op.OperationTimelineID"><strong>Tempo:</strong> @tot min</span></div>
+                                    if (op.MachineId.HasValue)
+                                    {
+                                        <div><span><strong>Macchinario NR°:</strong> @op.MachineId | <strong>Inizio:</strong> @op.StartDate.ToString("dd/MM/yy HH:mm") | <strong>Fine:</strong> @end</span> | <span id="time-@op.OperationTimelineID"><strong>Tempo:</strong> @tot min</span></div>
+                                    }
+                                    else
+                                    {
+                                        <div><span><strong>Fornitore:</strong> @op.DdtSupplier.Supplier.Name | <strong>Inizio:</strong> @op.StartDate.ToString("dd/MM/yy HH:mm") | <strong>Fine:</strong> @end</span> | <span id="time-@op.OperationTimelineID"><strong>Tempo:</strong> @tot min</span></div>
+                                    }
                                     var time = (int)(DateTime.Now - op.StartDate).TotalSeconds;
                                     <script>
                                     if('@op.Status' == '@OperationTimelineConstant.STATUS_WORKING'){
@@ -935,12 +948,13 @@
                     { "searchable": true, "orderable": true, "targets": 0 },
                     { "searchable": false, "orderable": false, "targets": 1 },
                     { "searchable": false, "orderable": false, "targets": 2 },
-                    { "searchable": false, "orderable": true, "targets": 3 },
+                    { "searchable": false, "orderable": false, "targets": 3 },
                     { "searchable": false, "orderable": true, "targets": 4 },
-                    { "searchable": true, "orderable": false, "targets": 5 },
-                    { "searchable": false, "orderable": false, "targets": 6 },
+                    { "searchable": false, "orderable": true, "targets": 5 },
+                    { "searchable": true, "orderable": false, "targets": 6 },
                     { "searchable": false, "orderable": false, "targets": 7 },
                     { "searchable": false, "orderable": false, "targets": 8 },
+                    { "searchable": false, "orderable": false, "targets": 9 },
                   ]
             });
         });

@@ -25,6 +25,7 @@
                     <th>SKU</th>
                     <th>N° pezzi</th>
                     <th>N° pezzi attuali</th>
+                    <th>N° pezzi da fornitori</th>
                     <th>Prz. Unitario</th>
                     <th>Arrivo ordine</th>
                     <th>Scadenza ordine</th>
@@ -41,6 +42,7 @@
                         <td>@ddt.Product.SKU</td>
                         <td id="pieces-number-@ddt.Ddt_In_ID">@ddt.Number_Piece</td>
                         <td id="pieces-number-now-@ddt.Ddt_In_ID">@ddt.Number_Piece_Now</td>
+                        <td id="pieces-number-now-@ddt.Ddt_In_ID">@ddt.Number_Piece_ToSupplier</td>
                         <td>&euro;@ddt.Price_Uni.ToString("0.00")</td>
                         <td>@ddt.DataIn.ToString("dd/MM/yy")</td>
                         <td>@ddt.DataOut.ToString("dd/MM/yy")</td>
@@ -242,10 +244,11 @@
                 { "searchable": false, "orderable": false, "targets": 3 },
                 { "searchable": false, "orderable": false, "targets": 4 },
                 { "searchable": false, "orderable": false, "targets": 5 },
-                { "searchable": false, "orderable": true, "targets": 6 },
+                { "searchable": false, "orderable": false, "targets": 6 },
                 { "searchable": false, "orderable": true, "targets": 7 },
-                { "searchable": false, "orderable": false, "targets": 8 },
+                { "searchable": false, "orderable": true, "targets": 8 },
                 { "searchable": false, "orderable": false, "targets": 9 },
+                { "searchable": false, "orderable": false, "targets": 10 },
               ]
         });
 

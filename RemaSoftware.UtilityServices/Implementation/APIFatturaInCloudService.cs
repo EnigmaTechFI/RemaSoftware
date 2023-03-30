@@ -268,7 +268,12 @@ namespace RemaSoftware.UtilityServices.Implementation
                     Code = item.Ddt_In.Code,
                     Description = item.Ddt_In.Description ,
                     Stock = false,
-                    
+                    NetPrice = 0,
+                    Vat = new VatType()
+                    {
+                        Id = 0,
+                        Value = 22
+                    }
                 });
             }
             var createIssuedDocumentRequest = new CreateIssuedDocumentRequest()
@@ -279,10 +284,10 @@ namespace RemaSoftware.UtilityServices.Implementation
                     Entity = new Entity()
                     {
                         Name = supplier.Name,
-                        AddressCity = supplier.City,
-                        AddressProvince = supplier.Province,
-                        AddressStreet = supplier.Street,
-                        AddressPostalCode = supplier.Cap,
+                        AddressCity = supplier.City ?? "",
+                        AddressProvince = supplier.Province ?? "",
+                        AddressStreet = supplier.Street ?? "",
+                        AddressPostalCode = supplier.Cap ?? "",
                         VatNumber = supplier.P_Iva,
                         TaxCode = supplier.P_Iva
                     },

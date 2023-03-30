@@ -90,9 +90,9 @@ namespace RemaSoftware.WebApp.Controllers
         }
         [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpGet]
-        public IActionResult SubBatchMonitoring(int id)
+        public IActionResult SubBatchMonitoring(int id, string url = "")
         {
-            return View(_orderHelper.GetSubBatchMonitoring(id));
+            return View(_orderHelper.GetSubBatchMonitoring(id, url));
         }
         [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpGet]
@@ -383,17 +383,7 @@ namespace RemaSoftware.WebApp.Controllers
                 return new JsonResult(new { Result = false, Data = 0, Message=e.Message});
             }
         }
-
-        #region Models validation
-
-        private string ValidateDuplicateOrderViewModel(CopyOrderViewModel model)
-        {
-            if (string.IsNullOrEmpty(model.Code_DDT))
-                return "Codice DDT mancante.";
-            return "";
-        }
-
-        #endregion
+        
         [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpGet]
         public IActionResult ExitToSupplier(int id)
@@ -416,15 +406,35 @@ namespace RemaSoftware.WebApp.Controllers
         {
             try
             {
-                _orderHelper.RegisterExitSubBatch(model);
-                return RedirectToAction("SubBatchMonitoring", new { id = model.SubBatch.SubBatchID });
+                var validationResult = _orderValidation.ValidateDDTSupplier(model);
+                if (validationResult != "")
+                {
+                    _notyfService.Error(validationResult);
+                    return RedirectToAction("ExitToSupplier", new{id =model.SubBatch.SubBatchID});
+                }
+                var result = _orderHelper.RegisterExitSubBatch(model);
+                return RedirectToAction("SubBatchMonitoring", new { id = model.SubBatch.SubBatchID, url = result});
             }
             catch (Exception e)
             {
                 Logger.Error(e, e.Message);
-                return RedirectToAction("SubBatchMonitoring", new { id = model.SubBatch.SubBatchID });
+                _notyfService.Error(e.Message);
+                return RedirectToAction("ExitToSupplier", new { id = model.SubBatch.SubBatchID });
             }
             
         }
+        
+
+        #region Models validation
+
+        private string ValidateDuplicateOrderViewModel(CopyOrderViewModel model)
+        {
+            if (string.IsNullOrEmpty(model.Code_DDT))
+                return "Codice DDT mancante.";
+            return "";
+        }
+
+        #endregion
+
     }
 }

@@ -43,5 +43,6 @@ namespace RemaSoftware.Domain.Services
         Ddt_Supplier CreateNewDdtSupplier(Ddt_Supplier modelDdtSupplier);
         void CreateNewDdtSupplierAssociation(DDT_Supplier_Association entity);
         void CreateNewDdtSuppliersAssociation(List<DDT_Supplier_Association> ddtSupplierAssociations);
+        void UpdateDDtSupplier(Ddt_Supplier ddtSupplier);
     }
 }
