@@ -216,7 +216,8 @@ namespace RemaSoftware.WebApp.Helper
             {
                 throw new Exception("Errore nel recuper del lotto.");
             }
-            if (subBatch.OperationTimelines.Any(s =>
+
+            if (subBatch.OperationTimelines != null && subBatch.OperationTimelines.Where(s => s.MachineId != null).ToList().Any(s =>
                     s.MachineId == 99 && s.Status == OrderStatusConstants.STATUS_ARRIVED))
                 throw new Exception("Lotto già registrato al controllo qualità.");
             if (subBatch.Status == OrderStatusConstants.STATUS_COMPLETED)
@@ -411,6 +412,8 @@ namespace RemaSoftware.WebApp.Helper
                             TypePieces = PiecesType.BUONI
                         });
                         item.Number_Piece_Now = 0;
+                        if(dto.OkPieces == 0)
+                            break;
                     }
 
                     if (subBatch.Ddts_In.All(s => s.Number_Piece_Now == 0))

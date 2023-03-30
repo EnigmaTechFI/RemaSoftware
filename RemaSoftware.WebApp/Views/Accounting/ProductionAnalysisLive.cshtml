@@ -252,7 +252,7 @@ function getTime(seconds, id){
       containerId: "planimetry",
     });
     
-    var opTimeline = @Json.Serialize(Model.OperationTimeLines)
+    var opTimeline = @Json.Serialize(Model.OperationTimeLines.Where(s => s.MachineId.HasValue).ToList())
     let allMachine = [];
     const macchina1 = [
           {

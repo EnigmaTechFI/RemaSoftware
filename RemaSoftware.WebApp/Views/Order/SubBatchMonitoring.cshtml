@@ -240,7 +240,7 @@
                                 {
                                     var end = op.Status == @OperationTimelineConstant.STATUS_WORKING ? "In corso" : op.EndDate.ToString("dd/MM/yy HH:mm");
                                     var tot = op.Status == @OperationTimelineConstant.STATUS_WORKING ? (int)(DateTime.Now - op.StartDate).TotalMinutes : (int)(op.EndDate - op.StartDate).TotalMinutes;
-                                    if (op.MachineId.HasValue)
+                                    if (op.MachineId != null)
                                     {
                                         <div><span><strong>Macchinario NR°:</strong> @op.MachineId | <strong>Inizio:</strong> @op.StartDate.ToString("dd/MM/yy HH:mm") | <strong>Fine:</strong> @end</span> | <span id="time-@op.OperationTimelineID"><strong>Tempo:</strong> @tot min</span></div>
                                     }
@@ -282,7 +282,7 @@
       containerId: "planimetry",
     });
     
-    var opTimeline = @Json.Serialize(Model.SubBatch.OperationTimelines)
+    var opTimeline = @Json.Serialize(Model.SubBatch.OperationTimelines.Where(s => s.MachineId != null).ToList())
     let allMachine = [];
     const macchina1 = [
           {
@@ -828,6 +828,40 @@
         ]
       }
     ]
+    const macchina98 = [
+          {
+            id: '17',
+            number_operators: 0,
+            sub_batch: 0,
+            operation: '',
+            coordinates: [
+              {
+                levelIndex: 0,
+                x: 15,
+                z: -20.9,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 15,
+                z: -26.9,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 17,
+                z: -26.9,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 17,
+                z: -20.9,
+                elevation: 0
+              }
+            ]
+          }
+        ]
     const macchina99 = [
       {
         id: '99',
@@ -880,6 +914,7 @@
     allMachine.push(macchina14)
     allMachine.push(macchina15)
     allMachine.push(macchina16)
+    allMachine.push(macchina98)
     allMachine.push(macchina99)
     
     
