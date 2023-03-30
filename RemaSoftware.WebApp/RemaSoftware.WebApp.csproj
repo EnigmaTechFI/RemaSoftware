@@ -50,7 +50,7 @@
     <Content Update="wwwroot\MailTemplate\variazione-prezzo.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\img\RemaLogo.png">
+    <Content Update="wwwroot\img\rema_sr.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="wwwroot\css\sb-admin-2.css">
@@ -66,9 +66,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="wwwroot\img\notfound.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\img\rema_sr.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="wwwroot\img\Rema.jpg">
