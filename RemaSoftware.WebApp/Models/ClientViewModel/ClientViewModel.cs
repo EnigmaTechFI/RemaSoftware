@@ -30,6 +30,7 @@ namespace RemaSoftware.WebApp.Models.ClientViewModel
         public string Fax { get; set; }
         [MaxLength(15)]
         public string SDI { get; set; }
-
+        [MaxLength(50)]
+        public string Pec { get; set; }
     }
 }

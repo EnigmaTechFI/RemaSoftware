@@ -13,6 +13,7 @@ using RemaSoftware.Domain.Models;
 using RemaSoftware.UtilityServices.Dtos;
 using RemaSoftware.UtilityServices.Interface;
 using UtilityServices.Dtos;
+using Supplier = RemaSoftware.Domain.Models.Supplier;
 
 namespace RemaSoftware.UtilityServices.Implementation
 {
@@ -51,7 +52,8 @@ namespace RemaSoftware.UtilityServices.Implementation
                     address_postal_code = client.Cap,
                     tax_code = client.P_Iva,
                     vat_number = client.P_Iva,
-                    ei_code = client.SDI
+                    ei_code = client.SDI,
+                    certified_email = client.Pec
                 };
                 string stringjson = JsonConvert.SerializeObject(new { data = clientToSendInCloud });
 
@@ -100,7 +102,8 @@ namespace RemaSoftware.UtilityServices.Implementation
                     address_postal_code = client.Cap,
                     tax_code = client.P_Iva,
                     vat_number = client.P_Iva,
-                    ei_code = client.SDI
+                    ei_code = client.SDI,
+                    certified_email = client.Pec
                 };
                 string stringjson = JsonConvert.SerializeObject(new { data = clientToSendInCloud });
 
@@ -203,6 +206,47 @@ namespace RemaSoftware.UtilityServices.Implementation
                 Logger.Error("Exception when calling IssuedDocumentsApi.DeleteIssuedDocument: " + e.Message);
                 throw e;
             }
+        }
+
+        public List<Supplier> GetListSuppliers()
+        {
+            Logger.Info("Inizio recupero fornitori FattureInCloud");
+            Configuration config = new Configuration();
+            config.BasePath = _configuration["ApiFattureInCloud:BasePath"];
+            config.AccessToken = _ficAccessToken;
+            var apiInstance = new SuppliersApi(config);
+            var companyId = Int32.Parse(_configuration["ApiFattureInCloud:CompanyId"]);
+            var suppliers = new List<Supplier>();
+            try
+            {
+                // Delete Issued Document
+                var result = apiInstance.ListSuppliers(companyId);
+                
+                foreach (var item in result.Data)
+                {
+                    suppliers.Add(new Supplier()
+                    {
+                        FC_SupplierID = item.Id.Value,
+                        Cap = item.AddressPostalCode,
+                        Street = item.AddressStreet,
+                        City = item.AddressCity,
+                        Pec = item.CertifiedEmail,
+                        Email = item.Email,
+                        PhoneNumber = item.Phone,
+                        Province = item.AddressProvince,
+                        Fax = item.Fax,
+                        Name = item.Name,
+                        P_Iva = item.TaxCode
+                    });
+                }
+            }
+            catch (ApiException  e)
+            {
+                Logger.Error("Exception when calling IssuedDocumentsApi.DeleteIssuedDocument: " + e.Message);
+                throw e;
+            }
+
+            return suppliers;
         }
 
         public string AddDdtInCloud(Ddt_In ddt, string SKU)
@@ -381,6 +425,7 @@ namespace RemaSoftware.UtilityServices.Implementation
         public string address_city { get; set; }
         public string address_province { get; set; }
         public string ei_code { get; set; }
+        public string certified_email { get; set; }
         
     }
 }

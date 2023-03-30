@@ -53,7 +53,8 @@ public class ClientHelper
                 Fax = model.Fax ?? "",
                 PhoneNumber = model.PhoneNumber,
                 Nation_ISO = "",
-                SDI = model.SDI
+                SDI = model.SDI,
+                Pec = model.Pec
             };
 
 

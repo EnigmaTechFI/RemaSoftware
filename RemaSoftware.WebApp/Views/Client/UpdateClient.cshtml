@@ -59,15 +59,19 @@
                     <input asp-for="@Model.Client.Email" type="email" class="form-control" id="validationTooltip03" placeholder="Email">
                 </div>
                 <div class="col-md-4 mb-3">
+                    <label class="font-weight-bold" for="validationTooltip03">PEC</label>
+                    <input asp-for="@Model.Client.Pec" type="email" class="form-control" id="validationTooltip03" placeholder="Pec">
+                </div>
+                <div class="col-md-4 mb-3">
                     <label class="font-weight-bold" for="validationTooltip03">Telefono</label>
                     <input asp-for="@Model.Client.PhoneNumber" type="text" class="form-control" id="validationTooltip03" placeholder="Numero di telefono">
                 </div>
+            </div>
+            <div class="form-row">
                 <div class="col-md-4 mb-3">
                     <label class="font-weight-bold" for="validationTooltip05">Fax</label>
                     <input asp-for="@Model.Client.Fax" type="text" class="form-control" id="validationTooltip05" placeholder="Fax">
                 </div>
-            </div>
-            <div class="form-row">
                 <div class="col-md-4 mb-3">
                     <label class="font-weight-bold" for="validationTooltip03">SDI</label>
                     <input asp-for="@Model.Client.SDI" type="text" class="form-control" id="validationTooltip03" placeholder="SDI">

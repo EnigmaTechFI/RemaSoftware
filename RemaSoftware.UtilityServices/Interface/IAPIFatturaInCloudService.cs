@@ -1,4 +1,5 @@
-﻿using RemaSoftware.Domain.Models;
+﻿using System.Collections.Generic;
+using RemaSoftware.Domain.Models;
 using RemaSoftware.UtilityServices.Dtos;
 
 namespace RemaSoftware.UtilityServices.Interface
@@ -12,5 +13,6 @@ namespace RemaSoftware.UtilityServices.Interface
         public void UpdateClientCloud(Client client);
         public (string, int) CreateDdtInCloud(Ddt_Out ddtOut);
         public void DeleteDdtInCloudById(int id);
+        public List<Supplier> GetListSuppliers();
     }
 }

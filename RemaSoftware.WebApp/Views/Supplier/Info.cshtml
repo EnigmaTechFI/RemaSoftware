@@ -1,0 +1,78 @@
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model RemaSoftware.WebApp.Models.SupplierViewModel.SupplierInfoViewModel
+
+@{
+    ViewData["Title"] = "Informazioni Fornitore";
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h4 class="m-0 font-weight-bold text-primary">Informazioni Fornitore</h4>
+    </div>
+    <div class="card-body">
+        <div class="form-row">
+            <div class="col-md-6 mb-3">
+                <label class="font-weight-bold">Nome Azienda</label>
+                <input asp-for="@Model.Supplier.Name" type="text" class="form-control" readonly>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="font-weight-bold">Partita Iva</label>
+                <input asp-for="@Model.Supplier.P_Iva" type="text" class="form-control" readonly>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-6 mb-3">
+                <label class="font-weight-bold">Via</label>
+                <input asp-for="@Model.Supplier.Street" type="text" class="form-control" readonly>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label class="font-weight-bold">N° Civico</label>
+                <input asp-for="@Model.Supplier.StreetNumber" type="text" class="form-control" readonly>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label class="font-weight-bold">CAP</label>
+                <input asp-for="@Model.Supplier.Cap" type="text" class="form-control" readonly>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-4 mb-3">
+                <label class="font-weight-bold">Città</label>
+                <input asp-for="@Model.Supplier.City" type="text" class="form-control" readonly>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="font-weight-bold">Provincia</label>
+                <input asp-for="@Model.Supplier.Province" type="text" class="form-control" readonly>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="font-weight-bold">Stato</label>
+                <input asp-for="@Model.Supplier.Nation" type="text" class="form-control" readonly>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-4 mb-3">
+                <label class="font-weight-bold">Email</label>
+                <input asp-for="@Model.Supplier.Email" type="email" class="form-control" readonly>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="font-weight-bold">PEC</label>
+                <input asp-for="@Model.Supplier.Pec" type="email" class="form-control" readonly>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="font-weight-bold">Telefono</label>
+                <input asp-for="@Model.Supplier.PhoneNumber" type="text" class="form-control" readonly>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-4 mb-3">
+                <label class="font-weight-bold">Fax</label>
+                <input asp-for="@Model.Supplier.Fax" type="text" class="form-control" readonly>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="font-weight-bold">SDI</label>
+                <input asp-for="@Model.Supplier.SDI" type="email" class="form-control" readonly>
+            </div>
+        </div>
+    </div>
+</div>
+
+
