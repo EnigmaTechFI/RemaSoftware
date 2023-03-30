@@ -48,6 +48,9 @@
                             <a onclick="printQRCode('@batch.SubBatchID')" style="text-decoration: none">
                                 <i class="fas fa-print fa-lg pl-2" title="Stampa etichetta" style="cursor: pointer; color: #6d767e"></i>
                             </a>
+                            <a style="text-decoration: none" asp-controller="Order" asp-action="SubBatchMonitoring" asp-route-id="@batch.SubBatchID">
+                                <i class="fas fa-eye fa-lg pl-2" title="Visualizza avanzamento" style="cursor: pointer; color: #6d767e"></i>
+                            </a>
                         </td>
                     </tr>
                 }

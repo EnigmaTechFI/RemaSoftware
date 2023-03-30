@@ -14,5 +14,6 @@ namespace RemaSoftware.UtilityServices.Interface
         public (string, int) CreateDdtInCloud(Ddt_Out ddtOut);
         public void DeleteDdtInCloudById(int id);
         public List<Supplier> GetListSuppliers();
+        (string,string, int) CreateDdtSupplierCloud(Ddt_Supplier ddtSupplier, Supplier supplier);
     }
 }

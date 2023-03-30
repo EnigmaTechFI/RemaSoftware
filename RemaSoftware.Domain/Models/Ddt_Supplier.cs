@@ -29,5 +29,7 @@ namespace RemaSoftware.Domain.Models
         public int OperationTimelineID { get; set; }
         public virtual Supplier Supplier { get; set; }
         public int SupplierID { get; set; }
+        public virtual List<DDT_Supplier_Association> DdtSupplierAssociations { get; set; }
+
     }
 }

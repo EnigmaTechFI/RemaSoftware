@@ -386,5 +386,24 @@ namespace RemaSoftware.Domain.Services.Impl
             _dbContext.Ddts_Out.Remove(ddtOut);
             _dbContext.SaveChanges();
         }
+
+        public Ddt_Supplier CreateNewDdtSupplier(Ddt_Supplier modelDdtSupplier)
+        {
+            _dbContext.Ddt_Suppliers.Add(modelDdtSupplier);
+            _dbContext.SaveChanges();
+            return modelDdtSupplier;
+        }
+
+        public void CreateNewDdtSupplierAssociation(DDT_Supplier_Association entity)
+        {
+            _dbContext.DdtSupplierAssociations.Add(entity);
+            _dbContext.SaveChanges();
+        }
+
+        public void CreateNewDdtSuppliersAssociation(List<DDT_Supplier_Association> ddtSupplierAssociations)
+        {
+            _dbContext.DdtSupplierAssociations.AddRange(ddtSupplierAssociations);
+            _dbContext.SaveChanges();
+        }
     }
 }

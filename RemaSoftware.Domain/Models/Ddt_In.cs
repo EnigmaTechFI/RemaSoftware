@@ -27,6 +27,7 @@ namespace RemaSoftware.Domain.Models
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]
         public int Number_Piece { get; set; }
         public int Number_Piece_Now { get; set; }
+        public int Number_Piece_ToSupplier { get; set; }
         
         public int NumberMissingPiece { get; set; }
         public int NumberWastePiece { get; set; }
@@ -43,5 +44,6 @@ namespace RemaSoftware.Domain.Models
         public bool PriceIsPending { get; set; }
         public decimal PendingPrice { get; set; }
         public virtual List<Ddt_Association> Ddt_Associations { get; set; }
+        public virtual List<DDT_Supplier_Association> DdtSupplierAssociations { get; set; }
     }
 }
