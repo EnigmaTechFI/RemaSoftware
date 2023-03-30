@@ -51,7 +51,7 @@ public class SubBatchHelper
                 OperationTimeLineId = item.OperationTimelineID,
                 OperationName = item.BatchOperation.Operations.Name,
                 ClientName = item.SubBatch.Ddts_In[0].Product.Client.Name,
-                MachineId = item.MachineId
+                MachineId = item.MachineId.Value
             };
             _productionHub.StartOperation(paDtos);
         }
@@ -61,14 +61,14 @@ public class SubBatchHelper
     public string EndOperationOnSubBatch(int operationTimelineId)
     {
         var result = _subBatchService.UpdateSubBatchStatusAndOperationTimelineEnd(operationTimelineId, DateTime.Now, OperationTimelineConstant.STATUS_COMPLETED);
-        _productionHub.EndOperation(operationTimelineId, result.MachineId);
+        _productionHub.EndOperation(operationTimelineId, result.MachineId.Value);
         return "Success";
     }
 
     public string PauseOperationOnSubBatch(int operationTimelineId)
     {
         var result = _subBatchService.UpdateSubBatchStatusAndOperationTimelineEnd(operationTimelineId, DateTime.Now, OperationTimelineConstant.STATUS_PAUSE);
-        _productionHub.EndOperation(operationTimelineId, result.MachineId);
+        _productionHub.EndOperation(operationTimelineId, result.MachineId.Value);
         return "Success";
     }
 

@@ -29,10 +29,11 @@ namespace RemaSoftware.WebApp.Helper
         private readonly ProductionHub _productionHub;
         private readonly IAPIFatturaInCloudService _apiFatturaInCloud;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly ISupplierService _supplierService;
 
         public OrderHelper(IOrderService orderService, IAPIFatturaInCloudService apiFatturaInCloudService,
             ApplicationDbContext dbContext, IProductService productService, ISubBatchService subBatchService,
-            IOperationService operationService, IEmailService emailService, ProductionHub productionHub, IAPIFatturaInCloudService apiFatturaInCloud)
+            IOperationService operationService, IEmailService emailService, ProductionHub productionHub, IAPIFatturaInCloudService apiFatturaInCloud, ISupplierService supplierService)
         {
             _orderService = orderService;
             _apiFatturaInCloudService = apiFatturaInCloudService;
@@ -43,6 +44,7 @@ namespace RemaSoftware.WebApp.Helper
             _emailService = emailService;
             _productionHub = productionHub;
             _apiFatturaInCloud = apiFatturaInCloud;
+            _supplierService = supplierService;
         }
 
         public Ddt_In GetDdtInById(int id)
@@ -759,6 +761,16 @@ namespace RemaSoftware.WebApp.Helper
                     throw new Exception("Errore durante l'annullamento della DDT.");
                 }
             }
+        }
+
+        public ExitToSupplierViewModel GetExitToSupplierViewModel(int id)
+        {
+            return new ExitToSupplierViewModel()
+            {
+                SubBatch = _subBatchService.GetSubBatchById(id),
+                Suppliers = _supplierService.GetSuppliers(),
+                
+            };
         }
     }
 
