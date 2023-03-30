@@ -40,5 +40,8 @@ namespace RemaSoftware.Domain.Services
         Ddt_Association GetDDTAssociationById(int id);
         void DeleteDDTAssociation(Ddt_Association ddtAssociation);
         void DeleteDDTOut(Ddt_Out ddtOut);
+        Ddt_Supplier CreateNewDdtSupplier(Ddt_Supplier modelDdtSupplier);
+        void CreateNewDdtSupplierAssociation(DDT_Supplier_Association entity);
+        void CreateNewDdtSuppliersAssociation(List<DDT_Supplier_Association> ddtSupplierAssociations);
     }
 }

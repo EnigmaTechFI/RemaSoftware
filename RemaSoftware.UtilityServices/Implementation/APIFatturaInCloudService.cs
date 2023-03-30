@@ -249,6 +249,58 @@ namespace RemaSoftware.UtilityServices.Implementation
             return suppliers;
         }
 
+        public (string, string, int) CreateDdtSupplierCloud(Ddt_Supplier ddtSupplier, Supplier supplier)
+        {
+            Logger.Info("Inizio invio a ApiFattureInCloud");
+            Configuration config = new Configuration();
+            config.BasePath = _configuration["ApiFattureInCloud:BasePath"];
+            config.AccessToken = _ficAccessToken;
+            var apiInstance = new IssuedDocumentsApi(config);
+            var companyId = _configuration["ApiFattureInCloud:CompanyId"];
+            var products = new List<IssuedDocumentItemsListItem>();
+            foreach (var item in ddtSupplier.DdtSupplierAssociations)
+            {
+                products.Add(new IssuedDocumentItemsListItem()
+                {
+                    ProductId = Int32.Parse(item.Ddt_In.FC_Ddt_In_ID),
+                    Qty = item.NumberPieces,
+                    Name = item.Ddt_In.Product.Name,
+                    Code = item.Ddt_In.Code,
+                    Description = item.Ddt_In.Description ,
+                    Stock = false,
+                    
+                });
+            }
+            var createIssuedDocumentRequest = new CreateIssuedDocumentRequest()
+            {
+                Data = new IssuedDocument()
+                {
+                    Type = IssuedDocumentType.DeliveryNote,
+                    Entity = new Entity()
+                    {
+                        Name = supplier.Name,
+                        AddressCity = supplier.City,
+                        AddressProvince = supplier.Province,
+                        AddressStreet = supplier.Street,
+                        AddressPostalCode = supplier.Cap,
+                        VatNumber = supplier.P_Iva,
+                        TaxCode = supplier.P_Iva
+                    },
+                    ItemsList = products,
+                }
+            };
+            try
+            {
+                CreateIssuedDocumentResponse result = apiInstance.CreateIssuedDocument(Int32.Parse(companyId), createIssuedDocumentRequest);
+                return (result.Data.DnUrl, result.Data.Numeration, result.Data.Id.Value);
+            }
+            catch (ApiException  e)
+            {
+                Logger.Error("Exception when calling IssuedDocumentsApi.CreateIssuedDocument: " + e.Message);
+                throw e;
+            }
+        }
+
         public string AddDdtInCloud(Ddt_In ddt, string SKU)
         {
             try

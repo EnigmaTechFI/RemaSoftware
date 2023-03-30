@@ -409,5 +409,22 @@ namespace RemaSoftware.WebApp.Controllers
             }
             
         }
+        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpPost]
+        public IActionResult ExitToSupplier(ExitToSupplierViewModel model)
+        {
+            try
+            {
+                _orderHelper.RegisterExitSubBatch(model);
+                return RedirectToAction("SubBatchMonitoring", new { id = model.SubBatch.SubBatchID });
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                return RedirectToAction("SubBatchMonitoring", new { id = model.SubBatch.SubBatchID });
+            }
+            
+        }
     }
 }

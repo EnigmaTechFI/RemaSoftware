@@ -24,6 +24,7 @@ namespace RemaSoftware.Domain.Data
         public DbSet<Label> Label { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
         public DbSet<Ddt_Supplier> Ddt_Suppliers { get; set; }
+        public DbSet<DDT_Supplier_Association> DdtSupplierAssociations { get; set; }
 
         #region Required
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -35,6 +36,9 @@ namespace RemaSoftware.Domain.Data
             modelBuilder.Entity<Ddt_Association>().HasKey(s => s.ID );
             modelBuilder.Entity<Ddt_Association>().HasOne(a => a.Ddt_In).WithMany(a => a.Ddt_Associations).HasForeignKey(s => s.Ddt_In_ID).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<Ddt_Association>().HasOne(a => a.Ddt_Out).WithMany(a => a.Ddt_Associations).HasForeignKey(s => s.Ddt_Out_ID).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<DDT_Supplier_Association>().HasKey(s => s.Id);
+            modelBuilder.Entity<DDT_Supplier_Association>().HasOne(a => a.Ddt_In).WithMany(a => a.DdtSupplierAssociations).HasForeignKey(s => s.Ddt_In_ID).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<DDT_Supplier_Association>().HasOne(a => a.Ddt_Supplier).WithMany(a => a.DdtSupplierAssociations).HasForeignKey(s => s.Ddt_Supplier_ID).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<OperationTimeline>().HasOne(a => a.SubBatch).WithMany(a => a.OperationTimelines).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<OperationTimeline>().HasOne(a => a.BatchOperation).WithMany(a => a.OperationTimelines).OnDelete(DeleteBehavior.NoAction);
             base.OnModelCreating(modelBuilder);

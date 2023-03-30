@@ -115,7 +115,7 @@ namespace RemaSoftware.WebApp.Helper
                         subBatches.Add(new SubBatch()
                         {
                             Ddts_In = ddtList,
-                            Status = "A",
+                            Status = OrderStatusConstants.STATUS_ARRIVED,
                         });
                         newSubbatch = true;
                         _orderService.CreateBatch(new Batch()
@@ -241,7 +241,7 @@ namespace RemaSoftware.WebApp.Helper
                 {
                     SubBatchID = subBatchId,
                     BatchOperation = batchOp,
-                    Status = "A",
+                    Status = OperationTimelineConstant.STATUS_WORKING,
                     MachineId = 99,
                     StartDate = now,
                     EndDate = now
@@ -765,12 +765,91 @@ namespace RemaSoftware.WebApp.Helper
 
         public ExitToSupplierViewModel GetExitToSupplierViewModel(int id)
         {
+            var subBatch = _subBatchService.GetSubBatchById(id);
             return new ExitToSupplierViewModel()
             {
                 SubBatch = _subBatchService.GetSubBatchById(id),
                 Suppliers = _supplierService.GetSuppliers(),
-                
+                BatchOperations = subBatch.Batch.BatchOperations.Where(s => s.Operations.Name != OtherConstants.COQ).ToList(), 
             };
+        }
+
+        public void RegisterExitSubBatch(ExitToSupplierViewModel model)
+        {
+            using (var transaction = _dbContext.Database.BeginTransaction())
+            {
+                
+                //TODO: Validazione !!
+                try
+                {
+                    var subBatch = _subBatchService.GetSubBatchById(model.SubBatch.SubBatchID);
+                    if (subBatch.Status == OrderStatusConstants.STATUS_ARRIVED)
+                    {
+                        subBatch.Status = OrderStatusConstants.STATUS_WORKING;
+                        _subBatchService.UpdateSubBatch(subBatch);
+                    }
+                    var now = DateTime.Now;
+                    model.DdtSupplier.Status = OrderStatusConstants.STATUS_WORKING;
+                    model.DdtSupplier.DataOut = now;
+                    model.DdtSupplier.OperationTimeline = new OperationTimeline()
+                    {
+                        BatchOperationID = model.BatchOperationID,
+                        StartDate = now,
+                        EndDate = now,
+                        Status = OperationTimelineConstant.STATUS_WORKING,
+                        SubBatchID = model.SubBatch.SubBatchID
+                    };
+                    var totalPieces = model.DdtSupplier.Number_Piece;
+                    var ddtSupplierAssociations = new List<DDT_Supplier_Association>();
+                    foreach (var item in subBatch.Ddts_In.OrderBy(s => s.DataIn))
+                    {
+                        if (item.Number_Piece_Now > totalPieces)
+                        {
+                            item.Number_Piece_Now -= totalPieces;
+                            item.Number_Piece_ToSupplier += totalPieces;
+                            item.Status = OrderStatusConstants.STATUS_WORKING;
+                            _orderService.UpdateDDtIn(item);
+                            ddtSupplierAssociations.Add(new DDT_Supplier_Association()
+                            {
+                                Ddt_In = item,
+                                Ddt_In_ID = item.Ddt_In_ID,
+                                NumberPieces = totalPieces,
+                            });
+                            break;
+                        }
+                        else
+                        {
+                            totalPieces -= item.Number_Piece;
+                            item.Number_Piece_ToSupplier += item.Number_Piece_Now;
+                            ddtSupplierAssociations.Add(new DDT_Supplier_Association()
+                            {
+                                Ddt_In = item,
+                                Ddt_In_ID = item.Ddt_In_ID,
+                                NumberPieces = item.Number_Piece_Now 
+                            });
+                            item.Number_Piece_Now = 0;
+                            item.Status = OrderStatusConstants.STATUS_WORKING;
+                            _orderService.UpdateDDtIn(item);
+                            if(totalPieces == 0)
+                                break;
+                        }
+                    }
+                    var ddtSupplier = _orderService.CreateNewDdtSupplier(model.DdtSupplier);
+                    var id = ddtSupplier.Ddt_Supplier_ID;
+                    foreach (var entity in ddtSupplierAssociations)
+                    {
+                        entity.Ddt_Supplier_ID = id;
+                    }
+                    _orderService.CreateNewDdtSuppliersAssociation(ddtSupplierAssociations);
+                    var supplier = _supplierService.GetSupplierById(model.DdtSupplier.SupplierID);
+                    var result = _apiFatturaInCloud.CreateDdtSupplierCloud(ddtSupplier, supplier);
+                }
+                catch (Exception e)
+                {
+                    throw e;
+                }
+            }
+            
         }
     }
 

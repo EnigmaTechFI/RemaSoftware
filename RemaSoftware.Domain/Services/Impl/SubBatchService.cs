@@ -83,7 +83,7 @@ public class SubBatchService : ISubBatchService
                         StartDate = start,
                         EndDate = start,
                         MachineId = machineId,
-                        Status = "A",
+                        Status = OperationTimelineConstant.STATUS_WORKING,
                         SubBatch = sb,
                         SubBatchID = sb.SubBatchID
                     });
@@ -119,7 +119,7 @@ public class SubBatchService : ISubBatchService
             var controlTime = end.DayOfYear - op.StartDate.DayOfYear;
             if ( controlTime> 0)
             {
-                op.Status = "C";
+                op.Status = OperationTimelineConstant.STATUS_COMPLETED;
                 op.EndDate = new DateTime(op.StartDate.Year, op.StartDate.Month, op.StartDate.Day, 17, 0, 0);
                 op.UseForStatics = true;
                 var dateRif = op.StartDate;
@@ -135,7 +135,7 @@ public class SubBatchService : ISubBatchService
                                 ? end
                                 : new DateTime(dateRif.Year, dateRif.Month, dateRif.Day, 17, 30, 0),
                             StartDate = new DateTime(dateRif.Year, dateRif.Month, dateRif.Day, 7, 30, 0),
-                            Status = i == controlTime ? status : "C",
+                            Status = i == controlTime ? status : OperationTimelineConstant.STATUS_COMPLETED,
                             UseForStatics = true,
                             MachineId = op.MachineId,
                             SubBatchID = op.SubBatchID
@@ -150,7 +150,7 @@ public class SubBatchService : ISubBatchService
                                 ? end
                                 : new DateTime(dateRif.Year, dateRif.Month, dateRif.Day, 12, 0, 0),
                             StartDate = new DateTime(dateRif.Year, dateRif.Month, dateRif.Day, 8, 0, 0),
-                            Status = i == controlTime ? status : "C",
+                            Status = i == controlTime ? status : OperationTimelineConstant.STATUS_COMPLETED,
                             UseForStatics = true,
                             MachineId = op.MachineId,
                             SubBatchID = op.SubBatchID
