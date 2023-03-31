@@ -45,15 +45,15 @@ namespace RemaSoftware.UtilityServices.Implementation
                 {
                     type = "company",
                     name = client.Name,
-                    email = client.Email,
-                    address_city = client.City,
+                    email = client.Email ?? "",
+                    address_city = client.City ?? "",
                     address_street = client.Street + ", " + client.StreetNumber,
-                    address_province = client.Province,
-                    address_postal_code = client.Cap,
-                    tax_code = client.P_Iva,
-                    vat_number = client.P_Iva,
-                    ei_code = client.SDI,
-                    certified_email = client.Pec
+                    address_province = client.Province?? "",
+                    address_postal_code = client.Cap?? "",
+                    tax_code = client.P_Iva?? "",
+                    vat_number = client.P_Iva?? "",
+                    ei_code = client.SDI ?? "",
+                    certified_email = client.Pec ?? ""
                 };
                 string stringjson = JsonConvert.SerializeObject(new { data = clientToSendInCloud });
 
@@ -95,15 +95,15 @@ namespace RemaSoftware.UtilityServices.Implementation
                 {
                     type = "company",
                     name = client.Name,
-                    email = client.Email,
-                    address_city = client.City,
+                    email = client.Email ?? "",
+                    address_city = client.City ?? "",
                     address_street = client.Street + ", " + client.StreetNumber,
-                    address_province = client.Province,
-                    address_postal_code = client.Cap,
-                    tax_code = client.P_Iva,
-                    vat_number = client.P_Iva,
-                    ei_code = client.SDI,
-                    certified_email = client.Pec
+                    address_province = client.Province?? "",
+                    address_postal_code = client.Cap?? "",
+                    tax_code = client.P_Iva?? "",
+                    vat_number = client.P_Iva?? "",
+                    ei_code = client.SDI ?? "",
+                    certified_email = client.Pec ?? ""
                 };
                 string stringjson = JsonConvert.SerializeObject(new { data = clientToSendInCloud });
 

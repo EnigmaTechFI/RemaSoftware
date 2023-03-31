@@ -30,23 +30,15 @@
                 <tbody>
                 @foreach (var batch in Model.SubBatches)
                 {
-                    <tr style="cursor: pointer;"  id="batch-@batch.Batch.BatchId">
+                    <tr style="cursor: pointer;">
                         <td>@batch.SubBatchID</td>
                         <td>@batch.Ddts_In[0].Product.Client.Name</td>
                         <td>@batch.Ddts_In[0].Product.SKU</td>
                         <td onclick="showDDT(@batch.SubBatchID)">Visualizza DDT associate</td>
                         <td>@batch.Ddts_In.Sum(s=> s.Number_Piece)</td>
                         <td class="text-center">
-                            @{
-                                var operation = "";
-                                foreach (var op in batch.Batch.BatchOperations)
-                                {
-                                    if(op.Operations.Name != OtherConstants.COQ && op.Operations.Name != OtherConstants.EXTRA)
-                                        operation += "," +op.Operations.Name;
-                                }
-                            }
                             <a onclick="printQRCode('@batch.SubBatchID')" style="text-decoration: none">
-                                <i class="fas fa-print fa-lg pl-2" title="Stampa etichetta" style="cursor: pointer; color: #6d767e"></i>
+                                <i class="fas fa-print fa-lg pl-2" title="Stampa ordine" style="cursor: pointer; color: #6d767e"></i>
                             </a>
                             <a style="text-decoration: none" asp-controller="Order" asp-action="SubBatchMonitoring" asp-route-id="@batch.SubBatchID">
                                 <i class="fas fa-eye fa-lg pl-2" title="Visualizza avanzamento" style="cursor: pointer; color: #6d767e"></i>

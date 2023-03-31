@@ -4,22 +4,6 @@
 @{
     ViewData["Title"] = "Monitoraggio lotto";
 }
-<script>
-  let counter=0;
-  function counterTest(){
-    setInterval(() => {
-      counter++
-    }, 1000)    
-  }
-  counterTest()
-  function getTime(seconds, id){
-    setInterval(() => {
-      var sec = parseInt(seconds) + counter;
-      var date = new Date(sec * 1000).toISOString().substring(11, 19)
-      document.getElementById("time-"+id).innerHTML= "<span><strong>Tempo: </strong>" + date + "</span>"
-    }, 1000) 
-  }
-</script>
 <link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
 <h4 class="m-0 font-weight-bold text-primary mb-3">Analisi lotto #@Model.SubBatch.SubBatchID</h4>
 <div class="row">
@@ -46,7 +30,7 @@
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                             Pezzi rimanenti</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.SubBatch.Ddts_In.Sum(s => s.Number_Piece_Now)</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.SubBatch.Ddts_In.Sum(s => s.Number_Piece_Now + s.Number_Piece_ToSupplier)</div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-hashtag fa-2x text-gray-300"></i>
@@ -151,7 +135,7 @@
                     <tr style="cursor: pointer;">
                         <td>@ddt.Code</td>
                         <td>@ddt.Number_Piece</td>
-                        <td>@ddt.Number_Piece_Now</td>
+                        <td>@(ddt.Number_Piece_Now + ddt.Number_Piece_ToSupplier)</td>
                         <td>@ddt.DataIn.ToString("dd/MM/yy")</td>
                         <td class="text-center">
                             @{
@@ -211,21 +195,6 @@
 {
     <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
     <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
-    <script src="../js/demo/smplr.js"></script>
-    <script>
-        const space = new smplr.Space({
-          spaceId: "f76edfb4-4d73-4a2d-9af1-560eccc371f7",
-          clientToken: "pub_10506c7898b54e94ac785017766316e4",
-          containerId: "planimetry",
-        });
-        space.startViewer({
-          preview: false,
-          loadingMessage: "Prova",
-          mode: '3d',
-          allowModeChange: true,
-          onReady: () => addData(),
-        }) 
-    </script>
     <script>
      $(document).ready( function () {
             table = $('#table-ddts').DataTable({

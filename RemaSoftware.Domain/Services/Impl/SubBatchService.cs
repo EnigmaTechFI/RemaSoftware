@@ -190,9 +190,6 @@ public class SubBatchService : ISubBatchService
     {
         return _dbContext.SubBatches
             .Where(s => s.Status == status)
-            .Include(s => s.Batch)
-            .ThenInclude(s => s.BatchOperations)
-            .ThenInclude(s => s.Operations)
             .Include(s => s.Ddts_In)
             .ThenInclude(s => s.Product)
             .ThenInclude(s => s.Client)

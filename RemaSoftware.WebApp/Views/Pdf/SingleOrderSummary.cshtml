@@ -78,8 +78,17 @@
                             <td width="40%">@Model.SubBatch.Ddts_In[0].Product.SKU</td>
                         </tr>
                         <tr>
-                            <td width="60%"><b>Codice DDT: </b></td>
-                            <td width="40%">@Model.SubBatch.Ddts_In[0].Code</td>
+                            <td width="60%"><b>DDT Associate: </b></td>
+                            <td width="40%">
+                                @{
+                                    var ddt = "";
+                                    foreach (var item in Model.SubBatch.Ddts_In)
+                                    {
+                                        ddt += item.Code;
+                                    }
+                                }
+                                @ddt
+                            </td>
                         </tr>
                         <tr>
                             <td width="60%"><b>Data di consegna dell'ordine: </b></td>
@@ -87,10 +96,10 @@
                         </tr>
                         <tr>
                             <td width="60%"><b>Numero di pezzi richiesti: </b></td>
-                            <td width="40%">@Model.SubBatch.Ddts_In[0].Number_Piece</td>
+                            <td width="40%">@Model.SubBatch.Ddts_In.Sum(s => s.Number_Piece)</td>
                         </tr>
                         <tr>
-                            <td width="60%"><b>Operazioni richiste sull'ordine: : </b></td>
+                            <td width="60%"><b>Operazioni richiste sull'ordine:</b></td>
                             <td width="40%">
                                 <ul>
                                     @foreach (var operation in Model.SubBatch.Ddts_In[0].SubBatch.Batch.BatchOperations.Where(s => s.Operations.Name != OtherConstants.EXTRA).ToList())
@@ -122,7 +131,6 @@
 
     <script>
         $(document).ready(function () {
-            
             window.print();
         })
     </script>

@@ -28,7 +28,7 @@ public class GuestHelper
         var clientId = _clientService.GetClientIdByUserId(userId);
         var stock = _orderService.GetDdtInStockByClientId(clientId);
         var working = _orderService.GetDdtInWorkingByClientId(clientId);
-        var totalpieces = stock.Sum(s => s.Number_Piece_Now) + working.Sum(s => s.Number_Piece_Now);
+        var totalpieces = stock.Sum(s => s.Number_Piece_Now + s.Number_Piece_Now) + working.Sum(s => s.Number_Piece_Now + s.Number_Piece_ToSupplier);
         var ddtOuts = _orderService.GetDdtOutsByClientIdAndStatus(clientId, DDTOutStatus.STATUS_PENDING);
         var vm = new IndexViewModel()
         {

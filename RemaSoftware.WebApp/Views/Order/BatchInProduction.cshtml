@@ -40,15 +40,6 @@
                         <td>@batch.Ddts_In.Sum(s=> s.Number_Piece)</td>
                         <td>@batch.Ddts_In.Sum(s=> s.Number_Piece_Now)</td>
                         <td class="text-center">
-                            @{
-                                
-                                var operation = "";
-                                foreach (var op in batch.Batch.BatchOperations)
-                                {
-                                    if(op.Operations.Name != OtherConstants.COQ && op.Operations.Name != OtherConstants.EXTRA)
-                                        operation += "," +op.Operations.Name;
-                                }
-                            }
                             <a onclick="printQRCode('@batch.SubBatchID')" style="text-decoration: none">
                                 <i class="fas fa-print fa-lg pl-2" title="Stampa etichetta" style="cursor: pointer; color: #6d767e"></i>
                             </a>
