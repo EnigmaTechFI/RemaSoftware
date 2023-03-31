@@ -92,7 +92,7 @@
         var ddt_list = ""
         batch[0].ddts_In.forEach(function(ddt) {
             var date = new Date(ddt.dataOut)
-            ddt_list = ddt_list +"<strong>Codice: </strong>"+ ddt.code + " - <strong>Arrivo: </strong>" + (parseInt(date.getMonth()) + 1) +"/" +date.getMonth() + "/" + date.getFullYear() + "<strong> - Pezzi: </strong>" + ddt.number_Piece_Now + "<br/>"
+            ddt_list = ddt_list +"<strong>Codice: </strong>"+ ddt.code + " - <strong>Arrivo: </strong>" + date.getDate() +"/" + (parseInt(date.getMonth()) + 1) + "/" + date.getFullYear() + "<strong> - Pezzi: </strong>" + ddt.number_Piece_Now + "<br/>"
         })
         $("#ddt_associate").modal('show');
         document.getElementById("batch_ddt").innerHTML = ddt_list

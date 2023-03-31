@@ -873,7 +873,7 @@ namespace RemaSoftware.WebApp.Helper
 
         public ReloadSubBatchFromSupplierViewModel GetReloadSubBatchFromSupplierViewModel(int id)
         {
-            var DDTSupplierPieces = _orderService.GetDdtSupplierById(id).Number_Piece;
+            var DDTSupplierPieces = _orderService.GetDdtSupplierById(id).DdtSupplierAssociations.Sum(s => s.Ddt_In.Number_Piece_ToSupplier);
             return new ReloadSubBatchFromSupplierViewModel()
             {
                 DDTSupplierId = id,
@@ -899,7 +899,10 @@ namespace RemaSoftware.WebApp.Helper
                     var ddts = new List<Ddt_In>();
                     foreach (var item in ddtSupplier.DdtSupplierAssociations)
                     {
-                        ddts.Add(item.Ddt_In);
+                        if (item.Ddt_In.Number_Piece_ToSupplier > 0)
+                        {
+                            ddts.Add(item.Ddt_In);
+                        }
                     }
                     ddts = ddts.OrderBy(s => s.DataIn).ToList();
                     var now = DateTime.Now;
@@ -967,6 +970,7 @@ namespace RemaSoftware.WebApp.Helper
                                     lost = model.LostPieces;
                                     item.NumberLostPiece += lost;
                                     item.Number_Piece_ToSupplier -= model.LostPieces;
+                                    model.LostPieces = 0;
                                 }
                                 else
                                 {
@@ -976,14 +980,17 @@ namespace RemaSoftware.WebApp.Helper
                                     item.Number_Piece_ToSupplier = 0;
                                 }
 
-                                item.Ddt_Associations.Add(new Ddt_Association()
+                                if (lost > 0)
                                 {
-                                    Date = now,
-                                    Ddt_In_ID = item.Ddt_In_ID,
-                                    Ddt_Out_ID = ddt_out_id,
-                                    NumberPieces = lost,
-                                    TypePieces = PiecesType.PERSI
-                                });
+                                    item.Ddt_Associations.Add(new Ddt_Association()
+                                    {
+                                        Date = now,
+                                        Ddt_In_ID = item.Ddt_In_ID,
+                                        Ddt_Out_ID = ddt_out_id,
+                                        NumberPieces = lost,
+                                        TypePieces = PiecesType.PERSI
+                                    });
+                                }
                             }
 
                             if (model.WastePieces > 0)
@@ -994,6 +1001,7 @@ namespace RemaSoftware.WebApp.Helper
                                     waste = model.WastePieces;
                                     item.NumberWastePiece += waste;
                                     item.Number_Piece_ToSupplier -= model.WastePieces;
+                                    model.WastePieces = 0;
                                 }
                                 else
                                 {
@@ -1003,14 +1011,17 @@ namespace RemaSoftware.WebApp.Helper
                                     item.Number_Piece_ToSupplier = 0;
                                 }
 
-                                item.Ddt_Associations.Add(new Ddt_Association()
+                                if (waste > 0)
                                 {
-                                    Date = now,
-                                    Ddt_In_ID = item.Ddt_In_ID,
-                                    Ddt_Out_ID = ddt_out_id,
-                                    NumberPieces = waste,
-                                    TypePieces = PiecesType.SCARTI
-                                });
+                                    item.Ddt_Associations.Add(new Ddt_Association()
+                                    {
+                                        Date = now,
+                                        Ddt_In_ID = item.Ddt_In_ID,
+                                        Ddt_Out_ID = ddt_out_id,
+                                        NumberPieces = waste,
+                                        TypePieces = PiecesType.SCARTI
+                                    });
+                                }
                             }
 
                             if (model.OkPieces > 0)
