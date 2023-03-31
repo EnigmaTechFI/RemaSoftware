@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -16,11 +17,13 @@ public class GuestController : Controller
     private readonly GuestHelper _guestHelper;
     private readonly UserManager<MyUser> _userManager;
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+    private readonly INotyfService _notyfToastService;
 
-    public GuestController(GuestHelper guestHelper, UserManager<MyUser> userManager)
+    public GuestController(GuestHelper guestHelper, UserManager<MyUser> userManager, INotyfService notyfToastService)
     {
         _guestHelper = guestHelper;
         _userManager = userManager;
+        _notyfToastService = notyfToastService;
     }
 
     [HttpGet]
@@ -109,6 +112,7 @@ public class GuestController : Controller
         catch (Exception e)
         {
             Logger.Error(e, e.Message);
+            _notyfToastService.Error(e.Message);
             return RedirectToAction("Index");
         }
     }
@@ -119,7 +123,7 @@ public class GuestController : Controller
         try
         {
             var users = await _userManager.GetUsersInRoleAsync(Roles.Admin);
-            _guestHelper.SendPrompt(id, users);
+            _guestHelper.SendPrompt(id, users, (await _userManager.GetUserAsync(this.User)).Id);
             return new JsonResult(new {Result = true, Error = "DDT sollecitata correttamente."});
         }
         catch (Exception e)

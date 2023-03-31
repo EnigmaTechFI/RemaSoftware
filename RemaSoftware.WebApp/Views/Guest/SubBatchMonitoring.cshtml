@@ -126,6 +126,7 @@
                     <th>N° Pezzi</th>
                     <th>N° Pezzi attuale</th>
                     <th>Data arrivo</th>
+                    <th>Data conclusione</th>
                     <th>Status</th>
                 </tr>
                 </thead>
@@ -136,7 +137,17 @@
                         <td>@ddt.Code</td>
                         <td>@ddt.Number_Piece</td>
                         <td>@(ddt.Number_Piece_Now + ddt.Number_Piece_ToSupplier)</td>
-                        <td>@ddt.DataIn.ToString("dd/MM/yy")</td>
+                        <td>@ddt.DataIn.ToString("dd/MM/yy HH:mm")</td>
+                        <td>
+                            @{
+                                var date = "Non concluso";
+                                if (ddt.DataEnd.HasValue)
+                                {
+                                    date = ddt.DataEnd.Value.ToString("dd/MM/yy HH:mm");
+                                }
+                            }
+                            @date
+                        </td>
                         <td class="text-center">
                             @{
                                 if (!string.IsNullOrEmpty(ddt.Status))

@@ -20,6 +20,7 @@
                         <th>N° pezzi</th>
                         <th>Arrivo ordine</th>
                         <th>Conclusione ordine</th>
+                        <th class="text-center">Azioni</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -31,6 +32,11 @@
                         <td>@ddt.Number_Piece</td>
                         <td>@ddt.DataIn.ToString("dd/MM/yy HH:mm")</td>
                         <td>@ddt.DataEnd.Value.ToString("dd/MM/yy HH:mm")</td>
+                        <td class="text-center">
+                            <a style="text-decoration: none" asp-controller="Guest" asp-action="SubBatchMonitoring" asp-route-id="@ddt.SubBatchID">
+                                <i class="fas fa-eye fa-lg pl-2" title="Visualizza avanzamento" style="cursor: pointer; color: #6d767e"></i>
+                            </a>
+                        </td>
                     </tr>
                 }
                 </tbody>
@@ -72,6 +78,7 @@
                 { "searchable": false, "orderable": true, "targets": 2 },
                 { "searchable": false, "orderable": true, "targets": 3 },
                 { "searchable": false, "orderable": true, "targets": 4 },
+                { "searchable": false, "orderable": false, "targets": 5 },
               ]
         });
     });

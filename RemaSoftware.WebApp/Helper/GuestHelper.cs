@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -93,13 +94,15 @@ public class GuestHelper
         var clientId = _clientService.GetClientIdByUserId(userId);
         return new GuestSubBatchMonitoringViewModel()
         {
-            SubBatch = _subBatchService.GetSubBatchByIdAndClientId(id, clientId)?? new SubBatch() //TODO: Controllare cliente;
+            SubBatch = _subBatchService.GetSubBatchByIdAndClientId(id, clientId)?? throw new Exception("Errore durante il recupero.")
         };
     }
 
-    public void SendPrompt(int ddtId, IList<MyUser> users)
+    public void SendPrompt(int ddtId, IList<MyUser> users, string userId)
     {
         var ddt = _orderService.GetDdtInById(ddtId);
+        if (ddt.Product.ClientID != _clientService.GetClientIdByUserId(userId))
+            throw new Exception("Errore durante la richiesta di sollecito.");
         ddt.IsPrompted = true;
         _orderService.UpdateDDtIn(ddt);
         _emailService.SendEmailPrompt(users.Select(s => s.Email).ToList(), ddt.Code);
