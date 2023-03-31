@@ -281,8 +281,14 @@
       clientToken: "pub_f7ab71cd2295435ea8906179ed754e6a",
       containerId: "planimetry",
     });
-    
-    var opTimeline = @Json.Serialize(Model.SubBatch.OperationTimelines.Where(s => s.MachineId != null).ToList())
+    var opTimeline = []
+    var sb = @Json.Serialize(Model.SubBatch)
+    if (sb.operationTimelines != null){
+        sb.operationTimelines.forEach(function (op){
+            if (op.machineId != null)
+                opTimeline.push(op)
+        })
+    }
     let allMachine = [];
     const macchina1 = [
           {

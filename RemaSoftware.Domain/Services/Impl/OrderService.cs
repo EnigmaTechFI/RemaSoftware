@@ -409,6 +409,24 @@ namespace RemaSoftware.Domain.Services.Impl
         public void UpdateDDtSupplier(Ddt_Supplier ddtSupplier)
         {
             _dbContext.Ddt_Suppliers.Update(ddtSupplier);
+            _dbContext.SaveChanges();
+        }
+
+        public Ddt_Supplier GetDdtSupplierById(int modelDdtSupplierId)
+        {
+            return _dbContext.Ddt_Suppliers
+                .Include(s => s.DdtSupplierAssociations)
+                .ThenInclude(s => s.Ddt_In)
+                .ThenInclude(s => s.Product)
+                .ThenInclude(s => s.Client)
+                .Include(s => s.OperationTimeline)
+                .SingleOrDefault(s => s.Ddt_Supplier_ID == modelDdtSupplierId);
+        }
+
+        public void UpdateDDtInRange(List<Ddt_In> ddts)
+        {
+            _dbContext.Ddts_In.UpdateRange(ddts);
+            _dbContext.SaveChanges();
         }
     }
 }

@@ -312,14 +312,28 @@ public class SubBatchService : ISubBatchService
     public List<SubBatch> GetSubBatchesWithExtras()
     {
         return _dbContext.SubBatches
+            .Include(s => s.OperationTimelines)
             .Include(s => s.Batch)
             .ThenInclude(s => s.BatchOperations)
             .ThenInclude(s => s.Operations)
             .Include(s => s.Ddts_In)
             .ThenInclude(s => s.Product)
             .ThenInclude(s => s.Client)
-            .Where(s => s.Batch.BatchOperations.Any(s => s.Operations.Name == OtherConstants.EXTRA) &&
-                        s.Status == OrderStatusConstants.STATUS_WORKING)
+            .Where(s => s.Batch.BatchOperations.Any(s => s.OperationTimelines.Any(s => s.BatchOperation.Operations.Name == OtherConstants.EXTRA)))
+            .ToList();
+    }
+
+    public List<Ddt_Supplier> GetSubBatchToSupplier()
+    {
+        return _dbContext.Ddt_Suppliers
+            .Include(s => s.Supplier)
+            .Include(s => s.DdtSupplierAssociations)
+            .ThenInclude(s => s.Ddt_In)
+            .ThenInclude(s => s.SubBatch)
+            .Include(s => s.DdtSupplierAssociations)
+            .ThenInclude(s => s.Ddt_In)
+            .ThenInclude(s => s.Product)
+            .Where(s => s.Status == OrderStatusConstants.STATUS_WORKING)
             .ToList();
     }
 

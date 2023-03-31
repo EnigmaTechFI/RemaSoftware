@@ -297,7 +297,7 @@ namespace RemaSoftware.UtilityServices.Implementation
             try
             {
                 CreateIssuedDocumentResponse result = apiInstance.CreateIssuedDocument(Int32.Parse(companyId), createIssuedDocumentRequest);
-                return (result.Data.DnUrl, result.Data.Numeration, result.Data.Id.Value);
+                return (result.Data.DnUrl, result.Data.DnNumber + "/" + DateTime.Now.Year, result.Data.Id.Value);
             }
             catch (ApiException  e)
             {

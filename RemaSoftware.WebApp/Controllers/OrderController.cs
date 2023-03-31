@@ -386,6 +386,56 @@ namespace RemaSoftware.WebApp.Controllers
         
         [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpGet]
+        public IActionResult BatchToSupplier()
+        {
+            try
+            {
+                return View(_orderHelper.GetBatchToSupplierViewModel());
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                return RedirectToAction("Index", "Home");
+            }
+            
+        }
+        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpGet]
+        public IActionResult ReloadSubBatchFromSupplier(int id)
+        {
+            try
+            {
+                return View(_orderHelper.GetReloadSubBatchFromSupplierViewModel(id));
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                return RedirectToAction("Index", "Home");
+            }
+            
+        }
+        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpPost]
+        public IActionResult ReloadSubBatchFromSupplier(ReloadSubBatchFromSupplierViewModel model)
+        {
+            try
+            {
+                _orderHelper.ReloadSubBatchFromSupplier(model);
+                return RedirectToAction("BatchToSupplier");
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                _notyfService.Error(e.Message);
+                return RedirectToAction("ReloadSubBatchFromSupplier", new{id = model.DDTSupplierId});
+            }
+            
+        }
+        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpGet]
         public IActionResult ExitToSupplier(int id)
         {
             try

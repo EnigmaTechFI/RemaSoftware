@@ -1,0 +1,78 @@
+@model RemaSoftware.WebApp.Models.OrderViewModel.ReloadSubBatchFromSupplierViewModel
+
+@{
+    ViewData["Title"] = "Ricarico da fornitore";
+}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Ricarico da fornitore</h1>
+</div>
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Nuovo ricarico</h6>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            @Html.HiddenFor(model => model.DDTSupplierId)
+            <div class="form-group">
+                <h6><strong>Massimo pezzi per ricarico: </strong>@Model.DDTSupplierPieces</h6>
+            </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput">Numero di pezzi buoni</label>
+                <input min="0" asp-for="OkPieces" type="number" class="form-control" id="formGroupExampleInput" placeholder="Numero di pezzi">
+            </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput">Numero di scarti</label>
+                <input min="0" asp-for="WastePieces" type="number" class="form-control" id="formGroupExampleInput" placeholder="Numero di pezzi">
+            </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput">Numero di persi</label>
+                <input min="0" asp-for="LostPieces" type="number" class="form-control" id="formGroupExampleInput" placeholder="Numero di pezzi">
+            </div>
+            <div style="width:100px; margin-top:50px;">
+                <button class="btn btn-primary" type="submit" onclick="clickEvent()">Registra</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="loader-cont">
+    <div class="spinner-grow" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+
+@section Scripts
+{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/js/select2.min.js" integrity="sha512-9p/L4acAjbjIaaGXmZf0Q2bV42HetlCLbv8EP0z3rLbQED2TAFUlDvAezy7kumYqg5T8jHtDdlm1fgIsr5QzKg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+    
+        var clicked = false;
+        
+        function clickEvent() {
+        $(".loader-cont").show()
+        if(!clicked)
+        {
+            clicked = true;
+            setTimeout(function(){
+                clicked = false;
+            }, 1500);
+        }
+        }
+
+        $('#priceUnit').keypress(function (e) {
+            if (e.which == 46) {
+                e.preventDefault();
+            }
+        });
+    </script>
+}
+
+
+
+
+

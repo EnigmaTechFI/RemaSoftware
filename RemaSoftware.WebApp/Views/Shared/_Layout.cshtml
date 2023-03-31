@@ -137,6 +137,12 @@
                     <span>Lotti in produzione</span>
                 </a>
             </li>
+            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "BatchToSupplier" ? "active" : "")">
+                <a class="nav-link" asp-action="BatchToSupplier" asp-controller="Order">
+                    <i class="fas fa-pallet"></i>
+                    <span>Lotti da fornitori</span>
+                </a>
+            </li>
         }
         @if (User.IsInRole(Roles.Cliente))
         {

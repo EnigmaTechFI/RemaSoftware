@@ -70,12 +70,12 @@
                     <tr>
                         <th>DDT</th>
                         <th>SKU</th>
-                        <th>Nome</th>
                         <th>Cliente</th>
                         <th>Data Entrata</th>
                         <th>Data Scadenza</th>
                         <th>N&deg; Pezzi Iniziale</th>
-                        <th>N&deg; Pezzi Attuale</th>
+                        <th>N&deg; Pezzi in azienda</th>
+                        <th>N&deg; Pezzi da fornitori</th>
                         <th>Prezzo Unitario</th>
                         <th>Status</th>
                     </tr>
@@ -84,14 +84,14 @@
                     @foreach (var order in Model.OrdersNotCompleted)
                     {
                         <tr>
-                            <td>@order.Ddt_In_ID</td>
+                            <td>@order.Code</td>
                             <td>@order.Product.SKU</td>
-                            <td>@order.Product.Name</td>
                             <td>@order.Product.Client.Name</td>
                             <td>@order.DataIn.ToString("d", new CultureInfo("it-IT"))</td>
                             <td>@order.DataOut.ToString("d", new CultureInfo("it-IT"))</td>
                             <td>@order.Number_Piece</td>
                             <td>@order.Number_Piece_Now</td>
+                            <td>@order.Number_Piece_ToSupplier</td>
                             <td>@order.Price_Uni.ToString("0.00")&#8364;</td>
                             <td class="text-center">
                                 @{

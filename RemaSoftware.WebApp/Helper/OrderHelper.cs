@@ -286,7 +286,7 @@ namespace RemaSoftware.WebApp.Helper
                         throw new Exception("Nessun pezzo inserito.");
                     var ratio = subBatch.Ddts_In.Sum(s => s.Number_Piece_Now);
                     var ddts = subBatch.Ddts_In.Where(s => s.Number_Piece_Now > 0)
-                        .OrderByDescending(s => s.TotalPriority)
+                        .OrderBy(s => s.DataIn)
                         .ToList();
                     var lastElement = ddts.LastOrDefault();
                     var dtoCopy = dto;
@@ -782,8 +782,6 @@ namespace RemaSoftware.WebApp.Helper
         {
             using (var transaction = _dbContext.Database.BeginTransaction())
             {
-                
-                //TODO: Validazione !!
                 try
                 {
                     var subBatch = _subBatchService.GetSubBatchById(model.SubBatch.SubBatchID);
@@ -825,34 +823,33 @@ namespace RemaSoftware.WebApp.Helper
                         }
                         else
                         {
-                            totalPieces -= item.Number_Piece;
-                            item.Number_Piece_ToSupplier += item.Number_Piece_Now;
-                            ddtSupplierAssociations.Add(new DDT_Supplier_Association()
+                            if (item.Number_Piece_Now > 0)
                             {
-                                Ddt_In = item,
-                                Ddt_In_ID = item.Ddt_In_ID,
-                                NumberPieces = item.Number_Piece_Now 
-                            });
-                            item.Number_Piece_Now = 0;
-                            item.Status = OrderStatusConstants.STATUS_WORKING;
-                            _orderService.UpdateDDtIn(item);
-                            if(totalPieces == 0)
-                                break;
+                                totalPieces -= item.Number_Piece_Now;
+                                item.Number_Piece_ToSupplier += item.Number_Piece_Now;
+                                ddtSupplierAssociations.Add(new DDT_Supplier_Association()
+                                {
+                                    Ddt_In = item,
+                                    Ddt_In_ID = item.Ddt_In_ID,
+                                    NumberPieces = item.Number_Piece_Now
+                                });
+                                item.Number_Piece_Now = 0;
+                                item.Status = OrderStatusConstants.STATUS_WORKING;
+                                _orderService.UpdateDDtIn(item);
+                                if (totalPieces <= 0)
+                                    break;
+                            }
                         }
                     }
-                    var ddtSupplier = _orderService.CreateNewDdtSupplier(model.DdtSupplier);
-                    var id = ddtSupplier.Ddt_Supplier_ID;
-                    foreach (var entity in ddtSupplierAssociations)
-                    {
-                        entity.Ddt_Supplier_ID = id;
-                    }
-                    _orderService.CreateNewDdtSuppliersAssociation(ddtSupplierAssociations);
+
+                    var ddtSupplier = model.DdtSupplier;
+                    ddtSupplier.DdtSupplierAssociations = ddtSupplierAssociations;
                     var supplier = _supplierService.GetSupplierById(model.DdtSupplier.SupplierID);
                     var result = _apiFatturaInCloud.CreateDdtSupplierCloud(ddtSupplier, supplier);
                     ddtSupplier.Code = result.Item2;
                     ddtSupplier.FC_Ddt_Supplier_ID = result.Item3.ToString();
                     ddtSupplier.Url = result.Item1;
-                    _orderService.UpdateDDtSupplier(ddtSupplier);
+                    _orderService.CreateNewDdtSupplier(ddtSupplier);
                     transaction.Commit();
                     return result.Item1;
                 }
@@ -864,6 +861,194 @@ namespace RemaSoftware.WebApp.Helper
                 }
             }
             
+        }
+
+        public BatchToSupplierViewModel GetBatchToSupplierViewModel()
+        {
+            return new BatchToSupplierViewModel()
+            {
+                Ddt_Suppliers = _subBatchService.GetSubBatchToSupplier()
+            };
+        }
+
+        public ReloadSubBatchFromSupplierViewModel GetReloadSubBatchFromSupplierViewModel(int id)
+        {
+            var DDTSupplierPieces = _orderService.GetDdtSupplierById(id).Number_Piece;
+            return new ReloadSubBatchFromSupplierViewModel()
+            {
+                DDTSupplierId = id,
+                DDTSupplierPieces = DDTSupplierPieces
+            };
+        }
+
+        public void ReloadSubBatchFromSupplier(ReloadSubBatchFromSupplierViewModel model)
+        {
+            using (var transaction = _dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    var ddtSupplier = _orderService.GetDdtSupplierById(model.DDTSupplierId);
+                    if (model.LostPieces + model.WastePieces + model.OkPieces > ddtSupplier.Number_Piece)
+                        throw new Exception("Il totale dei pezzi inserito è maggiore dei pezzi attualmente in azienda.");
+                    if (model.LostPieces + model.WastePieces + model.OkPieces <= 0)
+                        throw new Exception("Nessun pezzo inserito.");
+                    ddtSupplier.NumberReInPiece += model.OkPieces;
+                    ddtSupplier.NumberLostPiece += model.LostPieces;
+                    ddtSupplier.NumberWastePiece += model.WastePieces;
+                    ddtSupplier.Number_Piece -= (model.OkPieces + model.LostPieces + model.WastePieces);
+                    var ddts = new List<Ddt_In>();
+                    foreach (var item in ddtSupplier.DdtSupplierAssociations)
+                    {
+                        ddts.Add(item.Ddt_In);
+                    }
+                    ddts = ddts.OrderBy(s => s.DataIn).ToList();
+                    var now = DateTime.Now;
+                    var ddt_out_id = 0;
+                    var ddts_out = _orderService.GetDdtOutsByClientIdAndStatus(ddts[0].Product.ClientID, DDTOutStatus.STATUS_PENDING);
+                    if (ddts_out.Count == 0)
+                    {
+                        ddt_out_id = _orderService.CreateNewDdtOut(new Ddt_Out()
+                        {
+                            ClientID = ddts[0].Product.ClientID,
+                            Date = now,
+                            Status = DDTOutStatus.STATUS_PENDING
+                        }).Ddt_Out_ID;
+                    }
+                    else
+                    {
+                        ddt_out_id = ddts_out[0].Ddt_Out_ID;
+                    }
+
+                    foreach (var item in ddts)
+                    {
+                        item.Ddt_Associations ??= new List<Ddt_Association>();
+                        
+                        if (item.Number_Piece_ToSupplier >= model.OkPieces + model.WastePieces + model.LostPieces)
+                        {
+                            item.Number_Piece_Now += model.OkPieces;
+                            item.NumberLostPiece += model.LostPieces;
+                            item.NumberWastePiece += model.WastePieces;
+                            item.Number_Piece_ToSupplier -= model.OkPieces + model.WastePieces + model.LostPieces;
+                            if (model.LostPieces > 0)
+                            {
+                                item.Ddt_Associations.Add(new Ddt_Association()
+                                {
+                                    Date = now,
+                                    Ddt_In_ID = item.Ddt_In_ID,
+                                    Ddt_Out_ID = ddt_out_id,
+                                    NumberPieces = model.LostPieces,
+                                    TypePieces = PiecesType.PERSI
+                                });
+                            }
+
+                            if (model.WastePieces > 0)
+                            {
+                                item.Ddt_Associations.Add(new Ddt_Association()
+                                {
+                                    Date = now,
+                                    Ddt_In_ID = item.Ddt_In_ID,
+                                    Ddt_Out_ID = ddt_out_id,
+                                    NumberPieces = model.WastePieces,
+                                    TypePieces = PiecesType.SCARTI
+                                });
+                            }
+                            model.OkPieces = 0;
+                            model.LostPieces = 0;
+                            model.WastePieces = 0;
+                            break;
+                        }
+                        else
+                        {
+                            if (model.LostPieces > 0)
+                            {
+                                var lost = 0;
+                                if (item.Number_Piece_ToSupplier >= model.LostPieces)
+                                {
+                                    lost = model.LostPieces;
+                                    item.NumberLostPiece += lost;
+                                    item.Number_Piece_ToSupplier -= model.LostPieces;
+                                }
+                                else
+                                {
+                                    lost = item.Number_Piece_ToSupplier;
+                                    item.NumberLostPiece += lost;
+                                    model.LostPieces -= item.Number_Piece_ToSupplier;
+                                    item.Number_Piece_ToSupplier = 0;
+                                }
+
+                                item.Ddt_Associations.Add(new Ddt_Association()
+                                {
+                                    Date = now,
+                                    Ddt_In_ID = item.Ddt_In_ID,
+                                    Ddt_Out_ID = ddt_out_id,
+                                    NumberPieces = lost,
+                                    TypePieces = PiecesType.PERSI
+                                });
+                            }
+
+                            if (model.WastePieces > 0)
+                            {
+                                var waste = 0;
+                                if (item.Number_Piece_ToSupplier >= model.WastePieces)
+                                {
+                                    waste = model.WastePieces;
+                                    item.NumberWastePiece += waste;
+                                    item.Number_Piece_ToSupplier -= model.WastePieces;
+                                }
+                                else
+                                {
+                                    waste = item.Number_Piece_ToSupplier;
+                                    item.NumberWastePiece += waste;
+                                    model.WastePieces -= item.Number_Piece_ToSupplier;
+                                    item.Number_Piece_ToSupplier = 0;
+                                }
+
+                                item.Ddt_Associations.Add(new Ddt_Association()
+                                {
+                                    Date = now,
+                                    Ddt_In_ID = item.Ddt_In_ID,
+                                    Ddt_Out_ID = ddt_out_id,
+                                    NumberPieces = waste,
+                                    TypePieces = PiecesType.SCARTI
+                                });
+                            }
+
+                            if (model.OkPieces > 0)
+                            {
+                                if (item.Number_Piece_ToSupplier >= model.OkPieces)
+                                {
+                                    item.Number_Piece_ToSupplier -= model.OkPieces;
+                                    item.Number_Piece_Now += model.OkPieces;
+                                }
+                                else
+                                {
+                                    model.OkPieces -= item.Number_Piece_ToSupplier;
+                                    item.Number_Piece_Now += item.Number_Piece_ToSupplier;
+                                    item.Number_Piece_ToSupplier = 0;
+                                }
+                            }
+                        }
+                    }
+
+                    if (model.OkPieces + model.LostPieces + model.WastePieces > 0)
+                        throw new Exception("Errore di ricarico. Contattare gli sviluppatori.");
+                    _orderService.UpdateDDtInRange(ddts);
+                    if (ddtSupplier.Number_Piece == 0)
+                    {
+                        ddtSupplier.OperationTimeline.Status = OperationTimelineConstant.STATUS_COMPLETED;
+                        ddtSupplier.DataReIn = now;
+                        ddtSupplier.Status = OrderStatusConstants.STATUS_COMPLETED;
+                    }
+                    _orderService.UpdateDDtSupplier(ddtSupplier);
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    Logger.Error(e, e.Message);
+                    throw new Exception("Errore durante il ricarico.");
+                }
+            }
         }
     }
 
