@@ -45,9 +45,9 @@ namespace RemaSoftware.WebApp.Controllers
         {
             try
             {
-                await _productHelper.AddProduct(model);
+                var product = await _productHelper.AddProduct(model);
                 _notyfToastService.Success("Prodotto aggiunto correttamente");
-                return RedirectToAction("ProductList");
+                return RedirectToAction("NewOrder", "Order", new{ productId = product.ProductID});
             }
             catch(Exception ex)
             {

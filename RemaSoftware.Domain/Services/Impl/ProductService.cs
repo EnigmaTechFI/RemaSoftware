@@ -22,6 +22,11 @@ namespace RemaSoftware.Domain.Services.Impl
             return product;
         }
 
+        public List<string> GetAllProductSKU()
+        {
+            return _dbContext.Products.Select(s => s.SKU).ToList();
+        }
+
         public List<Product> GetAllProducts()
         {
             return _dbContext.Products.Include(i => i.Client).Include(s => s.Ddts_In).ToList();

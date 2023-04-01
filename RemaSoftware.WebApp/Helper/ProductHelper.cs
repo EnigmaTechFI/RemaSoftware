@@ -64,15 +64,19 @@ namespace RemaSoftware.WebApp.Helper
             };
         }
 
-        public async Task<string> AddProduct(NewProductViewModel model)
+        public async Task<Product> AddProduct(NewProductViewModel model)
         {
             if (!string.IsNullOrEmpty(model.Photo))
             {
                 model.Product.FileName = await _imageService.SavingOrderImage(model.Photo);
             }
-            _productValidation.ValidateProduct(model.Product);
-            _productService.AddProduct(model.Product);
-            return "Success";
+
+            if (_productService.GetAllProductSKU().Contains(model.Product.SKU))
+                throw new Exception("Nome prodotto già esistente.");
+            var validation = _productValidation.ValidateProduct(model.Product);
+            if(validation != "")
+                throw new Exception(validation);
+            return _productService.AddProduct(model.Product);
 
         }
 
