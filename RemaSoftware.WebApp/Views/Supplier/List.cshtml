@@ -37,7 +37,7 @@
     </div>
 </div>
 <div class="text-center m-2">
-    <a class="btn btn-primary text-white" asp-action="Sync" asp-controller="Supplier" type="button">Aggiorna fornitori da Fatture In Cloud</a>
+    <a class="btn btn-primary text-white" asp-action="Sync" asp-controller="Supplier" onclick="clickEvent()" type="button">Aggiorna fornitori da Fatture In Cloud</a>
 </div>
 
 
@@ -53,6 +53,16 @@
     <script>
         function ChangePage(id) {
             window.location.href = "/Supplier/Info?supplierId=" + id;
+        }
+        function clickEvent() {
+            $(".loader-cont").show()
+            if(!clicked)
+            {
+                clicked = true;
+                setTimeout(function(){
+                    clicked = false;
+                }, 1500);
+            }
         }
     </script>
     

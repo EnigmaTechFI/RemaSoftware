@@ -22,6 +22,7 @@
                     <th>Lotto</th>
                     <th>Cliente</th>
                     <th>Codice prodotto</th>
+                    <th>Nome prodotto</th>
                     <th>DDT associate</th>
                     <th>Pezzi nel lotto</th>
                     <th>Azioni</th>
@@ -34,6 +35,7 @@
                         <td>@batch.SubBatchID</td>
                         <td>@batch.Ddts_In[0].Product.Client.Name</td>
                         <td>@batch.Ddts_In[0].Product.SKU</td>
+                        <td>@batch.Ddts_In[0].Product.Name</td>
                         <td onclick="showDDT(@batch.SubBatchID)">Visualizza DDT associate</td>
                         <td>@batch.Ddts_In.Sum(s=> s.Number_Piece)</td>
                         <td class="text-center">
@@ -180,9 +182,10 @@
                 { "searchable": true, "orderable": true, "targets": 0 },
                 { "searchable": true, "orderable": true, "targets": 1 },
                 { "searchable": true, "orderable": true, "targets": 2 },
-                { "searchable": false, "orderable": false, "targets": 3 },
+                { "searchable": true, "orderable": true, "targets": 3 },
                 { "searchable": false, "orderable": false, "targets": 4 },
                 { "searchable": false, "orderable": false, "targets": 5 },
+                { "searchable": false, "orderable": false, "targets": 6 },
               ]
         });
 

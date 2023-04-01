@@ -16,7 +16,8 @@
                 <tr>
                     <th class="text-center" scope="col">Seleziona per emettere</th>
                     <th scope="col">DDT</th>
-                    <th scope="col">Prodotto</th>
+                    <th scope="col">Codice Prodotto</th>
+                    <th scope="col">Nome Prodotto</th>
                     <th scope="col">Numero pezzi</th>
                     <th scope="col">Tipo</th>
                     <th class="text-center" scope="col">Annulla</th>
@@ -32,6 +33,7 @@
                         <td class="text-center"><input asp-for="@Model.PartialDdtDtos[i].ToEmit" class="form-check-input" type="checkbox" id="gridCheck"></td>
                         <td>@Model.PartialDdtDtos[i].DdtAssociation.Ddt_In.Code</td>
                         <td>@Model.PartialDdtDtos[i].DdtAssociation.Ddt_In.Product.SKU</td>
+                        <td>@Model.PartialDdtDtos[i].DdtAssociation.Ddt_In.Product.Name</td>
                         <td>@Model.PartialDdtDtos[i].DdtAssociation.NumberPieces</td>
                         <td>@Model.PartialDdtDtos[i].DdtAssociation.TypePieces</td>
                         <td class="text-center"><i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer; color: #6d767e;" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDDTAssociationId('@Model.PartialDdtDtos[i].DdtAssociation.ID')"></i></td>

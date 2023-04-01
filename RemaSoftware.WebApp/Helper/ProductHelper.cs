@@ -70,9 +70,6 @@ namespace RemaSoftware.WebApp.Helper
             {
                 model.Product.FileName = await _imageService.SavingOrderImage(model.Photo);
             }
-
-            if (_productService.GetAllProductSKU().Contains(model.Product.SKU))
-                throw new Exception("Nome prodotto già esistente.");
             var validation = _productValidation.ValidateProduct(model.Product);
             if(validation != "")
                 throw new Exception(validation);

@@ -426,7 +426,7 @@ namespace RemaSoftware.WebApp.Helper
                             if (item.MachineId == 99 && item.OperationTimelineID == dto.OperationTimeLineId)
                             {
                                 item.EndDate = DateTime.Now;
-                                item.UseForStatics = true;
+                                item.UseForStatics = false;
                                 item.Status = OperationTimelineConstant.STATUS_COMPLETED;
                             }
                             else if (item.MachineId == 99 && item.OperationTimelineID != dto.OperationTimeLineId)

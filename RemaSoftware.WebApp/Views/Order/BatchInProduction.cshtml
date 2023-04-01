@@ -21,6 +21,7 @@
                     <th>Lotto</th>
                     <th>Cliente</th>
                     <th>Codice prodotto</th>
+                    <th>Nome prodotto</th>
                     <th>DDT associate</th>
                     <th>Pezzi nel lotto</th>
                     <th>Pezzi rimanenti</th>
@@ -34,12 +35,13 @@
                         <td>@batch.SubBatchID</td>
                         <td>@batch.Ddts_In[0].Product.Client.Name</td>
                         <td>@batch.Ddts_In[0].Product.SKU</td>
+                        <td>@batch.Ddts_In[0].Product.Name</td>
                         <td onclick="showDDT(@batch.SubBatchID)">Visualizza DDT associate</td>
                         <td>@batch.Ddts_In.Sum(s=> s.Number_Piece)</td>
                         <td>@batch.Ddts_In.Sum(s=> s.Number_Piece_Now)</td>
                         <td class="text-center">
                             <a onclick="printQRCode('@batch.SubBatchID')" style="text-decoration: none">
-                                <i class="fas fa-print fa-lg pl-2" title="Stampa etichetta" style="cursor: pointer; color: #6d767e"></i>
+                                <i class="fas fa-print fa-lg pl-2" title="Stampa commessa" style="cursor: pointer; color: #6d767e"></i>
                             </a>
                             <a style="text-decoration: none" asp-controller="Order" asp-action="SubBatchMonitoring" asp-route-id="@batch.SubBatchID">
                                 <i class="fas fa-eye fa-lg pl-2" title="Visualizza avanzamento" style="cursor: pointer; color: #6d767e"></i>
@@ -175,10 +177,11 @@
                 { "searchable": true, "orderable": true, "targets": 0 },
                 { "searchable": true, "orderable": true, "targets": 1 },
                 { "searchable": true, "orderable": true, "targets": 2 },
-                { "searchable": false, "orderable": false, "targets": 3 },
+                { "searchable": true, "orderable": true, "targets": 3 },
                 { "searchable": false, "orderable": false, "targets": 4 },
                 { "searchable": false, "orderable": false, "targets": 5 },
                 { "searchable": false, "orderable": false, "targets": 6 },
+                { "searchable": false, "orderable": false, "targets": 7 },
               ]
         });
 

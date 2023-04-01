@@ -338,7 +338,7 @@ namespace RemaSoftware.WebApp.Controllers
             }
         }
         
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente+"," + Roles.Magazzino)]
         [HttpGet]
         public IActionResult StockSummary()
         {

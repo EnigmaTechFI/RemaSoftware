@@ -28,7 +28,7 @@ namespace RemaSoftware.Domain.Data
                 });
             }
             _context.SaveChanges();
-            string[] roleNames = { Roles.Admin, Roles.Dipendente, Roles.Cliente, Roles.Machine, Roles.COQ};
+            string[] roleNames = { Roles.Admin, Roles.Dipendente, Roles.Cliente, Roles.Machine, Roles.COQ, Roles.Magazzino};
             IdentityResult roleResult;
 
             foreach (var roleName in roleNames)
@@ -94,7 +94,20 @@ namespace RemaSoftware.Domain.Data
                 var addedRole = userManager.AddToRolesAsync(dip2,new [] { Roles.COQ }).Result;
             }
             
-            //TODO: CAMBIARE EMAIL ACCOUNT
+            var dip3 = userManager.FindByEmailAsync("iot.rema.pul@gmail.com").Result;
+            if (dip3 == null)
+            {
+                dip3 = new MyUser
+                {
+                    UserName = "Stock",
+                    Email = "iot.rema.pul@gmail.com"
+                };
+
+                IdentityResult result = userManager.CreateAsync(dip3, "RemaPul2022!").Result;
+                
+                var addedRole = userManager.AddToRolesAsync(dip3,new [] { Roles.Magazzino }).Result;
+            }
+            
         }
     }
 }

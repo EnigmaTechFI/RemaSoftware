@@ -24,11 +24,9 @@ public class Supplier
     public string Nation { get; set; }
     [MaxLength(5)]
     public string Nation_ISO { get; set; }
-    [MaxLength(50)]
     public string Email { get; set; }
     [MaxLength(50)]
     public string Pec { get; set; }
-    [MaxLength(15)]
     public string PhoneNumber { get; set; }
     [MaxLength(15)]
     public string Fax { get; set; }

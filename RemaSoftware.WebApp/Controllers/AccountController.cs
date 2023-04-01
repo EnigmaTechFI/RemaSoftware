@@ -62,6 +62,8 @@ namespace RemaSoftware.WebApp.Controllers
                     var roles = await _userManager.GetRolesAsync(user);
                     if(roles.Contains(Roles.Cliente))
                         return RedirectToAction("Index", "Guest");
+                    if(roles.Contains(Roles.Magazzino))
+                        return RedirectToAction("StockSummary", "Order");
                     if (roles.Contains(Roles.COQ))
                         return RedirectToAction("QualityControl", "Order");
                     if (roles.Contains(Roles.Dipendente))

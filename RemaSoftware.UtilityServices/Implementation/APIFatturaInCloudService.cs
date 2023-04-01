@@ -219,9 +219,7 @@ namespace RemaSoftware.UtilityServices.Implementation
             var suppliers = new List<Supplier>();
             try
             {
-                // Delete Issued Document
-                var result = apiInstance.ListSuppliers(companyId);
-                
+                var result = apiInstance.ListSuppliers(companyId, null, "detailed", null, 1, 100);
                 foreach (var item in result.Data)
                 {
                     suppliers.Add(new Supplier()
@@ -239,6 +237,30 @@ namespace RemaSoftware.UtilityServices.Implementation
                         P_Iva = item.TaxCode
                     });
                 }
+                
+                for (int i = 2; i < result.LastPage; i++)
+                {
+                    result = apiInstance.ListSuppliers(companyId, null, "detailed", null, i, 100);
+                    foreach (var item in result.Data)
+                    {
+                        suppliers.Add(new Supplier()
+                        {
+                            FC_SupplierID = item.Id.Value,
+                            Cap = item.AddressPostalCode,
+                            Street = item.AddressStreet,
+                            City = item.AddressCity,
+                            Pec = item.CertifiedEmail,
+                            Email = item.Email,
+                            PhoneNumber = item.Phone,
+                            Province = item.AddressProvince,
+                            Fax = item.Fax,
+                            Name = item.Name,
+                            P_Iva = item.TaxCode
+                        });
+                    }
+                }
+                
+                
             }
             catch (ApiException  e)
             {
