@@ -35,6 +35,8 @@ namespace RemaSoftware.Domain.Models
         [MaxLength(15)]
         public string SDI { get; set; }
         public int FC_ClientID { get; set; }
+        public int? Ddt_TemplateID { get; set; }
+        public Ddt_Template Ddt_Template { get; set; }
         public virtual ICollection<UserClient> UserClients { get; set; } 
         public virtual ICollection<Ddt_Out> DdtOuts { get; set; } 
     }

@@ -148,20 +148,20 @@ namespace RemaSoftware.UtilityServices.Implementation
                         description = item.Ddt_In.Description;
                         break;
                     case PiecesType.MANCANTI:
-                        description = item.Ddt_In.Description + " - " + item.TypePieces;
+                        description = item.TypePieces + "\n" + item.Ddt_In.Description;
                         break;
                     case PiecesType.SCARTI:
-                        description = item.Ddt_In.Description + " - " + item.TypePieces;
+                        description =  item.TypePieces+ "\n" + item.Ddt_In.Description;
                         break;
                     case PiecesType.PERSI:
-                        description = item.Ddt_In.Description + " - Mancanti";
+                        description =  "Mancanti\n" + item.Ddt_In.Description;
                         break;
                 }
                 products.Add(new IssuedDocumentItemsListItem()
                 {
                     ProductId = Int32.Parse(item.Ddt_In.FC_Ddt_In_ID),
                     Qty = item.NumberPieces,
-                    Name = item.Ddt_In.Product.Name,
+                    Name = item.Ddt_In.Product.SKU,
                     Code = item.Ddt_In.Code,
                     Description = description,
                     Stock = item.TypePieces != PiecesType.MANCANTI,
@@ -190,6 +190,11 @@ namespace RemaSoftware.UtilityServices.Implementation
                         TaxCode = ddtOut.Client.P_Iva
                     },
                     ItemsList = products,
+                    DeliveryNoteTemplate = new DocumentTemplate()
+                    {
+                        Name = ddtOut.Client.Ddt_Template.Name,
+                        Id = ddtOut.Client.Ddt_Template.FC_Template_ID
+                    }
                 }
             };
             try

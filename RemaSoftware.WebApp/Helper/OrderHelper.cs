@@ -463,6 +463,17 @@ namespace RemaSoftware.WebApp.Helper
         {
 
             var ddtOut = _orderService.GetDdtOutById(id);
+            foreach (var item in ddtOut.Ddt_Associations)
+            {
+                item.Ddt_In.Status = item.Ddt_In.Number_Piece_Now + item.Ddt_In.Number_Piece_ToSupplier == 0
+                    ? OrderStatusConstants.STATUS_DELIVERED
+                    : item.Ddt_In.Status;
+
+                item.Ddt_In.SubBatch.Status =
+                    item.Ddt_In.SubBatch.Ddts_In.All(s => s.Number_Piece_Now + s.Number_Piece_ToSupplier == 0)
+                        ? OrderStatusConstants.STATUS_DELIVERED
+                        : item.Ddt_In.SubBatch.Status;
+            }
             if (ddtOut.Ddt_Associations.Any(s => s.Ddt_In.PriceIsPending))
             {
                 var ddts = "";

@@ -25,6 +25,7 @@ namespace RemaSoftware.Domain.Data
         public DbSet<Supplier> Suppliers { get; set; }
         public DbSet<Ddt_Supplier> Ddt_Suppliers { get; set; }
         public DbSet<DDT_Supplier_Association> DdtSupplierAssociations { get; set; }
+        public DbSet<Ddt_Template> Ddt_Templates {get; set; }
 
         #region Required
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -32,6 +33,7 @@ namespace RemaSoftware.Domain.Data
             modelBuilder.Entity<UserClient>().HasKey(a => new { a.MyUserID, a.ClientID });
             modelBuilder.Entity<Ddt_In>().HasKey(a => a.Ddt_In_ID);
             modelBuilder.Entity<Ddt_Out>().HasKey(a => a.Ddt_Out_ID);
+            modelBuilder.Entity<Ddt_Template>().HasKey(a => a.Ddt_Template_ID);
             modelBuilder.Entity<Ddt_Supplier>().HasKey(a => a.Ddt_Supplier_ID);
             modelBuilder.Entity<Ddt_Association>().HasKey(s => s.ID );
             modelBuilder.Entity<Ddt_Association>().HasOne(a => a.Ddt_In).WithMany(a => a.Ddt_Associations).HasForeignKey(s => s.Ddt_In_ID).OnDelete(DeleteBehavior.NoAction);

@@ -196,7 +196,7 @@ namespace RemaSoftware.Domain.Services.Impl
                 .Include(b => b.SubBatch)
                 .ThenInclude(s => s.Batch)
                 .ThenInclude(b => b.BatchOperations)
-                .Where(s => s.Status == OrderStatusConstants.STATUS_COMPLETED)
+                .Where(s => s.Status == OrderStatusConstants.STATUS_COMPLETED || s.Status == OrderStatusConstants.STATUS_DELIVERED)
                 .ToList();
         }
 
@@ -259,11 +259,12 @@ namespace RemaSoftware.Domain.Services.Impl
                 .Include(s => s.Ddt_Associations)
                 .ThenInclude(s => s.Ddt_In)
                 .ThenInclude(s => s.SubBatch)
-                .ThenInclude(s => s.Batch)
+                .ThenInclude(s => s.Ddts_In)
                 .Include(s => s.Ddt_Associations)
                 .ThenInclude(s => s.Ddt_In)
                 .ThenInclude(s => s.Product)
                 .ThenInclude(s => s.Client)
+                .ThenInclude(s => s.Ddt_Template)
                 .SingleOrDefault(s => s.Ddt_Out_ID == id);
         }
 
@@ -332,7 +333,7 @@ namespace RemaSoftware.Domain.Services.Impl
                 .Include(b => b.SubBatch)
                 .ThenInclude(s => s.Batch)
                 .ThenInclude(b => b.BatchOperations)
-                .Where(s => s.Product.ClientID == clientId && s.Status == OrderStatusConstants.STATUS_COMPLETED)
+                .Where(s => s.Product.ClientID == clientId && (s.Status == OrderStatusConstants.STATUS_COMPLETED || s.Status == OrderStatusConstants.STATUS_DELIVERED))
                 .ToList();
         }
 
