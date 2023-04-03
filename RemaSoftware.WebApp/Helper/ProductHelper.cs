@@ -5,6 +5,7 @@ using RemaSoftware.WebApp.Models.ProductViewModel;
 using RemaSoftware.WebApp.Validation;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using RemaSoftware.UtilityServices.Interface;
 
@@ -64,6 +65,11 @@ namespace RemaSoftware.WebApp.Helper
 
         public async Task<Product> AddProduct(NewProductViewModel model)
         {
+            var products = _productService.GetAllProductSKU();
+            if (products.Contains(model.Product.SKU))
+            {
+                throw new Exception("Prodotto già registrato.");
+            }
             if (!string.IsNullOrEmpty(model.Photo))
             {
                 model.Product.FileName = await _imageService.SavingOrderImage(model.Photo);
