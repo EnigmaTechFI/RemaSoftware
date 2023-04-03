@@ -76,6 +76,16 @@
                     <label class="font-weight-bold" for="validationTooltip03">SDI</label>
                     <input asp-for="@Model.Client.SDI" type="text" class="form-control" id="validationTooltip03" placeholder="SDI">
                 </div>
+                <div class="col-md-4 mb-3">
+                    <label class="font-weight-bold" for="validationTooltip03">Seleziona modello DDT</label>
+                    <span asp-validation-for="Client.Ddt_TemplateID" class="text-danger"></span>
+                    <select asp-for="Client.Ddt_TemplateID" class="form-control">
+                    @foreach (var item in Model.Ddt_Templates)
+                    {
+                        <option value="@item.Ddt_Template_ID">@item.Name</option>
+                    }
+                    </select>
+                </div>
             </div>
             <button class="btn btn-primary" type="submit" onclick="clickEvent()">Salva</button>
         </form>
