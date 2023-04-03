@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using RemaSoftware.Domain.Models;
 
 namespace RemaSoftware.WebApp.Models.ClientViewModel
 {
@@ -32,5 +34,8 @@ namespace RemaSoftware.WebApp.Models.ClientViewModel
         public string SDI { get; set; }
         [MaxLength(50)]
         public string Pec { get; set; }
+        public int Ddt_TemplateID { get; set; }
+        [Required(ErrorMessage = "Questo campo è obbligatorio!")]
+        public List<Ddt_Template> Ddt_Templates { get; set; }
     }
 }

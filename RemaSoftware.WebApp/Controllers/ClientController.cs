@@ -48,7 +48,7 @@ namespace RemaSoftware.WebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> AddClient()
         {
-            return View();
+            return View(_clientHelper.GetAddClientViewModel());
         }
 
         [HttpPost]
@@ -68,6 +68,7 @@ namespace RemaSoftware.WebApp.Controllers
                 Logger.Error(ex, "Errore durante l'aggiunta del Cliente.");
                 _notyfToastService.Error("Errore durante la creazione del Cliente.");
             }
+            model.Ddt_Templates = _clientHelper.GetAddClientViewModel().Ddt_Templates;
             return View(model);
         }
         

@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Data;
 
@@ -25,7 +26,7 @@ namespace RemaSoftware.Domain.Services.Impl
 
         public Client GetClient(int id)
         {
-            var client = _dbContext.Clients.SingleOrDefault(i => i.ClientID == id);
+            var client = _dbContext.Clients.Include(s => s.Ddt_Template).SingleOrDefault(i => i.ClientID == id);
             return client;
         }
 
@@ -50,6 +51,11 @@ namespace RemaSoftware.Domain.Services.Impl
         public int GetClientIdByUserId(string id)
         {
             return _dbContext.UserClients.SingleOrDefault(s => s.MyUserID == id).ClientID;
+        }
+
+        public List<Ddt_Template> GetDdts_Templates()
+        {
+            return _dbContext.Ddt_Templates.ToList();
         }
     }
 }

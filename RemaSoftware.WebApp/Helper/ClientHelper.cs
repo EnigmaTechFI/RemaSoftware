@@ -54,7 +54,8 @@ public class ClientHelper
                 PhoneNumber = model.PhoneNumber,
                 Nation_ISO = "",
                 SDI = model.SDI,
-                Pec = model.Pec
+                Pec = model.Pec,
+                Ddt_TemplateID = model.Ddt_TemplateID
             };
 
 
@@ -72,6 +73,7 @@ public class ClientHelper
     {
         return new UpdateClientViewModel()
         {
+            Ddt_Templates = _clientService.GetDdts_Templates(),
             Client = _clientService.GetClient(id),
         };
     }
@@ -113,4 +115,11 @@ public class ClientHelper
         }
     }
 
+    public ClientViewModel GetAddClientViewModel()
+    {
+        return new ClientViewModel()
+        {
+            Ddt_Templates = _clientService.GetDdts_Templates()
+        };
+    }
 }
