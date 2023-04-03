@@ -140,13 +140,30 @@ namespace RemaSoftware.UtilityServices.Implementation
             var products = new List<IssuedDocumentItemsListItem>();
             foreach (var item in ddtOut.Ddt_Associations)
             {
+
+                var description = "";
+                switch (item.TypePieces)
+                {
+                    case PiecesType.BUONI:
+                        description = item.Ddt_In.Description;
+                        break;
+                    case PiecesType.MANCANTI:
+                        description = item.Ddt_In.Description + " - " + item.TypePieces;
+                        break;
+                    case PiecesType.SCARTI:
+                        description = item.Ddt_In.Description + " - " + item.TypePieces;
+                        break;
+                    case PiecesType.PERSI:
+                        description = item.Ddt_In.Description + " - Mancanti";
+                        break;
+                }
                 products.Add(new IssuedDocumentItemsListItem()
                 {
                     ProductId = Int32.Parse(item.Ddt_In.FC_Ddt_In_ID),
                     Qty = item.NumberPieces,
                     Name = item.Ddt_In.Product.Name,
                     Code = item.Ddt_In.Code,
-                    Description = item.TypePieces == PiecesType.BUONI ? item.Ddt_In.Description : item.Ddt_In.Description + " - " + item.TypePieces,
+                    Description = description,
                     Stock = item.TypePieces != PiecesType.MANCANTI,
                     NetPrice = item.TypePieces == PiecesType.BUONI || item.TypePieces == PiecesType.SCARTI ? item.Ddt_In.Price_Uni : 0,
                     Vat = new VatType()

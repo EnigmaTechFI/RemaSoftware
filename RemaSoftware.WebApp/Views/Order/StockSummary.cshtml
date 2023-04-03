@@ -15,7 +15,8 @@
                 <tr>
                     <th scope="col">Lotto</th>
                     <th scope="col">Cliente</th>
-                    <th scope="col">Prodotto</th>
+                    <th scope="col">Codice prodotto</th>
+                    <th scope="col">Nome prodotto</th>
                     <th scope="col">Pezzi nel lotto</th>
                     <th scope="col">DDT associate</th>
                     <th scope="col">Numero solleciti</th>
@@ -28,6 +29,7 @@
                         <td>@item.SubBatchID</td>
                         <td>@item.Ddts_In[0].Product.Client.Name</td>
                         <td>@item.Ddts_In[0].Product.SKU</td>
+                        <td>@item.Ddts_In[0].Product.Name</td>
                         <td>@item.Ddts_In.Sum(s => s.Number_Piece_Now)</td>
                         <td style="cursor: pointer" class="text-primary" onclick="showDDT(@item.SubBatchID)">Visualizza DDT associate</td>
                         <td>@item.Ddts_In.Count(s => s.IsPrompted)</td>
