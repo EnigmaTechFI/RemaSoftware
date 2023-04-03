@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using RemaSoftware.Domain.Models;
-using RemaSoftware.UtilityServices.Dtos;
 
 namespace RemaSoftware.UtilityServices.Interface
 {

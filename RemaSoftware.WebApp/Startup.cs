@@ -11,7 +11,6 @@ using AspNetCoreHero.ToastNotification;
 using AspNetCoreHero.ToastNotification.Extensions;
 using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.SignalR;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
 using RemaSoftware.Domain.Services.Impl;

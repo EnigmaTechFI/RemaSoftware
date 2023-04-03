@@ -8,7 +8,6 @@ using NLog;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.WebApp.Helper;
-using RemaSoftware.WebApp.Models.OrderViewModel;
 
 namespace RemaSoftware.WebApp.Controllers;
 [Authorize(Roles = Roles.Cliente)]

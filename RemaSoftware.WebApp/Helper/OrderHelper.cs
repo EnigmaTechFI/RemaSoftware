@@ -4,9 +4,6 @@ using RemaSoftware.Domain.Services;
 using RemaSoftware.Domain.Data;
 using RemaSoftware.WebApp.Models.OrderViewModel;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
 using System.Linq;
 using NLog;
 using QRCoder;
@@ -30,10 +27,11 @@ namespace RemaSoftware.WebApp.Helper
         private readonly IAPIFatturaInCloudService _apiFatturaInCloud;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly ISupplierService _supplierService;
+        private IClientService _clientService;
 
         public OrderHelper(IOrderService orderService, IAPIFatturaInCloudService apiFatturaInCloudService,
             ApplicationDbContext dbContext, IProductService productService, ISubBatchService subBatchService,
-            IOperationService operationService, IEmailService emailService, ProductionHub productionHub, IAPIFatturaInCloudService apiFatturaInCloud, ISupplierService supplierService)
+            IOperationService operationService, IEmailService emailService, ProductionHub productionHub, IAPIFatturaInCloudService apiFatturaInCloud, ISupplierService supplierService, IClientService clientService)
         {
             _orderService = orderService;
             _apiFatturaInCloudService = apiFatturaInCloudService;
@@ -45,6 +43,7 @@ namespace RemaSoftware.WebApp.Helper
             _productionHub = productionHub;
             _apiFatturaInCloud = apiFatturaInCloud;
             _supplierService = supplierService;
+            _clientService = clientService;
         }
 
         public Ddt_In GetDdtInById(int id)
@@ -83,6 +82,128 @@ namespace RemaSoftware.WebApp.Helper
         }
 
         public Ddt_In AddNewDdtIn(NewOrderViewModel model)
+        {
+            using (var transaction = _dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    var newSubbatch = false;
+                    var operationsSelected = model.OperationsSelected.Where(w => !w.StartsWith("0"))
+                        .Select(s => int.Parse(s.Split('-').First())).ToList();
+                    operationsSelected.Add(_operationService.GetOperationIdByName(OtherConstants.EXTRA));
+                    operationsSelected.Add(_operationService.GetOperationIdByName(OtherConstants.COQ));
+                    var batchOperationList = new List<BatchOperation>();
+                    var index = 0;
+                    foreach (var operation in operationsSelected)
+                    {
+                        batchOperationList.Add(new BatchOperation()
+                        {
+                            OperationID = operation,
+                            Ordering = index++
+                        });
+                    }
+
+                    var batch = _orderService.GetBatchByProductIdAndOperationList(model.Ddt_In.ProductID,
+                        operationsSelected);
+                    model.Ddt_In.FC_Ddt_In_ID = _apiFatturaInCloudService.AddDdtInCloud(model.Ddt_In,
+                        _productService.GetProductById(model.Ddt_In.ProductID).SKU);
+                    if (batch == null)
+                    {
+                        var ddtList = new List<Ddt_In>();
+                        ddtList.Add(model.Ddt_In);
+                        var subBatches = new List<SubBatch>();
+                        subBatches.Add(new SubBatch()
+                        {
+                            Ddts_In = ddtList,
+                            Status = OrderStatusConstants.STATUS_ARRIVED,
+                        });
+                        newSubbatch = true;
+                        _orderService.CreateBatch(new Batch()
+                        {
+                            SubBatches = subBatches,
+                            BatchOperations = batchOperationList
+                        });
+                    }
+                    else
+                    {
+                        var subBatchInStock = batch.SubBatches
+                            .Where(s => s.Status == OrderStatusConstants.STATUS_ARRIVED).SingleOrDefault();
+                        if (subBatchInStock != null)
+                        {
+                            subBatchInStock.Ddts_In.Add(model.Ddt_In);
+                            _subBatchService.UpdateSubBatch(subBatchInStock);
+                        }
+                        else
+                        {
+                            var ddts = new List<Ddt_In>();
+                            ddts.Add(model.Ddt_In);
+                            var subBatch = new SubBatch()
+                            {
+                                BatchID = batch.BatchId,
+                                Ddts_In = ddts,
+                                Status = OrderStatusConstants.STATUS_ARRIVED,
+                            };
+                            _subBatchService.CreateSubBatch(subBatch);
+                            newSubbatch = true;
+                        }
+                    }
+
+                    if (model.Ddt_In.NumberMissingPiece != 0)
+                    {
+                        var product = _productService.GetProductById(model.Ddt_In.ProductID);
+                        var associations = new List<Ddt_Association>();
+                        var ass = new Ddt_Association()
+                        {
+                            Date = DateTime.Now,
+                            Ddt_In_ID = model.Ddt_In.Ddt_In_ID,
+                            NumberPieces = model.Ddt_In.NumberMissingPiece,
+                            TypePieces = PiecesType.MANCANTI
+                        };
+                        var ddtOut = _orderService.GetDdtOutsByClientIdAndStatus(product.ClientID,
+                            DDTOutStatus.STATUS_PENDING);
+                        if (ddtOut.Count > 0)
+                        {
+                            ass.Ddt_Out_ID = ddtOut[0].Ddt_Out_ID;
+                            _orderService.CreateDDTAssociation(ass);
+                        }
+                        else
+                        {
+                            associations.Add(ass);
+                            _orderService.CreateNewDdtOut(new Ddt_Out()
+                            {
+                                ClientID = product.ClientID,
+                                Date = DateTime.Now,
+                                Status = DDTOutStatus.STATUS_PENDING,
+                                Ddt_Associations = associations
+                            });
+                        }
+                        try
+                        {
+                            _emailService.SendEmailMissingPieces(product.Client.Email, model.Ddt_In.NumberMissingPiece,
+                                model.Ddt_In.Number_Piece, model.Ddt_In.Code, product.Client.Name, product.SKU,
+                                product.Name);
+                        }
+                        catch (Exception e)
+                        {
+                        }
+                    }
+
+                    transaction.Commit();
+                    if(newSubbatch)
+                        _productionHub.NewSubBatchInStock();
+                    return model.Ddt_In;
+                }
+                catch (Exception e)
+                {
+                    if(model.Ddt_In.FC_Ddt_In_ID != "" && model.Ddt_In.FC_Ddt_In_ID != null)
+                        _apiFatturaInCloud.DeleteOrder(model.Ddt_In.FC_Ddt_In_ID);
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+        }
+        
+        public Ddt_In AddDuplicateDdtIn(DuplicateOrderViewModel model)
         {
             using (var transaction = _dbContext.Database.BeginTransaction())
             {
@@ -1071,6 +1192,25 @@ namespace RemaSoftware.WebApp.Helper
                     throw new Exception("Errore durante il ricarico.");
                 }
             }
+        }
+
+        public DuplicateOrderViewModel GetDuplicateOrderViewModelForDuplicate(int id)
+        {
+            var subBatch = _subBatchService.GetSubBatchById(id);
+            var op = new List<string>();
+            foreach (var item in subBatch.Batch.BatchOperations.Where(s => s.Operations.Name != OtherConstants.COQ && s.Operations.Name != OtherConstants.EXTRA).ToList())
+            {
+                op.Add($"{item.OperationID}-{item.Operations.Name}");
+            }
+            return new DuplicateOrderViewModel
+            {
+                Clients = _clientService.GetAllClients(),
+                Ddt_In = new Ddt_In()
+                {
+                    ProductID = subBatch.Ddts_In[0].ProductID,
+                },
+                OperationsSelected = op
+            };
         }
     }
 

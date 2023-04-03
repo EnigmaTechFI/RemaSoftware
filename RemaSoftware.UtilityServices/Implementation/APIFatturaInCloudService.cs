@@ -10,9 +10,7 @@ using Newtonsoft.Json;
 using NLog;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Models;
-using RemaSoftware.UtilityServices.Dtos;
 using RemaSoftware.UtilityServices.Interface;
-using UtilityServices.Dtos;
 using Supplier = RemaSoftware.Domain.Models.Supplier;
 
 namespace RemaSoftware.UtilityServices.Implementation

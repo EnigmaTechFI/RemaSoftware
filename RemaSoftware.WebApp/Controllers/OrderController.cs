@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
@@ -9,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NLog;
 using Microsoft.Extensions.Configuration;
-using NLog.Fluent;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
@@ -474,6 +472,46 @@ namespace RemaSoftware.WebApp.Controllers
             
         }
         
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpGet]
+        public IActionResult DuplicateOrder(int id)
+        {
+            try
+            {
+                return View(_orderHelper.GetDuplicateOrderViewModelForDuplicate(id));
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                _notyfService.Error(e.Message);
+                return RedirectToAction("OrderSummary");
+            }
+        }
+        
+        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpPost]
+        public IActionResult DuplicateOrder(DuplicateOrderViewModel model)
+        {
+            try
+            {
+                var validationResult = _orderValidation.ValidateDuplicateOrderViewModelAndSetDefaultData(model);
+                if (validationResult != "")
+                {
+                    _notyfService.Error(validationResult);
+                    return View(model);
+                }
+                var result = _orderHelper.AddDuplicateDdtIn(model);
+                _notyfService.Success("Commessa registrata correttamente");
+                return RedirectToAction("OrderSummary", "Order", new{subBatchId = result.SubBatchID});
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                _notyfService.Error("Errore durante la creazione dell'ordine.");
+                return View(model);
+            }
+        }
 
         #region Models validation
 
