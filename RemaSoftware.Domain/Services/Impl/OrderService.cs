@@ -429,5 +429,11 @@ namespace RemaSoftware.Domain.Services.Impl
             _dbContext.Ddts_In.UpdateRange(ddts);
             _dbContext.SaveChanges();
         }
+
+        public void DeleteDDTAssociations(List<Ddt_Association> ddtDdtAssociations)
+        {
+            _dbContext.RemoveRange(ddtDdtAssociations);
+            _dbContext.SaveChanges();
+        }
     }
 }

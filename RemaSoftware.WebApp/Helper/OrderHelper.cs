@@ -804,6 +804,8 @@ namespace RemaSoftware.WebApp.Helper
                 try
                 {
                     var ddt = _orderService.GetDdtInById(ddtId);
+                    if(ddt.Ddt_Associations != null && ddt.Ddt_Associations.Count > 0)
+                        _orderService.DeleteDDTAssociations(ddt.Ddt_Associations);
                     _orderService.DeleteDDT(ddt);
                     if (ddt.SubBatch.Ddts_In.Count == 0)
                         _orderService.DeleteSubBatch(ddt.SubBatch);
