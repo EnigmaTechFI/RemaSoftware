@@ -326,7 +326,7 @@ namespace RemaSoftware.WebApp.Controllers
         {
             try
             {
-                return RedirectToAction("BatchInDelivery", new {pdfUrl = _orderHelper.EditPartialDdtIn(model)});
+                return RedirectToAction("BatchInDelivery", new {pdfUrl = _orderHelper.EmitPartialDdtIn(model)});
             }
             catch (Exception e)
             {

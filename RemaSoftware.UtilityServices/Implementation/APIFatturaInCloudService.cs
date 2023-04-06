@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using It.FattureInCloud.Sdk.Api;
 using It.FattureInCloud.Sdk.Client;
@@ -155,22 +156,32 @@ namespace RemaSoftware.UtilityServices.Implementation
                         description =  "Mancanti\n" + item.Ddt_In.Description;
                         break;
                 }
-                products.Add(new IssuedDocumentItemsListItem()
+
+                var p = products.SingleOrDefault(s => s.Code == item.Ddt_In.Code && s.Description == description);
+                if (p != null)
                 {
-                    ProductId = Int32.Parse(item.Ddt_In.FC_Ddt_In_ID),
-                    Qty = item.NumberPieces,
-                    Name = item.Ddt_In.Product.SKU,
-                    Code = item.Ddt_In.Code,
-                    Description = description,
-                    Stock = item.TypePieces != PiecesType.MANCANTI,
-                    NetPrice = item.TypePieces == PiecesType.BUONI || item.TypePieces == PiecesType.SCARTI ? item.Ddt_In.Price_Uni : 0,
-                    Vat = new VatType()
-                    {
-                        Id = 0,
-                        Value = 22
-                    }
+                    p.Qty += item.NumberPieces;
+                }
+                else
+                {
                     
-                });
+                    products.Add(new IssuedDocumentItemsListItem()
+                    {
+                        ProductId = Int32.Parse(item.Ddt_In.FC_Ddt_In_ID),
+                        Qty = item.NumberPieces,
+                        Name = item.Ddt_In.Product.SKU,
+                        Code = item.Ddt_In.Code,
+                        Description = description,
+                        Stock = item.TypePieces != PiecesType.MANCANTI,
+                        NetPrice = item.TypePieces == PiecesType.BUONI || item.TypePieces == PiecesType.SCARTI ? item.Ddt_In.Price_Uni : 0,
+                        Vat = new VatType()
+                        {
+                            Id = 0,
+                            Value = 22
+                        }
+                    
+                    });
+                }
             }
             var createIssuedDocumentRequest = new CreateIssuedDocumentRequest()
             {

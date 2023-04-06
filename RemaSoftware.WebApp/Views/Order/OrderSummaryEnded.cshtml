@@ -25,7 +25,8 @@
                         <th>Prz. Unitario</th>
                         <th>Arrivo ordine</th>
                         <th>Chiusura ordine</th>
-                        <th>Status</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Azioni</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -56,6 +57,8 @@
                                     <i class="fas fa-circle fa-lg" style="color: @statusDto?.StatusCssClass" title="@statusDto?.StatusDescription"></i>
                                 }
                             }
+                        </td>
+                        <td class="text-center">
                             <a style="text-decoration: none" asp-controller="Order" asp-action="SubBatchMonitoring" asp-route-id="@ddt.SubBatchID">
                                 <i class="fas fa-eye fa-lg pl-2" title="Visualizza avanzamento" style="cursor: pointer; color: #6d767e"></i>
                             </a>
@@ -130,6 +133,7 @@
                 { "searchable": false, "orderable": true, "targets": 6 },
                 { "searchable": false, "orderable": true, "targets": 7 },
                 { "searchable": false, "orderable": false, "targets": 8 },
+                { "searchable": false, "orderable": false, "targets": 9 },
               ]
         });
 
