@@ -172,7 +172,7 @@ namespace RemaSoftware.UtilityServices.Implementation
                         Name = item.Ddt_In.Product.SKU,
                         Code = item.Ddt_In.Code,
                         Description = description,
-                        Stock = item.TypePieces != PiecesType.MANCANTI,
+                        Stock = true,
                         NetPrice = item.TypePieces == PiecesType.BUONI || item.TypePieces == PiecesType.SCARTI ? item.Ddt_In.Price_Uni : 0,
                         Vat = new VatType()
                         {

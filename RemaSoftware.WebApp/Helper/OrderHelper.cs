@@ -617,41 +617,15 @@ namespace RemaSoftware.WebApp.Helper
                 {
                     var ddt = _orderService.GetDdtInById(model.Ddt_In.Ddt_In_ID);
                     ddt.Code = model.Ddt_In.Code;
-                    ddt.Number_Piece_Now = model.Ddt_In.Number_Piece;
+                    ddt.Number_Piece_Now = model.Ddt_In.Number_Piece_Now;
                     ddt.Number_Piece = model.Ddt_In.Number_Piece;
                     if (model.Ddt_In.NumberMissingPiece > 0 &&
                         ddt.NumberMissingPiece != model.Ddt_In.NumberMissingPiece)
                     {
                         var product = ddt.Product;
-                        var associations = ddt.Ddt_Associations?? new List<Ddt_Association>();
-                        var ass = new Ddt_Association()
-                        {
-                            Date = DateTime.Now,
-                            Ddt_In_ID = model.Ddt_In.Ddt_In_ID,
-                            NumberPieces = model.Ddt_In.NumberMissingPiece - ddt.NumberMissingPiece,
-                            TypePieces = PiecesType.MANCANTI
-                        };
-                        var ddtOut = _orderService.GetDdtOutsByClientIdAndStatus(product.ClientID,
-                            DDTOutStatus.STATUS_PENDING);
-                        if (ddtOut.Count > 0)
-                        {
-                            ass.Ddt_Out_ID = ddtOut[0].Ddt_Out_ID;
-                            _orderService.CreateDDTAssociation(ass);
-                        }
-                        else
-                        {
-                            associations.Add(ass);
-                            _orderService.CreateNewDdtOut(new Ddt_Out()
-                            {
-                                ClientID = product.ClientID,
-                                Date = DateTime.Now,
-                                Status = DDTOutStatus.STATUS_PENDING,
-                                Ddt_Associations = associations
-                            });
-                        }
                         try
                         {
-                            _emailService.SendEmailMissingPieces(product.Client.Email, ass.NumberPieces,
+                            _emailService.SendEmailMissingPieces(product.Client.Email,  model.Ddt_In.NumberMissingPiece - ddt.NumberMissingPiece,
                                 model.Ddt_In.Number_Piece, model.Ddt_In.Code, product.Client.Name, product.SKU,
                                 product.Name);
                         }

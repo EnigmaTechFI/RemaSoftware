@@ -135,7 +135,6 @@ namespace RemaSoftware.WebApp.Controllers
             {
                 Price = ddt.Price_Uni.ToString("0.00").Replace(".", ","),
                 Ddt_In = ddt,
-                Date = ddt.DataOut.ToString("dd/MM/YYYY")
             };
             return View(vm);
         }
@@ -145,7 +144,6 @@ namespace RemaSoftware.WebApp.Controllers
         public IActionResult EditOrder(NewOrderViewModel model)
         {
             try {
-                model.Ddt_In.DataOut = DateTime.Parse(model.Date, new CultureInfo("it-IT"));
                 var validationResult = _orderValidation.ValidateEditOrderViewModelAndSetDefaultData(model);
                 if (validationResult != "")
                 {

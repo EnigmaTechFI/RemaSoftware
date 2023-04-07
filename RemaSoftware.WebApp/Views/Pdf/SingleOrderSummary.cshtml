@@ -95,8 +95,8 @@
                             <td width="40%">@Model.SubBatch.Ddts_In[0].DataOut.ToString("dd/MM/yyyy")</td>
                         </tr>
                         <tr>
-                            <td width="60%"><b>Numero di pezzi richiesti: </b></td>
-                            <td width="40%">@Model.SubBatch.Ddts_In.Sum(s => s.Number_Piece)</td>
+                            <td width="60%"><b>Numero di pezzi da lavorare: </b></td>
+                            <td width="40%">@Model.SubBatch.Ddts_In.Sum(s => s.Number_Piece_Now)</td>
                         </tr>
                         <tr>
                             <td width="60%"><b>Operazioni richiste sull'ordine:</b></td>

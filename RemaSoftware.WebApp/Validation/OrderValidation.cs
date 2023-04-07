@@ -11,7 +11,7 @@ namespace RemaSoftware.WebApp.Validation
             model.Ddt_In.DataOut = DateTime.Parse(model.Date, new CultureInfo("it-IT"));
             model.Ddt_In.Status = "A";
             model.Ddt_In.DataIn = DateTime.Now;
-            model.Ddt_In.Number_Piece_Now = model.Ddt_In.Number_Piece;
+            model.Ddt_In.Number_Piece_Now = model.Ddt_In.Number_Piece - model.Ddt_In.NumberMissingPiece;
             try
             {
                 model.Ddt_In.Price_Uni = model.Ddt_In.IsReso ? 0 : Decimal.Parse(model.Price, new CultureInfo("it-IT")); 
@@ -41,7 +41,7 @@ namespace RemaSoftware.WebApp.Validation
             model.Ddt_In.DataOut = DateTime.Parse(model.Date, new CultureInfo("it-IT"));
             model.Ddt_In.Status = "A";
             model.Ddt_In.DataIn = DateTime.Now;
-            model.Ddt_In.Number_Piece_Now = model.Ddt_In.Number_Piece;
+            model.Ddt_In.Number_Piece_Now = model.Ddt_In.Number_Piece - model.Ddt_In.NumberMissingPiece;
             try
             {
                 model.Ddt_In.Price_Uni = model.Ddt_In.IsReso ? 0 : Decimal.Parse(model.Price, new CultureInfo("it-IT")); 
@@ -68,8 +68,7 @@ namespace RemaSoftware.WebApp.Validation
         
         public string ValidateEditOrderViewModelAndSetDefaultData(NewOrderViewModel model)
         {
-            model.Ddt_In.DataOut = DateTime.Parse(model.Date, new CultureInfo("it-IT"));
-            model.Ddt_In.Number_Piece_Now = model.Ddt_In.Number_Piece;
+            model.Ddt_In.Number_Piece_Now = model.Ddt_In.Number_Piece - model.Ddt_In.NumberMissingPiece;
             try
             {
                 model.Ddt_In.Price_Uni = model.Ddt_In.IsReso ? 0 : Decimal.Parse(model.Price, new CultureInfo("it-IT")); 
@@ -88,8 +87,6 @@ namespace RemaSoftware.WebApp.Validation
                 return "Inserire descrizione DDT.";
             if ((model.Ddt_In.Price_Uni < default(decimal) || model.Ddt_In.Price_Uni == null) && !model.Ddt_In.IsReso)
                 return "Prezzo unitario mancante.";
-            if (model.Ddt_In.DataOut.Date < DateTime.Now.Date)
-                return "Data di scadenza non valida.";
             return "";
         }
 
