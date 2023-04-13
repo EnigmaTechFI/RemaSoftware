@@ -31,9 +31,23 @@ namespace RemaSoftware.WebApp.Helper
 
         public ProductionAnalysisLiveViewModel GetProductionAnalysisLiveViewModel()
         {
+            var op = _subBatchService.GetOperationTimelinesByStatus(OperationTimelineConstant.STATUS_WORKING);
+            var productionLiveDtos = new List<ProductionLiveDto>();
+            foreach (var item in op.Where(s => s.MachineId.HasValue).ToList())
+            {
+                productionLiveDtos.Add(new ProductionLiveDto()
+                {
+                    Client = item.SubBatch.Ddts_In[0].Product.Client.Name,
+                    OperationTimelineId = item.OperationTimelineID,
+                    MachineId = item.MachineId.Value,
+                    Operation = item.BatchOperation.Operations.Name,
+                    SubBatchId = item.SubBatchID,
+                    Time = (int)(item.EndDate - item.StartDate).TotalSeconds
+                });
+            }
             return new ProductionAnalysisLiveViewModel()
             {
-                OperationTimeLines = _subBatchService.GetOperationTimelinesByStatus(OperationTimelineConstant.STATUS_WORKING)
+                 ProductionLiveDtos = productionLiveDtos
             };
         }
         public AccountingViewModel GetAccountingViewModel()

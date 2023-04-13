@@ -31,7 +31,7 @@ function getTime(seconds, id){
   @{
     for (int i = 1; i < 17; i++)
     {
-      var op = Model.OperationTimeLines.Where(s => s.MachineId == i).ToList();
+      var op = Model.ProductionLiveDtos.Where(s => s.MachineId == i).ToList();
       <div class="col-xl-4 col-md-6 mb-4">
         @{
           var css = "";
@@ -61,16 +61,16 @@ function getTime(seconds, id){
                     <script>
                       countOperator[@i] = @index
                     </script>
-                    <div id="operation-timeline-@item.OperationTimelineID">
+                    <div id="operation-timeline-@item.OperationTimelineId">
                       <span id="macchina-@i-operatore-@index"><strong>OPERATORE @index:</strong></span><br/>
-                      <span><i>- Lotto: </i>@item.SubBatchID</span><br/>
-                      <span><i>- Cliente: </i>@item.SubBatch.Ddts_In[0].Product.Client.Name</span><br/>
-                      <span><i>- Operazione: </i>@item.BatchOperation.Operations.Name</span><br/>
-                      @{ var time = (int)(DateTime.Now - item.StartDate).TotalSeconds; }
-                      <span id="time-@item.OperationTimelineID"></span><br/>
+                      <span><i>- Lotto: </i>@item.SubBatchId</span><br/>
+                      <span><i>- Cliente: </i>@item.Client</span><br/>
+                      <span><i>- Operazione: </i>@item.Operation</span><br/>
+                      @{ var time = item.Time; }
+                      <span id="time-@item.OperationTimelineId"></span><br/>
                       <hr/>
                       <script>
-                        getTime('@time', '@item.OperationTimelineID')
+                        getTime('@time', '@item.OperationTimelineId')
                       </script>
                     </div>
                   }
@@ -252,7 +252,7 @@ function getTime(seconds, id){
       containerId: "planimetry",
     });
     
-    var opTimeline = @Json.Serialize(Model.OperationTimeLines.Where(s => s.MachineId.HasValue).ToList())
+    var opTimeline = @Json.Serialize(Model.ProductionLiveDtos)
     let allMachine = [];
     const macchina1 = [
           {
@@ -893,8 +893,8 @@ function getTime(seconds, id){
            function(data){ 
               if (data[0].id == operation.machineId){
                 data[0].number_operators++; 
-                data[0].sub_batch = operation.subBatchID; 
-                data[0].operation = operation.batchOperation.operations.name; 
+                data[0].sub_batch = operation.subBatchId; 
+                data[0].operation = operation.operation; 
               }
            }
        );
