@@ -127,8 +127,8 @@ namespace RemaSoftware.WebApp.Helper
                     else
                     {
                         var subBatchInStock = batch.SubBatches
-                            .Where(s => s.Status == OrderStatusConstants.STATUS_ARRIVED).SingleOrDefault();
-                        if (subBatchInStock != null)
+                            .Where(s => s.Status == OrderStatusConstants.STATUS_ARRIVED).OrderByDescending(s => s.SubBatchID).FirstOrDefault();
+                        if (subBatchInStock != null && !model.NewSubBatch)
                         {
                             subBatchInStock.Ddts_In.Add(model.Ddt_In);
                             _subBatchService.UpdateSubBatch(subBatchInStock);
@@ -223,8 +223,8 @@ namespace RemaSoftware.WebApp.Helper
                     else
                     {
                         var subBatchInStock = batch.SubBatches
-                            .Where(s => s.Status == OrderStatusConstants.STATUS_ARRIVED).SingleOrDefault();
-                        if (subBatchInStock != null)
+                            .Where(s => s.Status == OrderStatusConstants.STATUS_ARRIVED).OrderByDescending(s => s.SubBatchID).FirstOrDefault();
+                        if (subBatchInStock != null && !model.NewSubBatch)
                         {
                             subBatchInStock.Ddts_In.Add(model.Ddt_In);
                             _subBatchService.UpdateSubBatch(subBatchInStock);

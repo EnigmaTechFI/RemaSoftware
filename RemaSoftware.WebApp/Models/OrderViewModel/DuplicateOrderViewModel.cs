@@ -13,4 +13,5 @@ public class DuplicateOrderViewModel
     public List<SelectListItem> Operations { get; set; }
     public List<string> OperationsSelected { get; set; }
     public List<Product> Products { get; set; }
+    public bool NewSubBatch { get; set; }
 }

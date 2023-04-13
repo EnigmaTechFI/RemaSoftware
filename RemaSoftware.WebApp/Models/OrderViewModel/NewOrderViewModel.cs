@@ -6,6 +6,7 @@ namespace RemaSoftware.WebApp.Models.OrderViewModel
 {
     public class NewOrderViewModel
     {
+        public bool NewSubBatch { get; set; }
         public List<Client> Clients { get; set; }
         public Ddt_In Ddt_In { get; set; }
         public string Date { get; set; }
