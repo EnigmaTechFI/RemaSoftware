@@ -54,8 +54,7 @@ public class SubBatchController : ControllerBase
     {
         try
         {
-            _batchHelper.EndOperationOnSubBatch(operationTimelineId);
-            return new JsonResult(new {Data = "SUCCESS", Error = ""});
+            return new JsonResult(new {Data= "SUCCESS", Time = _batchHelper.EndOperationOnSubBatch(operationTimelineId), Error = ""});
         }
         catch (Exception e)
         {
@@ -70,8 +69,7 @@ public class SubBatchController : ControllerBase
     {
         try
         {
-            _batchHelper.PauseOperationOnSubBatch(operationTimelineId);
-            return new JsonResult(new {Data = "SUCCESS", Error = ""});
+            return new JsonResult(new {Data ="SUCCESS", Time = _batchHelper.PauseOperationOnSubBatch(operationTimelineId), Error = ""});
         }
         catch (Exception e)
         {

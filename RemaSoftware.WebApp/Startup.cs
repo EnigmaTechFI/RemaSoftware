@@ -121,6 +121,7 @@ namespace RemaSoftware.WebApp
             services.AddTransient<IClientService, ClientService>();
             services.AddTransient<IWarehouseStockService, WarehouseStockService>();
             services.AddTransient<ISupplierService, SupplierService>();
+            services.AddTransient<IUtilityService, UtilityService>();
             
             services.AddTransient<PdfHelper>();
             services.AddTransient<SupplierHelper>();
