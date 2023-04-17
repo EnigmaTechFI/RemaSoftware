@@ -90,7 +90,7 @@ public class SubBatchService : ISubBatchService
                 }
 
                 _dbContext.OperationTimelines.AddRange(op);
-                sb.Ddts_In.ForEach(s => s.Status = OrderStatusConstants.STATUS_WORKING);
+                sb.Ddts_In.Where(s => s.Status == OrderStatusConstants.STATUS_ARRIVED).ToList().ForEach(s => s.Status = OrderStatusConstants.STATUS_WORKING);
 
                 _dbContext.Update(sb);
                 _dbContext.SaveChanges();
