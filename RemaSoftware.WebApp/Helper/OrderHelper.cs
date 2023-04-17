@@ -429,6 +429,7 @@ namespace RemaSoftware.WebApp.Helper
                             if (item.Number_Piece_Now >= dto.LostPieces)
                             {
                                 item.Number_Piece_Now -= dto.LostPieces;
+                                item.Status = OrderStatusConstants.STATUS_PARTIALLY_COMPLETED;
                                 item.Ddt_Associations.Add(new Ddt_Association()
                                 {
                                     Date = now,
@@ -450,6 +451,7 @@ namespace RemaSoftware.WebApp.Helper
                                     NumberPieces = item.Number_Piece_Now,
                                     TypePieces = PiecesType.PERSI
                                 });
+                                item.Status = OrderStatusConstants.STATUS_COMPLETED;
                                 item.Number_Piece_Now = 0;
                             }
                         }
@@ -459,6 +461,7 @@ namespace RemaSoftware.WebApp.Helper
                             if (item.Number_Piece_Now >= dto.WastePieces)
                             {
                                 item.Number_Piece_Now -= dto.WastePieces;
+                                item.Status = OrderStatusConstants.STATUS_PARTIALLY_COMPLETED;
                                 item.Ddt_Associations.Add(new Ddt_Association()
                                 {
                                     Date = now,
@@ -472,6 +475,7 @@ namespace RemaSoftware.WebApp.Helper
                             else if(item.Number_Piece_Now > 0)
                             {
                                 dto.WastePieces -= item.Number_Piece_Now;
+                                item.Status = OrderStatusConstants.STATUS_COMPLETED;
                                 item.Ddt_Associations.Add(new Ddt_Association()
                                 {
                                     Date = now,
@@ -485,7 +489,7 @@ namespace RemaSoftware.WebApp.Helper
                         }
                     }
 
-                    if (subBatch.Ddts_In.All(s => s.Number_Piece_Now == 0))
+                    if (subBatch.Ddts_In.All(s => s.Number_Piece_Now + s.Number_Piece_ToSupplier == 0))
                     {
                         subBatch.Status = OrderStatusConstants.STATUS_COMPLETED;
                         foreach (var item in subBatch.OperationTimelines
@@ -887,7 +891,7 @@ namespace RemaSoftware.WebApp.Helper
                         {
                             item.Number_Piece_Now -= totalPieces;
                             item.Number_Piece_ToSupplier += totalPieces;
-                            item.Status = OrderStatusConstants.STATUS_WORKING;
+                            item.Status = item.Status == OrderStatusConstants.STATUS_ARRIVED ? OrderStatusConstants.STATUS_WORKING : item.Status;
                             _orderService.UpdateDDtIn(item);
                             ddtSupplierAssociations.Add(new DDT_Supplier_Association()
                             {
@@ -910,7 +914,7 @@ namespace RemaSoftware.WebApp.Helper
                                     NumberPieces = item.Number_Piece_Now
                                 });
                                 item.Number_Piece_Now = 0;
-                                item.Status = OrderStatusConstants.STATUS_WORKING;
+                                item.Status = item.Status == OrderStatusConstants.STATUS_ARRIVED ? OrderStatusConstants.STATUS_WORKING : item.Status;
                                 _orderService.UpdateDDtIn(item);
                                 if (totalPieces <= 0)
                                     break;
