@@ -33,6 +33,7 @@ namespace RemaSoftware.WebApp.Helper
         {
             var op = _subBatchService.GetOperationTimelinesByStatus(OperationTimelineConstant.STATUS_WORKING);
             var productionLiveDtos = new List<ProductionLiveDto>();
+            var now = DateTime.Now;
             foreach (var item in op.Where(s => s.MachineId.HasValue).ToList())
             {
                 productionLiveDtos.Add(new ProductionLiveDto()
@@ -42,7 +43,7 @@ namespace RemaSoftware.WebApp.Helper
                     MachineId = item.MachineId.Value,
                     Operation = item.BatchOperation.Operations.Name,
                     SubBatchId = item.SubBatchID,
-                    Time = (int)(item.EndDate - item.StartDate).TotalSeconds
+                    Time = (int)(now - item.StartDate).TotalSeconds
                 });
             }
             return new ProductionAnalysisLiveViewModel()
