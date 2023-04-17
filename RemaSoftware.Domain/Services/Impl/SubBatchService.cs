@@ -114,6 +114,14 @@ public class SubBatchService : ISubBatchService
             .SingleOrDefault(s => s.OperationTimelineID == operationTimelineId);
         if (op.Status == OperationTimelineConstant.STATUS_COMPLETED)
             return op;
+        
+        if (op.Status == OperationTimelineConstant.STATUS_PAUSE)
+        {
+            _dbContext.OperationTimelines.Update(op);
+            _dbContext.SaveChanges();
+            return op;
+        }
+            
         if (op != null)
         {
             var controlTime = end.DayOfYear - op.StartDate.DayOfYear;
