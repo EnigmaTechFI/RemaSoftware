@@ -23,6 +23,7 @@
                     <th>Cliente</th>
                     <th>DDT</th>
                     <th>SKU</th>
+                    <th>Nome Prodotto</th>
                     <th>N° pezzi</th>
                     <th>N° pezzi attuali</th>
                     <th>N° pezzi da fornitori</th>
@@ -40,6 +41,7 @@
                         <td>@ddt.Product.Client.Name</td>
                         <td>@ddt.Code</td>
                         <td>@ddt.Product.SKU</td>
+                        <td>@ddt.Product.Name</td>
                         <td id="pieces-number-@ddt.Ddt_In_ID">@ddt.Number_Piece</td>
                         <td id="pieces-number-now-@ddt.Ddt_In_ID">@ddt.Number_Piece_Now</td>
                         <td id="pieces-number-now-@ddt.Ddt_In_ID">@ddt.Number_Piece_ToSupplier</td>
@@ -244,14 +246,15 @@
                 { "searchable": true, "orderable": true, "targets": 0 },
                 { "searchable": true, "orderable": true, "targets": 1 },
                 { "searchable": true, "orderable": true, "targets": 2 },
-                { "searchable": false, "orderable": false, "targets": 3 },
+                { "searchable": true, "orderable": true, "targets": 3 },
                 { "searchable": false, "orderable": false, "targets": 4 },
                 { "searchable": false, "orderable": false, "targets": 5 },
                 { "searchable": false, "orderable": false, "targets": 6 },
-                { "searchable": false, "orderable": true, "targets": 7 },
+                { "searchable": false, "orderable": false, "targets": 7 },
                 { "searchable": false, "orderable": true, "targets": 8 },
-                { "searchable": false, "orderable": false, "targets": 9 },
+                { "searchable": false, "orderable": true, "targets": 9 },
                 { "searchable": false, "orderable": false, "targets": 10 },
+                { "searchable": false, "orderable": false, "targets": 11 },
               ]
         });
 

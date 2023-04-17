@@ -20,6 +20,7 @@
                         <th>Cliente</th>
                         <th>DDT</th>
                         <th>SKU</th>
+                        <th>Nome prodotto</th>
                         <th>N° pezzi</th>
                         <th>N° pezzi attuali</th>
                         <th>Prz. Unitario</th>
@@ -36,6 +37,7 @@
                         <td>@ddt.Product.Client.Name</td>
                         <td>@ddt.Code</td>
                         <td>@ddt.Product.SKU</td>
+                        <td>@ddt.Product.Name</td>
                         <td>@ddt.Number_Piece</td>
                         <td>@ddt.Number_Piece_Now</td>
                         <td>&euro;@ddt.Price_Uni.ToString("0.00")</td>
@@ -127,13 +129,14 @@
                 { "searchable": true, "orderable": true, "targets": 0 },
                 { "searchable": true, "orderable": true, "targets": 1 },
                 { "searchable": true, "orderable": true, "targets": 2 },
-                { "searchable": false, "orderable": false, "targets": 3 },
+                { "searchable": true, "orderable": true, "targets": 3 },
                 { "searchable": false, "orderable": false, "targets": 4 },
                 { "searchable": false, "orderable": false, "targets": 5 },
-                { "searchable": false, "orderable": true, "targets": 6 },
+                { "searchable": false, "orderable": false, "targets": 6 },
                 { "searchable": false, "orderable": true, "targets": 7 },
-                { "searchable": false, "orderable": false, "targets": 8 },
+                { "searchable": false, "orderable": true, "targets": 8 },
                 { "searchable": false, "orderable": false, "targets": 9 },
+                { "searchable": false, "orderable": false, "targets": 10 },
               ]
         });
 
