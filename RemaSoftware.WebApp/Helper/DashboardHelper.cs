@@ -72,7 +72,7 @@ namespace RemaSoftware.WebApp.Helper
             var articlesInStock = _dbContext.Warehouse_Stocks
                 .Where(w => w.Number_Piece > 0)
                 .ToList()
-                .GroupBy(gb=> new{gb.Name, gb.Brand, gb.Size})
+                .GroupBy(gb=> new{gb.Name})
                 .Select(s=>s.First()).ToList();
             
             return articlesInStock;

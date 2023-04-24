@@ -1,61 +1,54 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
 using RemaSoftware.WebApp.DTOs;
+using RemaSoftware.WebApp.Models.ProductViewModel;
 using RemaSoftware.WebApp.Models.StockViewModel;
 
 namespace RemaSoftware.WebApp.Helper;
 
 public class StockHelper
 {
-    private readonly IWarehouseStockService _warehouseService;
+    private readonly IWarehouseStockService _warehouseStockService;
 
-    public StockHelper(IWarehouseStockService warehouseService)
+    public StockHelper(IWarehouseStockService warehouseStockService)
     {
-        _warehouseService = warehouseService;
+        _warehouseStockService = warehouseStockService;
     }
 
+    public List<Warehouse_Stock> GetAllStocks()
+    {
+        try
+        {
+            return _warehouseStockService.GetAllWarehouseStocks();
+                
+        }
+        catch (Exception ex)
+        {
+            throw new Exception();
+        }
+
+    }
+    
     public StockListViewModel GetStockListViewModel()
     {
-        var stocks = _warehouseService.GetAllWarehouseStocks();
-        
         return new StockListViewModel
         {
-            WarehouseStocks = stocks.Select(s=>new StockViewModel
-            {
-                StockArticleId = s.Warehouse_StockID,
-                Name = s.Name,
-                Brand = s.Brand,
-                Size = s.Size,
-                Price_Uni = s.Price_Uni,
-                Number_Piece = s.Number_Piece
-            }).ToList()
+            WarehouseStocks = GetAllStocks()
         };
     }
-
-    public void AddStockProduct(StockViewModel model)
+    
+    public async Task<Warehouse_Stock> AddStockProduct(NewStockViewModel model)
     {
-        model.Size = string.IsNullOrEmpty(model.Size)
-            ? "Unica"
-            : model.Size;
-        _warehouseService.AddOrUpdateWarehouseStock(new Warehouse_Stock
-        {
-            Name = model.Name,
-            Brand = model.Brand,
-            Size = model.Size,
-            Number_Piece = model.Number_Piece,
-            Price_Uni = model.Price_Uni
-        });
-    }
-
-    public void EditStockArticle(Warehouse_Stock model)
-    {
-        _warehouseService.AddOrUpdateWarehouseStock(model);
+        return _warehouseStockService.AddStockProduct(model.WarehouseStock);
     }
 
     public void DeleteStockArticle(int stockArticleId)
     {
-        _warehouseService.DeleteWarehouseStockById(stockArticleId);
+        _warehouseStockService.DeleteWarehouseStockById(stockArticleId);
     }
 
     public StockJsonResultDTO AddOrRemoveQuantityFromArticle(QtyAddRemoveJsDTO model)
@@ -65,7 +58,7 @@ public class StockHelper
         if (model.QtyToAddRemove <= 0)
             return new StockJsonResultDTO(false,"La quantità deve essere maggiore di 0.");
         
-        var stockArticle = _warehouseService.GetStockArticleById(model.ArticleId);
+        var stockArticle = _warehouseStockService.GetStockArticleById(model.ArticleId);
                 
         if(model.QtyToAddRemoveRadio == 0 && stockArticle.Number_Piece - model.QtyToAddRemove < 0)
             return new StockJsonResultDTO(false, "La quantità risulterebbe minore di 0.");
@@ -73,7 +66,7 @@ public class StockHelper
         stockArticle.Number_Piece = model.QtyToAddRemoveRadio == 1
             ? stockArticle.Number_Piece + model.QtyToAddRemove
             : stockArticle.Number_Piece - model.QtyToAddRemove;
-        _warehouseService.UpdateStockArticle(stockArticle);
+        _warehouseStockService.UpdateStockArticle(stockArticle);
 
         return new StockJsonResultDTO
         {
@@ -81,6 +74,14 @@ public class StockHelper
             ToastMessage = "Quantità modificata correttamente.",
             Number_Piece = stockArticle.Number_Piece,
             Price_Tot = stockArticle.Price_Tot
+        };
+    }
+    
+    public NewStockViewModel GetStockById(int id)
+    {
+        return new NewStockViewModel()
+        {
+            WarehouseStock = _warehouseStockService.GetStockArticleById(id)
         };
     }
 }

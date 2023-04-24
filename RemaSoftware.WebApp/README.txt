@@ -26,6 +26,6 @@ Per Migration - DA TERMINAL:
 4. dotnet ef database update --startup-project ../RemaSoftware.WebApp/RemaSoftware.WebApp.csproj
 5. Le migration non vengono aggiunte su git, vanno spostate a mano
 
-NOTE: 
+NOTE:
 - La gestione del prezzo rifarsi alla pagina new order in quanto il prezzo in vista è una stringa che poi viene convertita nell'helper. Bloccare il punto ed usare solo la virgola come separatore decimale. 
 - La creazione di services e di helper deve essere registrata nello startup come gli altri altrimenti da eccezione (Dependency Injection)

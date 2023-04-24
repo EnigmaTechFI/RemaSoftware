@@ -26,6 +26,8 @@ namespace RemaSoftware.Domain.Data
         public DbSet<Ddt_Supplier> Ddt_Suppliers { get; set; }
         public DbSet<DDT_Supplier_Association> DdtSupplierAssociations { get; set; }
         public DbSet<Ddt_Template> Ddt_Templates {get; set; }
+        
+        public DbSet<Stock_History> Stock_Histories {get; set; }
 
         #region Required
         protected override void OnModelCreating(ModelBuilder modelBuilder)

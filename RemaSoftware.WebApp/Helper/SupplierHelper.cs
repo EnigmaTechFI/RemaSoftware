@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using NLog;
 using RemaSoftware.Domain.Models;
@@ -85,5 +86,10 @@ public class SupplierHelper
         {
             Supplier = _supplierService.GetSupplierById(supplierId)
         };
+    }
+    
+    public List<Supplier> GetAllSuppliers()
+    {
+        return _supplierService.GetSuppliers();
     }
 }

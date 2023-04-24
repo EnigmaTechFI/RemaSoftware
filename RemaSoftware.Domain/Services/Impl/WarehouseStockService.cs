@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using NLog;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Data;
@@ -16,9 +17,16 @@ namespace RemaSoftware.Domain.Services.Impl
         
         public List<Warehouse_Stock> GetAllWarehouseStocks()
         {
-            return _dbContext.Warehouse_Stocks.ToList();
+            return _dbContext.Warehouse_Stocks.Include(i => i.Supplier).ToList();
         }
 
+        public Warehouse_Stock AddStockProduct(Warehouse_Stock warehouse_Stock)
+        {
+            _dbContext.Add(warehouse_Stock);
+            _dbContext.SaveChanges();
+            return warehouse_Stock;
+        }
+        
         public bool AddOrUpdateWarehouseStock(Warehouse_Stock stockArticle)
         {
             if (stockArticle == null)
@@ -36,10 +44,11 @@ namespace RemaSoftware.Domain.Services.Impl
                     
                 
                 articleToUpdate.Name = stockArticle.Name;
-                articleToUpdate.Brand = stockArticle.Brand;
-                articleToUpdate.Size = stockArticle.Size;
                 articleToUpdate.Number_Piece = stockArticle.Number_Piece;
                 articleToUpdate.Price_Uni = stockArticle.Price_Uni;
+                articleToUpdate.SupplierID = stockArticle.SupplierID;
+                articleToUpdate.Reorder_Limit = stockArticle.Reorder_Limit;
+                articleToUpdate.Measure_Unit = stockArticle.Measure_Unit;
                 _dbContext.Update(articleToUpdate);
             }
 
@@ -56,7 +65,7 @@ namespace RemaSoftware.Domain.Services.Impl
 
         public Warehouse_Stock GetStockArticleById(int stockArticleId)
         {
-            return _dbContext.Warehouse_Stocks.SingleOrDefault(sd => sd.Warehouse_StockID == stockArticleId);
+            return _dbContext.Warehouse_Stocks.Include(i => i.Supplier).SingleOrDefault(sd => sd.Warehouse_StockID == stockArticleId);
         }
 
         public bool UpdateStockArticle(Warehouse_Stock stockArticle)

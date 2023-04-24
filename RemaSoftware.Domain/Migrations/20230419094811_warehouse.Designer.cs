@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RemaSoftware.Domain.Data;
 
@@ -11,9 +12,10 @@ using RemaSoftware.Domain.Data;
 namespace RemaSoftware.Domain.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230419094811_warehouse")]
+    partial class warehouse
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -902,9 +904,8 @@ namespace RemaSoftware.Domain.Migrations
                     b.Property<decimal>("Price_Uni")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Product_Code")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Product_Code")
+                        .HasColumnType("int");
 
                     b.Property<int>("Reorder_Limit")
                         .HasColumnType("int");
@@ -1175,13 +1176,11 @@ namespace RemaSoftware.Domain.Migrations
 
             modelBuilder.Entity("RemaSoftware.Domain.Models.Warehouse_Stock", b =>
                 {
-                    b.HasOne("RemaSoftware.Domain.Models.Supplier", "Supplier")
+                    b.HasOne("RemaSoftware.Domain.Models.Supplier", null)
                         .WithMany("WarehouseStocks")
                         .HasForeignKey("SupplierID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Supplier");
                 });
 
             modelBuilder.Entity("RemaSoftware.Domain.Models.Batch", b =>

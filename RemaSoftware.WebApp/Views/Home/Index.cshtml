@@ -199,7 +199,7 @@
                         <select class="form-control" id="dd-articles">
                             @foreach (var article in Model.StockArticleAddRemQty)
                             {
-                                var value = $"{article.Name} - {article.Brand} - {article.Size}";
+                                var value = $"{article.Name}";
                                 <option value="@article.Warehouse_StockID">@value</option>
                             }
                         </select>

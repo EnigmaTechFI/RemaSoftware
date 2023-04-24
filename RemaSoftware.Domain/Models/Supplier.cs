@@ -33,5 +33,9 @@ public class Supplier
     [MaxLength(15)]
     public string SDI { get; set; }
     public int FC_SupplierID { get; set; }
+    
     public virtual List<Ddt_Supplier> DdtSuppliers { get; set; }
+    
+    public virtual List<Warehouse_Stock> WarehouseStocks { get; set; }
+    
 }
