@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
 using RemaSoftware.Domain.Constants;
-using RemaSoftware.Domain.Models;
 using RemaSoftware.WebApp.DTOs;
 using RemaSoftware.WebApp.Helper;
 using RemaSoftware.WebApp.Models.StockViewModel;
@@ -47,6 +47,7 @@ namespace RemaSoftware.WebApp.Controllers
         {
             try 
             {
+                
                 _stockHelper.AddStockProduct(model);
                     
                 _notyfService.Success("Articolo aggiunto al magazzino correttamente.");
@@ -94,6 +95,28 @@ namespace RemaSoftware.WebApp.Controllers
         public IActionResult ViewStock(int id)
         {
             return View(_stockHelper.GetStockById(id));
+        }
+        
+        [HttpGet]
+        public IActionResult ModifyStock(int id)
+        {
+            return View(_stockHelper.GetStockById(id));
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> ModifyStock(StockViewModel model)
+        {
+            try {
+                await _stockHelper.EditStock(model);
+                _notyfService.Success("Prodotto aggiornato correttamente");
+                return RedirectToAction("Stock", "Stock");
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                _notyfService.Error("Errore durante l&#39;aggiornamento del prodotto.");
+                return View(_stockHelper.GetStockById(model.WarehouseStock.Warehouse_StockID));
+            }
         }
     }
 }

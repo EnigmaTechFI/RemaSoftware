@@ -39,7 +39,9 @@
                             <a style="text-decoration: none" asp-controller="Stock" asp-action="ViewStock" asp-route-id="@article.Warehouse_StockID">
                                 <i class="fas fa-eye fa-lg pl-2" title="Visualizza avanzamento" style="cursor: pointer; color: #6d767e"></i>
                             </a>
-                            @* <i class="fas fa-pen fa-lg pl-2" style="cursor: pointer; color: #6d767e;" title="Modifica" onclick="ShowTextBoxesForEdit(@article.Warehouse_StockID)"></i> *@
+                            <a style="text-decoration: none" asp-controller="Stock" asp-action="ModifyStock" asp-route-id="@article.Warehouse_StockID">
+                             <i class="fas fa-pen fa-lg pl-2" style="cursor: pointer; color: #6d767e;" title="Modifica"></i> 
+                             </a>
                             <i class="fas fa-sort fa-lg pl-2 add-rem-qty" style="cursor: pointer; color: #6d767e;" title="Aggingi/Sottrai pezzi" data-toggle="modal" data-target="#add-remove-qty-modal" onclick="SetDataArticleId('#add-remove-qty-modal', @article.Warehouse_StockID)"></i>
                             <i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer; color: #6d767e;" id="@article.Warehouse_StockID" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDataArticleId('#confirm-del-modal', @article.Warehouse_StockID)"></i>
                         </td>

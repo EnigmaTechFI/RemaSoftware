@@ -1,5 +1,4 @@
-﻿@using RemaSoftware.Domain.Constants
-@model RemaSoftware.WebApp.Models.StockViewModel.NewStockViewModel
+﻿@model RemaSoftware.WebApp.Models.StockViewModel.NewStockViewModel
 
 @{
     ViewData["Title"] = "Aggiungi Prodotto";
@@ -121,18 +120,14 @@
                     <th>N° Pezzi</th>
                 </tr>
                 </thead>
-                @*<tbody>
-                @foreach (var ddt in Model.SubBatch.Ddts_In)
+                <tbody>
+                @foreach (var history in Model.WarehouseStock.Stock_Histories)
                 {
                     <tr style="cursor: pointer;">
-                        <td>@ddt.Code</td>
-                        <td>@ddt.Number_Piece</td>
-                        <td>@ddt.Number_Piece_Now</td>
-                        <td>@ddt.Number_Piece_ToSupplier</td>
-                        <td>@ddt.DataIn.ToString("dd/MM/yy")</td>
-                        <td>@ddt.DataOut.ToString("dd/MM/yy")</td>
-                        <td>@OrderPriorityConstant.OrderPriority[@ddt.Priority]</td>
-                        <td class="text-center">
+                        <td>@history.Date</td>
+                        <td>@history.Entry</td>
+                        <td>@history.Number_Piece</td>
+                        @*<td class="text-center">
                             @{
                                 if (!string.IsNullOrEmpty(ddt.Status))
                                 {
@@ -140,10 +135,10 @@
                                     <i class="fas fa-circle fa-lg" style="color: @statusDto?.StatusCssClass" title="@statusDto?.StatusDescription"></i>
                                 }
                             }
-                        </td>
+                        </td>*@
                     </tr>
                 }
-                </tbody>*@
+                </tbody>
             </table>
         </div>
     </div>

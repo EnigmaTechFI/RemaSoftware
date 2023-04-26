@@ -22,9 +22,25 @@ namespace RemaSoftware.Domain.Services.Impl
 
         public Warehouse_Stock AddStockProduct(Warehouse_Stock warehouse_Stock)
         {
-            _dbContext.Add(warehouse_Stock);
-            _dbContext.SaveChanges();
-            return warehouse_Stock;
+            try
+            {
+                _dbContext.Add(warehouse_Stock);
+                _dbContext.Stock_Histories.Add(new Stock_History()
+                {
+                    Entry = true,
+                    Number_Piece = warehouse_Stock.Number_Piece,
+                    Warehouse_StockID = warehouse_Stock.Warehouse_StockID,
+                    Date = DateTime.Now,
+                    Warehouse_Stock = warehouse_Stock
+                });
+                _dbContext.SaveChanges();
+                return warehouse_Stock;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Errore durante la creazione del prodotto.");
+                throw new Exception($"Errore durante la creazione del prodotto.");
+            }
         }
         
         public bool AddOrUpdateWarehouseStock(Warehouse_Stock stockArticle)
@@ -65,14 +81,21 @@ namespace RemaSoftware.Domain.Services.Impl
 
         public Warehouse_Stock GetStockArticleById(int stockArticleId)
         {
-            return _dbContext.Warehouse_Stocks.Include(i => i.Supplier).SingleOrDefault(sd => sd.Warehouse_StockID == stockArticleId);
+            return _dbContext.Warehouse_Stocks.Include(t => t.Stock_Histories).Include(i => i.Supplier).SingleOrDefault(sd => sd.Warehouse_StockID == stockArticleId);
         }
 
         public bool UpdateStockArticle(Warehouse_Stock stockArticle)
         {
-            _dbContext.Warehouse_Stocks.Update(stockArticle);
-            _dbContext.SaveChanges();
-            return true;
+            try
+            {
+                _dbContext.Warehouse_Stocks.Update(stockArticle);
+                _dbContext.SaveChanges();
+                return true;
+            }catch (Exception e)
+            {
+                Logger.Error(e, $"Errore durante l'aggiornamento del prodotto: #{stockArticle.Warehouse_StockID}");
+                throw new Exception($"Errore durante l'aggiornamento del prodotto: #{stockArticle.Warehouse_StockID}");
+            }
         }
 
         public bool UpdateQtyByArticleId(int articleId, int qtyToAdd)
@@ -85,5 +108,6 @@ namespace RemaSoftware.Domain.Services.Impl
             _dbContext.SaveChanges();
             return true; 
         }
+        
     }
 }

@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
 using RemaSoftware.WebApp.DTOs;
-using RemaSoftware.WebApp.Models.ProductViewModel;
 using RemaSoftware.WebApp.Models.StockViewModel;
 
 namespace RemaSoftware.WebApp.Helper;
@@ -84,4 +82,19 @@ public class StockHelper
             WarehouseStock = _warehouseStockService.GetStockArticleById(id)
         };
     }
+
+    public async Task<string> EditStock(StockViewModel model)
+    {
+        try
+        {
+            _warehouseStockService.UpdateStockArticle(model.WarehouseStock);
+            return "Success";
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+    }
+    
+    
 }

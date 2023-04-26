@@ -58,7 +58,6 @@ public class SubBatchService : ISubBatchService
         {
             try
             {
-                
                 var sb = _dbContext.SubBatches
                     .Include(s => s.Ddts_In)
                     .ThenInclude(s => s.Product)

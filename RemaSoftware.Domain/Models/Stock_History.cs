@@ -14,6 +14,8 @@ namespace RemaSoftware.Domain.Models
         
         public int Warehouse_StockID { get; set; }
         
+        public Warehouse_Stock Warehouse_Stock { get; set; }
+
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime Date { get; set; }
