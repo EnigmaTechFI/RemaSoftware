@@ -45,21 +45,6 @@ namespace RemaSoftware.WebApp.Controllers
             return View(vm);
         }
 
-
-        public JsonResult AddRemoveSingleQtyDashboard(int articleId, bool isAdd)
-        {
-            try
-            {
-                var result = _stockService.UpdateQtyByArticleId(articleId, isAdd ? 1 : -1);
-                return new JsonResult(new {Result = result, ToastMessage = isAdd ? $"Aggiunto 1 pezzo all\\'articlo di magazzino." : $"Sottratto 1 pezzo all\\'articlo di magazzino."});
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, $"Error modifing quantity of stockArticle: {articleId}");
-                return new JsonResult(new {Error = e, ToastMessage = $"Errore durante l\\'eliminazione dell\\'articolo di magazzino."});
-            }
-        }
-        
         public IActionResult Privacy()
         {
             return View();

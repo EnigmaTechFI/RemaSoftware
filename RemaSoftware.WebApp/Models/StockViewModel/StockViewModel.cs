@@ -6,7 +6,5 @@ namespace RemaSoftware.WebApp.Models.StockViewModel
     public class StockViewModel
     {
         public Warehouse_Stock WarehouseStock { get; set; }
-        
-        public List<Supplier> Suppliers { get; set; }
     }
 }

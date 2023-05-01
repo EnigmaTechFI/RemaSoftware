@@ -11,26 +11,19 @@ namespace RemaSoftware.WebApp.Helper;
 public class StockHelper
 {
     private readonly IWarehouseStockService _warehouseStockService;
+    private readonly ISupplierService _supplierService;
 
-    public StockHelper(IWarehouseStockService warehouseStockService)
+    public StockHelper(IWarehouseStockService warehouseStockService, ISupplierService supplierService)
     {
         _warehouseStockService = warehouseStockService;
+        _supplierService = supplierService;
     }
 
     public List<Warehouse_Stock> GetAllStocks()
     {
-        try
-        {
-            return _warehouseStockService.GetAllWarehouseStocks();
-                
-        }
-        catch (Exception ex)
-        {
-            throw new Exception();
-        }
-
+        return _warehouseStockService.GetAllWarehouseStocks();
     }
-    
+
     public StockListViewModel GetStockListViewModel()
     {
         return new StockListViewModel
@@ -64,7 +57,7 @@ public class StockHelper
         stockArticle.Number_Piece = model.QtyToAddRemoveRadio == 1
             ? stockArticle.Number_Piece + model.QtyToAddRemove
             : stockArticle.Number_Piece - model.QtyToAddRemove;
-        _warehouseStockService.UpdateStockArticle(stockArticle);
+        _warehouseStockService.UpdateStockQuantity(stockArticle, model.QtyToAddRemove, model.QtyToAddRemoveRadio);
 
         return new StockJsonResultDTO
         {
@@ -85,16 +78,18 @@ public class StockHelper
 
     public async Task<string> EditStock(StockViewModel model)
     {
-        try
-        {
-            _warehouseStockService.UpdateStockArticle(model.WarehouseStock);
-            return "Success";
-        }
-        catch (Exception ex)
-        {
-            throw new Exception(ex.Message);
-        }
+        _warehouseStockService.UpdateStockArticle(model.WarehouseStock);
+        return "Success";
     }
-    
-    
+
+
+    public NewStockViewModel GetAddProductViewModel()
+    {
+        
+        var vm = new NewStockViewModel
+        {
+            Suppliers = _supplierService.GetSuppliers()
+        };
+        return vm;
+    }
 }

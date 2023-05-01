@@ -6,11 +6,9 @@ namespace RemaSoftware.Domain.Services
     {
         List<Warehouse_Stock> GetAllWarehouseStocks();
         Warehouse_Stock AddStockProduct(Warehouse_Stock warehouseStock);
-        bool AddOrUpdateWarehouseStock(Warehouse_Stock stockArticle);
         bool DeleteWarehouseStockById(int stockArticleId);
         Warehouse_Stock GetStockArticleById(int stockArticleId);
         bool UpdateStockArticle(Warehouse_Stock stockArticle);
-        bool UpdateQtyByArticleId(int articleId, int qtyToAdd);
-
+        bool UpdateStockQuantity(Warehouse_Stock stockArticle, int quantity, int addOrRemove);
     }
 }

@@ -4,6 +4,7 @@ using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
+using NLog.Fluent;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.WebApp.DTOs;
 using RemaSoftware.WebApp.Helper;
@@ -29,17 +30,31 @@ namespace RemaSoftware.WebApp.Controllers
         [HttpGet]
         public IActionResult Stock()
         {
-            return View(_stockHelper.GetStockListViewModel());
+            try
+            {
+                return View(_stockHelper.GetStockListViewModel());
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                _notyfService.Error("Errore, impossibile procedere.");
+                return View();
+            }
         }
         
         [HttpGet]
         public IActionResult AddProduct()
         {
-            var vm = new NewStockViewModel
+            try
             {
-                Suppliers = _supplierHelper.GetAllSuppliers()
-            };
-            return View(vm);
+                return View(_stockHelper.GetAddProductViewModel());
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                _notyfService.Error("Errore, impossibile procedere.");
+                return RedirectToAction("Stock");
+            }
         }
 
         [HttpPost]
@@ -47,11 +62,9 @@ namespace RemaSoftware.WebApp.Controllers
         {
             try 
             {
-                
                 _stockHelper.AddStockProduct(model);
-                    
                 _notyfService.Success("Articolo aggiunto al magazzino correttamente.");
-                return RedirectToAction("Stock", "Stock"); //redirect to "Giacenze"
+                return RedirectToAction("Stock", "Stock"); 
             }
             catch (Exception e) {
                 
@@ -81,26 +94,43 @@ namespace RemaSoftware.WebApp.Controllers
             try
             {
                 var result = _stockHelper.AddOrRemoveQuantityFromArticle(model);
-                
                 return new JsonResult(new { result.Result, result.ToastMessage, NewQty=result.Number_Piece, NewPrice = result.Price_Tot});
             }
             catch (Exception e)
             {
-                Logger.Error(e, $"Error modifing quantity of stockArticle: {model.ArticleId}");
-                return new JsonResult(new {Error = e, ToastMessage = $"Errore durante l\\'eliminazione dell\\'articolo di magazzino."});
+                Logger.Error(e, $"Errore, impossibile modificare quantità.");
+                return new JsonResult(new {Error = e, ToastMessage = $"Errore durante l\\'eliminazione dell\\'articolo dal magazzino."});
             }
         }
         
         [HttpGet]
         public IActionResult ViewStock(int id)
         {
-            return View(_stockHelper.GetStockById(id));
+            try
+            {
+                return View(_stockHelper.GetStockById(id));
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                _notyfService.Error("Impossibile visualizzare il prodotto.");
+                return RedirectToAction("Stock");
+            }
         }
         
         [HttpGet]
         public IActionResult ModifyStock(int id)
         {
-            return View(_stockHelper.GetStockById(id));
+            try
+            {
+                return View(_stockHelper.GetStockById(id));
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                _notyfService.Error("Impossibile modificare il prodotto.");
+                return RedirectToAction("Stock");
+            }
         }
         
         [HttpPost]
@@ -116,6 +146,21 @@ namespace RemaSoftware.WebApp.Controllers
                 Logger.Error(e, e.Message);
                 _notyfService.Error("Errore durante l&#39;aggiornamento del prodotto.");
                 return View(_stockHelper.GetStockById(model.WarehouseStock.Warehouse_StockID));
+            }
+        }
+        
+        [HttpGet]
+        public IActionResult RetireProduct()
+        {
+            try
+            {
+                return View(_stockHelper.GetStockListViewModel());
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                _notyfService.Error("Errore, impossibile procedere.");
+                return View();
             }
         }
     }

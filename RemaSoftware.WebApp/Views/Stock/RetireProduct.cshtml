@@ -1,18 +1,35 @@
 ﻿@model RemaSoftware.WebApp.Models.StockViewModel.StockListViewModel
 
 @{
-    ViewData["Title"] = "Giacenze";
+    ViewData["Title"] = "Ritiro prodotti";
 }
 <link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
 
-<!-- DataTales Example -->
+<h4 class="m-0 mb-4 font-weight-bold text-primary">Ritiro prodotti</h4>
 <div class="card shadow mb-4">
-    <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
-        <h3 class="m-0 font-weight-bold text-primary">Giacenze di magazzino</h3>
-        <div>
-            <button class="btn btn-primary" type="button" onclick="location.href='@Url.Action("AddProduct", "Stock")'">Aggiungi prodotto</button>
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Seleziona prodotto</h6>
+    </div>
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-xl-12 col-md-12 mb-4">
+                    <div style="border-right: 0.25rem solid #4e73df !important;" class="card border-right-primary border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="mt-4 mb-4 h-100 text-center align-items-center">
+                                <a class="mt-5 mb-4 text-white btn btn-primary btn-lg" onclick="startCamera()" data-toggle="modal" data-target="#modalProduct">Scannerizza</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+</div>
+<div class="card shadow mb-4" id="order-summ-content">
+    <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Lista prodotti</h6>
+        </div>
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered" id="table-stock" width="100%" cellspacing="0">
@@ -20,11 +37,9 @@
                 <tr>
                     <th>Codice</th>
                     <th>Nome</th>
-                    <th>Codice Fornitore</th>
+                    <th>Codice fornitore</th>
                     <th>Fornitore</th>
                     <th>Numero Pezzi</th>
-                    <th>Prezzo Unitario</th>
-                    <th>Prezzo Totale</th>
                     <th>Status</th>
                     <th>Azioni</th>
                 </tr>
@@ -38,9 +53,6 @@
                         <td class="productcode-@article.Warehouse_StockID">@article.Product_Code</td>
                         <td class="supplier-@article.Warehouse_StockID">@article.Supplier.Name</td>
                         <td class="npieces-@article.Warehouse_StockID">@article.Number_Piece (@article.Reorder_Limit)</td>
-                        <td class="priceuni-@article.Warehouse_StockID">€@article.Price_Uni</td>
-                        <td class="pricetot-@article.Warehouse_StockID">€@article.Price_Tot</td>
-                        
                         <td class="pricetot-@article.Warehouse_StockID text-center">
                             @if(@article.Number_Piece>@article.Reorder_Limit){
                                 <i class="fas fa-circle fa-lg" style="color: green;"></i>
@@ -51,16 +63,8 @@
                             }
 
                         </td>
-                        
                         <td class="text-center editicon-@article.Warehouse_StockID">
-                            <a style="text-decoration: none" asp-controller="Stock" asp-action="ViewStock" asp-route-id="@article.Warehouse_StockID">
-                                <i class="fas fa-eye fa-lg pl-2" title="Visualizza" style="cursor: pointer; color: #6d767e"></i>
-                            </a>
-                            <a style="text-decoration: none" asp-controller="Stock" asp-action="ModifyStock" asp-route-id="@article.Warehouse_StockID">
-                             <i class="fas fa-pen fa-lg pl-2" style="cursor: pointer; color: #6d767e;" title="Modifica"></i> 
-                             </a>
                             <i class="fas fa-sort fa-lg pl-2 add-rem-qty" style="cursor: pointer; color: #6d767e;" title="Aggingi/Sottrai pezzi" data-toggle="modal" data-target="#add-remove-qty-modal" onclick="SetDataArticleId('#add-remove-qty-modal', @article.Warehouse_StockID)"></i>
-                            <i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer; color: #6d767e;" id="@article.Warehouse_StockID" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDataArticleId('#confirm-del-modal', @article.Warehouse_StockID)"></i>
                         </td>
                     </tr>
                 }
@@ -69,21 +73,32 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="confirm-del-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalProduct" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Conferma eliminazione</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Seleziona prodotto</h5>
                 <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
-            <div class="modal-body">Sei sicuro di voler eliminare questo articolo di magazzino?</div>
+            <div class="modal-body">
+                <span class="mb-2">Inserisci il codice del prodotto oppure avvicina il qr alla fotocamera</span>
+                <input class="mb-2 mt-2 form-control" id="StockId" placeholder="Codice prodotto"> 
+                <video class="mt-2" width="100%" style="position: relative; border-radius: 5px;" id="preview"></video>
+            </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
-                <button class="btn btn-danger" onclick="DeleteStockArticle()">Elimina</button>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#add-remove-qty-modal" onclick="SetDataArticleId('#add-remove-qty-modal')">Conferma</button>
+                </div>
             </div>
         </div>
+    </div>
+</div>
+<div class="loader-cont">
+    <div class="spinner-grow" role="status">
+        <span class="sr-only">Loading...</span>
     </div>
 </div>
 @{
@@ -121,42 +136,20 @@
                 { "searchable": false, "orderable": true, "targets": 4 },
                 { "searchable": false, "orderable": false, "targets": 5 },
                 { "searchable": false, "orderable": false, "targets": 6 },
-                { "searchable": false, "orderable": false, "targets": 7 },
-                { "searchable": false, "orderable": false, "targets": 8 }
               ]
         });
     } );
-    
-    $(document).on("click", ".del-stock-article", function () {
-         var articleId = $(this).attr('id');
-         $(".modal-body #modal-addrem-articleId").val( parseInt(articleId) );
-    });
     
     function SetDataArticleId(elementName, articleId){
         $(elementName).data("articleId", articleId );
     }
     
-    function DeleteStockArticle(){
-        var articleId = $("#confirm-del-modal").data("articleId");
-        $.ajax({
-            url: '@Url.Action("DeleteStockArticle", "Stock")?' + $.param({"stockArticleId": articleId}),
-            type: 'GET',
-            success: function (data) {
-                if (data.result == true){
-                    table.row($("tr#article-" + articleId)).remove().draw();
-                    $("#confirm-del-modal").modal('toggle');
-                    toastNotifySuccess(data.toastMessage);
-                }else{
-                    toastNotifyError(data.toastMessage);
-                }
-            },
-            error: function (data){
-                toastNotifyError("Errore durante l\'eliminazione dell\'articolo di magazzino.");
-            }
-        });
+    function SetDataArticleId(elementName){
+        $("#modalProduct").modal('hide');
+        let tmp = document.getElementById("StockId").value;
+        $(elementName).data("articleId", tmp);
     }
     
-    // chiamata dalla modale
     function AddOrRemoveQuantity() {
         var articleId = $("#add-remove-qty-modal").data("articleId");
         var model = {
@@ -169,7 +162,6 @@
             if (data.result == true){
                 $("#add-remove-qty-modal").modal('toggle');
                 $(".npieces-" + articleId)[0].innerText = data.newQty;
-                $(".pricetot-" + articleId)[0].innerText = data.newPrice;
                toastNotifySuccess(data.toastMessage);
             }else{
                 toastNotifyError(data.toastMessage);
@@ -177,6 +169,37 @@
         });
     }
     </script>>
+
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+    
+    <script type="text/javascript">
+
+    let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
+    scanner.addListener('scan', function (content) {
+    document.getElementById("StockId").value = content.slice(4);
+    console.log("ciao");
+    console.log(content);
+    });
+    let camera;
+    Instascan.Camera.getCameras().then(function (cameras) {
+      if (cameras.length == 0) {
+          alert('Videocamera non rilevata. Provare ad aggiornare la pagina');
+      }
+      else{
+          camera = cameras[0]
+      }
+    }).catch(function (e) {
+      console.error(e);
+    });
+    $('#modalProduct').on('hidden.bs.modal', function () {
+    scanner.stop(camera);
+    })
+    
+    function startCamera(){
+      scanner.start(camera);
+    }
+    </script>
 }
 
 
