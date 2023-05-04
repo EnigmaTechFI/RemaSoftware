@@ -86,7 +86,6 @@ public class StockHelper
 
     public NewStockViewModel GetAddProductViewModel()
     {
-        
         var vm = new NewStockViewModel
         {
             Suppliers = _supplierService.GetSuppliers()

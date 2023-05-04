@@ -1,0 +1,77 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model RemaSoftware.WebApp.Models.EmployeeViewModel.EmployeeViewModel
+
+@{
+    ViewData["Title"] = "Aggiungi impiegato";
+}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Aggiungi impiegato</h1>
+</div>
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Nuovo impiegato</h6>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            <div class="form-row">
+                <div class="col-md-6 mb-3">
+                    <label>Nome</label>
+                    <input asp-for="Employee.Name" type="text" class="form-control" placeholder="Nome" required>
+                    <span asp-validation-for="Employee.Name" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label>Cognome</label>
+                    <input asp-for="Employee.Surname" type="text" class="form-control" placeholder="Cognome" required>
+                    <span asp-validation-for="Employee.Surname" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-6 mb-3">
+                    <label>Matricola</label>
+                    <input asp-for="Employee.number" type="text" class="form-control" placeholder="Matricola" required>
+                    <span asp-validation-for="Employee.number" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label>Seleziona data di nascita</label>
+                    <div class='input-group date'>
+                        <input placeholder="Data di nascita" type='date' class="form-control bg-white" style="cursor: pointer;" asp-for="Employee.BirthDate" />
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-6 mb-3 form-group">
+                    <label for="formGroupExampleInput">Seleziona sesso</label>
+                    <select asp-for="Employee.Gender" class="form-control">
+                        <option selected="selected" value="Nessuna">Nessuna</option>
+                        <option value="Uomo">Uomo</option>
+                        <option value="Donna">Donna</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label>Codice fiscale</label>
+                    <input asp-for="Employee.TaxID" type="text" class="form-control" placeholder="Codice fiscale" required>
+                    <span asp-validation-for="Employee.TaxID" class="text-danger"></span>
+                </div>
+            </div>
+            <button class="btn btn-primary" type="submit" onclick="clickEvent()">Aggiungi</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        
+        $('#priceUnit').keypress(function (e) {
+            if (e.which == 46) {
+                e.preventDefault();
+            }
+        });       
+        
+    </script>
+    
+}

@@ -80,8 +80,6 @@ namespace RemaSoftware.WebApp
                     }
                 };
             });
-            
-            
 
             var mvcBuilder = services.AddControllersWithViews().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
@@ -122,7 +120,8 @@ namespace RemaSoftware.WebApp
             services.AddTransient<IWarehouseStockService, WarehouseStockService>();
             services.AddTransient<ISupplierService, SupplierService>();
             services.AddTransient<IUtilityService, UtilityService>();
-            
+            services.AddTransient<IEmployeeService, EmployeeService>();
+
             services.AddTransient<PdfHelper>();
             services.AddTransient<SupplierHelper>();
             services.AddTransient<DashboardHelper>();
@@ -136,10 +135,12 @@ namespace RemaSoftware.WebApp
             services.AddTransient<ClientHelper>();
             services.AddTransient<AccountHelper>();
             services.AddTransient<GuestHelper>();
+            services.AddTransient<EmployeeHelper>();
             services.AddTransient<OrderValidation>();
             services.AddTransient<ProductValidation>();
             services.AddTransient<OperationValidation>();
             services.AddTransient<StockValidation>();
+            services.AddTransient<EmployeeValidation>();
 
         }
 
