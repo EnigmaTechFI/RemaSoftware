@@ -1,10 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
 using RemaSoftware.WebApp.DTOs;
 using RemaSoftware.WebApp.Models.StockViewModel;
+
 
 namespace RemaSoftware.WebApp.Helper;
 
@@ -24,10 +24,11 @@ public class StockHelper
         return _warehouseStockService.GetAllWarehouseStocks();
     }
 
-    public StockListViewModel GetStockListViewModel()
+    public StockListViewModel GetStockListViewModel(bool newProduct)
     {
         return new StockListViewModel
         {
+            newProduct = newProduct,
             WarehouseStocks = GetAllStocks()
         };
     }
@@ -92,4 +93,5 @@ public class StockHelper
         };
         return vm;
     }
+
 }

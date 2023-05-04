@@ -4,35 +4,38 @@ using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
-using NLog.Fluent;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.WebApp.DTOs;
 using RemaSoftware.WebApp.Helper;
 using RemaSoftware.WebApp.Models.StockViewModel;
+using RemaSoftware.WebApp.Validation;
+
 
 namespace RemaSoftware.WebApp.Controllers
 {
-    [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+    [Authorize(Roles = Roles.Admin + "," + Roles.Dipendente + "," + Roles.MagazzinoMaterie)]
     public class StockController : Controller
     {
         private readonly StockHelper _stockHelper;
         private readonly INotyfService _notyfService;
         private readonly SupplierHelper _supplierHelper;
+        private readonly StockValidation _stockValidation;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public StockController(StockHelper stockHelper, INotyfService notyfService, SupplierHelper supplierHelper)
+        public StockController(StockHelper stockHelper, INotyfService notyfService, StockValidation stockValidation, SupplierHelper supplierHelper)
         {
             _stockHelper = stockHelper;
             _notyfService = notyfService;
+            _stockValidation = stockValidation;
             _supplierHelper = supplierHelper;
         }
 
         [HttpGet]
-        public IActionResult Stock()
+        public IActionResult Stock(bool newProduct)
         {
             try
             {
-                return View(_stockHelper.GetStockListViewModel());
+                return View(_stockHelper.GetStockListViewModel(newProduct));
             }
             catch (Exception e)
             {
@@ -53,7 +56,7 @@ namespace RemaSoftware.WebApp.Controllers
             {
                 Logger.Error(e, e.Message);
                 _notyfService.Error("Errore, impossibile procedere.");
-                return RedirectToAction("Stock");
+                return RedirectToAction("Stock", new { newProduct = false });
             }
         }
 
@@ -62,17 +65,25 @@ namespace RemaSoftware.WebApp.Controllers
         {
             try 
             {
-                _stockHelper.AddStockProduct(model);
-                _notyfService.Success("Articolo aggiunto al magazzino correttamente.");
-                return RedirectToAction("Stock", "Stock"); 
+                var validationResult = _stockValidation.ValidateStock(model);
+                if (validationResult != "")
+                {
+                    _notyfService.Error(validationResult);
+                    model.Suppliers = _supplierHelper.GetAllSuppliers();
+                } else
+                {
+                    _stockHelper.AddStockProduct(model);
+                    _notyfService.Success("Articolo aggiunto al magazzino correttamente.");
+                    return RedirectToAction("Stock", new { newProduct = true });
+                }
             }
             catch (Exception e) {
-                
                 Logger.Error(e, $"Errore durante l'aggiunta dell'articolo di magazzino.");
                 _notyfService.Error("Errore durante l'aggiunta dell'articolo di magazzino.");
             }
             return View(model);
         }
+
 
         public JsonResult DeleteStockArticle(int stockArticleId)
         {
@@ -114,7 +125,7 @@ namespace RemaSoftware.WebApp.Controllers
             {
                 Logger.Error(e, e.Message);
                 _notyfService.Error("Impossibile visualizzare il prodotto.");
-                return RedirectToAction("Stock");
+                return RedirectToAction("Stock", new { newProduct = false });
             }
         }
         
@@ -129,7 +140,7 @@ namespace RemaSoftware.WebApp.Controllers
             {
                 Logger.Error(e, e.Message);
                 _notyfService.Error("Impossibile modificare il prodotto.");
-                return RedirectToAction("Stock");
+                return RedirectToAction("Stock", new { newProduct = false });
             }
         }
         
@@ -137,16 +148,24 @@ namespace RemaSoftware.WebApp.Controllers
         public async Task<IActionResult> ModifyStock(StockViewModel model)
         {
             try {
-                await _stockHelper.EditStock(model);
-                _notyfService.Success("Prodotto aggiornato correttamente");
-                return RedirectToAction("Stock", "Stock");
+                var validationResult = _stockValidation.ValidateStockModify(model);
+                if (validationResult != "")
+                {
+                    _notyfService.Error(validationResult);
+                }
+                else
+                {
+                    await _stockHelper.EditStock(model);
+                    _notyfService.Success("Prodotto aggiornato correttamente");
+                    return RedirectToAction("Stock", new { newProduct = false });
+                }
             }
             catch (Exception e)
             {
                 Logger.Error(e, e.Message);
                 _notyfService.Error("Errore durante l&#39;aggiornamento del prodotto.");
-                return View(_stockHelper.GetStockById(model.WarehouseStock.Warehouse_StockID));
             }
+            return View(_stockHelper.GetStockById(model.WarehouseStock.Warehouse_StockID));
         }
         
         [HttpGet]
@@ -154,7 +173,7 @@ namespace RemaSoftware.WebApp.Controllers
         {
             try
             {
-                return View(_stockHelper.GetStockListViewModel());
+                return View(_stockHelper.GetStockListViewModel(false));
             }
             catch (Exception e)
             {

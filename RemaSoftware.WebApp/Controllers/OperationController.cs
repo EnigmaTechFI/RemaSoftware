@@ -18,6 +18,7 @@ namespace RemaSoftware.WebApp.Controllers
         private readonly OperationValidation _operationValidation;
         private readonly INotyfService _notyfToastService;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        
         public OperationController(IOperationService operationService, INotyfService notyfToastService, OperationValidation operationValidation)
         {
             _operationService = operationService;

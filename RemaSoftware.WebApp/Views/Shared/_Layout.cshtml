@@ -188,7 +188,7 @@
                     <span>DDT emesse</span>
                 </a>
             </li>
-        
+
             <!-- Divider -->
             <hr class="sidebar-divider">
 
@@ -208,7 +208,10 @@
                     <span>Fornitori</span>
                 </a>
             </li>
-
+        }
+    
+        @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente) || User.IsInRole(Roles.MagazzinoMaterie))
+        {
             <!-- Divider -->
             <hr class="sidebar-divider">
 
@@ -217,14 +220,17 @@
                 Magazzino
             </div>
             
-
-            <!-- Nav Item - Tables -->
-            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Stock" ? "active" : "")">
-                <a class="nav-link" asp-action="Stock" asp-controller="Stock">
-                    <i class="fas fa-fw fa-warehouse"></i>
-                    <span>Giacenze</span>
-                </a>
-            </li>
+            @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente))
+            {
+                <!-- Nav Item - Tables -->
+                <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Stock" ? "active" : "")">
+                    <a class="nav-link" asp-action="Stock" asp-controller="Stock" asp-route-newProduct="false">
+                        <i class="fas fa-fw fa-warehouse"></i>
+                        <span>Giacenze</span>
+                    </a>
+                </li>
+            }
+            
             <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "RetireProduct" ? "active" : "")">
                 <a class="nav-link" asp-action="RetireProduct" asp-controller="Stock">
                     <i class="fas fa-fw fa-pallet"></i>

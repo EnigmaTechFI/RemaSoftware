@@ -28,7 +28,7 @@ namespace RemaSoftware.Domain.Data
                 });
             }
             _context.SaveChanges();
-            string[] roleNames = { Roles.Admin, Roles.Dipendente, Roles.Cliente, Roles.Machine, Roles.COQ, Roles.Magazzino};
+            string[] roleNames = { Roles.Admin, Roles.Dipendente, Roles.Cliente, Roles.Machine, Roles.COQ, Roles.Magazzino, Roles.MagazzinoMaterie};
             IdentityResult roleResult;
 
             foreach (var roleName in roleNames)
@@ -106,6 +106,20 @@ namespace RemaSoftware.Domain.Data
                 IdentityResult result = userManager.CreateAsync(dip3, "RemaPul2022!").Result;
                 
                 var addedRole = userManager.AddToRolesAsync(dip3,new [] { Roles.Magazzino }).Result;
+            }
+            
+            var dip4 = userManager.FindByEmailAsync("mm.rema.pul@gmail.com").Result;
+            if (dip4 == null)
+            {
+                dip4 = new MyUser
+                {
+                    UserName = "MagazzinoMaterie",
+                    Email = "mm.rema.pul@gmail.com"
+                };
+
+                IdentityResult result = userManager.CreateAsync(dip4, "RemaPul2022!").Result;
+                
+                var addedRole = userManager.AddToRolesAsync(dip4,new [] { Roles.MagazzinoMaterie }).Result;
             }
             
         }

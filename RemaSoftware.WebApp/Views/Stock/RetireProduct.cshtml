@@ -40,6 +40,7 @@
                     <th>Codice fornitore</th>
                     <th>Fornitore</th>
                     <th>Numero Pezzi</th>
+                    <th>Limite minimo</th>
                     <th>Status</th>
                     <th>Azioni</th>
                 </tr>
@@ -52,19 +53,23 @@
                         <td class="name-@article.Warehouse_StockID">@article.Name</td>
                         <td class="productcode-@article.Warehouse_StockID">@article.Product_Code</td>
                         <td class="supplier-@article.Warehouse_StockID">@article.Supplier.Name</td>
-                        <td class="npieces-@article.Warehouse_StockID">@article.Number_Piece (@article.Reorder_Limit)</td>
+                        <td class="npieces-@article.Warehouse_StockID">@article.Number_Piece</td>
+                        <td class="npieces-@article.Warehouse_StockID">@article.Reorder_Limit</td>
                         <td class="pricetot-@article.Warehouse_StockID text-center">
                             @if(@article.Number_Piece>@article.Reorder_Limit){
-                                <i class="fas fa-circle fa-lg" style="color: green;"></i>
+                                <i class="fas fa-circle fa-lg" style="color: green;"><p style="display: none;">Over limit</p></i>
                             }
                             else
                             {
-                                <i class="fas fa-circle fa-lg" style="color: red;"></i>
+                                <i class="fas fa-circle fa-lg" style="color: red;"><p style="display: none;">Under limit</p></i>
                             }
 
                         </td>
                         <td class="text-center editicon-@article.Warehouse_StockID">
-                            <i class="fas fa-sort fa-lg pl-2 add-rem-qty" style="cursor: pointer; color: #6d767e;" title="Aggingi/Sottrai pezzi" data-toggle="modal" data-target="#add-remove-qty-modal" onclick="SetDataArticleId('#add-remove-qty-modal', @article.Warehouse_StockID)"></i>
+                            <a style="text-decoration: none" asp-controller="Stock" asp-action="ViewStock" asp-route-id="@article.Warehouse_StockID">
+                                <i class="fas fa-eye fa-lg pl-2" title="Visualizza" style="cursor: pointer; color: #6d767e"></i>
+                            </a>
+                            <i class="fas fa-sort fa-lg pl-2 add-rem-qty" style="cursor: pointer; color: #6d767e;" title="Aggingi/Sottrai pezzi" data-toggle="modal" data-target="#add-remove-qty-modal" onclick="SetDataArticleId1('#add-remove-qty-modal', @article.Warehouse_StockID)"></i>
                         </td>
                     </tr>
                 }
@@ -90,7 +95,7 @@
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#add-remove-qty-modal" onclick="SetDataArticleId('#add-remove-qty-modal')">Conferma</button>
+                    <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#add-remove-qty-modal" onclick="SetDataArticleId2('#add-remove-qty-modal')">Conferma</button>
                 </div>
             </div>
         </div>
@@ -135,16 +140,17 @@
                 { "searchable": false, "orderable": false, "targets": 3 },
                 { "searchable": false, "orderable": true, "targets": 4 },
                 { "searchable": false, "orderable": false, "targets": 5 },
-                { "searchable": false, "orderable": false, "targets": 6 },
+                { "searchable": false, "orderable": true, "targets": 6 },
+                { "searchable": false, "orderable": false, "targets": 7 },
               ]
         });
     } );
     
-    function SetDataArticleId(elementName, articleId){
+    function SetDataArticleId1(elementName, articleId){
         $(elementName).data("articleId", articleId );
     }
     
-    function SetDataArticleId(elementName){
+    function SetDataArticleId2(elementName){
         $("#modalProduct").modal('hide');
         let tmp = document.getElementById("StockId").value;
         $(elementName).data("articleId", tmp);
@@ -160,7 +166,6 @@
     
         $.post('@Url.Action("AddOrRemoveQuantity", "Stock")', model, function (data){
             if (data.result == true){
-                $("#add-remove-qty-modal").modal('toggle');
                 $(".npieces-" + articleId)[0].innerText = data.newQty;
                toastNotifySuccess(data.toastMessage);
             }else{
@@ -178,8 +183,6 @@
     let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
     scanner.addListener('scan', function (content) {
     document.getElementById("StockId").value = content.slice(4);
-    console.log("ciao");
-    console.log(content);
     });
     let camera;
     Instascan.Camera.getCameras().then(function (cameras) {

@@ -68,6 +68,8 @@ namespace RemaSoftware.WebApp.Controllers
                         return RedirectToAction("QualityControl", "Order");
                     if (roles.Contains(Roles.Dipendente))
                         return RedirectToAction("OrderSummary", "Order");
+                    if (roles.Contains(Roles.MagazzinoMaterie))
+                        return RedirectToAction("RetireProduct", "Stock");
                     return RedirectToAction("Index", "Home");
                 }
                     
