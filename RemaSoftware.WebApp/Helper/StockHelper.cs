@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
+using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
 using RemaSoftware.WebApp.DTOs;
@@ -73,7 +75,8 @@ public class StockHelper
     {
         return new NewStockViewModel()
         {
-            WarehouseStock = _warehouseStockService.GetStockArticleById(id)
+            WarehouseStock = _warehouseStockService.GetStockArticleById(id),
+            UnitMeasure = WarehouseStockMeasure.GetUnitMeasure()
         };
     }
 
@@ -86,10 +89,10 @@ public class StockHelper
 
     public NewStockViewModel GetAddProductViewModel()
     {
-        
         var vm = new NewStockViewModel
         {
-            Suppliers = _supplierService.GetSuppliers()
+            Suppliers = _supplierService.GetSuppliers(),
+            UnitMeasure = WarehouseStockMeasure.GetUnitMeasure()
         };
         return vm;
     }

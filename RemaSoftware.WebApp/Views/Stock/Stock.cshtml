@@ -202,7 +202,7 @@
             if (data.result == true){
                 $("#add-remove-qty-modal").modal('toggle');
                 $(".npieces-" + articleId)[0].innerText = data.newQty;
-                $(".pricetot-" + articleId)[0].innerText = data.newPrice;
+                $(".pricetot-" + articleId)[0].innerText = "€" + data.newPrice.toFixed(2).replace('.', ',');
                toastNotifySuccess(data.toastMessage);
             }else{
                 toastNotifyError(data.toastMessage);
