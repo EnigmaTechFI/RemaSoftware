@@ -289,8 +289,11 @@ namespace RemaSoftware.WebApp.Helper
             if (subBatch.OperationTimelines != null && subBatch.OperationTimelines.Where(s => s.MachineId != null).ToList().Any(s =>
                     s.MachineId == 99 && s.Status == OrderStatusConstants.STATUS_ARRIVED))
                 throw new Exception("Lotto già registrato al controllo qualità.");
-            if (subBatch.Status == OrderStatusConstants.STATUS_COMPLETED)
+            if (subBatch.Status == OrderStatusConstants.STATUS_COMPLETED ||
+                subBatch.Status == OrderStatusConstants.STATUS_COMPLETED)
                 throw new Exception("Lotto già completato.");
+            if (subBatch.Ddts_In.Sum(s => s.Number_Piece_Now) <= 0)
+                throw new Exception("Nessun pezzo attualmente in azienda.");
 
             if (subBatch != null)
             {
@@ -561,6 +564,7 @@ namespace RemaSoftware.WebApp.Helper
             ddtOut.Status = DDTOutStatus.STATUS_EMITTED;
             ddtOut.FC_Ddt_Out_ID = result.Item2;
             ddtOut.Url = result.Item1;
+            ddtOut.Code = result.Item3;
             try
             {
                 _orderService.UpdateDdtOut(ddtOut);
@@ -588,7 +592,8 @@ namespace RemaSoftware.WebApp.Helper
                     NumberPieces = item.Ddt_Associations.Sum(s => s.NumberPieces),
                     DdtWithPieces = new List<(string, int)>(),
                     Client = item.Ddt_Associations[0].Ddt_In.Product.Client.Name,
-                    Date = item.Date
+                    Date = item.Date,
+                    Code = item.Code
                 };
                 foreach (var entity in item.Ddt_Associations)
                 {

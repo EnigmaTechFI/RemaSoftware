@@ -17,4 +17,5 @@ public class DDTEmittedDto
     public string Client { get; set; }
     public List<(string, int)> DdtWithPieces { get; set; }
     public DateTime Date { get; set; }
+    public string Code { get; set; }
 }
