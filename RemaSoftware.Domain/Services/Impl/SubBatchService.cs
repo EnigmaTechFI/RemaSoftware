@@ -116,6 +116,7 @@ public class SubBatchService : ISubBatchService
         
         if (op.Status == OperationTimelineConstant.STATUS_PAUSE)
         {
+            op.Status = status;
             _dbContext.OperationTimelines.Update(op);
             _dbContext.SaveChanges();
             return op;

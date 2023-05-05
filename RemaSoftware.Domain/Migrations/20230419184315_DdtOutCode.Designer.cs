@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RemaSoftware.Domain.Data;
 
@@ -11,9 +12,10 @@ using RemaSoftware.Domain.Data;
 namespace RemaSoftware.Domain.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230419184315_DdtOutCode")]
+    partial class DdtOutCode
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -746,33 +748,6 @@ namespace RemaSoftware.Domain.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("RemaSoftware.Domain.Models.Stock_History", b =>
-                {
-                    b.Property<int>("Stock_HistoryID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Stock_HistoryID"), 1L, 1);
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("Entry")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("Number_Piece")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Warehouse_StockID")
-                        .HasColumnType("int");
-
-                    b.HasKey("Stock_HistoryID");
-
-                    b.HasIndex("Warehouse_StockID");
-
-                    b.ToTable("Stock_Histories");
-                });
-
             modelBuilder.Entity("RemaSoftware.Domain.Models.SubBatch", b =>
                 {
                     b.Property<int>("SubBatchID")
@@ -891,8 +866,9 @@ namespace RemaSoftware.Domain.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Warehouse_StockID"), 1L, 1);
 
-                    b.Property<string>("Measure_Unit")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Brand")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -905,19 +881,11 @@ namespace RemaSoftware.Domain.Migrations
                     b.Property<decimal>("Price_Uni")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Product_Code")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Reorder_Limit")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SupplierID")
-                        .HasColumnType("int");
+                    b.Property<string>("Size")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Warehouse_StockID");
-
-                    b.HasIndex("SupplierID");
 
                     b.ToTable("Warehouse_Stocks");
                 });
@@ -1137,17 +1105,6 @@ namespace RemaSoftware.Domain.Migrations
                     b.Navigation("Client");
                 });
 
-            modelBuilder.Entity("RemaSoftware.Domain.Models.Stock_History", b =>
-                {
-                    b.HasOne("RemaSoftware.Domain.Models.Warehouse_Stock", "Warehouse_Stock")
-                        .WithMany("Stock_Histories")
-                        .HasForeignKey("Warehouse_StockID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Warehouse_Stock");
-                });
-
             modelBuilder.Entity("RemaSoftware.Domain.Models.SubBatch", b =>
                 {
                     b.HasOne("RemaSoftware.Domain.Models.Batch", "Batch")
@@ -1176,17 +1133,6 @@ namespace RemaSoftware.Domain.Migrations
                     b.Navigation("Client");
 
                     b.Navigation("MyUser");
-                });
-
-            modelBuilder.Entity("RemaSoftware.Domain.Models.Warehouse_Stock", b =>
-                {
-                    b.HasOne("RemaSoftware.Domain.Models.Supplier", "Supplier")
-                        .WithMany("WarehouseStocks")
-                        .HasForeignKey("SupplierID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Supplier");
                 });
 
             modelBuilder.Entity("RemaSoftware.Domain.Models.Batch", b =>
@@ -1250,13 +1196,6 @@ namespace RemaSoftware.Domain.Migrations
             modelBuilder.Entity("RemaSoftware.Domain.Models.Supplier", b =>
                 {
                     b.Navigation("DdtSuppliers");
-
-                    b.Navigation("WarehouseStocks");
-                });
-
-            modelBuilder.Entity("RemaSoftware.Domain.Models.Warehouse_Stock", b =>
-                {
-                    b.Navigation("Stock_Histories");
                 });
 
             modelBuilder.Entity("RemaSoftware.Domain.Models.MyUser", b =>
