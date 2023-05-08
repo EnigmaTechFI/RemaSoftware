@@ -27,10 +27,10 @@
                     <label for="formGroupExampleInput">Unità di misura</label>
                     <select asp-for="WarehouseStock.Measure_Unit" class="form-control">
                         <option selected="selected" value="Nessuna">Nessuna</option>
-                        <option value="@WarehouseStockMeasure.Metro">Metro</option>
-                        <option value="@WarehouseStockMeasure.Taglia">Taglia</option>
-                        <option value="@WarehouseStockMeasure.Litro">Litro</option>
-                        <option value="@WarehouseStockMeasure.Kilogrammo">Killogrammo</option>
+                        @foreach (var item in Model.UnitMeasure)
+                        {
+                            <option value="@item">@item</option>
+                        }
                     </select>
                 </div>
             </div>

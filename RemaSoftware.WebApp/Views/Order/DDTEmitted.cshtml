@@ -19,6 +19,7 @@
                 <thead>
                 <tr>
                     <th>Cliente</th>
+                    <th>Codice</th>
                     <th>Data</th>
                     <th>DDT associate</th>
                     <th>N° Pezzi</th>
@@ -30,6 +31,7 @@
                 {
                     <tr id="ddt-@item.Id" style="cursor: pointer;">
                         <td>@item.Client</td>
+                        <td>@item.Code</td>
                         <td>@item.Date.ToString("dd/MM/yyyy")</td>
                         <td onclick="showDDT(@item.Id)">Visualizza DDT associate</td>
                         <td>@item.NumberPieces</td>
@@ -157,10 +159,11 @@
             "product": [[0, 'asc']],
             "columnDefs": [
                 { "searchable": true, "orderable": true, "targets": 0 },
-                { "searchable": false, "orderable": true, "targets": 1 },
-                { "searchable": false, "orderable": false, "targets": 2 },
-                { "searchable": false, "orderable": true, "targets": 3 },
-                { "searchable": false, "orderable": false, "targets": 4 },
+                { "searchable": true, "orderable": true, "targets": 1 },
+                { "searchable": false, "orderable": true, "targets": 2 },
+                { "searchable": false, "orderable": false, "targets": 3 },
+                { "searchable": false, "orderable": true, "targets": 4 },
+                { "searchable": false, "orderable": false, "targets": 5 },
               ]
         });
     });

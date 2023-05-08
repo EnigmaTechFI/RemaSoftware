@@ -21,17 +21,14 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach(var ddt in Model.DdtOut)
+                @foreach(var item in Model.DdtOut)
                 {
-                    foreach (var item in ddt.Ddt_Associations)
-                    {
-                        <tr>
-                            <td>@item.Ddt_In.Code</td>
-                            <td>@item.Ddt_In.Product.SKU</td>
-                            <td>@item.NumberPieces</td>
-                            <td>@item.TypePieces</td>
-                        </tr>
-                    }
+                    <tr>
+                        <td>@item.Code</td>
+                        <td>@item.Product</td>
+                        <td>@item.NumberPieces</td>
+                        <td>@item.Type</td>
+                    </tr>
                 }
                 <tr></tr>
                 </tbody>

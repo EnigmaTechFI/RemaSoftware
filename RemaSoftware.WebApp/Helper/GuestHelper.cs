@@ -61,9 +61,32 @@ public class GuestHelper
     public BatchInViewModel GetBatchInStockViewModel(string userId)
     {
         var clientId = _clientService.GetClientIdByUserId(userId);
+        var sb = _subBatchService.GetSubBatchesStatusAndClientId(OrderStatusConstants.STATUS_ARRIVED, clientId);
+        var sbDto = new List<SubBatchInProductionGuestDto>();
+        foreach (var item in sb)
+        {
+            var dto = new SubBatchInProductionGuestDto()
+            {
+                Id = item.SubBatchID,
+                NumberPieces = item.Ddts_In.Sum(s => s.Number_Piece),
+                NumberPiecesNow = item.Ddts_In.Sum(s => s.Number_Piece_Now + s.Number_Piece_ToSupplier),
+                Product = item.Ddts_In[0].Product.SKU,
+            };        
+            dto.Ddt_In = new List<Ddt_In_Dto>();
+            foreach (var ddt in item.Ddts_In)
+            {
+                dto.Ddt_In.Add(new Ddt_In_Dto()
+                {
+                    Code = ddt.Code,
+                    Date = ddt.DataIn.ToString("dd/MM/yy"),
+                    NowPieces = ddt.Number_Piece_Now + ddt.Number_Piece_ToSupplier
+                });
+            }  
+            sbDto.Add(dto);
+        }
         return new BatchInViewModel()
         {
-            SubBatches = _subBatchService.GetSubBatchesStatusAndClientId(OrderStatusConstants.STATUS_ARRIVED, clientId)
+            SubBatches = sbDto
         };
     }
 
@@ -73,18 +96,56 @@ public class GuestHelper
         var sb = new List<SubBatch>();
         sb.AddRange(_subBatchService.GetSubBatchesStatusAndClientId(OrderStatusConstants.STATUS_WORKING, clientId));
         sb.AddRange(_subBatchService.GetSubBatchesStatusAndClientId(OrderStatusConstants.STATUS_PARTIALLY_COMPLETED, clientId));
+        var sbDto = new List<SubBatchInProductionGuestDto>();
+        foreach (var item in sb)
+        {
+            var dto = new SubBatchInProductionGuestDto()
+            {
+                Id = item.SubBatchID,
+                NumberPieces = item.Ddts_In.Sum(s => s.Number_Piece),
+                NumberPiecesNow = item.Ddts_In.Sum(s => s.Number_Piece_Now + s.Number_Piece_ToSupplier),
+                Product = item.Ddts_In[0].Product.SKU,
+            };
+            dto.Ddt_In = new List<Ddt_In_Dto>();
+            foreach (var ddt in item.Ddts_In)
+            {
+                dto.Ddt_In.Add(new Ddt_In_Dto()
+                {
+                    Code = ddt.Code,
+                    Date = ddt.DataIn.ToString("dd/MM/yy"),
+                    NowPieces = ddt.Number_Piece_Now + ddt.Number_Piece_ToSupplier
+                });
+            }            
+            sbDto.Add(dto);
+        }
         return new BatchInViewModel()
         {
-            SubBatches = sb
+            SubBatches = sbDto
         };
     }
 
     public DDTInDeliveryViewModel GetBatchInDeliveryViewModel(string userId)
     {
         var clientId = _clientService.GetClientIdByUserId(userId);
+        var ddtOut = _orderService.GetDdtOutsByClientIdAndStatus(clientId, DDTOutStatus.STATUS_PENDING);
+        var ddtOutDto = new List<Ddt_OutDto>();
+        foreach (var ddt in ddtOut)
+        {
+            foreach (var item in ddt.Ddt_Associations)
+            {
+                ddtOutDto.Add(new Ddt_OutDto()
+                {
+                    Code = item.Ddt_In.Code,
+                    NumberPieces = item.NumberPieces,
+                    Type = item.TypePieces,
+                    Product = item.Ddt_In.Product.SKU
+                });
+            }
+            
+        }
         return new DDTInDeliveryViewModel()
         {
-            DdtOut = _orderService.GetDdtOutsByClientIdAndStatus(clientId, DDTOutStatus.STATUS_PENDING)
+            DdtOut = ddtOutDto
         };
     }
 
