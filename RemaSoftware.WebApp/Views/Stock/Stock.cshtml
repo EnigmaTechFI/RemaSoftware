@@ -91,6 +91,10 @@
         </div>
     </div>
 </div>
+<div class="text-center m-2">
+    <a class="btn btn-primary text-white" asp-action="ReportStock" asp-controller="Stock" type="button">Report magazzino</a>
+</div>
+
 @{
     await Html.RenderPartialAsync("../Stock/_AddOrRemoveQuantityModal");   
 }

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
+using RemaSoftware.UtilityServices.Implementation;
 using RemaSoftware.WebApp.DTOs;
 using RemaSoftware.WebApp.Models.StockViewModel;
 
@@ -12,11 +13,13 @@ public class StockHelper
 {
     private readonly IWarehouseStockService _warehouseStockService;
     private readonly ISupplierService _supplierService;
+    private readonly EmailService _emailService;
 
-    public StockHelper(IWarehouseStockService warehouseStockService, ISupplierService supplierService)
+    public StockHelper(IWarehouseStockService warehouseStockService, ISupplierService supplierService, EmailService emailService)
     {
         _warehouseStockService = warehouseStockService;
         _supplierService = supplierService;
+        _emailService = emailService;
     }
 
     public List<Warehouse_Stock> GetAllStocks()
@@ -60,6 +63,11 @@ public class StockHelper
             : stockArticle.Number_Piece - model.QtyToAddRemove;
         _warehouseStockService.UpdateStockQuantity(stockArticle, model.QtyToAddRemove, model.QtyToAddRemoveRadio);
 
+        if (stockArticle.Number_Piece < stockArticle.Reorder_Limit)
+        {
+            _emailService.SendEmailStock(stockArticle.Warehouse_StockID, stockArticle.Name, stockArticle.Supplier.Name);
+        }
+        
         return new StockJsonResultDTO
         {
             Result = true,
@@ -94,4 +102,12 @@ public class StockHelper
         return vm;
     }
 
+    public ReportStockViewModel ReportStock()
+    {
+        var vm = new ReportStockViewModel
+        {
+            StockHistories =  _warehouseStockService.GetReportStocks()
+        };
+        return vm;
+    }
 }

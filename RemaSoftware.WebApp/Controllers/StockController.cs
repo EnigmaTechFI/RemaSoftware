@@ -182,5 +182,20 @@ namespace RemaSoftware.WebApp.Controllers
                 return View();
             }
         }
+        
+        [HttpGet]
+        public IActionResult ReportStock()
+        {
+            try
+            {
+                return View(_stockHelper.ReportStock());
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                _notyfService.Error("Errore, impossibile procedere.");
+                return View();
+            }
+        }
     }
 }
