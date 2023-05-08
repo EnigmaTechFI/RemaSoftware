@@ -5,6 +5,7 @@ using RemaSoftware.WebApp.Helper;
 using RemaSoftware.WebApp.Models.ProductViewModel;
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using RemaSoftware.Domain.Constants;
 
 namespace RemaSoftware.WebApp.Controllers
@@ -15,12 +16,14 @@ namespace RemaSoftware.WebApp.Controllers
         private readonly ClientHelper _clientHelper;
         private readonly ProductHelper _productHelper;
         private readonly INotyfService _notyfToastService;
+        private readonly IConfiguration _configuration;
 
-        public ProductController(ClientHelper clientHelper, ProductHelper productHelper, INotyfService notyfToastService)
+        public ProductController(ClientHelper clientHelper, ProductHelper productHelper, INotyfService notyfToastService, IConfiguration configuration)
         {
             _clientHelper = clientHelper;
             _productHelper = productHelper;
             _notyfToastService = notyfToastService;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -35,6 +38,18 @@ namespace RemaSoftware.WebApp.Controllers
             var vm = new NewProductViewModel
             {
                 Clients = _clientHelper.GetAllClients()
+            };
+
+            return View(vm);
+        }
+        
+        [HttpGet]
+        public IActionResult ViewProduct(int id)
+        {
+            var vm = new ProductViewModel
+            {
+                Product = _productHelper.GetProductById(id),
+                BasePathImages = $"{_configuration["ApplicationUrl"]}{_configuration["ImagesEndpoint"]}order/"
             };
 
             return View(vm);
