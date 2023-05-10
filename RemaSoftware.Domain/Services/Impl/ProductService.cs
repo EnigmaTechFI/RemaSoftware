@@ -34,7 +34,7 @@ namespace RemaSoftware.Domain.Services.Impl
 
         public Product GetProductById(int productId)
         {
-            return _dbContext.Products.Include(i => i.Client).SingleOrDefault(i => i.ProductID == productId);
+            return _dbContext.Products.Include(i => i.Client).Include(s => s.Ddts_In).SingleOrDefault(i => i.ProductID == productId);
         }
 
         public string DeleteProduct(Product product)

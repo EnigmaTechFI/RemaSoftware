@@ -24,6 +24,7 @@
                     <th>DDT associate</th>
                     <th>Pezzi nel lotto</th>
                     <th>Pezzi rimanenti</th>
+                    <th>Data di scadenza</th>
                     <th class="text-center">Azioni</th>
                 </tr>
                 </thead>
@@ -38,6 +39,7 @@
                         <td onclick="showDDT(@batch.SubBatchID)">Visualizza DDT associate</td>
                         <td>@batch.Ddts_In.Sum(s=> s.Number_Piece)</td>
                         <td>@batch.Ddts_In.Sum(s=> s.Number_Piece_Now)</td>
+                        <td>@batch.Ddts_In.OrderBy(s=> s.DataOut).FirstOrDefault().DataOut.ToString("dd/MM/yy")</td>
                         <td class="text-center">
                             <a onclick="printQRCode('@batch.SubBatchID')" style="text-decoration: none">
                                 <i class="fas fa-print fa-lg pl-2" title="Stampa commessa" style="cursor: pointer; color: #6d767e"></i>
@@ -180,7 +182,8 @@
                 { "searchable": false, "orderable": false, "targets": 4 },
                 { "searchable": false, "orderable": false, "targets": 5 },
                 { "searchable": false, "orderable": false, "targets": 6 },
-                { "searchable": false, "orderable": false, "targets": 7 },
+                { "searchable": false, "orderable": true, "targets": 7 },
+                { "searchable": false, "orderable": false, "targets": 8 },
               ]
         });
 
