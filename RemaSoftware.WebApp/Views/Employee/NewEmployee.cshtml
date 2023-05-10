@@ -32,15 +32,16 @@
                     <input asp-for="Employee.number" type="text" class="form-control" placeholder="Matricola" required>
                     <span asp-validation-for="Employee.number" class="text-danger"></span>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label>Seleziona data di nascita</label>
-                    <div class='input-group date'>
-                        <input placeholder="Data di nascita" type='date' class="form-control bg-white" style="cursor: pointer;" asp-for="Employee.BirthDate" />
-                        <span class="input-group-addon">
-                            <span class="glyphicon glyphicon-calendar"></span>
-                        </span>
-                    </div>
-                </div>
+               <div class="col-md-6 mb-3">
+                   <label>Seleziona data di consegna</label>
+                   <div class='input-group date'>
+                       <input placeholder="Seleziona data di consegna" type='text' class="form-control bg-white" id='datetimepicker1' asp-for="Employee.BirthDate" />
+                       <span class="input-group-addon">
+                           <span class="glyphicon glyphicon-calendar"></span>
+                       </span>
+                   </div>
+               </div>
+
             </div>
             <div class="form-row">
                 <div class="col-md-6 mb-3 form-group">
@@ -64,13 +65,50 @@
 
 @section Scripts
 {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/js/select2.min.js" integrity="sha512-9p/L4acAjbjIaaGXmZf0Q2bV42HetlCLbv8EP0z3rLbQED2TAFUlDvAezy7kumYqg5T8jHtDdlm1fgIsr5QzKg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     <script>
         
+        var clicked = false;
+                
+        function clickEvent() {
+        $(".loader-cont").show()
+        if(!clicked)
+        {
+            clicked = true;
+            setTimeout(function(){
+                clicked = false;
+            }, 1500);
+        }
+        }
+                
         $('#priceUnit').keypress(function (e) {
             if (e.which == 46) {
                 e.preventDefault();
             }
-        });       
+        });     
+        
+        var date = new Date().toLocaleDateString('it-IT');
+        
+                
+        $("#datetimepicker1").flatpickr({
+            dateFormat: "d/m/Y",
+            defaultDate: date,
+            locale: {
+                weekdays: {
+                    shorthand: ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'],
+                    longhand: ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'],
+                },
+                    months: {
+                        shorthand: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Оtt', 'Nov', 'Dic'],
+                        longhand: ['Gennaio', 'Febbraio', 'Мarzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'],
+                    }
+            }
+
+        });
         
     </script>
     

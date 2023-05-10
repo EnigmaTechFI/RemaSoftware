@@ -1,0 +1,112 @@
+﻿@model RemaSoftware.WebApp.Models.EmployeeViewModel.AttendanceViewModel
+
+@{
+    ViewData["Title"] = "Gestione Presenze";
+}
+
+<link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
+
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
+        <h3 class="m-0 font-weight-bold text-primary">Gestione Presenze</h3>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+              <table class="table table-bordered" id="table-stock" width="100%" cellspacing="0">
+                  <thead>
+                    <tr>
+                      
+                    </tr>
+                  </thead>
+                  <tbody id="your-table-body">
+                  <!-- Qui verranno aggiunte le righe con i dati -->
+                  </tbody>
+                </table>
+            @*<table class="table table-bordered" id="table-stock" width="100%" cellspacing="0">
+                <thead>
+                <tr>
+                    <th>Matricola</th>
+                    <th>Nome</th>
+                    <th>Cognome</th>
+                    <th>Data di nascita</th>
+                    <th>Sesso</th>
+                    <th>Codice fiscale</th>
+                    <th>Azioni</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var employee in Model.Attendances)
+                {
+                    <tr id="item-@employee.EmployeeID" form="form-@employee.EmployeeID">
+                        <td class="number-@employee.DateIn">@employee.DateIn</td>
+                        <td class="number-@employee.Employee.Name">@employee.Employee.Name</td>
+
+                    </tr>
+                    $1$ <tr id="item-@employee.EmployeeID" form="form-@employee.EmployeeID">
+                        <td class="number-@employee.number">@employee.number</td>
+                        <td class="name-@employee.Name">@employee.Name</td>
+                        <td class="surname-@employee.Surname">@employee.Surname</td>
+                        <td class="birth-@employee.BirthDate.ToString("dd/MM/yyyy")">@employee.BirthDate.ToString("dd/MM/yyyy")</td>
+                        <td class="gender-@employee.Gender">@employee.Gender</td>
+                        <td class="tax-@employee.TaxID">@employee.TaxID</td>
+                        <td class="text-center editicon-@employee.EmployeeID">
+                            <a style="text-decoration: none" asp-controller="Employee" asp-action="ViewEmployee" asp-route-id="@employee.EmployeeID">
+                                <i class="fas fa-eye fa-lg pl-2" title="Visualizza" style="cursor: pointer; color: #6d767e"></i>
+                            </a>
+                            <a style="text-decoration: none" asp-controller="Employee" asp-action="ModifyEmployee" asp-route-id="@employee.EmployeeID">
+                             <i class="fas fa-pen fa-lg pl-2" style="cursor: pointer; color: #6d767e;" title="Modifica"></i> 
+                             </a>
+                            <i class="fas fa-trash fa-lg pl-2 del-employee" style="cursor: pointer; color: #6d767e;" id="@employee.EmployeeID" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDataEmployeeId('#confirm-del-modal', @employee.EmployeeID)"></i>
+                        </td>
+                    </tr>#1#
+                }
+                </tbody>
+            </table>*@
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        var names = ["Mario Rossi", "Luca Bianchi", "Anna Verdi"]; 
+    
+        var tableBody = document.getElementById("your-table-body");
+    
+        var daysRow = document.createElement("tr");
+    
+        var emptyCell = document.createElement("td");
+        daysRow.appendChild(emptyCell);
+    
+        var today = new Date();
+        var currentMonth = today.getMonth();
+        var currentYear = today.getFullYear();
+        var daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    
+        for (var i = 1; i <= daysInMonth; i++) {
+          var dayCell = document.createElement("td");
+          dayCell.textContent = i;
+          daysRow.appendChild(dayCell);
+        }
+    
+        tableBody.appendChild(daysRow);
+    
+        for (var i = 0; i < names.length; i++) {
+          var row = document.createElement("tr");
+    
+          var nameCell = document.createElement("td");
+          nameCell.textContent = names[i];
+          row.appendChild(nameCell);
+    
+          for (var j = 0; j < daysInMonth; j++) {
+            var emptyCell = document.createElement("td");
+            row.appendChild(emptyCell);
+          }
+    
+          tableBody.appendChild(row);
+        }
+      </script>
+}
+
+
+    

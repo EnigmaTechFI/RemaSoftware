@@ -1,0 +1,71 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model RemaSoftware.WebApp.Models.EmployeeViewModel.EmployeeViewModel
+
+@{
+    ViewData["Title"] = "Modifica Impiegato";
+}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">@Model.Employee.Name @Model.Employee.Surname</h1>
+</div>
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Aggiorna informazioni impiegato</h6>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            @Html.HiddenFor(model => model.Employee.EmployeeID)
+            @Html.HiddenFor(model => model.Employee.Gender)
+            @Html.HiddenFor(model => model.Employee.TaxID)
+            @Html.HiddenFor(model => model.Employee.Name)
+            @Html.HiddenFor(model => model.Employee.Surname)
+            @Html.HiddenFor(model => model.Employee.number)
+
+            <div class="form-row">
+                <div class="col-md-4 mb-3">
+                    <label>Bho</label>
+                    @*<input asp-for="Employee.number" type="text" class="form-control" value="@Model.Employee." required>
+                    <span asp-validation-for="Employee.number" class="text-danger"></span>*@
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label>Bho</label>
+                    @*<input asp-for="Employee.Name" type="text" class="form-control" value="@Model.Employee.Name" required>
+                    <span asp-validation-for="Employee.Name" class="text-danger"></span>*@
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label>Bho</label>
+                    @*<input asp-for="Employee.Name" type="text" class="form-control" value="@Model.Employee.Name" required>
+                    <span asp-validation-for="Employee.Name" class="text-danger"></span>*@
+                </div>
+                
+            </div>
+            <button class="btn btn-primary" type="submit" onclick="clickEvent()">Aggiorna</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+            
+        var clicked = false;
+                
+        function clickEvent() {
+            $(".loader-cont").show()
+            if(!clicked)
+            {
+                clicked = true;
+                setTimeout(function(){
+                    clicked = false;
+                }, 1500);
+            }
+        }
+            
+        $('#priceUnit').keypress(function (e) {
+            if (e.which == 46) {
+                e.preventDefault();
+            }
+        });
+        
+    </script>
+}

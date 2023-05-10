@@ -87,6 +87,7 @@
   <ItemGroup>
     <_ContentIncludedByDefault Remove="wwwroot\TemplateMail\new-account-mail.html" />
     <_ContentIncludedByDefault Remove="wwwroot\MailTemplate\mail-new-account.html" />
+    <_ContentIncludedByDefault Remove="Views\Employee\EmployeeList.cshtml" />
   </ItemGroup>
 
 </Project>
