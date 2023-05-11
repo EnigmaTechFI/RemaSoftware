@@ -19,14 +19,16 @@ namespace RemaSoftware.WebApp.Helper
         private readonly IEmailService _emailService;
         private readonly IAPIFatturaInCloudService _apiFatturaInCloudService;
         private readonly ApplicationDbContext _dbContext;
+        private readonly IClientService _clientService;
 
-        public AccountingHelper(IOrderService orderService, ISubBatchService subBatchService, IEmailService emailService, ApplicationDbContext dbContext, IAPIFatturaInCloudService apiFatturaInCloudService)
+        public AccountingHelper(IOrderService orderService, ISubBatchService subBatchService, IEmailService emailService, ApplicationDbContext dbContext, IAPIFatturaInCloudService apiFatturaInCloudService, IClientService clientService)
         {
             _orderService = orderService;
             _subBatchService = subBatchService;
             _emailService = emailService;
             _dbContext = dbContext;
             _apiFatturaInCloudService = apiFatturaInCloudService;
+            _clientService = clientService;
         }
 
         public ProductionAnalysisLiveViewModel GetProductionAnalysisLiveViewModel()
@@ -59,6 +61,7 @@ namespace RemaSoftware.WebApp.Helper
                     new OrderInFactoryGroupByClient
                     {
                         Client = s.First().Product.Client.Name,
+                        ClientID = s.First().Product.Client.ClientID,
                         NumberPiecesInStock = s.Sum(sum => sum.Number_Piece_Now),
                         TotPriceInStock = s.Sum(sum => sum.Price_Uni * sum.Number_Piece_Now)
                     }).ToList();
@@ -213,5 +216,42 @@ namespace RemaSoftware.WebApp.Helper
             return chart;
         }
 
+        public ClientAccountingViewModel GetClientAnalsysisViewModel(int id)
+        {
+            return new ClientAccountingViewModel()
+            {
+                Ddts_In = _clientService.ClientAccountingInfo(id)
+            };
+        }
+
+        public int getPieces(int selectedMonth, int selectedYear, int id)
+        {
+            var Ddts_In = _clientService.ClientAccountingInfo(id);
+
+            var sum = 0;
+            foreach (var output in Ddts_In)
+            {
+                if (output.DataIn.Month == selectedMonth && selectedMonth != 0 && output.DataIn.Year == selectedYear)
+                {
+                    sum += output.Number_Piece;
+                }
+            }
+            return sum;
+        }
+        
+        public decimal getPrice(int selectedMonth, int selectedYear, int id)
+        {
+            var Ddts_In = _clientService.ClientAccountingInfo(id);
+
+            decimal sum = 0;
+            foreach (var output in Ddts_In)
+            {
+                if (output.DataIn.Month == selectedMonth && selectedMonth != 0 && output.DataIn.Year == selectedYear)
+                {
+                    sum += output.Number_Piece * output.Price_Uni;
+                }
+            }
+            return sum;
+        }
     }
 }

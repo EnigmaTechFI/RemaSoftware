@@ -11,6 +11,8 @@ namespace RemaSoftware.WebApp.Models.AccountingViewModel
         public class OrderInFactoryGroupByClient
         {
             public string Client { get; set; }
+            
+            public int ClientID { get; set; }
             public int NumberPiecesInStock { get; set; }
             public decimal TotPriceInStock { get; set; }
         }

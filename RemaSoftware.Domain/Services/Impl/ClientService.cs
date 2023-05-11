@@ -57,5 +57,16 @@ namespace RemaSoftware.Domain.Services.Impl
         {
             return _dbContext.Ddt_Templates.ToList();
         }
+        
+        public List<Ddt_In> ClientAccountingInfo(int Id)
+        {
+            return _dbContext.Ddts_In
+                .Include(d => d.Product)
+                .ThenInclude(s => s.Client)
+                .Include(b => b.SubBatch)
+                .ThenInclude(s => s.Batch)
+                .Where(s => s.Product.ClientID == Id)
+                .ToList();
+        }
     }
 }

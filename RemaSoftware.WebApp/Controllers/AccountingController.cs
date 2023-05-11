@@ -141,5 +141,35 @@ namespace RemaSoftware.WebApp.Controllers
                 return RedirectToAction("Preliminar");
             }
         }
+        
+        [HttpGet]
+        public IActionResult AccountingClient(int id)
+        {
+            try
+            {
+                return View(_accountingHelper.GetClientAnalsysisViewModel(id));
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Preliminar");
+            }
+        }
+        
+        [HttpGet]
+        public ActionResult GetPiecesForPeriod(int selectedMonth, int selectedYear, int id)
+        {
+            int totalPieces = _accountingHelper.getPieces(selectedMonth, selectedYear, id);
+
+            return Json(totalPieces);
+        }
+        
+        [HttpGet]
+        public ActionResult GetPriceForPeriod(int selectedMonth, int selectedYear, int id)
+        {
+            decimal totalPrice = _accountingHelper.getPrice(selectedMonth, selectedYear, id);
+
+            return Json(totalPrice);
+        }
+        
     }
 }
