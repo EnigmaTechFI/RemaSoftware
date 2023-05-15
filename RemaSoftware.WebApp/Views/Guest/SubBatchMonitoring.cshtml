@@ -181,7 +181,12 @@
                     var operationList = item.OperationTimelines.Where(s => s.BatchOperationID == item.BatchOperationID && s.SubBatchID == @Model.SubBatch.SubBatchID).ToList();
                     var status = "";
                     var css = "";
-                    if (operationList.Count == 0)
+                    if (Model.SubBatch.Ddts_In.All(s => s.Status == OrderStatusConstants.STATUS_COMPLETED || s.Status == OrderStatusConstants.STATUS_DELIVERED))
+                    {
+                        status = "Conclusa";
+                        css = " badge-success";
+                    }
+                    else if (operationList.Count == 0)
                     {
                         status = "Da effettuare";
                         css = " badge-danger";
