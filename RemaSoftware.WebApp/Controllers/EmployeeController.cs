@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -122,19 +123,28 @@ namespace RemaSoftware.WebApp.Controllers
             }
         }
         
-        [HttpGet]
-        public IActionResult Attendance()
+        [HttpPost]
+        public async Task<IActionResult> ModifyEmployee(EmployeeViewModel model)
         {
-            try
-            {
-                return View(_employeeHelper.GetAttendanceViewModel());
+            try {
+                var validationResult = _employeeValidation.ValidateEmployee(model);
+                if (validationResult != "")
+                {
+                    _notyfService.Error(validationResult);
+                }
+                else
+                {
+                    await _employeeHelper.EditEmployee(model);
+                    _notyfService.Success("Impiegato aggiornato correttamente");
+                    return RedirectToAction("EmployeeList");
+                }
             }
             catch (Exception e)
             {
                 Logger.Error(e, e.Message);
-                _notyfService.Error("Errore, impossibile procedere.");
-                return View();
+                _notyfService.Error("Errore durante l&#39;aggiornamento dell'impiegato.");
             }
+            return View(_employeeHelper.GetEmployeeById(model.Employee.EmployeeID));
         }
     }
 }

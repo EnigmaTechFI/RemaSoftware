@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using RemaSoftware.Domain.Constants
 @model RemaSoftware.WebApp.Models.EmployeeViewModel.EmployeeViewModel
 
 @{
@@ -15,36 +16,39 @@
     <div class="card-body">
         <form method="post">
             <div class="form-row">
-                <div class="col-md-6 mb-3">
+                <div class="col-md-4 mb-4">
                     <label>Nome</label>
                     <input asp-for="Employee.Name" type="text" class="form-control" placeholder="Nome" required>
                     <span asp-validation-for="Employee.Name" class="text-danger"></span>
                 </div>
-                <div class="col-md-6 mb-3">
+                <div class="col-md-4 mb-4">
                     <label>Cognome</label>
                     <input asp-for="Employee.Surname" type="text" class="form-control" placeholder="Cognome" required>
                     <span asp-validation-for="Employee.Surname" class="text-danger"></span>
                 </div>
-            </div>
-            <div class="form-row">
-                <div class="col-md-6 mb-3">
+                <div class="col-md-4 mb-4">
                     <label>Matricola</label>
                     <input asp-for="Employee.number" type="text" class="form-control" placeholder="Matricola" required>
                     <span asp-validation-for="Employee.number" class="text-danger"></span>
                 </div>
-               <div class="col-md-6 mb-3">
-                   <label>Seleziona data di consegna</label>
-                   <div class='input-group date'>
-                       <input placeholder="Seleziona data di consegna" type='text' class="form-control bg-white" id='datetimepicker1' asp-for="Employee.BirthDate" />
-                       <span class="input-group-addon">
-                           <span class="glyphicon glyphicon-calendar"></span>
-                       </span>
-                   </div>
-               </div>
-
             </div>
             <div class="form-row">
-                <div class="col-md-6 mb-3 form-group">
+                <div class="col-md-4 mb-4">
+                    <label>Seleziona data di nascita</label>
+                    <div class='input-group date'>
+                        <input placeholder="Seleziona data di consegna" type='text' class="form-control bg-white" id='datetimepicker1' asp-for="Employee.BirthDate" />
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <label>Luogo di nascita</label>
+                    <input asp-for="Employee.BirthPlace" type="text" class="form-control" placeholder="Luogo di nascita">
+                    <span asp-validation-for="Employee.BirthPlace" class="text-danger"></span>
+                </div>
+                
+                <div class="col-md-4 mb-4 form-group">
                     <label for="formGroupExampleInput">Seleziona sesso</label>
                     <select asp-for="Employee.Gender" class="form-control">
                         <option selected="selected" value="Nessuna">Nessuna</option>
@@ -52,12 +56,76 @@
                         <option value="Donna">Donna</option>
                     </select>
                 </div>
-                <div class="col-md-6 mb-3">
+
+            </div>
+            <div class="form-row">
+                <div class="col-md-4 mb-4">
                     <label>Codice fiscale</label>
                     <input asp-for="Employee.TaxID" type="text" class="form-control" placeholder="Codice fiscale" required>
                     <span asp-validation-for="Employee.TaxID" class="text-danger"></span>
                 </div>
+                <div class="col-md-4 mb-4">
+                    <label>Mansione</label>
+                    <input asp-for="Employee.Task" type="text" class="form-control" placeholder="Mansione">
+                    <span asp-validation-for="Employee.Task" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <label>Livello</label>
+                    <input asp-for="Employee.Level" type="number" class="form-control" placeholder="Livello">
+                    <span asp-validation-for="Employee.Level" class="text-danger"></span>
+                </div>
             </div>
+            <div class="form-row">
+                <div class="col-md-6 mb-4 form-group">
+                    <label for="formGroupExampleInput">Tipo di rapporto</label>
+                    <select asp-for="Employee.TypeRelationship" class="form-control">
+                        <option selected="selected" value="Nessuna">Nessuno</option>
+                        <option value="@TypeRelationship.LavoroDipendente">Lavoro dipendente</option>
+                        <option value="@TypeRelationship.Somministrato">Somministarto</option>
+                        <option value="@TypeRelationship.Distaccato">Distaccato</option>
+                        <option value="@TypeRelationship.ParasubCalendario">Parasub. con calendario</option>
+                        <option value="@TypeRelationship.ParasubSenzaCalendario">Parasub. senza calendario</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-4 form-group">
+                    <label for="formGroupExampleInput">Tipo di posizione</label>
+                    <select asp-for="Employee.TypePosition" class="form-control">
+                        <option selected="selected" value="Nessuna">Nessuno</option>
+                        <option value="@TypePosition.InServizio">Lavoro dipendente</option>
+                        <option value="@TypePosition.MaternitàAnticipata">Maternità anticipata</option>
+                        <option value="@TypePosition.MaternitàObbligatoria">Maternità obbligatoria</option>
+                        <option value="@TypePosition.MaternitàFacoltativa">Maternità facoltativa</option>
+                        <option value="@TypePosition.SospensioneAspettativa">Sospensione o aspettativa</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-4 mb-4">
+                    <label>Seleziona data di inizio rapporto</label>
+                    <div class='input-group date'>
+                        <input placeholder="Seleziona data di inizio rapporto" type='text' class="form-control bg-white" id='datetimepicker2' asp-for="Employee.StartRelationship" />
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <label>Seleziona data di fine rapporto (Facoltativo)</label>
+                    <div class='input-group date'>
+                        <input placeholder="Seleziona data di fine rapporto" type='text' class="form-control bg-white" id='datetimepicker3' asp-for="Employee.EndRelationship" />
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <label>Numero di ore lavorative</label>
+                    <input asp-for="Employee.NumberHour" type="number" class="form-control" placeholder="Numero di ore" required>
+                    <span asp-validation-for="Employee.NumberHour" class="text-danger"></span>
+                </div>
+            </div>
+            
             <button class="btn btn-primary" type="submit" onclick="clickEvent()">Aggiungi</button>
         </form>
     </div>
@@ -71,20 +139,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/js/select2.min.js" integrity="sha512-9p/L4acAjbjIaaGXmZf0Q2bV42HetlCLbv8EP0z3rLbQED2TAFUlDvAezy7kumYqg5T8jHtDdlm1fgIsr5QzKg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
-        
-        var clicked = false;
-                
-        function clickEvent() {
-        $(".loader-cont").show()
-        if(!clicked)
-        {
-            clicked = true;
-            setTimeout(function(){
-                clicked = false;
-            }, 1500);
-        }
-        }
-                
+                    
         $('#priceUnit').keypress(function (e) {
             if (e.which == 46) {
                 e.preventDefault();
@@ -95,6 +150,38 @@
         
                 
         $("#datetimepicker1").flatpickr({
+            dateFormat: "d/m/Y",
+            defaultDate: date,
+            locale: {
+                weekdays: {
+                    shorthand: ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'],
+                    longhand: ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'],
+                },
+                    months: {
+                        shorthand: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Оtt', 'Nov', 'Dic'],
+                        longhand: ['Gennaio', 'Febbraio', 'Мarzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'],
+                    }
+            }
+
+        });
+        
+        $("#datetimepicker2").flatpickr({
+            dateFormat: "d/m/Y",
+            defaultDate: date,
+            locale: {
+                weekdays: {
+                    shorthand: ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'],
+                    longhand: ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'],
+                },
+                    months: {
+                        shorthand: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Оtt', 'Nov', 'Dic'],
+                        longhand: ['Gennaio', 'Febbraio', 'Мarzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'],
+                    }
+            }
+
+        });
+        
+        $("#datetimepicker3").flatpickr({
             dateFormat: "d/m/Y",
             defaultDate: date,
             locale: {

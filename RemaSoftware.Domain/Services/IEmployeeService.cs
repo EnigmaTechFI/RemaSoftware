@@ -9,7 +9,7 @@ namespace RemaSoftware.Domain.Services
         bool DeleteEmployeeById(int employeeId);
         Employee GetEmployeeById(int employeeId);
         List<Attendance> GetAllAttendance();
-
+        bool UpdateEmployee(Employee employee);
 
     }
 }

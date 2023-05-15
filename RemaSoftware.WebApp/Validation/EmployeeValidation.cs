@@ -19,6 +19,8 @@ namespace RemaSoftware.WebApp.Validation
                 return "Inserire sesso.";
             if (string.IsNullOrEmpty(employee.Employee.TaxID))
                 return "Inserire codice fiscale.";
+            if (employee.Employee.NumberHour<=0)
+                return "Inserire numero ore di lavoro.";
             if (employee.Employee.BirthDate > DateTime.Now.Date)
                 return "Inserire data di nascita.";
             return "";

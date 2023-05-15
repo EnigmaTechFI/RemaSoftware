@@ -42,5 +42,12 @@ namespace RemaSoftware.Domain.Services.Impl
             return _dbContext.Attendances.Include(t => t.Employee).ToList();
         }
         
+        public bool UpdateEmployee(Employee employee)
+        {
+            _dbContext.Employees.Update(employee);
+            _dbContext.SaveChanges();
+            return true;
+        }
+        
     }
 }

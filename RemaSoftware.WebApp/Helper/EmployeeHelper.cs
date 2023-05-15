@@ -64,5 +64,11 @@ public class EmployeeHelper
     {
         return _employeeService.GetAllAttendance();
     }
+    
+    public async Task<string> EditEmployee(EmployeeViewModel model)
+    {
+        _employeeService.UpdateEmployee(model.Employee);
+        return "Success";
+    }
 
 }

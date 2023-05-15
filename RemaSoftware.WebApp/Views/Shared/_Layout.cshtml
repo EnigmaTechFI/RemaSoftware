@@ -257,8 +257,8 @@
                 Amministrazione
             </div>
         
-            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Employee" ? "active" : "")">
-                <a class="nav-link" asp-action="Attendance" asp-controller="Employee">
+            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Attendance" ? "active" : "")">
+                <a class="nav-link" asp-action="Attendance" asp-controller="Attendance">
                     <i class="fas fa-fw fa-area-chart"></i>
                     <span>Presenze</span>
                 </a>
