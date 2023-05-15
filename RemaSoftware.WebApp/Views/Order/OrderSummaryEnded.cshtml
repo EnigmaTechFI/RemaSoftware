@@ -107,7 +107,7 @@
 
     <script>
     let enable = true;
-
+    
     $(document).ready( function () {
         table = $('#table-ddt').DataTable({
             "language": {
@@ -133,8 +133,8 @@
                 { "searchable": false, "orderable": false, "targets": 4 },
                 { "searchable": false, "orderable": false, "targets": 5 },
                 { "searchable": false, "orderable": false, "targets": 6 },
-                { "searchable": false, "orderable": true, "targets": 7 },
-                { "searchable": false, "orderable": true, "targets": 8 },
+                { "searchable": false, "orderable": true, "targets": 7, "type": "date-eu" },
+                { "searchable": false, "orderable": true, "targets": 8, "type": "date-eu" },
                 { "searchable": false, "orderable": false, "targets": 9 },
                 { "searchable": false, "orderable": false, "targets": 10 },
               ]

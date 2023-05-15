@@ -271,6 +271,11 @@
 </div>
 @section Scripts
 {
+    
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/js/select2.min.js" integrity="sha512-9p/L4acAjbjIaaGXmZf0Q2bV42HetlCLbv8EP0z3rLbQED2TAFUlDvAezy7kumYqg5T8jHtDdlm1fgIsr5QzKg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+     <script src="https://cdn.datatables.net/plug-ins/1.10.11/sorting/date-eu.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
     <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
     <script src="https://app.smplrspace.com/lib/smplr.js"></script>
@@ -989,8 +994,8 @@
                     { "searchable": false, "orderable": false, "targets": 1 },
                     { "searchable": false, "orderable": false, "targets": 2 },
                     { "searchable": false, "orderable": false, "targets": 3 },
-                    { "searchable": false, "orderable": true, "targets": 4 },
-                    { "searchable": false, "orderable": true, "targets": 5 },
+                    { "searchable": false, "orderable": true, "targets": 4, "type": "date-eu" },
+                    { "searchable": false, "orderable": true, "targets": 5, "type": "date-eu" },
                     { "searchable": true, "orderable": false, "targets": 6 },
                     { "searchable": false, "orderable": false, "targets": 7 },
                   ]
