@@ -6,7 +6,6 @@ namespace RemaSoftware.Domain.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {
-        public object Stock_History;
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         public DbSet<MyUser> MyUsers { get; set; }
