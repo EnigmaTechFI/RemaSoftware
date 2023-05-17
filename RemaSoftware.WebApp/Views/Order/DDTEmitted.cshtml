@@ -39,9 +39,12 @@
                             <a href="@item.Url" target="_blank" style="text-decoration: none">
                                 <i class="fas fa-print fa-lg pl-2" title="Stampa ddt" style="cursor: pointer; color: #6d767e"></i>
                             </a>
-                            <a style="text-decoration: none" onclick="setDDTToDeleteID(@item.Id)">
-                                <i class="fas fa-trash fa-lg pl-2" style="cursor: pointer; color: #6d767e;" title="Elimina DDT"></i>
-                            </a>
+                            @if (item.Id != 0)
+                            {
+                                <a style="text-decoration: none" onclick="setDDTToDeleteID(@item.Id)">
+                                    <i class="fas fa-trash fa-lg pl-2" style="cursor: pointer; color: #6d767e;" title="Elimina DDT"></i>
+                                </a>
+                            }
                         </td>
                     </tr>
                 }

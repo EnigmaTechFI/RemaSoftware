@@ -5,6 +5,7 @@ using RemaSoftware.Domain.Data;
 using RemaSoftware.WebApp.Models.OrderViewModel;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using NLog;
 using QRCoder;
 using RemaSoftware.Domain.Constants;
@@ -535,7 +536,7 @@ namespace RemaSoftware.WebApp.Helper
             return _orderService.GetDdtOutsByStatus(DDTOutStatus.STATUS_PENDING);
         }
 
-        public string EmitDDT(int id)
+        public async Task<string> EmitDDT(int id)
         {
 
             var ddtOut = _orderService.GetDdtOutById(id);
@@ -560,7 +561,7 @@ namespace RemaSoftware.WebApp.Helper
                 throw new Exception($"Attenzione contattare l&#39;amministrazione! Le seguenti DDT hanno il prezzo da confermare: {ddts}");
             }
 
-            var result = _apiFatturaInCloudService.CreateDdtInCloud(ddtOut);
+            var result = await _apiFatturaInCloudService.CreateDdtInCloud(ddtOut);
             ddtOut.Status = DDTOutStatus.STATUS_EMITTED;
             ddtOut.FC_Ddt_Out_ID = result.Item2;
             ddtOut.Url = result.Item1;
@@ -680,14 +681,14 @@ namespace RemaSoftware.WebApp.Helper
             };
         }
 
-        public string EmitPartialDdtIn(PartialDDTViewModel model)
+        public async Task<string> EmitPartialDdtIn(PartialDDTViewModel model)
         {
             using (var transaction = _dbContext.Database.BeginTransaction())
             {
                 try
                 {
                     if (model.PartialDdtDtos.All(s => s.ToEmit))
-                        return EmitDDT(model.DdtId);
+                        return await EmitDDT(model.DdtId);
                     if (model.PartialDdtDtos.Any(s => s.ToEmit))
                     {
                         var ddtOut = _orderService.CreateDDTOut(new Ddt_Out()
@@ -702,11 +703,11 @@ namespace RemaSoftware.WebApp.Helper
                         {
                             _orderService.UpdateDdtAssociationByIdWithNewDdtOut(item.DdtAssociation.ID, ddtOut.Ddt_Out_ID);
                         }
-                        var result = EmitDDT(ddtOut.Ddt_Out_ID);
+                        var result = await EmitDDT(ddtOut.Ddt_Out_ID);
                         transaction.Commit();
                         return result;
                     }
-
+                    transaction.Commit();
                     return "";
                 }
                 catch (Exception e)
