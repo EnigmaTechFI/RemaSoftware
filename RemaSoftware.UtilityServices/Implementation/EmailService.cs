@@ -243,7 +243,7 @@ namespace RemaSoftware.UtilityServices.Implementation
             }
         }
 
-        public bool SendEmailStock(int id, string name, string supplierName, string mail)
+        public bool SendEmailStock(int id, string name, string sku, string supplierName, string mail)
         {
             try
             {
@@ -263,6 +263,8 @@ namespace RemaSoftware.UtilityServices.Implementation
                 MailText = MailText.Replace("[id]", id.ToString());
                 MailText = MailText.Replace("[name]", name);
                 MailText = MailText.Replace("[supplierName]", supplierName);
+                MailText = MailText.Replace("[sku]", sku);
+
 
 
                 mailMessage.Body = MailText;

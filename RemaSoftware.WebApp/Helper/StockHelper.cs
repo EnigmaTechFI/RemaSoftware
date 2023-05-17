@@ -77,7 +77,7 @@ public class StockHelper
         {
             if (stockArticle.Number_Piece < stockArticle.Reorder_Limit)
             {
-                _emailService.SendEmailStock(stockArticle.Warehouse_StockID, stockArticle.Name,
+                _emailService.SendEmailStock(stockArticle.Warehouse_StockID, stockArticle.Name, stockArticle.Product_Code,
                     stockArticle.Supplier.Name, mail);
             }
         }
