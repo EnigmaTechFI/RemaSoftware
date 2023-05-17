@@ -243,14 +243,15 @@ namespace RemaSoftware.UtilityServices.Implementation
             }
         }
 
-        public bool SendEmailStock(int id, string name, string supplierName)
+        public bool SendEmailStock(int id, string name, string sku, string supplierName, string mail)
         {
             try
             {
                 MailMessage mailMessage = new MailMessage();
                 var mailAddressSender = _configuration["EmailConfig:EmailAddress"];
                 mailMessage.From = new MailAddress(mailAddressSender);
-                mailMessage.To.Add(new MailAddress("rema.pul@gmail.com"));
+                
+                mailMessage.To.Add(new MailAddress(mail));
 
                 mailMessage.Subject = "Prodotto magazzino sotto limite scorte";
                 mailMessage.IsBodyHtml = true;
@@ -262,6 +263,8 @@ namespace RemaSoftware.UtilityServices.Implementation
                 MailText = MailText.Replace("[id]", id.ToString());
                 MailText = MailText.Replace("[name]", name);
                 MailText = MailText.Replace("[supplierName]", supplierName);
+                MailText = MailText.Replace("[sku]", sku);
+
 
 
                 mailMessage.Body = MailText;

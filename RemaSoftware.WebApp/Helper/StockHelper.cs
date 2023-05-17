@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
@@ -16,12 +18,14 @@ public class StockHelper
     private readonly IWarehouseStockService _warehouseStockService;
     private readonly ISupplierService _supplierService;
     private readonly EmailService _emailService;
+    private readonly UserManager<MyUser> _userManager;
 
-    public StockHelper(IWarehouseStockService warehouseStockService, ISupplierService supplierService, EmailService emailService)
+    public StockHelper(IWarehouseStockService warehouseStockService, ISupplierService supplierService, UserManager<MyUser> userManager, EmailService emailService)
     {
         _warehouseStockService = warehouseStockService;
         _supplierService = supplierService;
         _emailService = emailService;
+        _userManager = userManager;
     }
 
     public List<Warehouse_Stock> GetAllStocks()
@@ -65,11 +69,19 @@ public class StockHelper
             : stockArticle.Number_Piece - model.QtyToAddRemove;
         _warehouseStockService.UpdateStockQuantity(stockArticle, model.QtyToAddRemove, model.QtyToAddRemoveRadio);
 
-        if (stockArticle.Number_Piece < stockArticle.Reorder_Limit)
+
+        var admins = _userManager.GetUsersInRoleAsync("Admin").Result;
+        var adminEmails = admins.Select(u => u.Email).ToList();
+
+        foreach (var mail in adminEmails)
         {
-            _emailService.SendEmailStock(stockArticle.Warehouse_StockID, stockArticle.Name, stockArticle.Supplier.Name);
+            if (stockArticle.Number_Piece < stockArticle.Reorder_Limit)
+            {
+                _emailService.SendEmailStock(stockArticle.Warehouse_StockID, stockArticle.Name, stockArticle.Product_Code,
+                    stockArticle.Supplier.Name, mail);
+            }
         }
-        
+
         return new StockJsonResultDTO
         {
             Result = true,
