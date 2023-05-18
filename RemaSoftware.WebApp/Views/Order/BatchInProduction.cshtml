@@ -126,7 +126,7 @@
         } 
     </script>
 
-    <script>
+     <script>
     const batches = @Json.Serialize(Model.SubBatches)
     function showDDT(subbatchId) {
         var batch = batches.filter(obj => {
@@ -190,10 +190,16 @@
                 { "searchable": false, "orderable": false, "targets": 8 },
               ]
         });
-
-        
-        
+  
     });
+    
+    function formatDate(timestamp){
+        var x=new Date(timestamp);
+        var dd = x.getDate();
+        var mm = x.getMonth()+1;
+        var yy = x.getFullYear();
+        return dd +"/" + mm+"/" + yy;
+     }
 
     </script>
 }
