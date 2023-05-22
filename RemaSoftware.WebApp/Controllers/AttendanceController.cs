@@ -22,13 +22,13 @@ namespace RemaSoftware.WebApp.Controllers
             _employeeHelper = employeeHelper;
             _notyfService = notyfService;
         }
-
+        
         [HttpGet]
-        public IActionResult Attendance()
+        public IActionResult Attendance(int mouth, int year)
         {
             try
             {
-                return View(_employeeHelper.GetAttendanceViewModel());
+                return View(_employeeHelper.GetAttendanceViewModel(mouth, year));
             }
             catch (Exception e)
             {

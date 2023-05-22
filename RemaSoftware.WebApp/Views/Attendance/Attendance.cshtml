@@ -11,16 +11,110 @@
     <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
         <h3 class="m-0 font-weight-bold text-primary">Gestione Presenze</h3>
     </div>
+    <form method="get" action="/Attendance/Attendance">
+        <div class="row mb-4">
+            <div class="col-3 ml-4 mt-3">
+                <label for="mese">Mese:</label>
+                <select id="mese" name="mouth" class="form-control">
+                    <option value="01" selected="@(Model.Mouth == 01)">Gennaio</option>
+                    <option value="02" selected="@(Model.Mouth == 02)">Febbraio</option>
+                    <option value="03" selected="@(Model.Mouth == 03)">Marzo</option>
+                    <option value="04" selected="@(Model.Mouth == 04)">Aprile</option>
+                    <option value="05" selected="@(Model.Mouth == 05)">Maggio</option>
+                    <option value="06" selected="@(Model.Mouth == 06)">Giugno</option>
+                    <option value="07" selected="@(Model.Mouth == 07)">Luglio</option>
+                    <option value="08" selected="@(Model.Mouth == 08)">Agosto</option>
+                    <option value="09" selected="@(Model.Mouth == 09)">Settembre</option>
+                    <option value="10" selected="@(Model.Mouth == 10)">Ottobre</option>
+                    <option value="11" selected="@(Model.Mouth == 11)">Novembre</option>
+                    <option value="12" selected="@(Model.Mouth == 12)">Dicembre</option>
+                </select>
+
+
+            </div>
+            <div class="col-3 ml-3 mt-3">
+                <label for="anno">Anno:</label>
+                <select id="anno" name="year" class="form-control">
+                    <option value="2023" selected="@(Model.Year == 2023)">2023</option>
+                    <option value="2024" selected="@(Model.Year == 2024)">2024</option>
+                    <option value="2025" selected="@(Model.Year == 2025)">2025</option>
+                </select>
+            </div>
+            <div class="col-3 ml-3 mt-5">
+                <input type="submit" value="Visualizza" class="btn btn-primary text-white"/>
+            </div>
+        </div>
+    </form>
     <div class="card-body">
         <div class="table-responsive">
               <table class="table table-bordered" id="table-stock" width="100%" cellspacing="0">
                   <thead>
-                    <tr>
-                      
-                    </tr>
+                       <th>Impiegato</th>
+                       <!-- Intestazione con i giorni del mese -->
+                      @for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, Model.Mouth); giorno++)
+                      {
+                          DateTime dataCorrente = new DateTime(Model.Year, Model.Mouth, giorno);
+                          if (dataCorrente.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
+                          {
+                              <th class="text-center" style="background-color: #d3d3d3;">@giorno</th>
+                          }
+                          else
+                          {
+                              <th class="text-center">@giorno</th>
+                          }
+                      }
+
                   </thead>
-                  <tbody id="your-table-body">
-                  <!-- Qui verranno aggiunte le righe con i dati -->
+                  <tbody>
+                    @foreach (var presenza in Model.Attendances)
+                    {
+                        <tr>
+                            <td>@presenza.Employee.Name @presenza.Employee.Surname</td>
+                            @for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, Model.Mouth); giorno++)
+                            {
+                                DateTime dataCorrente = new DateTime(Model.Year, Model.Mouth, giorno);
+                                @if (dataCorrente.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
+                                {
+                                    <td style="background-color: #ededed;">
+                                    @if(@presenza.DateIn.Day == giorno)
+                                    {
+                                        <div> <i class="fa fa-check" style="color: green;"></i> @presenza.DateIn.ToString(@"hh\:mm")</div>
+                                        <div> <i class="fa fa-check" style="color: red;"></i> @presenza.DateOut.ToString(@"hh\:mm")</div>
+                                    }
+                                    </td>
+                                }else{
+                                    <td>
+                                    @if(@presenza.DateIn.Day == giorno)
+                                    {
+                                        <div> <i class="fa fa-check" style="color: green;"></i> @presenza.DateIn.ToString(@"hh\:mm")</div>
+                                        <div> <i class="fa fa-check" style="color: red;"></i> @presenza.DateOut.ToString(@"hh\:mm")</div>
+                                    }
+                                    </td>
+                                }
+                            }
+                        </tr>
+                    }
+                  
+                    @foreach (var employee in Model.Employees)
+                    {
+                        <tr>
+                            <td>@employee.Name @employee.Surname</td>
+                            @for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, Model.Mouth); giorno++)
+                            {
+                                DateTime dataCorrente = new DateTime(Model.Year, Model.Mouth, giorno);
+                                @if (dataCorrente.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
+                                {
+                                    <td style="background-color: #ededed;">
+                                    
+                                    </td>
+                                }else{
+                                    <td>
+                                    
+                                    </td>
+                                }
+                            }
+                        </tr>
+                    }
                   </tbody>
                 </table>
             @*<table class="table table-bordered" id="table-stock" width="100%" cellspacing="0">
@@ -67,46 +161,6 @@
     </div>
 </div>
 
-@section Scripts{
-    <script>
-        var names = ["Mario Rossi", "Luca Bianchi", "Anna Verdi"]; 
-    
-        var tableBody = document.getElementById("your-table-body");
-    
-        var daysRow = document.createElement("tr");
-    
-        var emptyCell = document.createElement("td");
-        daysRow.appendChild(emptyCell);
-    
-        var today = new Date();
-        var currentMonth = today.getMonth();
-        var currentYear = today.getFullYear();
-        var daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-    
-        for (var i = 1; i <= daysInMonth; i++) {
-          var dayCell = document.createElement("td");
-          dayCell.textContent = i;
-          daysRow.appendChild(dayCell);
-        }
-    
-        tableBody.appendChild(daysRow);
-    
-        for (var i = 0; i < names.length; i++) {
-          var row = document.createElement("tr");
-    
-          var nameCell = document.createElement("td");
-          nameCell.textContent = names[i];
-          row.appendChild(nameCell);
-    
-          for (var j = 0; j < daysInMonth; j++) {
-            var emptyCell = document.createElement("td");
-            row.appendChild(emptyCell);
-          }
-    
-          tableBody.appendChild(row);
-        }
-      </script>
-}
 
 
     

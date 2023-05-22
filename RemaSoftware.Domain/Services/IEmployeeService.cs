@@ -1,4 +1,5 @@
 using RemaSoftware.Domain.Models;
+using Attendance = RemaSoftware.Domain.Migrations.Attendance;
 
 namespace RemaSoftware.Domain.Services
 {
@@ -8,8 +9,9 @@ namespace RemaSoftware.Domain.Services
         Employee NewEmployee(Employee employee);
         bool DeleteEmployeeById(int employeeId);
         Employee GetEmployeeById(int employeeId);
-        List<Attendance> GetAllAttendance();
+        List<Models.Attendance> GetAllAttendance(int mouth, int year);
         bool UpdateEmployee(Employee employee);
+        public List<Employee> GetEmployeesWithoutAttendances(int mouth, int year);
 
     }
 }

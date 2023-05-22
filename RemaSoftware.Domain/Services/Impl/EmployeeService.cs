@@ -37,9 +37,17 @@ namespace RemaSoftware.Domain.Services.Impl
             return _dbContext.Employees.SingleOrDefault(sd => sd.EmployeeID == employeeId);
         }
 
-        public List<Attendance> GetAllAttendance()
+        public List<Attendance> GetAllAttendance(int mouth, int year)
         {
-            return _dbContext.Attendances.Include(t => t.Employee).ToList();
+            return _dbContext.Attendances.Include(t => t.Employee).Where(i => i.DateIn.Month == mouth && i.DateIn.Year == year).ToList();
+        }
+        
+        public List<Employee> GetEmployeesWithoutAttendances(int mouth, int year)
+        {
+            return _dbContext.Employees
+                .Where(e => !_dbContext.Attendances.Any(a => a.EmployeeID == e.EmployeeID && a.DateIn.Month == mouth && a.DateIn.Year == year))
+                .ToList();
+
         }
         
         public bool UpdateEmployee(Employee employee)

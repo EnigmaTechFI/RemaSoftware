@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using RemaSoftware.Domain.Models;
@@ -52,19 +53,30 @@ public class EmployeeHelper
         };
     }
     
-    public AttendanceViewModel GetAttendanceViewModel()
+    public AttendanceViewModel GetAttendanceViewModel(int mouth, int year)
     {
+        var m = mouth;
+        var y = year;
+        if (year == 0)
+        {
+            m = DateTime.Today.Month;
+            y = DateTime.Today.Year;
+        }
+
         return new AttendanceViewModel
         {
-            Attendances = GetAllAttendance()
+            Attendances = GetAllAttendance(m, y),
+            Employees = _employeeService.GetEmployeesWithoutAttendances(mouth, year),
+            Mouth = m,
+            Year = y
         };
     }
     
-    public List<Attendance> GetAllAttendance()
+    public List<Attendance> GetAllAttendance(int mouth, int year)
     {
-        return _employeeService.GetAllAttendance();
+        return _employeeService.GetAllAttendance(mouth, year);
     }
-    
+
     public async Task<string> EditEmployee(EmployeeViewModel model)
     {
         _employeeService.UpdateEmployee(model.Employee);
