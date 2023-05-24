@@ -66,7 +66,7 @@ public class EmployeeHelper
         return new AttendanceViewModel
         {
             Attendances = GetAllAttendance(m, y),
-            Employees = _employeeService.GetEmployeesWithoutAttendances(mouth, year),
+            Employees = _employeeService.GetEmployeesWithoutAttendances(m, y),
             Mouth = m,
             Year = y
         };

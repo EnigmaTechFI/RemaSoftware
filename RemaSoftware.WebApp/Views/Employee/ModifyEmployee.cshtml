@@ -62,7 +62,7 @@
                  </div>
              </div>
             <div class="form-row">
-                <div class="col-md-6 mb-3 form-group">
+                <div class="col-md-4 mb-3 form-group">
                     <label for="formGroupExampleInput">Tipo di relazione</label>
                     <select asp-for="@Model.Employee.TypeRelationship" class="form-control">
                         <option selected="selected" value="Nessuna">Nessuna</option>
@@ -73,7 +73,7 @@
                         <option value="@TypeRelationship.ParasubSenzaCalendario">Parasub. senza calendario</option>
                     </select>
                 </div>
-                <div class="col-md-6 mb-3 form-group">
+                <div class="col-md-4 mb-3 form-group">
                     <label for="formGroupExampleInput">Tipo di posizione</label>
                     <select asp-for="@Model.Employee.TypePosition" class="form-control">
                         <option selected="selected" value="Nessuna">Nessuna</option>
@@ -83,6 +83,11 @@
                         <option value="@TypePosition.MaternitàObbligatoria">Maternità obbligatioria</option>
                         <option value="@TypePosition.SospensioneAspettativa">Sospensione o aspettativa</option>
                     </select>
+                </div>
+                 <div class="col-md-4 mb-4">
+                    <label>Codice fluida</label>
+                    <input asp-for="Employee.FluidaId" type="text" class="form-control" value="@Model.Employee.FluidaId">
+                    <span asp-validation-for="Employee.FluidaId" class="text-danger"></span>
                 </div>
             </div>
             <button class="btn btn-primary" type="submit" onclick="clickEvent()">Aggiorna</button>

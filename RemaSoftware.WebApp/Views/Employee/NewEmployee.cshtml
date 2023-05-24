@@ -76,7 +76,7 @@
                 </div>
             </div>
             <div class="form-row">
-                <div class="col-md-6 mb-4 form-group">
+                <div class="col-md-4 mb-4 form-group">
                     <label for="formGroupExampleInput">Tipo di rapporto</label>
                     <select asp-for="Employee.TypeRelationship" class="form-control">
                         <option selected="selected" value="Nessuna">Nessuno</option>
@@ -87,7 +87,7 @@
                         <option value="@TypeRelationship.ParasubSenzaCalendario">Parasub. senza calendario</option>
                     </select>
                 </div>
-                <div class="col-md-6 mb-4 form-group">
+                <div class="col-md-4 mb-4 form-group">
                     <label for="formGroupExampleInput">Tipo di posizione</label>
                     <select asp-for="Employee.TypePosition" class="form-control">
                         <option selected="selected" value="Nessuna">Nessuno</option>
@@ -97,6 +97,11 @@
                         <option value="@TypePosition.MaternitàFacoltativa">Maternità facoltativa</option>
                         <option value="@TypePosition.SospensioneAspettativa">Sospensione o aspettativa</option>
                     </select>
+                </div>
+                 <div class="col-md-4 mb-4">
+                    <label>Codice riconoscimento fluida</label>
+                    <input asp-for="Employee.FluidaId" type="text" class="form-control" placeholder="codice fluida">
+                    <span asp-validation-for="Employee.FluidaId" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-row">

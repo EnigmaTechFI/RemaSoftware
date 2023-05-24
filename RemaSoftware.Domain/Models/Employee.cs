@@ -51,6 +51,9 @@ namespace RemaSoftware.Domain.Models
         [MaxLength(20)]
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]
         public string TaxID { get; set; }
+        
+        [MaxLength(50)]
+        public string FluidaId { get; set; }
 
         public virtual List<Attendance> Attendances { get; set; }
 

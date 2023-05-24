@@ -655,6 +655,10 @@ namespace RemaSoftware.Domain.Migrations
                     b.Property<DateTime>("EndRelationship")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("FluidaId")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<string>("Gender")
                         .IsRequired()
                         .HasMaxLength(20)

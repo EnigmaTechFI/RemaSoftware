@@ -6,6 +6,9 @@
 
 <link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
     <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
@@ -47,120 +50,263 @@
     </form>
     <div class="card-body">
         <div class="table-responsive">
-              <table class="table table-bordered" id="table-stock" width="100%" cellspacing="0">
-                  <thead>
-                       <th>Impiegato</th>
-                       <!-- Intestazione con i giorni del mese -->
-                      @for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, Model.Mouth); giorno++)
-                      {
-                          DateTime dataCorrente = new DateTime(Model.Year, Model.Mouth, giorno);
-                          if (dataCorrente.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
-                          {
-                              <th class="text-center" style="background-color: #d3d3d3;">@giorno</th>
-                          }
-                          else
-                          {
-                              <th class="text-center">@giorno</th>
-                          }
-                      }
-
-                  </thead>
-                  <tbody>
-                    @foreach (var presenza in Model.Attendances)
-                    {
-                        <tr>
-                            <td>@presenza.Employee.Name @presenza.Employee.Surname</td>
-                            @for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, Model.Mouth); giorno++)
-                            {
-                                DateTime dataCorrente = new DateTime(Model.Year, Model.Mouth, giorno);
-                                @if (dataCorrente.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
-                                {
-                                    <td style="background-color: #ededed;">
-                                    @if(@presenza.DateIn.Day == giorno)
-                                    {
-                                        <div> <i class="fa fa-check" style="color: green;"></i> @presenza.DateIn.ToString(@"hh\:mm")</div>
-                                        <div> <i class="fa fa-check" style="color: red;"></i> @presenza.DateOut.ToString(@"hh\:mm")</div>
-                                    }
-                                    </td>
-                                }else{
-                                    <td>
-                                    @if(@presenza.DateIn.Day == giorno)
-                                    {
-                                        <div> <i class="fa fa-check" style="color: green;"></i> @presenza.DateIn.ToString(@"hh\:mm")</div>
-                                        <div> <i class="fa fa-check" style="color: red;"></i> @presenza.DateOut.ToString(@"hh\:mm")</div>
-                                    }
-                                    </td>
-                                }
-                            }
-                        </tr>
-                    }
-                  
-                    @foreach (var employee in Model.Employees)
-                    {
-                        <tr>
-                            <td>@employee.Name @employee.Surname</td>
-                            @for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, Model.Mouth); giorno++)
-                            {
-                                DateTime dataCorrente = new DateTime(Model.Year, Model.Mouth, giorno);
-                                @if (dataCorrente.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
-                                {
-                                    <td style="background-color: #ededed;">
-                                    
-                                    </td>
-                                }else{
-                                    <td>
-                                    
-                                    </td>
-                                }
-                            }
-                        </tr>
-                    }
-                  </tbody>
-                </table>
-            @*<table class="table table-bordered" id="table-stock" width="100%" cellspacing="0">
-                <thead>
+            <table class="table table-bordered" id="table-stock" width="100%" cellspacing="0">
                 <tr>
-                    <th>Matricola</th>
-                    <th>Nome</th>
-                    <th>Cognome</th>
-                    <th>Data di nascita</th>
-                    <th>Sesso</th>
-                    <th>Codice fiscale</th>
-                    <th>Azioni</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach (var employee in Model.Attendances)
-                {
-                    <tr id="item-@employee.EmployeeID" form="form-@employee.EmployeeID">
-                        <td class="number-@employee.DateIn">@employee.DateIn</td>
-                        <td class="number-@employee.Employee.Name">@employee.Employee.Name</td>
-
+                    <th>Impiegato</th>
+                        @for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, Model.Mouth); giorno++)
+                        {
+                            DateTime dataCorrente = new DateTime(Model.Year, Model.Mouth, giorno);
+                            if (dataCorrente.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
+                            {
+                                <th class="text-center" style="background-color: #d3d3d3;">@giorno</th>
+                            }
+                            else
+                            {
+                                <th class="text-center">@giorno</th>
+                            }
+                        }
                     </tr>
-                    $1$ <tr id="item-@employee.EmployeeID" form="form-@employee.EmployeeID">
-                        <td class="number-@employee.number">@employee.number</td>
-                        <td class="name-@employee.Name">@employee.Name</td>
-                        <td class="surname-@employee.Surname">@employee.Surname</td>
-                        <td class="birth-@employee.BirthDate.ToString("dd/MM/yyyy")">@employee.BirthDate.ToString("dd/MM/yyyy")</td>
-                        <td class="gender-@employee.Gender">@employee.Gender</td>
-                        <td class="tax-@employee.TaxID">@employee.TaxID</td>
-                        <td class="text-center editicon-@employee.EmployeeID">
-                            <a style="text-decoration: none" asp-controller="Employee" asp-action="ViewEmployee" asp-route-id="@employee.EmployeeID">
-                                <i class="fas fa-eye fa-lg pl-2" title="Visualizza" style="cursor: pointer; color: #6d767e"></i>
-                            </a>
-                            <a style="text-decoration: none" asp-controller="Employee" asp-action="ModifyEmployee" asp-route-id="@employee.EmployeeID">
-                             <i class="fas fa-pen fa-lg pl-2" style="cursor: pointer; color: #6d767e;" title="Modifica"></i> 
-                             </a>
-                            <i class="fas fa-trash fa-lg pl-2 del-employee" style="cursor: pointer; color: #6d767e;" id="@employee.EmployeeID" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDataEmployeeId('#confirm-del-modal', @employee.EmployeeID)"></i>
+                
+                    @foreach (var presenza in Model.Attendances.GroupBy(a => a.Employee))
+                    {
+                        <tr onclick="SetEmployeeAttendanceId('#new-modal', @presenza.Key.EmployeeID)">
+                            <td style="width: 150px;">
+                                <div style="display: inline-block; white-space: nowrap; box-sizing: border-box; width: 80%; float:  left;">
+                                  <div style="white-space: nowrap;"><b>@presenza.Key.Name </b></div> <div style="white-space: nowrap;"><b> @presenza.Key.Surname</b> </div>
+                                </div>
+                              <button style="display: inline-block; cursor: pointer; border: 0px; background-color: white; box-sizing: border-box; width: 20%; float:  right;" title="Nuova Entrata/Uscita" data-toggle="modal" data-target="#new-modal">
+                                <span style="color: green; font-weight: bold; font-size: 25px; line-height: 40px; display: inline-block; text-align: center; width: 100%;">+</span>
+                              </button>
+                            </td>
+                            @for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, Model.Mouth); giorno++)
+                            {
+                                DateTime dataCorrente = new DateTime(Model.Year, Model.Mouth, giorno);
+                                var attendanceForDay = presenza.FirstOrDefault(a => a.DateIn.Day == giorno);
+                
+                                @if (attendanceForDay != null)
+                                {
+                                    if (dataCorrente.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
+                                    {
+                                        <td style="background-color: #ededed;">
+                                            <a style="cursor: pointer;" title="Modifica Entrata/Uscita" data-toggle="modal" data-target="#modify-modal" onclick="SetDataAttendanceId('#modify-modal', @attendanceForDay.AttendanceID), SetDataAttendanceId('#confirm-del-modal', @attendanceForDay.AttendanceID)">
+                                                  <div style="color: green;"><b> @attendanceForDay.DateIn.ToString(@"HH\:mm")</b> </div>
+                                                 <div style="color: red;"><b> @attendanceForDay.DateOut.ToString(@"HH\:mm")</b> </div>
+                                            </a>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            <a style="cursor: pointer;" title="Modifica Entrata/Uscita" data-toggle="modal" data-target="#modify-modal" onclick="SetDataAttendanceId('#modify-modal', @attendanceForDay.AttendanceID), SetDataAttendanceId('#confirm-del-modal', @attendanceForDay.AttendanceID)">
+                                                <div style="color: green;"> <b> @attendanceForDay.DateIn.ToString(@"HH\:mm")</b> </div>
+                                                <div style="color: red;"><b>@attendanceForDay.DateOut.ToString(@"HH\:mm")</b> </div>
+                                            </a>
+                                        </td>
+                                    }
+                                }
+                                else if(dataCorrente.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
+                                {
+                                    <td style="background-color: #ededed;">
+                                    </td>
+
+                                }
+                                else
+                                {
+                                    <td>
+                                    </td>
+                                }
+                            }
+                        </tr>
+                    }
+
+                  
+                @foreach (var employee in Model.Employees)
+                {
+                    <tr onclick="SetEmployeeAttendanceId('#new-modal', @employee.EmployeeID)">
+                        <td>
+                          <div style="display: inline-block; white-space: nowrap; box-sizing: border-box; width: 80%; float:  left;">
+                          <div style="white-space: nowrap;"><b>@employee.Name </b></div> <div style="white-space: nowrap;"><b> @employee.Surname</b> </div>
+                          </div>
+                          <button style="display: inline-block; cursor: pointer; border: 0px; background-color: white; box-sizing: border-box; width: 20%; float:  right;" title="Nuova Entrata/Uscita" data-toggle="modal" data-target="#new-modal">
+                            <span style="color: green; font-weight: bold; font-size: 25px; line-height: 40px; display: inline-block; text-align: center; width: 100%;">+</span>
+                          </button>
                         </td>
-                    </tr>#1#
+                        @for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, Model.Mouth); giorno++)
+                        {
+                            DateTime dataCorrente = new DateTime(Model.Year, Model.Mouth, giorno);
+                            @if (dataCorrente.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
+                            {
+                                <td style="background-color: #ededed;">
+                                </td>
+                            }else{
+                                <td>
+                                </td>
+                            }
+                        }
+                    </tr>
                 }
-                </tbody>
-            </table>*@
+            </table>
+            
         </div>
     </div>
 </div>
 
+<div class="modal fade" id="confirm-del-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Conferma eliminazione</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Sei sicuro di voler eliminare questa presenza?</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
+                <button class="btn btn-danger" onclick="DeleteAttendance()">Elimina</button>
+            </div>
+        </div>
+    </div>
+</div>
 
+<div class="modal fade" id="modify-modal" tabindex="-1" role="dialog" aria-labelledby="modal-head" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-head">Modifica Ingresso/Uscita</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="pb-2 font-italic h6">Inserire la modifica degli orari di ingresso/uscita:</p>
+                <div class="row">
+                    <div class="col-6">
+                        <label class="form-check-label"><b>Orario Ingresso</b></label>
+                        <input class="form-control" type="time" id="ModifyIn"/>
 
+                    </div>
+                    <div class="col-6">
+                        <label class="form-check-label"><b>Orario Uscita</b></label>
+                        <input class="form-control" type="time" id="ModifyOut" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" style="float: left; margin-right: 25%;" data-toggle="modal" data-target="#confirm-del-modal" data-dismiss="modal">Elimina presenza</button>
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary" onclick="ModifyAttendance()">Conferma</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="new-modal" tabindex="-1" role="dialog" aria-labelledby="modal-head" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-head">Aggiungi Ingresso/Uscita</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="pb-2 font-italic h6">Inserire i nuovi orari di ingresso/uscita:</p>
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <label class="form-check-label"><b>Data</b></label>
+                        <input class="form-control" type="date" id="DataInOut" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <label class="form-check-label"><b>Orario Ingresso</b></label>
+                        <input class="form-control" type="time" id="TimeIn"/>
+
+                    </div>
+                    <div class="col-6">
+                        <label class="form-check-label"><b>Orario Uscita</b></label>
+                        <input class="form-control" type="time" id="TimeOut" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary" onclick="NewAttendance()">Conferma</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+
+    <script>
+        
+        function SetDataAttendanceId(elementName, attendanceId){
+            $(elementName).data("attendanceId", attendanceId);
+        }
     
+        function SetEmployeeAttendanceId(elementName, employeeId){
+            $(elementName).data("employeeId", employeeId);
+        }
+        
+        function SetDataAttendance(elementName, data){
+            $(elementName).data("data", data);
+        }
+        
+        function DeleteAttendance(){
+            var attendanceId = $("#confirm-del-modal").data("attendanceId");
+            $.ajax({
+                url: '@Url.Action("DeleteAttendance", "Attendance")?' + $.param({"attendanceId": attendanceId}),
+                type: 'GET',
+                success: function (data) {
+                    $("#confirm-del-modal").modal('toggle');
+                },
+                error: function (data){
+                    $("#confirm-del-modal").modal('toggle');
+                }
+            });
+        }
+        
+        function ModifyAttendance() {
+            var attendanceId = $("#modify-modal").data("attendanceId");
+
+            var model = {
+                attendanceId: attendanceId,
+                InId: $('#ModifyIn').val(),
+                OutId: $('#ModifyOut').val()
+            }
+        
+            $.post('@Url.Action("ModifyAttendance", "Attendance")', model, function (data){
+                $("#modify-modal").modal('toggle');
+            });
+        }
+        
+        function NewAttendance(){
+            var employeeId = $("#new-modal").data("employeeId");
+            
+            var dataInOut = $('#DataInOut').val();
+            var timeIn = $('#TimeIn').val();
+            var timeOut = $('#TimeOut').val();
+            
+            var inDateTime = moment(dataInOut + ' ' + timeIn, 'YYYY-MM-DD HH:mm').utcOffset('+02:00');
+            var outDateTime = moment(dataInOut + ' ' + timeOut, 'YYYY-MM-DD HH:mm').utcOffset('+02:00');
+            
+            var inIdFormatted = inDateTime.format('YYYY-MM-DD HH:mm:ss');
+            var outIdFormatted = outDateTime.format('YYYY-MM-DD HH:mm:ss');
+            
+            var model = {
+                attendanceId: employeeId,
+                InId: inIdFormatted,
+                OutId: outIdFormatted
+            }
+        
+            $.post('@Url.Action("NewAttendance", "Attendance")', model, function (data){
+                $("#new-modal").modal('toggle');
+            });
+        }
+
+    </script>
+
+}

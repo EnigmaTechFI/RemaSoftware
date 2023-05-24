@@ -122,6 +122,7 @@ namespace RemaSoftware.WebApp
             services.AddTransient<ISupplierService, SupplierService>();
             services.AddTransient<IUtilityService, UtilityService>();
             services.AddTransient<IEmployeeService, EmployeeService>();
+            services.AddTransient<IAttendanceService, AttendanceService>();
 
             services.AddTransient<PdfHelper>();
             services.AddTransient<SupplierHelper>();
@@ -136,6 +137,7 @@ namespace RemaSoftware.WebApp
             services.AddTransient<ClientHelper>();
             services.AddTransient<AccountHelper>();
             services.AddTransient<GuestHelper>();
+            services.AddTransient<AttendanceHelper>();
             services.AddTransient<EmployeeHelper>();
             services.AddTransient<OrderValidation>();
             services.AddTransient<ProductValidation>();
@@ -181,4 +183,5 @@ namespace RemaSoftware.WebApp
             DbInitializer.SeedUsersAndRoles(userManager, roleManager, context);
         }
     }
+    
 }
