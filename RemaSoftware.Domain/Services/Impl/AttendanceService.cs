@@ -43,7 +43,7 @@ namespace RemaSoftware.Domain.Services.Impl;
             attendance.DateOut = newOutDateTime;
             attendance.EmployeeID = EmployeeId;
 
-            bool isDateInAlreadyPresent = _dbContext.Attendances.Any(a => a.DateIn.Date == attendance.DateIn.Date);
+            bool isDateInAlreadyPresent = _dbContext.Attendances.Where(u => u.EmployeeID == EmployeeId).Any(a => a.DateIn.Date == attendance.DateIn.Date);
 
             if (attendance.DateIn <= attendance.DateOut && !isDateInAlreadyPresent)
             {
