@@ -7,6 +7,8 @@
 
 <link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
 <h4 class="m-0 font-weight-bold text-primary mb-3">Informazioni impiegato</h4>
 
 <div class="row">
@@ -179,39 +181,206 @@
             </div>
         </div>
 </div>
-@*
-<div class="card shadow mb-4" id="order-summ-content">
+
+<div class="card shadow mb-4">
     <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
-        <h3 class="m-0 font-weight-bold text-primary">Storico ingressi/uscite prodotto</h3>
+        <h3 class="m-0 font-weight-bold text-primary">Gestione Presenze</h3>
     </div>
+    <form method="get" action="/Employee/ViewEmployee">
+        <input type="hidden" name="id" value="@Model.Employee.EmployeeID">
+        <div class="row mb-4">
+            <div class="col-3 ml-4 mt-3">
+                <label for="mese">Mese:</label>
+                <select id="mese" name="mouth" class="form-control">
+                    <option value="01" selected="@(Model.Mouth == 01)">Gennaio</option>
+                    <option value="02" selected="@(Model.Mouth == 02)">Febbraio</option>
+                    <option value="03" selected="@(Model.Mouth == 03)">Marzo</option>
+                    <option value="04" selected="@(Model.Mouth == 04)">Aprile</option>
+                    <option value="05" selected="@(Model.Mouth == 05)">Maggio</option>
+                    <option value="06" selected="@(Model.Mouth == 06)">Giugno</option>
+                    <option value="07" selected="@(Model.Mouth == 07)">Luglio</option>
+                    <option value="08" selected="@(Model.Mouth == 08)">Agosto</option>
+                    <option value="09" selected="@(Model.Mouth == 09)">Settembre</option>
+                    <option value="10" selected="@(Model.Mouth == 10)">Ottobre</option>
+                    <option value="11" selected="@(Model.Mouth == 11)">Novembre</option>
+                    <option value="12" selected="@(Model.Mouth == 12)">Dicembre</option>
+                </select>
+
+
+            </div>
+            <div class="col-3 ml-3 mt-3">
+                <label for="anno">Anno:</label>
+                <select id="anno" name="year" class="form-control">
+                    <option value="2023" selected="@(Model.Year == 2023)">2023</option>
+                    <option value="2024" selected="@(Model.Year == 2024)">2024</option>
+                    <option value="2025" selected="@(Model.Year == 2025)">2025</option>
+                </select>
+            </div>
+            <div class="col-3 ml-3 mt-5">
+                <input type="submit" value="Visualizza" class="btn btn-primary text-white"/>
+            </div>
+        </div>
+    </form>
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-bordered" id="table-history" width="100%" cellspacing="0">
-                <thead>
-                <tr >
-                    <th>Data</th>
-                    <th>Azione</th>
-                    <th>N° Pezzi</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach (var history in Model.WarehouseStock.Stock_Histories)
-                {
-                    <tr style="cursor: pointer;" id="history-@history.Warehouse_StockID">
-                        <td>@history.Date</td>
-                        @if (history.Entry)
+            <table class="table table-bordered" id="table-stock" width="100%" cellspacing="0">
+                <tr>
+                    <th>Presenze</th>
+                        @for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, Model.Mouth); giorno++)
                         {
-                            <td><i class="fas fa-circle fa-lg" style="color: green;"></i> Ingresso</td>
+                            DateTime dataCorrente = new DateTime(Model.Year, Model.Mouth, giorno);
+                            if (dataCorrente.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
+                            {
+                                <th class="text-center" style="background-color: #d3d3d3;">@giorno</th>
+                            }
+                            else
+                            {
+                                <th class="text-center">@giorno</th>
+                            }
                         }
-                        else
-                        {
-                            <td><i class="fas fa-circle fa-lg" style="color: red;"></i> Uscita</td>
-                        }
-                        <td>@history.Number_Piece</td>
                     </tr>
-                }
-                </tbody>
+                
+                    @foreach (var presenza in Model.Attendances.GroupBy(a => a.Employee))
+                    {
+                        <tr onclick="SetEmployeeAttendanceId('#new-modal', @presenza.Key.EmployeeID)">
+                            <td style="width: 150px;">
+                                <div style="display: inline-block; white-space: nowrap; box-sizing: border-box; width: 80%; float:  left;">
+                                  <div style="white-space: nowrap;"><b>@presenza.Key.Name </b></div> <div style="white-space: nowrap;"><b> @presenza.Key.Surname</b> </div>
+                                </div>
+                              <button style="display: inline-block; cursor: pointer; border: 0px; background-color: white; box-sizing: border-box; width: 20%; float:  right;" title="Nuova Entrata/Uscita" data-toggle="modal" data-target="#new-modal">
+                                <span style="color: green; font-weight: bold; font-size: 25px; line-height: 40px; display: inline-block; text-align: center; width: 100%;">+</span>
+                              </button>
+                            </td>
+                            @for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, Model.Mouth); giorno++)
+                            {
+                                DateTime dataCorrente = new DateTime(Model.Year, Model.Mouth, giorno);
+                                var attendanceForDay = presenza.FirstOrDefault(a => a.DateIn.Day == giorno);
+                
+                                @if (attendanceForDay != null)
+                                {
+                                    if (dataCorrente.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
+                                    {
+                                        <td style="background-color: #ededed;">
+                                            <a style="cursor: pointer;" title="Modifica Entrata/Uscita" data-toggle="modal" data-target="#modify-modal" onclick="SetDataAttendanceId('#modify-modal', @attendanceForDay.AttendanceID), SetDataAttendanceId('#confirm-del-modal', @attendanceForDay.AttendanceID)">
+                                                  <div style="color: green;"><b> @attendanceForDay.DateIn.ToString(@"HH\:mm")</b> </div>
+                                                 <div style="color: red;"><b> @attendanceForDay.DateOut.ToString(@"HH\:mm")</b> </div>
+                                            </a>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            <a style="cursor: pointer;" title="Modifica Entrata/Uscita" data-toggle="modal" data-target="#modify-modal" onclick="SetDataAttendanceId('#modify-modal', @attendanceForDay.AttendanceID), SetDataAttendanceId('#confirm-del-modal', @attendanceForDay.AttendanceID)">
+                                                <div style="color: green;"> <b> @attendanceForDay.DateIn.ToString(@"HH\:mm")</b> </div>
+                                                <div style="color: red;"><b>@attendanceForDay.DateOut.ToString(@"HH\:mm")</b> </div>
+                                            </a>
+                                        </td>
+                                    }
+                                }
+                                else if(dataCorrente.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
+                                {
+                                    <td style="background-color: #ededed;">
+                                    </td>
+
+                                }
+                                else
+                                {
+                                    <td>
+                                    </td>
+                                }
+                            }
+                        </tr>
+                    }
+                
             </table>
+            
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirm-del-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Conferma eliminazione</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Sei sicuro di voler eliminare questa presenza?</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
+                <button class="btn btn-danger" onclick="DeleteAttendance()">Elimina</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modify-modal" tabindex="-1" role="dialog" aria-labelledby="modal-head" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-head">Modifica Ingresso/Uscita</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="pb-2 font-italic h6">Inserire la modifica degli orari di ingresso/uscita:</p>
+                <div class="row">
+                    <div class="col-6">
+                        <label class="form-check-label"><b>Orario Ingresso</b></label>
+                        <input class="form-control" type="time" id="ModifyIn"/>
+
+                    </div>
+                    <div class="col-6">
+                        <label class="form-check-label"><b>Orario Uscita</b></label>
+                        <input class="form-control" type="time" id="ModifyOut" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" style="float: left; margin-right: 25%;" data-toggle="modal" data-target="#confirm-del-modal" data-dismiss="modal">Elimina presenza</button>
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary" onclick="ModifyAttendance()">Conferma</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="new-modal" tabindex="-1" role="dialog" aria-labelledby="modal-head" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-head">Aggiungi Ingresso/Uscita</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="pb-2 font-italic h6">Inserire i nuovi orari di ingresso/uscita:</p>
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <label class="form-check-label"><b>Data</b></label>
+                        <input class="form-control" type="date" id="DataInOut" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <label class="form-check-label"><b>Orario Ingresso</b></label>
+                        <input class="form-control" type="time" id="TimeIn"/>
+
+                    </div>
+                    <div class="col-6">
+                        <label class="form-check-label"><b>Orario Uscita</b></label>
+                        <input class="form-control" type="time" id="TimeOut" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary" onclick="NewAttendance()">Conferma</button>
+            </div>
         </div>
     </div>
 </div>
@@ -219,34 +388,72 @@
 @section Scripts
 {
 
-    <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
-    <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
-
     <script>
- $(document).ready( function () {
-        table = $('#table-history').DataTable({
-            "language": {
-                "lengthMenu": "Mostra _MENU_ risultati per pagina",
-                "zeroRecords": "Nessun risultato trovato",
-                "info": "Pagina _PAGE_ di _PAGES_",
-                "infoEmpty": "Nessun risultato disponibile",
-                "infoFiltered": "(filtrato da _MAX_ risultati totali)",
-                "search": "Ricerca:",
-                "paginate": {
-                    "first": "Inizio",
-                    "previous": "Precedente",
-                    "next": "Successivo",
-                    "last": "Fine"
-                }                
-            },
-            "history": [[0, 'asc']],
-            "columnDefs": [
-                { "searchable": true, "orderable": true, "targets": 0 },
-                { "searchable": true, "orderable": true, "targets": 1 },
-                { "searchable": true, "orderable": true, "targets": 2 },
-              ]
-        });
-    });
+        
+        function SetDataAttendanceId(elementName, attendanceId){
+            $(elementName).data("attendanceId", attendanceId);
+        }
+    
+        function SetEmployeeAttendanceId(elementName, employeeId){
+            $(elementName).data("employeeId", employeeId);
+        }
+        
+        function SetDataAttendance(elementName, data){
+            $(elementName).data("data", data);
+        }
+        
+        function DeleteAttendance(){
+            var attendanceId = $("#confirm-del-modal").data("attendanceId");
+            $.ajax({
+                url: '@Url.Action("DeleteAttendance", "Attendance")?' + $.param({"attendanceId": attendanceId}),
+                type: 'GET',
+                success: function (data) {
+                    $("#confirm-del-modal").modal('toggle');
+                },
+                error: function (data){
+                    $("#confirm-del-modal").modal('toggle');
+                }
+            });
+        }
+        
+        function ModifyAttendance() {
+            var attendanceId = $("#modify-modal").data("attendanceId");
 
-</script>
-}*@
+            var model = {
+                attendanceId: attendanceId,
+                InId: $('#ModifyIn').val(),
+                OutId: $('#ModifyOut').val()
+            }
+        
+            $.post('@Url.Action("ModifyAttendance", "Attendance")', model, function (data){
+                $("#modify-modal").modal('toggle');
+            });
+        }
+        
+        function NewAttendance(){
+            var employeeId = $("#new-modal").data("employeeId");
+            
+            var dataInOut = $('#DataInOut').val();
+            var timeIn = $('#TimeIn').val();
+            var timeOut = $('#TimeOut').val();
+            
+            var inDateTime = moment(dataInOut + ' ' + timeIn, 'YYYY-MM-DD HH:mm').utcOffset('+02:00');
+            var outDateTime = moment(dataInOut + ' ' + timeOut, 'YYYY-MM-DD HH:mm').utcOffset('+02:00');
+            
+            var inIdFormatted = inDateTime.format('YYYY-MM-DD HH:mm:ss');
+            var outIdFormatted = outDateTime.format('YYYY-MM-DD HH:mm:ss');
+            
+            var model = {
+                attendanceId: employeeId,
+                InId: inIdFormatted,
+                OutId: outIdFormatted
+            }
+        
+            $.post('@Url.Action("NewAttendance", "Attendance")', model, function (data){
+                $("#new-modal").modal('toggle');
+            });
+        }
+
+    </script>
+
+}

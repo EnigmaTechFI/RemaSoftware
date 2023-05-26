@@ -94,11 +94,11 @@ namespace RemaSoftware.WebApp.Controllers
         }
         
         [HttpGet]
-        public IActionResult ViewEmployee(int id)
+        public IActionResult ViewEmployee(int id, int mouth, int year)
         {
             try
             {
-                return View(_employeeHelper.GetEmployeeById(id));
+                return View(_employeeHelper.GetEmployeeById(id, mouth, year));
             }
             catch (Exception e)
             {
@@ -113,7 +113,7 @@ namespace RemaSoftware.WebApp.Controllers
         {
             try
             {
-                return View(_employeeHelper.GetEmployeeById(id));
+                return View(_employeeHelper.GetEmployeeById(id, 0, 0));
             }
             catch (Exception e)
             {
@@ -144,7 +144,7 @@ namespace RemaSoftware.WebApp.Controllers
                 Logger.Error(e, e.Message);
                 _notyfService.Error("Errore durante l&#39;aggiornamento dell'impiegato.");
             }
-            return View(_employeeHelper.GetEmployeeById(model.Employee.EmployeeID));
+            return View(_employeeHelper.GetEmployeeById(model.Employee.EmployeeID, 0, 0));
         }
     }
 }

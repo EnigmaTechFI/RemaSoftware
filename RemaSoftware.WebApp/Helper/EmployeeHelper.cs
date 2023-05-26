@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
 using RemaSoftware.WebApp.Models.EmployeeViewModel;
@@ -11,11 +12,13 @@ namespace RemaSoftware.WebApp.Helper;
 public class EmployeeHelper
 {
     private readonly IEmployeeService _employeeService;
+    private readonly IAttendanceService _attendanceService;
 
-    public EmployeeHelper(IEmployeeService employeeService)
+    public EmployeeHelper(IEmployeeService employeeService, IAttendanceService attendanceService)
     {
         _employeeService = employeeService;
-       
+        _attendanceService = attendanceService;
+
     }
     public EmployeeViewModel NewEmployee()
     {
@@ -45,11 +48,21 @@ public class EmployeeHelper
         _employeeService.DeleteEmployeeById(employeeId);
     }
     
-    public EmployeeViewModel GetEmployeeById(int id)
+    public EmployeeViewModel GetEmployeeById(int id, int mouth, int year)
     {
+        var m = mouth;
+        var y = year;
+        if (year == 0)
+        {
+            m = DateTime.Today.Month;
+            y = DateTime.Today.Year;
+        }
         return new EmployeeViewModel()
         {
-            Employee = _employeeService.GetEmployeeById(id)
+            Employee = _employeeService.GetEmployeeById(id),
+            Attendances = _attendanceService.getAttendanceById(id, m, y),
+            Mouth = m,
+            Year = y
         };
     }
     
@@ -82,5 +95,4 @@ public class EmployeeHelper
         _employeeService.UpdateEmployee(model.Employee);
         return "Success";
     }
-
 }
