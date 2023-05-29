@@ -1,6 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using NLog;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Data;
@@ -19,35 +17,22 @@ namespace RemaSoftware.Domain.Services.Impl
         
         public List<Warehouse_Stock> GetAllWarehouseStocks()
         {
-            return _dbContext.Warehouse_Stocks.ToList();
+            return _dbContext.Warehouse_Stocks.Include(i => i.Supplier).ToList();
         }
 
-        public bool AddOrUpdateWarehouseStock(Warehouse_Stock stockArticle)
+        public Warehouse_Stock AddStockProduct(Warehouse_Stock warehouse_Stock)
         {
-            if (stockArticle == null)
-                throw new ArgumentException("AddOrUpdateWarehouseStock invocata con parametro stockArticle a null.");
-            if (stockArticle.Warehouse_StockID == 0)
+            _dbContext.Add(warehouse_Stock);
+            _dbContext.Stock_Histories.Add(new Stock_History()
             {
-                _dbContext.Add(stockArticle);
-            }
-            else
-            {
-                var articleToUpdate = _dbContext.Warehouse_Stocks
-                    .SingleOrDefault(sd => sd.Warehouse_StockID == stockArticle.Warehouse_StockID);
-                if (articleToUpdate == null)
-                    throw new Exception($"Stock article not found with id: {stockArticle.Warehouse_StockID}");
-                    
-                
-                articleToUpdate.Name = stockArticle.Name;
-                articleToUpdate.Brand = stockArticle.Brand;
-                articleToUpdate.Size = stockArticle.Size;
-                articleToUpdate.Number_Piece = stockArticle.Number_Piece;
-                articleToUpdate.Price_Uni = stockArticle.Price_Uni;
-                _dbContext.Update(articleToUpdate);
-            }
-
+                Entry = true,
+                Number_Piece = warehouse_Stock.Number_Piece,
+                Warehouse_StockID = warehouse_Stock.Warehouse_StockID,
+                Date = DateTime.Now,
+                Warehouse_Stock = warehouse_Stock
+            });
             _dbContext.SaveChanges();
-            return true;
+            return warehouse_Stock;
         }
 
         public bool DeleteWarehouseStockById(int stockArticleId)
@@ -59,7 +44,7 @@ namespace RemaSoftware.Domain.Services.Impl
 
         public Warehouse_Stock GetStockArticleById(int stockArticleId)
         {
-            return _dbContext.Warehouse_Stocks.SingleOrDefault(sd => sd.Warehouse_StockID == stockArticleId);
+            return _dbContext.Warehouse_Stocks.Include(t => t.Stock_Histories).Include(i => i.Supplier).SingleOrDefault(sd => sd.Warehouse_StockID == stockArticleId);
         }
 
         public bool UpdateStockArticle(Warehouse_Stock stockArticle)
@@ -68,16 +53,33 @@ namespace RemaSoftware.Domain.Services.Impl
             _dbContext.SaveChanges();
             return true;
         }
-
-        public bool UpdateQtyByArticleId(int articleId, int qtyToAdd)
+        
+        public bool UpdateStockQuantity(Warehouse_Stock stockArticle, int quantity, int addOrRemove)
         {
-            var article = _dbContext.Warehouse_Stocks.SingleOrDefault(sd => sd.Warehouse_StockID == articleId);
-            if(article == null)
-                throw new Exception($"Articolo non trovato. Id: {articleId}");
-            article.Number_Piece += qtyToAdd;
-            _dbContext.Warehouse_Stocks.Update(article);
-            _dbContext.SaveChanges();
-            return true; 
+            bool AddOrRemove = addOrRemove != 0;
+
+            try
+            {
+                _dbContext.Stock_Histories.Add(new Stock_History(){
+                    Entry = AddOrRemove,
+                    Number_Piece = quantity,
+                    Warehouse_StockID = stockArticle.Warehouse_StockID,
+                    Date = DateTime.Now,
+                    Warehouse_Stock = stockArticle
+                });
+                _dbContext.Warehouse_Stocks.Update(stockArticle);
+                _dbContext.SaveChanges();
+                return true;
+            }catch (Exception e)
+            {
+                Logger.Error(e, $"Errore durante l'aggiornamento del prodotto: #{stockArticle.Warehouse_StockID}");
+                throw new Exception($"Errore durante l'aggiornamento del prodotto: #{stockArticle.Warehouse_StockID}");
+            }
+        }
+
+        public List<Stock_History> GetReportStocks()
+        {
+            return _dbContext.Stock_Histories.Include(i => i.Warehouse_Stock).ThenInclude(t => t.Supplier).OrderBy(h => h.Date).ToList();
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace RemaSoftware.Domain.Models
 {
@@ -8,6 +7,8 @@ namespace RemaSoftware.Domain.Models
         public int OperationTimelineID { get; set; }
         public int BatchOperationID { get; set; }
         public BatchOperation BatchOperation { get; set; }
+        public int? MachineId { get; set; }
+        public virtual Ddt_Supplier DdtSupplier { get; set; }
         public int SubBatchID { get; set; }
         public SubBatch SubBatch { get; set; }
         [DataType(DataType.Date)]
@@ -19,5 +20,6 @@ namespace RemaSoftware.Domain.Models
         public DateTime EndDate { get; set; }
         [MaxLength(1)]
         public string Status { get; set; }
+        public bool UseForStatics { get; set; }
     }
 }

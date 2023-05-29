@@ -1,0 +1,192 @@
+﻿@using RemaSoftware.Domain.Constants
+@model RemaSoftware.WebApp.Models.StockViewModel.NewStockViewModel
+
+@{
+    ViewData["Title"] = "Prodotto";
+}
+
+<link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
+
+<h4 class="m-0 font-weight-bold text-primary mb-3">Prodotto: @Model.WarehouseStock.Warehouse_StockID - @Model.WarehouseStock.Name</h4>
+<div class="row">
+    <div class="@((User.IsInRole(Roles.Admin)) ? "col-xl-2" : "col-xl-3") col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Numero pezzi</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.WarehouseStock.Number_Piece</div>
+                        <small>Pezzi limite: @Model.WarehouseStock.Reorder_Limit</small>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-hashtag fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="@((User.IsInRole(Roles.Admin)) ? "col-xl-2" : "col-xl-3") col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Codice prodotto</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.WarehouseStock.Product_Code</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-barcode fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @if (User.IsInRole(Roles.Admin))
+    {
+        <div class="col-xl-2 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Costo unitario</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.WarehouseStock.Price_Uni</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-euro-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="@((User.IsInRole(Roles.Admin)) ? "col-xl-2" : "col-xl-3") col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Unità di misura</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.WarehouseStock.Measure_Unit</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-info fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="@((User.IsInRole(Roles.Admin)) ? "col-xl-2" : "col-xl-3") col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Fornitore</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.WarehouseStock.Supplier.Name</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-user fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @if (User.IsInRole(Roles.Admin))
+    {
+        <div class="col-xl-2 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Valore totale
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.WarehouseStock.Price_Tot</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-euro-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="card shadow mb-4" id="order-summ-content">
+    <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
+        <h3 class="m-0 font-weight-bold text-primary">Storico ingressi/uscite prodotto</h3>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="table-history" width="100%" cellspacing="0">
+                <thead>
+                <tr >
+                    <th>Data</th>
+                    <th>Azione</th>
+                    <th>N° Pezzi</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var history in Model.WarehouseStock.Stock_Histories)
+                {
+                    <tr style="cursor: pointer;" id="history-@history.Warehouse_StockID">
+                        <td>@history.Date.ToString("dd/MM/yy")</td>
+                        @if (history.Entry)
+                        {
+                            <td><i class="fas fa-circle fa-lg" style="color: green;"></i> Ingresso</td>
+                        }
+                        else
+                        {
+                            <td><i class="fas fa-circle fa-lg" style="color: red;"></i> Uscita</td>
+                        }
+                        <td>@history.Number_Piece</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+        <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
+        <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
+        
+         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/js/select2.min.js" integrity="sha512-9p/L4acAjbjIaaGXmZf0Q2bV42HetlCLbv8EP0z3rLbQED2TAFUlDvAezy7kumYqg5T8jHtDdlm1fgIsr5QzKg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdn.datatables.net/plug-ins/1.10.11/sorting/date-eu.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+        <script>
+    $(document).ready( function () {
+        table = $('#table-history').DataTable({
+            "language": {
+                 "lengthMenu": "Mostra _MENU_ risultati per pagina",
+                "zeroRecords": "Nessun risultato trovato",
+                "info": "Pagina _PAGE_ di _PAGES_",
+                "infoEmpty": "Nessun risultato disponibile",
+                "infoFiltered": "(filtrato da _MAX_ risultati totali)",
+                "search": "Ricerca:",
+                "paginate": {
+                    "first": "Inizio",
+                    "previous": "Precedente",
+                    "next": "Successivo",
+                    "last": "Fine"
+                }                
+            },
+            "order": [[0, 'asc']],
+            "columnDefs": [
+                { "searchable": false, "orderable": true, "targets": 0, "type": "date-eu" },
+                { "searchable": true, "orderable": true, "targets": 1 },
+                { "searchable": true, "orderable": true, "targets": 2 },
+              ]
+        });
+    });
+
+</script>
+}

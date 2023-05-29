@@ -1,0 +1,932 @@
+@model RemaSoftware.WebApp.Models.AccountingViewModel.ProductionAnalysisLiveViewModel
+@{
+    ViewData["Title"] = "Monitoraggio live";
+}
+
+<link href="https://app.smplrspace.com/lib/smplr.css" rel="stylesheet" />
+<script>
+let countOperator = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+let counter=0;
+function counterTest(){
+  setInterval(() => {
+    counter++
+  }, 1000)    
+}
+counterTest()
+function getTime(seconds, id){
+  seconds = seconds - counter;
+  setInterval(() => {
+    var sec = parseInt(seconds) + counter;
+    var date = new Date(sec * 1000).toISOString().substring(11, 19)
+    var timeToChange = document.getElementById("time-"+id)
+    if (timeToChange){
+      timeToChange.innerHTML= "<i>- Tempo: </i>" + date
+    }
+  }, 1000) 
+}
+</script>
+<h4 class="m-0 font-weight-bold text-primary mb-3">Analisi produzione live</h4>
+
+<div class="row">
+  @{
+    for (int i = 1; i < 17; i++)
+    {
+      var op = Model.ProductionLiveDtos.Where(s => s.MachineId == i).ToList();
+      <div class="col-xl-4 col-md-6 mb-4">
+        @{
+          var css = "";
+          if (op.Count != 0)
+          {
+             css = "success";
+          }
+          else
+          {
+            css = "danger";
+          }
+        }
+          <div id="bordo-machine-@i" class="card border-left-@css shadow h-100 py-2">
+          <div class="card-body">
+            <div class="row no-gutters align-items-center">
+              <div id="name-machine-@i" class="col mr-2">
+                <h5 id="title-machine-@i" class="text-center font-weight-bold text-@css text-uppercase mb-1">
+                  Macchina @i</h5>
+                <hr/>
+                @if (op.Count != 0)
+                {
+                  var index = 0;
+
+                  foreach (var item in op)
+                  {
+                    index++;
+                    <script>
+                      countOperator[@i] = @index
+                    </script>
+                    <div id="operation-timeline-@item.OperationTimelineId">
+                      <span id="macchina-@i-operatore-@index"><strong>OPERATORE @index:</strong></span><br/>
+                      <span><i>- Lotto: </i>@item.SubBatchId</span><br/>
+                      <span><i>- Cliente: </i>@item.Client</span><br/>
+                      <span><i>- Operazione: </i>@item.Operation</span><br/>
+                      @{ var time = item.Time; }
+                      <span id="time-@item.OperationTimelineId"></span><br/>
+                      <hr/>
+                      <script>
+                        getTime('@time', '@item.OperationTimelineId')
+                      </script>
+                    </div>
+                  }
+                }
+                else
+                {
+                  <div id="noop-machine-@i" class="h5 mb-0 font-weight-bold text-gray-800">Nessuna lavorazione in corso</div>
+                }
+
+              </div>
+              <div class="col-auto">
+                <i id="icon-machine-@i" class="fas fa-industry fa-2x text-@css"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>
+<h4 class="m-0 font-weight-bold text-primary mb-3">Planimetria live</h4>
+<div style="width:100%; height:80vh !important;" id="planimetry">
+    
+</div>
+
+@section Scripts{
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+      // connessione all'hub signalr.
+      var connection = new signalR.HubConnectionBuilder()
+                          .withUrl('/productionhub')
+                          .build();
+      
+      connection.serverTimeoutInMilliseconds = 900000;
+      
+      // gli dico cosa fare quando arriva un messaggio
+      connection.on('startOperation', function (operation) {
+          var nop = document.getElementById("noop-machine-"+ operation.machineId)
+          if(nop){
+            nop.remove()
+          }
+          document.getElementById("title-machine-"+ operation.machineId).classList.remove("text-danger")
+          document.getElementById("title-machine-"+ operation.machineId).classList.add("text-success")
+          document.getElementById("bordo-machine-"+ operation.machineId).classList.remove("border-left-danger")
+          document.getElementById("bordo-machine-"+ operation.machineId).classList.add("border-left-success")
+          document.getElementById("icon-machine-"+ operation.machineId).classList.remove("text-danger")
+          document.getElementById("icon-machine-"+ operation.machineId).classList.add("text-success")
+          var div = document.getElementById("name-machine-" + operation.machineId)
+          var div2 = document.createElement('div');
+          div2.id = "operation-timeline-" + operation.operationTimeLineId
+          var span = document.createElement('span')
+          var span1 = document.createElement('span')
+          var span2 = document.createElement('span')
+          var span3 = document.createElement('span')
+          var span4 = document.createElement('span')
+          span4.id = "time-" + operation.operationTimeLineId
+          getTime(operation.seconds, operation.operationTimeLineId)
+          var hr = document.createElement('hr');
+          countOperator[operation.machineId]++;
+          span.id = "macchina-" + operation.machineId + "-operatore-" + countOperator[operation.machineId]
+          span.innerHTML = "<strong>OPERATORE "+ countOperator[operation.machineId] +":</strong></br>";
+          span1.innerHTML = "- Lotto: " + operation.subBatchId + "</br>";
+          span2.innerHTML = "- Cliente: " + operation.clientName + "</br>";
+          span3.innerHTML = "- Operazione: " + operation.operationName + "</br>";
+          span4.innerHTML = "- Tempo: </br>";
+          div2.appendChild(span)
+          div2.appendChild(span1)
+          div2.appendChild(span2)
+          div2.appendChild(span3)
+          div2.appendChild(span4)
+          div2.appendChild(hr)
+          div.appendChild(div2)
+          var layer;
+          allMachine.filter(
+             function(data){ 
+                if (data[0].id == operation.machineId){
+                  data[0].number_operators++;
+                  data[0].sub_batch = operation.subBatchId; 
+                  data[0].operation = data[0].operation = operation.operationName; 
+                  layer = data;
+                }
+                
+             }
+          );
+          let tooltip = `Nessuna operazione`;
+          let color = '#dc3545'
+          if (layer[0].number_operators > 0)
+          {
+             tooltip = `N° OPERATORI: ` + layer[0].number_operators + ` | OPERAZIONE: ` + layer[0].operation + ` | LOTTO: ` + layer[0].sub_batch
+             color = '#28a745'
+          }
+          space.updateDataLayer({
+            id: operation.machineId.toString(),
+            type: 'polygon',
+            data: layer,
+            tooltip: d => tooltip,
+            color: color
+          })
+          toastNotifySuccess("Una nuova lavorazione alla macchina " + operation.machineId + " è appena iniziata.");
+      });
+      
+      connection.on('endOperation', function (operationId, machineId) {
+          
+          countOperator[machineId]--;
+          var ele = document.getElementById("operation-timeline-" + operationId)
+          var opId = ele.childNodes[1].id.split("-")
+          var opNumber = parseInt(opId.slice(-1))
+          ele.remove()
+          if (countOperator[machineId] == 0){
+            document.getElementById("title-machine-"+ machineId).classList.remove("text-success")
+            document.getElementById("title-machine-"+ machineId).classList.add("text-danger")
+            document.getElementById("bordo-machine-"+ machineId).classList.remove("border-left-success")
+            document.getElementById("bordo-machine-"+ machineId).classList.add("border-left-danger")
+            document.getElementById("icon-machine-"+ machineId).classList.remove("text-success")
+            document.getElementById("icon-machine-"+ machineId).classList.add("text-danger")
+            var div = document.getElementById("name-machine-" + machineId)
+            var div2 = document.createElement('div');
+            div2.innerHTML = '<div id="noop-machine-'+ machineId + '" class="h5 mb-0 font-weight-bold text-gray-800">Nessuna lavorazione in corso</div>'
+            div.appendChild(div2)
+          }
+          else{
+            for (var i = countOperator[machineId]+1; i > opNumber; i--){
+               var operator = document.getElementById("macchina-" + machineId + "-operatore-" + i)
+               if (operator){
+                 operator.innerHTML = "<strong>OPERATORE "+ (i - 1) +":</strong>";
+                 document.getElementById("macchina-" + machineId + "-operatore-" + i).id = "macchina-" + machineId + "-operatore-" + parseInt(i -1)
+               }
+               else{
+                 break
+               }
+            }
+          }
+          var layer;
+          allMachine.filter(
+             function(data){ 
+                if (data[0].id == machineId){
+                  data[0].number_operators--;
+                  if (data[0].number_operators <= 0){
+                    data[0].sub_batch = ''; 
+                    data[0].operation = '';
+                  }
+                  layer = data;
+                }
+                
+             }
+          );
+          let tooltip = `Nessuna operazione`;
+          let color = '#dc3545'
+          if (layer[0].number_operators > 0)
+          {
+             tooltip = `N° OPERATORI: ` + layer[0].number_operators + ` | OPERAZIONE: ` + layer[0].operation + ` | LOTTO: ` + layer[0].sub_batch
+             color = '#28a745'
+          }
+          space.updateDataLayer({
+            id: machineId.toString(),
+            type: 'polygon',
+            data: layer,
+            tooltip: d => tooltip,
+            color: color
+          })
+          toastNotifySuccess("Lavorazione alla macchina " + machineId + " conclusa.");
+      });
+      
+      // starto la connessione con il server
+      connection.start()
+          .then(function () {
+              console.log('connection started');
+      })
+      .catch(error => {
+          console.error(error.message);
+      });
+  });
+  </script>
+  <script src="https://app.smplrspace.com/lib/smplr.js"></script>
+  <script>
+    const space = new smplr.Space({
+      spaceId: "f76edfb4-4d73-4a2d-9af1-560eccc371f7",
+      clientToken: "pub_f7ab71cd2295435ea8906179ed754e6a",
+      containerId: "planimetry",
+    });
+    
+    var opTimeline = @Json.Serialize(Model.ProductionLiveDtos)
+    let allMachine = [];
+    const macchina1 = [
+          {
+            id: '1',
+            number_operators: 0,
+            sub_batch: 0,
+            operation: '',
+            coordinates: [
+              {
+                levelIndex: 0,
+                x: 7,
+                z: -1,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 7,
+                z: -3,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 8,
+                z: -3,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 8,
+                z: -1,
+                elevation: 0
+              }
+            ]
+          }
+        ]
+    const macchina2 = [
+          {
+            id: '2',
+            number_operators: 0,
+            sub_batch: 0,
+            operation: '',
+            coordinates: [
+              {
+                levelIndex: 0,
+                x: 9,
+                z: -1,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 9,
+                z: -3,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 10,
+                z: -3,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 10,
+                z: -1,
+                elevation: 0
+              }
+            ]
+          }
+        ]
+    const macchina3 = [
+          {
+            id: '3',
+            number_operators: 0,
+            sub_batch: 0,
+            operation: '',
+            coordinates: [
+              {
+                levelIndex: 0,
+                x: 7,
+                z: -4,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 7,
+                z: -6,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 8,
+                z: -6,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 8,
+                z: -4,
+                elevation: 0
+              }
+            ]
+          }
+        ]
+    const macchina4 = [
+          {
+            id: '4',
+            number_operators: 0,
+            sub_batch: 0,
+            operation: '',
+            coordinates: [
+              {
+                levelIndex: 0,
+                x: 9,
+                z: -4,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 9,
+                z: -6,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 10,
+                z: -6,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 10,
+                z: -4,
+                elevation: 0
+              }
+            ]
+          }
+        ]
+    const macchina5 = [
+          {
+            id: '5',
+            number_operators: 0,
+            sub_batch: 0,
+            operation: '',
+            coordinates: [
+              {
+                levelIndex: 0,
+                x: 7,
+                z: -7,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 7,
+                z: -8.9,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 8,
+                z: -8.9,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 8,
+                z: -7,
+                elevation: 0
+              }
+            ]
+          }
+        ]
+    const macchina6 = [
+          {
+            id: '6',
+            number_operators: 0,
+            sub_batch: 0,
+            operation: '',
+            coordinates: [
+              {
+                levelIndex: 0,
+                x: 9,
+                z: -7,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 9,
+                z: -8.9,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 10,
+                z: -8.9,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 10,
+                z: -7,
+                elevation: 0
+              }
+            ]
+          }
+        ]
+    const macchina7 = [
+          {
+            id: '7',
+            number_operators: 0,
+            sub_batch: 0,
+            operation: '',
+            coordinates: [
+              {
+                levelIndex: 0,
+                x: 7,
+                z: -10,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 7,
+                z: -11.9,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 8,
+                z: -11.9,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 8,
+                z: -10,
+                elevation: 0
+              }
+            ]
+          }
+        ]
+    const macchina8 = [
+          {
+            id: '8',
+            number_operators: 0,
+            sub_batch: 0,
+            operation: '',
+            coordinates: [
+              {
+                levelIndex: 0,
+                x: 9,
+                z: -10,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 9,
+                z: -11.9,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 10,
+                z: -11.9,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 10,
+                z: -10,
+                elevation: 0
+              }
+            ]
+          }
+        ]
+    const macchina9 = [
+          {
+            id: '9',
+            number_operators: 0,
+            sub_batch: 0,
+            operation: '',
+            coordinates: [
+              {
+                levelIndex: 0,
+                x: 7,
+                z: -13,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 7,
+                z: -15,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 8,
+                z: -15,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 8,
+                z: -13,
+                elevation: 0
+              }
+            ]
+          }
+        ]
+    const macchina10 = [
+          {
+            id: '10',
+            number_operators: 0,
+            sub_batch: 0,
+            operation: '',
+            coordinates: [
+              {
+                levelIndex: 0,
+                x: 9,
+                z: -13,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 9,
+                z: -15,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 10,
+                z: -15,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 10,
+                z: -13,
+                elevation: 0
+              }
+            ]
+          }
+        ]
+    const macchina11 = [
+          {
+            id: '11',
+            number_operators: 0,
+            sub_batch: 0,
+            operation: '',
+            coordinates: [
+              {
+                levelIndex: 0,
+                x: 7,
+                z: -16,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 7,
+                z: -18,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 8,
+                z: -18,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 8,
+                z: -16,
+                elevation: 0
+              }
+            ]
+          }
+        ]
+    const macchina12 = [
+          {
+            id: '12',
+            number_operators: 0,
+            sub_batch: 0,
+            operation: '',
+            coordinates: [
+              {
+                levelIndex: 0,
+                x: 9,
+                z: -16,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 9,
+                z: -18,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 10,
+                z: -18,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 10,
+                z: -16,
+                elevation: 0
+              }
+            ]
+          }
+        ]
+    const macchina13 = [
+          {
+            id: '13',
+            number_operators: 0,
+            sub_batch: 0,
+            operation: '',
+            coordinates: [
+              {
+                levelIndex: 0,
+                x: 7,
+                z: -20,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 7,
+                z: -19,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 10,
+                z: -19,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 10,
+                z: -20,
+                elevation: 0
+              }
+            ]
+          }
+        ]
+    const macchina14 = [
+              {
+                id: '14',
+                number_operators: 0,
+                sub_batch: 0,
+                operation: '',
+                coordinates: [
+                  {
+                    levelIndex: 0,
+                    x: 14,
+                    z: 0,
+                    elevation: 0
+                  },
+                  {
+                    levelIndex: 0,
+                    x: 14,
+                    z: -4,
+                    elevation: 0
+                  },
+                  {
+                    levelIndex: 0,
+                    x: 17,
+                    z: -4,
+                    elevation: 0
+                  },
+                  {
+                    levelIndex: 0,
+                    x: 17,
+                    z: 0,
+                    elevation: 0
+                  }
+                ]
+              }
+            ]
+    const macchina15 = [
+      {
+        id: '15',
+        number_operators: 0,
+        sub_batch: 0,
+        operation: '',
+        coordinates: [
+          {
+            levelIndex: 0,
+            x: 14,
+            z: -5,
+            elevation: 0
+          },
+          {
+            levelIndex: 0,
+            x: 14,
+            z: -8.9,
+            elevation: 0
+          },
+          {
+            levelIndex: 0,
+            x: 17,
+            z: -8.9,
+            elevation: 0
+          },
+          {
+            levelIndex: 0,
+            x: 17,
+            z: -5,
+            elevation: 0
+          }
+        ]
+      }
+    ]
+    const macchina16 = [
+      {
+        id: '16',
+        number_operators: 0,
+        sub_batch: 0,
+        operation: '',
+        coordinates: [
+          {
+            levelIndex: 0,
+            x: 14,
+            z: -10,
+            elevation: 0
+          },
+          {
+            levelIndex: 0,
+            x: 14,
+            z: -13.8,
+            elevation: 0
+          },
+          {
+            levelIndex: 0,
+            x: 17,
+            z: -13.8,
+            elevation: 0
+          },
+          {
+            levelIndex: 0,
+            x: 17,
+            z: -10,
+            elevation: 0
+          }
+        ]
+      }
+    ]
+    const macchina98 = [
+      {
+        id: '17',
+        number_operators: 0,
+        sub_batch: 0,
+        operation: '',
+        coordinates: [
+          {
+            levelIndex: 0,
+            x: 15,
+            z: -20.9,
+            elevation: 0
+          },
+          {
+            levelIndex: 0,
+            x: 15,
+            z: -26.9,
+            elevation: 0
+          },
+          {
+            levelIndex: 0,
+            x: 17,
+            z: -26.9,
+            elevation: 0
+          },
+          {
+            levelIndex: 0,
+            x: 17,
+            z: -20.9,
+            elevation: 0
+          }
+        ]
+      }
+    ]
+    const macchina99 = [
+      {
+        id: '99',
+        number_operators: 0,
+        sub_batch: 0,
+        operation: '',
+        coordinates: [
+          {
+            levelIndex: 0,
+            x: 11,
+            z: -25.9,
+            elevation: 0
+          },
+          {
+            levelIndex: 0,
+            x: 11,
+            z: -22.1,
+            elevation: 0
+          },
+          {
+           levelIndex: 0,
+           x: 14,
+           z: -22.1,
+           elevation: 0
+          },
+          {
+            levelIndex: 0,
+            x: 14,
+            z: -25.9,
+            elevation: 0
+          }
+        ]
+      }
+    ]
+    
+    
+    allMachine.push(macchina1)
+    allMachine.push(macchina2)
+    allMachine.push(macchina3)
+    allMachine.push(macchina4)
+    allMachine.push(macchina5)
+    allMachine.push(macchina6)
+    allMachine.push(macchina7)
+    allMachine.push(macchina8)
+    allMachine.push(macchina9)
+    allMachine.push(macchina10)
+    allMachine.push(macchina11)
+    allMachine.push(macchina12)
+    allMachine.push(macchina13)
+    allMachine.push(macchina14)
+    allMachine.push(macchina15)
+    allMachine.push(macchina16)
+    allMachine.push(macchina98)
+    allMachine.push(macchina99)
+    
+    
+    opTimeline.forEach(function (operation){
+       machine = allMachine.filter(
+           function(data){ 
+              if (data[0].id == operation.machineId){
+                data[0].number_operators++; 
+                data[0].sub_batch = operation.subBatchId; 
+                data[0].operation = operation.operation; 
+              }
+           }
+       );
+    })
+    
+    space.startViewer({
+      preview: false,
+      loadingMessage: "Loading planimetry",
+      mode: '3d',
+      allowModeChange: true,
+      onReady: () => addData(),
+    }) 
+    
+    function addData(){
+      allMachine.forEach(function (unit){
+        let tooltip = `Nessuna operazione`;
+        let color = '#dc3545'
+        if (unit[0].number_operators > 0)
+        {
+           tooltip = `N° OPERATORI: ` + unit[0].number_operators + ` | OPERAZIONE: ` + unit[0].operation + ` | LOTTO: ` + unit[0].sub_batch
+           color = '#28a745'
+        }
+        space.addDataLayer({
+            id: unit[0].id,
+            type: 'polygon',
+            data: unit,
+            tooltip: d => tooltip,
+            color: color
+          })
+        })
+      
+    }
+    
+</script>
+}

@@ -1,0 +1,187 @@
+@model RemaSoftware.WebApp.Models.OrderViewModel.DDTEmittedViewModel
+
+@{
+    ViewData["Title"] = "DDT Emesse";
+}
+
+<link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
+
+<div class="card shadow mb-4" id="order-summ-content">
+    <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
+        <h3 class="m-0 font-weight-bold text-primary">DDT emesse</h3>
+        @*<div>
+            <button class="btn btn-primary" type="button" onclick="location.href='@Url.Action("NewProduct", "Product")'">Nuovo prodotto</button>
+        </div>*@
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" id="table-batches" width="100%" cellspacing="0">
+                <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Codice</th>
+                    <th>Data</th>
+                    <th>DDT associate</th>
+                    <th>N° Pezzi</th>
+                    <th class="text-center">Azioni</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model.DdtOuts.OrderByDescending(s => s.Date).ToList())
+                {
+                    <tr id="ddt-@item.Id" style="cursor: pointer;">
+                        <td>@item.Client</td>
+                        <td>@item.Code</td>
+                        <td>@item.Date.ToString("dd/MM/yyyy")</td>
+                        <td onclick="showDDT(@item.Id)">Visualizza DDT associate</td>
+                        <td>@item.NumberPieces</td>
+                        <td class="text-center">
+                            <a href="@item.Url" target="_blank" style="text-decoration: none">
+                                <i class="fas fa-print fa-lg pl-2" title="Stampa ddt" style="cursor: pointer; color: #6d767e"></i>
+                            </a>
+                            @if (item.Id != 0)
+                            {
+                                <a style="text-decoration: none" onclick="setDDTToDeleteID(@item.Id)">
+                                    <i class="fas fa-trash fa-lg pl-2" style="cursor: pointer; color: #6d767e;" title="Elimina DDT"></i>
+                                </a>
+                            }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ddt_associate" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="batchModalHeader">DDT in uscita</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="batch_ddt"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Chiudi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirm-del-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Conferma eliminazione</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Sei sicuro di voler eliminare questa ddt? I pezzi verrano riassegnati al magazzino nello stato "Pronto per la consegna"</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
+                <button class="btn btn-danger" onclick="DeleteDDT()">Elimina</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="loader-cont">
+    <div class="spinner-grow" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+
+@section Scripts
+{
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/js/select2.min.js" integrity="sha512-9p/L4acAjbjIaaGXmZf0Q2bV42HetlCLbv8EP0z3rLbQED2TAFUlDvAezy7kumYqg5T8jHtDdlm1fgIsr5QzKg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdn.datatables.net/plug-ins/1.10.11/sorting/date-eu.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
+
+     <script>
+    const ddts = @Json.Serialize(Model.DdtOuts)
+    function showDDT(ddt_Out_ID) {
+        var ddt = ddts.filter(obj => {
+          return obj.id === ddt_Out_ID
+        })
+        var ddt_list = ""
+        ddt[0].ddtWithPieces.forEach(function(ddt) {
+            ddt_list = ddt_list + "<strong>Codice: </strong>" +  ddt.item1 + " - <strong>N° pezzi:</strong> "+ ddt.item2  + "<br/>"
+        })
+        $("#ddt_associate").modal('show');
+        document.getElementById("batch_ddt").innerHTML = ddt_list
+    }
+    let ddtToDeleteId;
+    
+    function setDDTToDeleteID(id){
+        ddtToDeleteId = id;
+        $("#confirm-del-modal").modal('show');
+    }
+    
+    function DeleteDDT(){
+        $(".loader-cont").show()
+        $.ajax({
+            url: '@Url.Action("DeleteDDT", "Order")?' + $.param({"id": ddtToDeleteId}),
+            type: 'GET',
+            success: function (result) {                    
+                if (result.data != null || result.data != 0){
+                    table.row($("tr#ddt-" + result.data)).remove().draw();
+                    $("#confirm-del-modal").modal('hide');
+                    toastNotifySuccess("DDT eliminata correttamente");
+                }else{
+                    toastNotifyError("Errore durante l'eliminazione della ddt");
+                }
+                $(".loader-cont").hide()
+            },
+            error: function (data){
+                toastNotifyError(data.toastMessage);
+                $(".loader-cont").hide()
+            }
+        });
+    }
+   
+    $(document).ready( function () {
+        table = $('#table-batches').DataTable({
+            "language": {
+                "lengthMenu": "Mostra _MENU_ risultati per pagina",
+                "zeroRecords": "Nessun risultato trovato",
+                "info": "Pagina _PAGE_ di _PAGES_",
+                "infoEmpty": "Nessun risultato disponibile",
+                "infoFiltered": "(filtrato da _MAX_ risultati totali)",
+                "search": "Ricerca:",
+                "paginate": {
+                    "first": "Inizio",
+                    "previous": "Precedente",
+                    "next": "Successivo",
+                    "last": "Fine"
+                }                
+            },
+            "product": [[0, 'asc']],
+            "columnDefs": [
+                { "searchable": true, "orderable": true, "targets": 0 },
+                { "searchable": true, "orderable": true, "targets": 1 },
+                { "searchable": false, "orderable": true, "targets": 2, "type": "date-eu" },
+                { "searchable": false, "orderable": false, "targets": 3 },
+                { "searchable": false, "orderable": true, "targets": 4 },
+                { "searchable": false, "orderable": false, "targets": 5 },
+              ]
+        });
+    });
+    
+    function formatDate(timestamp){
+        var x=new Date(timestamp);
+        var dd = x.getDate();
+        var mm = x.getMonth()+1;
+        var yy = x.getFullYear();
+        return dd +"/" + mm+"/" + yy;
+     }
+
+    </script>
+}

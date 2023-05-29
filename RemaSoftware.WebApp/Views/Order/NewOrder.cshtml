@@ -1,4 +1,5 @@
-﻿@model RemaSoftware.WebApp.Models.OrderViewModel.NewOrderViewModel
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model RemaSoftware.WebApp.Models.OrderViewModel.NewOrderViewModel
 
 @{
     ViewData["Title"] = "Nuovo Ordine";
@@ -13,7 +14,30 @@
     </div>
     <div class="card-body">
         <form method="post">
-            @Html.HiddenFor(model => model.Ddt_In.ProductID)
+            <div class="form-group">
+                <div class="form-check">
+                    <input asp-for="NewSubBatch" class="form-check-input" type="checkbox" id="gridCheck">
+                    <label class="form-check-label" for="gridCheck">
+                        Selezionare se si vuole creare un nuovo lotto
+                    </label>
+                </div>
+            </div>
+            @if(Model.Products.Count != 0)
+            {
+                <div class="form-group">
+                    <label for="formGroupExampleInput">Seleziona prodotto</label>
+                    <select asp-for="Ddt_In.ProductID" class="form-control">
+                        @foreach (var item in Model.Products)
+                        {
+                            <option value="@item.ProductID">@item.SKU - @item.Name</option>
+                        }
+                    </select>
+                </div>
+            }
+            else
+            {
+                @Html.HiddenFor(model => model.Ddt_In.ProductID)
+            }
             <div class="form-group">
                 <label for="formGroupExampleInput">Codice DDT</label>
                 <input asp-for="Ddt_In.Code" type="text" class="form-control" id="DDT_cod" placeholder="Codice DDT">
@@ -21,6 +45,10 @@
             <div class="form-group">
                 <label for="formGroupExampleInput">Numero di pezzi</label>
                 <input min="0" asp-for="Ddt_In.Number_Piece" type="number" class="form-control" id="formGroupExampleInput" placeholder="Numero di pezzi">
+            </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput">Numero di pezzi mancanti</label>
+                <input min="0" asp-for="Ddt_In.NumberMissingPiece" type="number" class="form-control" id="formGroupExampleInput" placeholder="Numero di pezzi">
             </div>
             <div class="form-group">
                 <div class="form-check">
@@ -31,16 +59,16 @@
                 </div>
             </div>
             <div class="form-group">
-                <label for="validationTooltip04">Prezzo Unitario (IVA Inclusa) *</label>
+                <label for="validationTooltip04">Prezzo Unitario (IVA Esclusa) *</label>
                 <div class="input-group-append">
-                    <input min="0" asp-for="uni_price" type="number" pattern="^[\d,]+$" class="form-control" id="priceUnit" placeholder="Prezzo Unitario">
+                    <input min="0" asp-for="Price" value="0,00" type="text" class="form-control" id="priceUnit" placeholder="Prezzo Unitario">
                     <span class="input-group-text">€</span>
                 </div>
             </div>
             <div class="form-group">
                 <label>Seleziona data di consegna</label>
                 <div class='input-group date'>
-                    <input placeholder="Seleziona data di consegna" type='text' class="form-control bg-white" id='datetimepicker1' asp-for="Ddt_In.DataOut" />
+                    <input placeholder="Seleziona data di consegna" type='text' class="form-control bg-white" id='datetimepicker1' asp-for="Date" />
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
                     </span>
@@ -69,13 +97,19 @@
                 @Html.DropDownListFor(
                     model=>model.OperationsSelected,
                     Model.Operations, 
-                    new {multiple="multiple", @class=" form-control select2-operations", name="OperationsSelected[]", style="width:100%;"})
+                    new {multiple="multiple", @class=" form-control select2-operations", id="OperationsSelected", name="OperationsSelected[]", style="width:100%;"})
             </div>
             
             <div style="width:100px; margin-top:50px;">
-                <button class="btn btn-primary" type="submit">Aggiungi</button>
+                <button class="btn btn-primary" type="submit" onclick="clickEvent()">Aggiungi</button>
             </div>
         </form>
+    </div>
+</div>
+
+<div class="loader-cont">
+    <div class="spinner-grow" role="status">
+        <span class="sr-only">Loading...</span>
     </div>
 </div>
 
@@ -87,6 +121,19 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/js/select2.min.js" integrity="sha512-9p/L4acAjbjIaaGXmZf0Q2bV42HetlCLbv8EP0z3rLbQED2TAFUlDvAezy7kumYqg5T8jHtDdlm1fgIsr5QzKg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
+    
+        var clicked = false;
+        
+        function clickEvent() {
+        $(".loader-cont").show()
+        if(!clicked)
+        {
+            clicked = true;
+            setTimeout(function(){
+                clicked = false;
+            }, 1500);
+        }
+        }
 
         $('#priceUnit').keypress(function (e) {
             if (e.which == 46) {
@@ -94,14 +141,25 @@
             }
         });
         
-        $('.select2-operations').select2({
+        var ddtEditOperations = $('.select2-operations').select2({
             placeholder: "Seleziona operazioni"
         });
-
+    
+        var data = @Json.Serialize(Model.OperationsSelected)
+        
+        if(data.length != 0){
+            ddtEditOperations.val(data).trigger("change");
+        }
+        
+        var date = "today";
+        if (@Model.Ddt_In.DataOut.CompareTo(@DateTime.Now) > 0){
+           date = '@Model.Ddt_In.DataOut.ToString("dd/MM/yyyy")'
+        }
+        
         $("#datetimepicker1").flatpickr({
             dateFormat: "d/m/Y",
             minDate: "today",
-            defaultDate: "today",
+            defaultDate: date,
             locale: {
                 weekdays: {
                     shorthand: ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'],

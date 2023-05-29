@@ -1,8 +1,9 @@
-﻿@model RemaSoftware.WebApp.Models.ClientViewModel.ClientViewModel
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model RemaSoftware.WebApp.Models.ClientViewModel.ClientViewModel
 
-    @{
-        ViewData["Title"] = "Aggiungi Cliente";
-    }
+@{
+    ViewData["Title"] = "Aggiungi Cliente";
+}
 
 <div class="card shadow mb-4">
     <div class="card-header py-3">
@@ -21,7 +22,7 @@
                     <input asp-for="P_Iva" type="text" class="form-control" id="validationTooltip02" placeholder="P. IVA">
                 </div>
             </div>
-             <div class="form-row">
+            <div class="form-row">
                 <div class="col-md-6 mb-3">
                     <label class="font-weight-bold" for="validationTooltip02">Via</label>
                     <input asp-for="Street" type="text" class="form-control" id="validationTooltip02" placeholder="Via">
@@ -55,17 +56,65 @@
                     <input asp-for="Email" type="email" class="form-control" id="validationTooltip03" placeholder="Email">
                 </div>
                 <div class="col-md-4 mb-3">
+                    <label class="font-weight-bold" for="validationTooltip03">PEC</label>
+                    <input asp-for="Pec" type="email" class="form-control" id="validationTooltip03" placeholder="Pec">
+                </div>
+                <div class="col-md-4 mb-3">
                     <label class="font-weight-bold" for="validationTooltip03">Telefono</label>
                     <input asp-for="PhoneNumber" type="text" class="form-control" id="validationTooltip03" placeholder="Numero di telefono">
                 </div>
+            </div>
+            <div class="form-row">
                 <div class="col-md-4 mb-3">
                     <label class="font-weight-bold" for="validationTooltip05">Fax</label>
                     <input asp-for="Fax" type="text" class="form-control" id="validationTooltip05" placeholder="Fax">
                 </div>
+                <div class="col-md-4 mb-3">
+                    <label class="font-weight-bold" for="validationTooltip03">SDI</label>
+                    <input asp-for="SDI" type="text" class="form-control" id="validationTooltip03" placeholder="SDI">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="font-weight-bold" for="validationTooltip03">Seleziona modello DDT</label>
+                    <span asp-validation-for="Ddt_TemplateID" class="text-danger"></span>
+                    <select asp-for="Ddt_TemplateID" class="form-control">
+                        @foreach (var item in Model.Ddt_Templates)
+                        {
+                            <option value="@item.Ddt_Template_ID">@item.Name</option>
+                        }
+                    </select>
+                </div>
             </div>
-            <button class="btn btn-primary" type="submit">Aggiungi</button>
+            <button class="btn btn-primary" type="submit" onclick="clickEvent()">Aggiungi</button>
         </form>
     </div>
 </div>
+
+<div class="loader-cont">
+    <div class="spinner-grow" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+
+<script>
+
+    var clicked = false;
+
+    function clickEvent() {
+    $(".loader-cont").show()
+    if(!clicked)
+    {
+        clicked = true;
+        setTimeout(function(){
+            clicked = false;
+        }, 1500);
+    }
+    }
+    
+    $('#priceUnit').keypress(function (e) {
+        if (e.which == 46) {
+            e.preventDefault();
+        }
+    });
+</script>
 
 

@@ -1,0 +1,243 @@
+@using RemaSoftware.Domain.Constants
+@model RemaSoftware.WebApp.Models.GuestViewModel.GuestSubBatchMonitoringViewModel
+
+@{
+    ViewData["Title"] = "Monitoraggio lotto";
+}
+<link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
+<h4 class="m-0 font-weight-bold text-primary mb-3">Analisi lotto #@Model.SubBatch.SubBatchID</h4>
+<div class="row">
+    <div class="col-xl-2 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Numero pezzi</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.SubBatch.Ddts_In.Sum(s => s.Number_Piece)</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-hashtag fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-2 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Pezzi rimanenti</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.SubBatch.Ddts_In.Sum(s => s.Number_Piece_Now + s.Number_Piece_ToSupplier)</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-hashtag fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-2 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Codice prodotto</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.SubBatch.Ddts_In[0].Product.SKU</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-barcode fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-2 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Nome prodotto</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.SubBatch.Ddts_In[0].Product.Name</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-info fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-2 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Cliente</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.SubBatch.Ddts_In[0].Product.Client.Name</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-user fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-2 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Operatori attuali
+                        </div>
+                        @if (Model.SubBatch.OperationTimelines != null)
+                        {
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.SubBatch.OperationTimelines.Where(s => s.Status == OperationTimelineConstant.STATUS_WORKING).ToList().Count</div>
+                        }
+                        else
+                        {
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">Nessun operatore</div>
+                        }
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow mb-4" id="order-summ-content">
+    <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
+        <h3 class="m-0 font-weight-bold text-primary">DDT associate al lotto</h3>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" id="table-ddts">
+                <thead>
+                <tr>
+                    <th>DDT</th>
+                    <th>N° Pezzi</th>
+                    <th>N° Pezzi attuale</th>
+                    <th>Data arrivo</th>
+                    <th>Data conclusione</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var ddt in Model.SubBatch.Ddts_In)
+                {
+                    <tr style="cursor: pointer;">
+                        <td>@ddt.Code</td>
+                        <td>@ddt.Number_Piece</td>
+                        <td>@(ddt.Number_Piece_Now + ddt.Number_Piece_ToSupplier)</td>
+                        <td>@ddt.DataIn.ToString("dd/MM/yy HH:mm")</td>
+                        <td>
+                            @{
+                                var date = "Non concluso";
+                                if (ddt.DataEnd.HasValue)
+                                {
+                                    date = ddt.DataEnd.Value.ToString("dd/MM/yy HH:mm");
+                                }
+                            }
+                            @date
+                        </td>
+                        <td class="text-center">
+                            @{
+                                if (!string.IsNullOrEmpty(ddt.Status))
+                                {
+                                    var statusDto = OrderStatusConstants.OrderStatuses[@ddt.Status];
+                                    <i class="fas fa-circle fa-lg" style="color: @statusDto?.StatusCssClass" title="@statusDto?.StatusDescription"></i>
+                                }
+                            }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="col-md-12 col-12 card shadow mb-4" id="order-summ-content">
+    <div class="d-sm-flex align-items-center justify-content-between card-header py-3 mb-1">
+        <h3 class="m-0 font-weight-bold text-primary">Stato di avanzamento produzione</h3>
+    </div>
+    @{
+        var index = 0;
+    }
+    @foreach (var item in Model.SubBatch.Batch.BatchOperations.Where(s => s.Operations.Name != OtherConstants.EXTRA).ToList())
+    {
+        index++;
+        <div class="card shadow mb-1">
+            <!-- Card Header - Accordion -->
+            <a class="d-block card-header py-3" role="button">
+                @{
+                    var operationList = item.OperationTimelines.Where(s => s.BatchOperationID == item.BatchOperationID && s.SubBatchID == @Model.SubBatch.SubBatchID).ToList();
+                    var status = "";
+                    var css = "";
+                    if (Model.SubBatch.Ddts_In.All(s => s.Status == OrderStatusConstants.STATUS_COMPLETED || s.Status == OrderStatusConstants.STATUS_DELIVERED))
+                    {
+                        status = "Conclusa";
+                        css = " badge-success";
+                    }
+                    else if (operationList.Count == 0)
+                    {
+                        status = "Da effettuare";
+                        css = " badge-danger";
+                    }
+                    else if (operationList.All(s => s.Status == "C"))
+                    {
+                        status = "Conclusa";
+                        css = " badge-success";
+                    }
+                    else
+                    {
+                        status = "In corso";
+                        css = " badge-warning";
+                    }
+                }
+                <h6 class="m-0 font-weight-bold text-primary">@index - @item.Operations.Name.ToUpper() - <small class="badge @css"><i class="fas fa-clock"></i> @status</small></h6>
+            </a>
+        </div>
+    }
+</div>
+@section Scripts
+{
+    <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
+    <script>
+     $(document).ready( function () {
+            table = $('#table-ddts').DataTable({
+                "language": {
+                    "lengthMenu": "Mostra _MENU_ risultati per pagina",
+                    "zeroRecords": "Nessun risultato trovato",
+                    "info": "Pagina _PAGE_ di _PAGES_",
+                    "infoEmpty": "Nessun risultato disponibile",
+                    "infoFiltered": "(filtrato da _MAX_ risultati totali)",
+                    "search": "Ricerca:",
+                    "paginate": {
+                        "first": "Inizio",
+                        "previous": "Precedente",
+                        "next": "Successivo",
+                        "last": "Fine"
+                    }                
+                },
+                "product": [[0, 'asc']],
+                "columnDefs": [
+                    { "searchable": true, "orderable": true, "targets": 0 },
+                    { "searchable": false, "orderable": false, "targets": 1 },
+                    { "searchable": false, "orderable": false, "targets": 2 },
+                    { "searchable": false, "orderable": true, "targets": 3 },
+                    { "searchable": false, "orderable": false, "targets": 4 },
+                  ]
+            });
+        });
+    
+    </script>
+}

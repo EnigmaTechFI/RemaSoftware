@@ -17,46 +17,63 @@
         <div class="table-responsive">
             <table class="table table-bordered table-hover" id="table-batches" width="100%" cellspacing="0">
                 <thead>
-                    <tr>
-                        <th>Lotto</th>
-                        <th>Cliente</th>
-                        <th>Codice prodotto</th>
-                        <th>DDT associate</th>
-                        <th>Pezzi nel lotto</th>
-                        <th>Azioni</th>
-                    </tr>
+                <tr>
+                    <th>Lotto</th>
+                    <th>Cliente</th>
+                    <th>Codice prodotto</th>
+                    <th>Nome prodotto</th>
+                    <th>DDT associate</th>
+                    <th>Pezzi nel lotto</th>
+                    <th>Azioni</th>
+                </tr>
                 </thead>
                 <tbody>
-                @foreach (var batch in Model.Batches)
+                @foreach (var batch in Model.SubBatches)
                 {
-                    <tr style="cursor: pointer;" onclick="showDDT(@batch.BatchId)" id="batch-@batch.BatchId">
-                        <td>@batch.BatchId</td>
+                    <tr style="cursor: pointer;">
+                        <td>@batch.SubBatchID</td>
                         <td>@batch.Ddts_In[0].Product.Client.Name</td>
                         <td>@batch.Ddts_In[0].Product.SKU</td>
-                        <td>Visualizza DDT associate</td>
+                        <td>@batch.Ddts_In[0].Product.Name</td>
+                        <td onclick="showDDT(@batch.SubBatchID)">Visualizza DDT associate</td>
                         <td>@batch.Ddts_In.Sum(s=> s.Number_Piece)</td>
                         <td class="text-center">
-                            @*<a style="text-decoration: none" asp-action="NewOrder" asp-controller="Order" asp-route-productId="@product.ProductID">
-                                <i class="fas fa-file-text fa-lg pl-2" title="Registra commessa" style="cursor: pointer; color: lightgray"></i>
-                            </a>*@
-                            <a style="text-decoration: none">
-                                <i class="fas fa-pen fa-lg pl-2" title="Modifica prodotto" style="cursor: pointer; color: lightgray"></i>
+                            <a onclick="printQRCode('@batch.SubBatchID')" style="text-decoration: none">
+                                <i class="fas fa-print fa-lg pl-2" title="Stampa ordine" style="cursor: pointer; color: #6d767e"></i>
                             </a>
-                            <i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer; color: lightgray" title="Elimina prodotto" data-toggle="modal" data-target="#confirm-del-modal"></i>                        
+                            <a style="text-decoration: none" asp-controller="Order" asp-action="SubBatchMonitoring" asp-route-id="@batch.SubBatchID">
+                                <i class="fas fa-eye fa-lg pl-2" title="Visualizza avanzamento" style="cursor: pointer; color: #6d767e"></i>
+                            </a>
                         </td>
                     </tr>
                 }
                 </tbody>
             </table>
         </div>
+        
+        <div class="row">
+            <div class="col-12 h5">
+                @{
+                    var tot = 0;
+                    foreach (var item in @Model.SubBatches)
+                    {
+                        tot += item.Ddts_In.Sum(s => s.Number_Piece_Now);
+                    }
+                }
+                Totale pezzi in magazzino: <b>@tot</b>
+            </div>
+        </div>
     </div>
+</div>
+<div class="text-center m-2">
+    <a class="btn btn-primary text-white" asp-action="StockSummary" asp-controller="Order" type="button">Prelievi da magazzino</a>
 </div>
 
 <div class="modal fade" id="ddt_associate" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">DDT associate al lotto #</h5>
+                <h5 class="modal-title" id="batchModalHeader"></h5>
                 <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">×</span>
                 </button>
@@ -96,17 +113,31 @@
     <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
 
     <script>
-    const batches = @Json.Serialize(Model.Batches)
-    function showDDT(batchId) {
+    function printQRCode(id){
+      var aElement = document.createElement("a");
+      aElement.setAttribute("type", "hidden");
+      aElement.href = '@Url.Action("DownloadPdfOrder", "Order")' + "?id=" + id;
+      aElement.target = "_blank";
+      document.getElementsByTagName("body")
+      aElement.click();
+    } 
+    </script>
+
+    <script>
+    
+    const batches = @Json.Serialize(Model.SubBatches)
+    function showDDT(subbatchId) {
         var batch = batches.filter(obj => {
-          return obj.batchId === batchId
+          return obj.subBatchID === subbatchId
         })
         var ddt_list = ""
-        batch[0].ddt_In.forEach(function(ddt) {
-            ddt_list = ddt_list + ddt.code + "<br/>"
+        batch[0].ddts_In.forEach(function(ddt) {
+            var date = new Date(ddt.dataOut)
+            ddt_list = ddt_list +"<strong>Codice: </strong>"+ ddt.code + " - <strong>Scadenza: </strong>" + date.getDate() +"/" + (parseInt(date.getMonth()) + 1) + "/" + date.getFullYear() + "<strong> - Pezzi: </strong>" + ddt.number_Piece_Now + "<br/>"
         })
         $("#ddt_associate").modal('show');
-        document.getElementById("batch_ddt").textContent = ddt_list
+        document.getElementById("batch_ddt").innerHTML = ddt_list
+        document.getElementById("batchModalHeader").textContent = "DDT associate al lotto #" + subbatchId;
     }
 
     function DeleteStockArticle(){
@@ -150,9 +181,10 @@
                 { "searchable": true, "orderable": true, "targets": 0 },
                 { "searchable": true, "orderable": true, "targets": 1 },
                 { "searchable": true, "orderable": true, "targets": 2 },
-                { "searchable": false, "orderable": false, "targets": 3 },
+                { "searchable": true, "orderable": true, "targets": 3 },
                 { "searchable": false, "orderable": false, "targets": 4 },
                 { "searchable": false, "orderable": false, "targets": 5 },
+                { "searchable": false, "orderable": false, "targets": 6 },
               ]
         });
 

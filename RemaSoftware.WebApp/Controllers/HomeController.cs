@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using NLog;
+using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Services;
 using RemaSoftware.WebApp.Helper;
 using RemaSoftware.WebApp.Models;
@@ -10,7 +11,7 @@ using RemaSoftware.WebApp.Models.HomeViewModel;
 
 namespace RemaSoftware.WebApp.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = Roles.Admin)]
     public class HomeController : Controller
     {
         private readonly IClientService _clientService;
@@ -36,7 +37,6 @@ namespace RemaSoftware.WebApp.Controllers
                 TotalProcessedPieces = _orderService.GetTotalProcessedPiecese(),
                 TotalCountOrdersNotExtinguished = _orderService.GetCountOrdersNotExtinguished(),
                 LastMonthEarnings = _orderService.GetLastMonthEarnings(),
-                PieChartData = _dashboardHelper.GetDataForDashboardPieChart(),
                 AreaChartData = _dashboardHelper.GetDataForDashboardAreaChart(),
                 OrderNearToDeadline = _orderService.GetOrdersNearToDeadlineTakeTop(5),
                 StockArticleAddRemQty = _dashboardHelper.GetAllWarehouseStocksForDashboard(),
@@ -45,21 +45,6 @@ namespace RemaSoftware.WebApp.Controllers
             return View(vm);
         }
 
-
-        public JsonResult AddRemoveSingleQtyDashboard(int articleId, bool isAdd)
-        {
-            try
-            {
-                var result = _stockService.UpdateQtyByArticleId(articleId, isAdd ? 1 : -1);
-                return new JsonResult(new {Result = result, ToastMessage = isAdd ? $"Aggiunto 1 pezzo all\\'articlo di magazzino." : $"Sottratto 1 pezzo all\\'articlo di magazzino."});
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, $"Error modifing quantity of stockArticle: {articleId}");
-                return new JsonResult(new {Error = e, ToastMessage = $"Errore durante l\\'eliminazione dell\\'articolo di magazzino."});
-            }
-        }
-        
         public IActionResult Privacy()
         {
             return View();

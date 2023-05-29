@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
+using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Data;
 
@@ -19,6 +18,11 @@ namespace RemaSoftware.Domain.Services.Impl
             return _dbContext.Operations.ToList();
         }
 
+        public List<Operation> GetAllOperationsWithOutCOQAndEXTRA()
+        {
+            return _dbContext.Operations.Where(s => s.Name != OtherConstants.COQ && s.Name != OtherConstants.EXTRA).ToList();
+        }
+
         public void AddOperation(Operation operation)
         {
             _dbContext.Add(operation);
@@ -32,24 +36,21 @@ namespace RemaSoftware.Domain.Services.Impl
             return operations;
         }
 
-        public void RemoveAllOrderOperations(int orderId)
+        public Operation GetOperationById(int id)
         {
-            var orderOperations = _dbContext.Order_Operations.Where(w => w.OrderID == orderId);
-            _dbContext.Order_Operations.RemoveRange(orderOperations);
+            return _dbContext.Operations.SingleOrDefault(s => s.OperationID == id);
+        }
+
+        public void UpdateOperation(Operation Operation)
+        {
+            _dbContext.Operations.Update(Operation);
             _dbContext.SaveChanges();
         }
 
-        public bool EditOrderOperations(int orderId, List<int> operationToAdd, List<int> operationToRemove)
+        public int GetOperationIdByName(string name)
         {
-            foreach (var addOperId in operationToAdd)
-                _dbContext.Order_Operations.Add(new Order_Operation {OrderID = orderId, OperationID = addOperId});
-            
-            _dbContext.SaveChanges();
-            var opersToRemove = _dbContext.Order_Operations.Where(w => operationToRemove.Contains(w.OperationID) && w.OrderID == orderId);
-            _dbContext.RemoveRange(opersToRemove);
-
-            _dbContext.SaveChanges();
-            return true;
+            return _dbContext.Operations.SingleOrDefault(s => s.Name == name).OperationID;
         }
+
     }
 }

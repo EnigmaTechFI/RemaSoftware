@@ -1,0 +1,61 @@
+@model RemaSoftware.WebApp.Models.OperationViewModel.EditOperationViewModel
+
+@{
+    ViewData["Title"] = "Modifica Operazione";
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h3 class="m-0 font-weight-bold text-primary">Modifica Operazione</h3>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            @Html.HiddenFor(model => model.Operation.OperationID)
+            <div class="form-row">
+                <div class="col-md-4 mb-3">
+                    <label for="validationTooltip01">Nome Operazione *</label>
+                    <input asp-for="@Model.Operation.Name" type="text" class="form-control" id="validationTooltip01" placeholder="Nome Operazione" required>
+                    <span asp-validation-for="@Model.Operation.Name" class="text-danger"></span>
+                    <div class="valid-tooltip">
+                        Looks good!
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-12 mb-3">
+                    <label for="validationTooltip02">Descrizione</label>
+                    <textarea class="form-control" id="validationTooltip02" asp-for="@Model.Operation.Description" placeholder="Descrizione Operazione" rows="3"></textarea>
+                </div>
+            </div>
+            <button class="btn btn-primary" type="submit" onclick="clickEvent()">Modifica</button>
+        </form>
+    </div>
+</div>
+
+<div class="loader-cont">
+    <div class="spinner-grow" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+
+<script>
+
+    var clicked = false;
+
+    function clickEvent() {
+    $(".loader-cont").show()
+    if(!clicked)
+    {
+        clicked = true;
+        setTimeout(function(){
+            clicked = false;
+        }, 1500);
+    }
+    }
+    
+    $('#priceUnit').keypress(function (e) {
+        if (e.which == 46) {
+            e.preventDefault();
+        }
+    });
+</script>

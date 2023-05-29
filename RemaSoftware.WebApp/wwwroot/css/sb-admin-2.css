@@ -10046,6 +10046,10 @@ a:focus {
   border-left: 0.25rem solid #4e73df !important;
 }
 
+.border-right-primary {
+  border-right: 0.25rem solid #4e73df !important; 
+}
+
 .border-bottom-primary {
   border-bottom: 0.25rem solid #4e73df !important;
 }
@@ -10832,6 +10836,12 @@ a:focus {
   width: 100%;
 }
 
+.chart-area-2 {
+  position: relative;
+  height: 12rem;
+  width: 100%;
+}
+
 @media (min-width: 768px) {
   .chart-area {
     height: 20rem;
@@ -10863,7 +10873,7 @@ a:focus {
 }
 
 .bg-login-image {
-    background: url("~/img/login.JPG");
+    background: url("~/img/RemaLogo.png");
     background-position: center;
     background-size: cover;
 }

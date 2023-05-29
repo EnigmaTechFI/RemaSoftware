@@ -1,62 +1,55 @@
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
-using RemaSoftware.WebApp.Controllers;
+using RemaSoftware.UtilityServices.Implementation;
 using RemaSoftware.WebApp.DTOs;
 using RemaSoftware.WebApp.Models.StockViewModel;
+
 
 namespace RemaSoftware.WebApp.Helper;
 
 public class StockHelper
 {
-    private readonly IWarehouseStockService _warehouseService;
+    private readonly IWarehouseStockService _warehouseStockService;
+    private readonly ISupplierService _supplierService;
+    private readonly EmailService _emailService;
+    private readonly UserManager<MyUser> _userManager;
 
-    public StockHelper(IWarehouseStockService warehouseService)
+    public StockHelper(IWarehouseStockService warehouseStockService, ISupplierService supplierService, UserManager<MyUser> userManager, EmailService emailService)
     {
-        _warehouseService = warehouseService;
+        _warehouseStockService = warehouseStockService;
+        _supplierService = supplierService;
+        _emailService = emailService;
+        _userManager = userManager;
     }
 
-    public StockListViewModel GetStockListViewModel()
+    public List<Warehouse_Stock> GetAllStocks()
     {
-        var stocks = _warehouseService.GetAllWarehouseStocks();
-        
+        return _warehouseStockService.GetAllWarehouseStocks();
+    }
+
+    public StockListViewModel GetStockListViewModel(bool newProduct)
+    {
         return new StockListViewModel
         {
-            WarehouseStocks = stocks.Select(s=>new StockViewModel
-            {
-                StockArticleId = s.Warehouse_StockID,
-                Name = s.Name,
-                Brand = s.Brand,
-                Size = s.Size,
-                Price_Uni = s.Price_Uni,
-                Number_Piece = s.Number_Piece
-            }).ToList()
+            newProduct = newProduct,
+            WarehouseStocks = GetAllStocks()
         };
     }
-
-    public void AddStockProduct(StockViewModel model)
+    
+    public async Task<Warehouse_Stock> AddStockProduct(NewStockViewModel model)
     {
-        model.Size = string.IsNullOrEmpty(model.Size)
-            ? "Unica"
-            : model.Size;
-        _warehouseService.AddOrUpdateWarehouseStock(new Warehouse_Stock
-        {
-            Name = model.Name,
-            Brand = model.Brand,
-            Size = model.Size,
-            Number_Piece = model.Number_Piece,
-            Price_Uni = model.Price_Uni
-        });
-    }
-
-    public void EditStockArticle(Warehouse_Stock model)
-    {
-        _warehouseService.AddOrUpdateWarehouseStock(model);
+        return _warehouseStockService.AddStockProduct(model.WarehouseStock);
     }
 
     public void DeleteStockArticle(int stockArticleId)
     {
-        _warehouseService.DeleteWarehouseStockById(stockArticleId);
+        _warehouseStockService.DeleteWarehouseStockById(stockArticleId);
     }
 
     public StockJsonResultDTO AddOrRemoveQuantityFromArticle(QtyAddRemoveJsDTO model)
@@ -66,7 +59,7 @@ public class StockHelper
         if (model.QtyToAddRemove <= 0)
             return new StockJsonResultDTO(false,"La quantità deve essere maggiore di 0.");
         
-        var stockArticle = _warehouseService.GetStockArticleById(model.ArticleId);
+        var stockArticle = _warehouseStockService.GetStockArticleById(model.ArticleId);
                 
         if(model.QtyToAddRemoveRadio == 0 && stockArticle.Number_Piece - model.QtyToAddRemove < 0)
             return new StockJsonResultDTO(false, "La quantità risulterebbe minore di 0.");
@@ -74,7 +67,20 @@ public class StockHelper
         stockArticle.Number_Piece = model.QtyToAddRemoveRadio == 1
             ? stockArticle.Number_Piece + model.QtyToAddRemove
             : stockArticle.Number_Piece - model.QtyToAddRemove;
-        _warehouseService.UpdateStockArticle(stockArticle);
+        _warehouseStockService.UpdateStockQuantity(stockArticle, model.QtyToAddRemove, model.QtyToAddRemoveRadio);
+
+
+        var admins = _userManager.GetUsersInRoleAsync("Admin").Result;
+        var adminEmails = admins.Select(u => u.Email).ToList();
+
+        foreach (var mail in adminEmails)
+        {
+            if (stockArticle.Number_Piece < stockArticle.Reorder_Limit)
+            {
+                _emailService.SendEmailStock(stockArticle.Warehouse_StockID, stockArticle.Name, stockArticle.Product_Code,
+                    stockArticle.Supplier.Name, mail);
+            }
+        }
 
         return new StockJsonResultDTO
         {
@@ -83,5 +89,40 @@ public class StockHelper
             Number_Piece = stockArticle.Number_Piece,
             Price_Tot = stockArticle.Price_Tot
         };
+    }
+    
+    public NewStockViewModel GetStockById(int id)
+    {
+        return new NewStockViewModel()
+        {
+            WarehouseStock = _warehouseStockService.GetStockArticleById(id),
+            UnitMeasure = WarehouseStockMeasure.GetUnitMeasure()
+        };
+    }
+
+    public async Task<string> EditStock(StockViewModel model)
+    {
+        _warehouseStockService.UpdateStockArticle(model.WarehouseStock);
+        return "Success";
+    }
+
+
+    public NewStockViewModel GetAddProductViewModel()
+    {
+        var vm = new NewStockViewModel
+        {
+            Suppliers = _supplierService.GetSuppliers(),
+            UnitMeasure = WarehouseStockMeasure.GetUnitMeasure()
+        };
+        return vm;
+    }
+
+    public ReportStockViewModel ReportStock()
+    {
+        var vm = new ReportStockViewModel
+        {
+            StockHistories =  _warehouseStockService.GetReportStocks()
+        };
+        return vm;
     }
 }

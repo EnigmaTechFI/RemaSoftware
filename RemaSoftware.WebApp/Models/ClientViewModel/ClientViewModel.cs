@@ -1,10 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using RemaSoftware.Domain.Models;
 
 namespace RemaSoftware.WebApp.Models.ClientViewModel
 {
     public class ClientViewModel
     {
+        
+
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]
         public string Name { get; set; }
         [MaxLength(20)]
@@ -27,6 +30,12 @@ namespace RemaSoftware.WebApp.Models.ClientViewModel
         public string PhoneNumber { get; set; }
         [MaxLength(15)]
         public string Fax { get; set; }
-
+        [MaxLength(15)]
+        public string SDI { get; set; }
+        [MaxLength(50)]
+        public string Pec { get; set; }
+        [Required(ErrorMessage = "Questo campo è obbligatorio!")]
+        public int Ddt_TemplateID { get; set; }
+        public List<Ddt_Template> Ddt_Templates { get; set; }
     }
 }

@@ -1,12 +1,13 @@
 ﻿using Microsoft.Extensions.Configuration;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
-using RemaSoftware.UtilityServices;
 using RemaSoftware.WebApp.Models.ProductViewModel;
 using RemaSoftware.WebApp.Validation;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using RemaSoftware.UtilityServices.Interface;
 
 namespace RemaSoftware.WebApp.Helper
 {
@@ -15,18 +16,13 @@ namespace RemaSoftware.WebApp.Helper
         private readonly IProductService _productService;
         private readonly IImageService _imageService;
         private readonly IConfiguration _configuration;
-        private readonly ClientHelper _clientHelper;
         private readonly ProductValidation _productValidation;
-        private readonly string _basePathForImages;
 
-        public ProductHelper(IProductService productService, IImageService imageService, IConfiguration configuration, ClientHelper clientHelper, ProductValidation productValidation)
+        public ProductHelper(IProductService productService, IImageService imageService, IConfiguration configuration, ProductValidation productValidation)
         {
             _productService = productService;
             _imageService = imageService;
             _configuration = configuration;
-            _basePathForImages =
-                (Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName + _configuration["ImagePath"]).Replace("/", "\\");
-            _clientHelper = clientHelper;
             _productValidation = productValidation;
         }
 
@@ -35,28 +31,13 @@ namespace RemaSoftware.WebApp.Helper
             return _productService.GetProductById(productId);
         }
 
-        public string RetrieveProductPhoto(string path)
-        {
-            try
-            {
-                var photo = File.ReadAllBytes(_basePathForImages +  path);
-                var base64 = Convert.ToBase64String(photo);
-                return String.Format("data:image/gif;base64,{0}", base64);
-            }
-            catch(Exception ex)
-            {
-                return "";
-            }
-        }
-
-        public string UpdateProduct(UpdateProductViewModel model)
+        public async Task<string> UpdateProduct(UpdateProductViewModel model)
         {
             try
             {
                 if (!string.IsNullOrEmpty(model.Photo))
                 {
-                    var imageName = _imageService.SavingOrderImage(model.Photo, _basePathForImages);
-                    model.Product.Image_URL = imageName;
+                    model.Product.FileName = await _imageService.SavingOrderImage(model.Photo);
                 }
                 _productValidation.ValidateProduct(model.Product);
                 _productService.UpdateProduct(model.Product);
@@ -70,32 +51,29 @@ namespace RemaSoftware.WebApp.Helper
         
         public UpdateProductViewModel UpdateProduct(int productId)
         {
-            var product = this.GetProductById(productId);
+            var product = GetProductById(productId);
             return new UpdateProductViewModel()
             {
                 Product = product,
-                Clients = _clientHelper.GetAllClients(),
-                Photo = RetrieveProductPhoto(product.Image_URL)
+                BasePathImages = $"{_configuration["ApplicationUrl"]}{_configuration["ImagesEndpoint"]}order/",
             };
         }
 
-        public string AddProduct(NewProductViewModel model)
+        public async Task<Product> AddProduct(NewProductViewModel model)
         {
-            try
+            var products = _productService.GetAllProductSKU();
+            if (products.Contains(model.Product.SKU))
             {
-                if (!string.IsNullOrEmpty(model.Photo))
-                {
-                    var imageName = _imageService.SavingOrderImage(model.Photo, _basePathForImages);
-                    model.Product.Image_URL = imageName;
-                }
-                _productValidation.ValidateProduct(model.Product);
-                _productService.AddProduct(model.Product);
-                return "Success";
+                throw new Exception("Prodotto già registrato.");
             }
-            catch(Exception ex)
+            if (!string.IsNullOrEmpty(model.Photo))
             {
-                throw new Exception(ex.Message);
+                model.Product.FileName = await _imageService.SavingOrderImage(model.Photo);
             }
+            var validation = _productValidation.ValidateProduct(model.Product);
+            if(validation != "")
+                throw new Exception(validation);
+            return _productService.AddProduct(model.Product);
 
         }
 
@@ -124,6 +102,14 @@ namespace RemaSoftware.WebApp.Helper
             {
                 return e.Message;
             }
+        }
+
+        public ProductListViewModel GetProductListViewModel()
+        {
+            return new ProductListViewModel
+            {
+                Products = GetAllProducts()
+            };
         }
     }
 }

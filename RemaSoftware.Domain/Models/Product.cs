@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace RemaSoftware.Domain.Models
 {
@@ -18,7 +17,7 @@ namespace RemaSoftware.Domain.Models
         [MaxLength(50)]
         public string SKU { get; set; }
         [MaxLength(70)]
-        public string Image_URL { get; set; }
+        public string FileName { get; set; }
         public virtual List<Ddt_In> Ddts_In { get; set; }
 
     }

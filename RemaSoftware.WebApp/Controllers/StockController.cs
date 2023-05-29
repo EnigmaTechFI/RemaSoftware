@@ -1,92 +1,90 @@
 ﻿using System;
-using System.Linq;
+using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using NLog;
-using RemaSoftware.Domain.Models;
-using RemaSoftware.Domain.Services;
+using RemaSoftware.Domain.Constants;
 using RemaSoftware.WebApp.DTOs;
 using RemaSoftware.WebApp.Helper;
 using RemaSoftware.WebApp.Models.StockViewModel;
+using RemaSoftware.WebApp.Validation;
+
 
 namespace RemaSoftware.WebApp.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = Roles.Admin + "," + Roles.Dipendente + "," + Roles.MagazzinoMaterie)]
     public class StockController : Controller
     {
         private readonly StockHelper _stockHelper;
         private readonly INotyfService _notyfService;
+        private readonly SupplierHelper _supplierHelper;
+        private readonly StockValidation _stockValidation;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public StockController(StockHelper stockHelper, INotyfService notyfService)
+        public StockController(StockHelper stockHelper, INotyfService notyfService, StockValidation stockValidation, SupplierHelper supplierHelper)
         {
             _stockHelper = stockHelper;
             _notyfService = notyfService;
+            _stockValidation = stockValidation;
+            _supplierHelper = supplierHelper;
         }
-        
+
         [HttpGet]
-        public IActionResult Stock()
+        public IActionResult Stock(bool newProduct)
         {
-            var vm = new StockListViewModel();
             try
             {
-                vm = _stockHelper.GetStockListViewModel();
+                return View(_stockHelper.GetStockListViewModel(newProduct));
             }
             catch (Exception e)
             {
-                Logger.Error(e, $"Errore durante il caricamento della lista di magazzino.");
-                _notyfService.Error("Errore durante il caricamento della lista di magazzino.");
+                Logger.Error(e, e.Message);
+                _notyfService.Error("Errore, impossibile procedere.");
+                return View();
             }
-            
-            return View(vm);
         }
         
         [HttpGet]
         public IActionResult AddProduct()
         {
-            return View(new StockViewModel());
+            try
+            {
+                return View(_stockHelper.GetAddProductViewModel());
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                _notyfService.Error("Errore, impossibile procedere.");
+                return RedirectToAction("Stock", new { newProduct = false });
+            }
         }
 
         [HttpPost]
-        public IActionResult AddProduct(StockViewModel model)
+        public IActionResult AddProduct(NewStockViewModel model)
         {
             try 
-            { 
-                if (ModelState.IsValid)
+            {
+                var validationResult = _stockValidation.ValidateStock(model);
+                if (validationResult != "")
+                {
+                    _notyfService.Error(validationResult);
+                    model.Suppliers = _supplierHelper.GetAllSuppliers();
+                } else
                 {
                     _stockHelper.AddStockProduct(model);
-                    
                     _notyfService.Success("Articolo aggiunto al magazzino correttamente.");
-                    return RedirectToAction("Stock", "Stock"); //redirect to "Giacenze"
+                    return RedirectToAction("Stock", new { newProduct = true });
                 }
             }
             catch (Exception e) {
-                
                 Logger.Error(e, $"Errore durante l'aggiunta dell'articolo di magazzino.");
                 _notyfService.Error("Errore durante l'aggiunta dell'articolo di magazzino.");
             }
             return View(model);
         }
 
- 
-        // non usata
-        [HttpPost]
-        public JsonResult SaveStockArticleEdit(Warehouse_Stock model)
-        {
-            try
-            {
-                _stockHelper.EditStockArticle(model);
-                return new JsonResult(new {result = true, ToastMessage="Articolo di magazzino modificato correttamente."});
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, $"Errore durante l'aggiornamento dell'articolo magazzino: {model.Warehouse_StockID}");
-                return new JsonResult(new {Error = e, Messge = $"Errore durante l\'aggiornamento dell\'articolo magazzino: {model.Warehouse_StockID}"});
-            }
-        }
-        
+
         public JsonResult DeleteStockArticle(int stockArticleId)
         {
             try
@@ -107,13 +105,96 @@ namespace RemaSoftware.WebApp.Controllers
             try
             {
                 var result = _stockHelper.AddOrRemoveQuantityFromArticle(model);
-                
                 return new JsonResult(new { result.Result, result.ToastMessage, NewQty=result.Number_Piece, NewPrice = result.Price_Tot});
             }
             catch (Exception e)
             {
-                Logger.Error(e, $"Error modifing quantity of stockArticle: {model.ArticleId}");
-                return new JsonResult(new {Error = e, ToastMessage = $"Errore durante l\\'eliminazione dell\\'articolo di magazzino."});
+                Logger.Error(e, $"Errore, impossibile modificare quantità.");
+                return new JsonResult(new {Error = e, ToastMessage = $"Errore durante l\\'eliminazione dell\\'articolo dal magazzino."});
+            }
+        }
+        
+        [HttpGet]
+        public IActionResult ViewStock(int id)
+        {
+            try
+            {
+                return View(_stockHelper.GetStockById(id));
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                _notyfService.Error("Impossibile visualizzare il prodotto.");
+                return RedirectToAction("Stock", new { newProduct = false });
+            }
+        }
+        
+        [HttpGet]
+        public IActionResult ModifyStock(int id)
+        {
+            try
+            {
+                return View(_stockHelper.GetStockById(id));
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                _notyfService.Error("Impossibile modificare il prodotto.");
+                return RedirectToAction("Stock", new { newProduct = false });
+            }
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> ModifyStock(StockViewModel model)
+        {
+            try {
+                var validationResult = _stockValidation.ValidateStockModify(model);
+                if (validationResult != "")
+                {
+                    _notyfService.Error(validationResult);
+                }
+                else
+                {
+                    await _stockHelper.EditStock(model);
+                    _notyfService.Success("Prodotto aggiornato correttamente");
+                    return RedirectToAction("Stock", new { newProduct = false });
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                _notyfService.Error("Errore durante l&#39;aggiornamento del prodotto.");
+            }
+            return View(_stockHelper.GetStockById(model.WarehouseStock.Warehouse_StockID));
+        }
+        
+        [HttpGet]
+        public IActionResult RetireProduct()
+        {
+            try
+            {
+                return View(_stockHelper.GetStockListViewModel(false));
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                _notyfService.Error("Errore, impossibile procedere.");
+                return View();
+            }
+        }
+        
+        [HttpGet]
+        public IActionResult ReportStock()
+        {
+            try
+            {
+                return View(_stockHelper.ReportStock());
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                _notyfService.Error("Errore, impossibile procedere.");
+                return View();
             }
         }
     }

@@ -2,11 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using NLog;
 using RemaSoftware.Domain.Data;
 using RemaSoftware.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RemaSoftware.Domain.Services.Impl
 {
@@ -22,18 +17,14 @@ namespace RemaSoftware.Domain.Services.Impl
 
         public Product AddProduct(Product product)
         {
-            try
-            {
-                var newProduct = _dbContext.Add(product);
-                _dbContext.SaveChanges();
+            _dbContext.Add(product);
+            _dbContext.SaveChanges();
+            return product;
+        }
 
-                return newProduct.Entity;
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, $"Errore durante l'aggiunta del prodotto: {product.ToString()}");
-            }
-            return null;
+        public List<string> GetAllProductSKU()
+        {
+            return _dbContext.Products.Select(s => s.SKU).ToList();
         }
 
         public List<Product> GetAllProducts()
@@ -43,7 +34,7 @@ namespace RemaSoftware.Domain.Services.Impl
 
         public Product GetProductById(int productId)
         {
-            return _dbContext.Products.Include(i => i.Client).SingleOrDefault(i => i.ProductID == productId);
+            return _dbContext.Products.Include(i => i.Client).Include(s => s.Ddts_In).SingleOrDefault(i => i.ProductID == productId);
         }
 
         public string DeleteProduct(Product product)

@@ -1,0 +1,129 @@
+@model RemaSoftware.WebApp.Models.AccountingViewModel.PreliminarViewModel
+
+@{
+    ViewData["Title"] = "Lotti clienti";
+}
+
+<link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
+
+<div class="card shadow mb-4" id="order-summ-content">
+    <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
+        <h3 class="m-0 font-weight-bold text-primary">Seleziona lotto</h3>
+        @*<div>
+            <button class="btn btn-primary" type="button" onclick="location.href='@Url.Action("NewProduct", "Product")'">Nuovo prodotto</button>
+        </div>*@
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" id="table-batches" width="100%" cellspacing="0">
+                <thead>
+                <tr>
+                    <th>Lotto</th>
+                    <th>Cliente</th>
+                    <th>Codice prodotto</th>
+                    <th>Numero sotto lotti</th>
+                    <th>Azioni</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var batch in Model.Batches)
+                {
+                    <tr style="cursor: pointer;" onclick="goToAnalysis(@batch.BatchId)">
+                        <td>@batch.BatchId</td>
+                        <td>@batch.SubBatches[0].Ddts_In[0].Product.Client.Name</td>
+                        <td>@batch.SubBatches[0].Ddts_In[0].Product.SKU</td>
+                        <td>@batch.SubBatches.Count()</td>
+                        <td class="text-center">
+                            
+                            <a asp-action="BatchAnalysis" asp-controller="Accounting" asp-route-id="@batch.BatchId">
+                                <i class="fas fa-area-chart fa-lg pl-2" title="Stampa etichetta" style="cursor: pointer; color: #6d767e"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ddt_associate" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="batchModalHeader"></h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="batch_ddt"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Chiudi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirm-del-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Conferma eliminazione</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Sei sicuro di voler eliminare questo prodotto?</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
+                <button class="btn btn-primary" onclick="DeleteStockArticle()">Elimina</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts
+{
+    <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
+    <script>
+        function goToAnalysis(param) {
+            location.href = "/Accounting/BatchAnalysis?id=" + param
+        }
+     </script>
+
+    <script>
+
+    $(document).ready( function () {
+        table = $('#table-batches').DataTable({
+            "language": {
+                "lengthMenu": "Mostra _MENU_ risultati per pagina",
+                "zeroRecords": "Nessun risultato trovato",
+                "info": "Pagina _PAGE_ di _PAGES_",
+                "infoEmpty": "Nessun risultato disponibile",
+                "infoFiltered": "(filtrato da _MAX_ risultati totali)",
+                "search": "Ricerca:",
+                "paginate": {
+                    "first": "Inizio",
+                    "previous": "Precedente",
+                    "next": "Successivo",
+                    "last": "Fine"
+                }                
+            },
+            "product": [[0, 'asc']],
+            "columnDefs": [
+                { "searchable": true, "orderable": true, "targets": 0 },
+                { "searchable": true, "orderable": true, "targets": 1 },
+                { "searchable": true, "orderable": true, "targets": 2 },
+                { "searchable": false, "orderable": true, "targets": 3 },
+                { "searchable": false, "orderable": false, "targets": 4 },
+              ]
+        });
+        
+    });
+
+    </script>
+}

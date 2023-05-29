@@ -1,0 +1,173 @@
+@using RemaSoftware.Domain.Constants
+@model RemaSoftware.WebApp.Models.GuestViewModel.OrdersActiveViewModel
+
+@{
+    ViewData["Title"] = "Ordini attivi";
+}
+
+<link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
+
+<div class="card shadow mb-4" id="order-summ-content">
+    <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
+        <h3 class="m-0 font-weight-bold text-primary">Resoconto DDT attive</h3>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="table-ddt" width="100%" cellspacing="0">
+                <thead>
+                <tr>
+                    <th>DDT</th>
+                    <th>SKU</th>
+                    <th>N° pezzi</th>
+                    <th>N° pezzi rimanenti</th>
+                    <th>Arrivo ordine</th>
+                    <th>Status</th>
+                    <th>Sollecitata</th>
+                    <th>Azioni</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var ddt in Model.Ddt_In)
+                {
+                    <tr>
+                        <td>@ddt.Code</td>
+                        <td>@ddt.Product.SKU</td>
+                        <td>@ddt.Number_Piece</td>
+                        <td>@(ddt.Number_Piece_Now + ddt.Number_Piece_ToSupplier)</td>
+                        <td>@ddt.DataIn.ToString("dd/MM/yy")</td>
+                        <td class="text-center">
+                            @{
+                                if (!string.IsNullOrEmpty(ddt.Status))
+                                {
+                                    var statusDto = OrderStatusConstants.OrderStatuses[@ddt.Status];
+                                    <i class="fas fa-circle fa-lg" style="color: @statusDto?.StatusCssClass" title="@statusDto?.StatusDescription"></i>
+                                }
+                            }
+                        </td>
+                        <td id="sollecito-text-@ddt.Ddt_In_ID">
+                            @{
+                                var text = "";
+                                if (ddt.IsPrompted)
+                                {
+                                    text = "SI";
+                                }
+                                else
+                                {
+                                    text = "NO";
+                                }
+                            }
+                            @text
+                        </td>
+                        <td class="text-center">
+                            <a style="text-decoration: none" asp-controller="Guest" asp-action="SubBatchMonitoring" asp-route-id="@ddt.SubBatchID">
+                                <i class="fas fa-eye fa-lg pl-2" title="Visualizza avanzamento" style="cursor: pointer; color: #6d767e"></i>
+                            </a>
+                            @if (!ddt.IsPrompted)
+                            {
+                                <a id="sollecito-@ddt.Ddt_In_ID" style="text-decoration: none" onclick="setDdtId('@ddt.Ddt_In_ID')">
+                                    <i class="fas fa-bell fa-lg pl-2" title="Sollecita" style="cursor: pointer; color: #6d767e"></i>
+                                </a>
+                            }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="confirm-prompt" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Conferma sollecito</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Sei sicuro di voler sollecitare questa DDT?</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
+                <button class="btn btn-danger" onclick="SendPrompt()">Conferma</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
+    <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/js/select2.min.js" integrity="sha512-9p/L4acAjbjIaaGXmZf0Q2bV42HetlCLbv8EP0z3rLbQED2TAFUlDvAezy7kumYqg5T8jHtDdlm1fgIsr5QzKg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.10.11/sorting/date-eu.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+    let ddtId;
+    
+    function setDdtId(id){
+        ddtId = id;
+        $("#confirm-prompt").modal('show');
+    }
+    
+    function SendPrompt() {
+        $.ajax({
+            url: '@Url.Action("PromptDdt", "Guest")?' + $.param({"id": ddtId}),
+            type: 'GET',
+            success: function (data) {                    
+                if (data.result == true){
+                    $("#confirm-prompt").modal('toggle');
+                    document.getElementById("sollecito-" + ddtId).remove();
+                    document.getElementById("sollecito-text-" + ddtId).textContent = "SI"
+                    toastNotifySuccess(data.error);
+                }else{
+                    toastNotifyError(data.error);
+                }
+            },
+            error: function (data){
+                toastNotifyError(data.error);
+            }
+        });  
+    }
+    
+    $(document).ready( function () {
+        table = $('#table-ddt').DataTable({
+            "language": {
+                "lengthMenu": "Mostra _MENU_ risultati per pagina",
+                "zeroRecords": "Nessun risultato trovato",
+                "info": "Pagina _PAGE_ di _PAGES_",
+                "infoEmpty": "Nessun risultato disponibile",
+                "infoFiltered": "(filtrato da _MAX_ risultati totali)",
+                "search": "Ricerca:",
+                "paginate": {
+                    "first": "Inizio",
+                    "previous": "Precedente",
+                    "next": "Successivo",
+                    "last": "Fine"
+                }                
+            },
+            "order": [[0, 'asc']],
+            "columnDefs": [
+                { "searchable": true, "orderable": true, "targets": 0 },
+                { "searchable": true, "orderable": true, "targets": 1 },
+                { "searchable": false, "orderable": true, "targets": 2 },
+                { "searchable": false, "orderable": true, "targets": 3 },
+                { "searchable": false, "orderable": true, "targets": 4, "type": "date-eu" },
+                { "searchable": false, "orderable": false, "targets": 5 },
+                { "searchable": false, "orderable": false, "targets": 6 },
+              ]
+        });
+    });
+
+    function formatDate(timestamp){
+        var x=new Date(timestamp);
+        var dd = x.getDate();
+        var mm = x.getMonth()+1;
+        var yy = x.getFullYear();
+        return dd +"/" + mm+"/" + yy;
+     }    
+    </script>
+}

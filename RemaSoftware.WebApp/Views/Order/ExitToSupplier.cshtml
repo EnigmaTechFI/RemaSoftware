@@ -1,0 +1,97 @@
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model RemaSoftware.WebApp.Models.OrderViewModel.ExitToSupplierViewModel
+
+@{
+    ViewData["Title"] = "Nuovo Ordine";
+}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Registra uscita lotto</h1>
+</div>
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Nuova esternazione</h6>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            @Html.HiddenFor(model => model.SubBatch.SubBatchID)
+            
+            <div class="form-group">
+                <h6><strong>Pezzi rimanenti nel lotto: </strong>@Model.SubBatch.Ddts_In.Sum(s => s.Number_Piece_Now)</h6>
+            </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput">Seleziona fornitore</label>
+                <select asp-for="DdtSupplier.SupplierID" class="form-control">
+                    @foreach (var item in Model.Suppliers)
+                    {
+                        <option value="@item.SupplierID">@item.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput">Seleziona fase di lavoro</label>
+                <select asp-for="BatchOperationID" class="form-control">
+                    @foreach (var item in Model.BatchOperations)
+                    {
+                        <option value="@item.BatchOperationID">@item.Operations.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput">Numero di pezzi</label>
+                <input min="0" asp-for="DdtSupplier.Number_Piece" type="number" class="form-control" id="formGroupExampleInput" placeholder="Numero di pezzi">
+            </div>
+            <div class="form-group">
+                <label for="validationTooltip04">Costo Unitario (IVA Esclusa) *</label>
+                <div class="input-group-append">
+                    <input min="0" asp-for="CostUni" value="0,00" type="text" class="form-control" id="priceUnit" placeholder="Prezzo Unitario">
+                    <span class="input-group-text">€</span>
+                </div>
+            </div>
+            <div style="width:100px; margin-top:50px;">
+                <button class="btn btn-primary" type="submit" onclick="clickEvent()">Registra</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="loader-cont">
+    <div class="spinner-grow" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+
+@section Scripts
+{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/js/select2.min.js" integrity="sha512-9p/L4acAjbjIaaGXmZf0Q2bV42HetlCLbv8EP0z3rLbQED2TAFUlDvAezy7kumYqg5T8jHtDdlm1fgIsr5QzKg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+    
+        var clicked = false;
+        
+        function clickEvent() {
+        $(".loader-cont").show()
+        if(!clicked)
+        {
+            clicked = true;
+            setTimeout(function(){
+                clicked = false;
+            }, 1500);
+        }
+        }
+
+        $('#priceUnit').keypress(function (e) {
+            if (e.which == 46) {
+                e.preventDefault();
+            }
+        });
+    </script>
+}
+
+
+
+
+

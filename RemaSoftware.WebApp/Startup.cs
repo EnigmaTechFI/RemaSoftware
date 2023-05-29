@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -8,13 +9,16 @@ using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification;
 using AspNetCoreHero.ToastNotification.Extensions;
-using RemaSoftware.UtilityServices;
+using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
 using RemaSoftware.Domain.Services.Impl;
 using RemaSoftware.Domain.Data;
+using RemaSoftware.UtilityServices.Implementation;
+using RemaSoftware.UtilityServices.Interface;
 using RemaSoftware.WebApp.Helper;
+using RemaSoftware.WebApp.Hub;
 using RemaSoftware.WebApp.Validation;
 
 namespace RemaSoftware.WebApp
@@ -59,7 +63,7 @@ namespace RemaSoftware.WebApp
             })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
-            
+
             services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/Account/Login";
@@ -93,26 +97,51 @@ namespace RemaSoftware.WebApp
                 config.IsDismissable = true;
                 config.Position = NotyfPosition.TopRight;
             });
+            
+            // register azure blob storage
+            var azureBlobCs = Configuration.GetValue<string>("AzureBlobStorage:ConnectionString");
 
+            services.AddSingleton(x => new BlobServiceClient(azureBlobCs));
+            services.AddSingleton(x=> 
+                new OrderImageBlobService(new BlobServiceClient(azureBlobCs), 
+                    Configuration.GetValue<string>("AzureBlobStorage:OrderContainerName")));
+            
+            services.AddSignalR().AddHubOptions<ProductionHub>(options =>
+            {
+                options.ClientTimeoutInterval = TimeSpan.FromSeconds(1800);
+                options.KeepAliveInterval = TimeSpan.FromSeconds(900);
+            });
+            services.AddTransient<ProductionHub>();
             services.AddTransient<IImageService, ImageService>();
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<IOrderService, OrderService>();
+            services.AddTransient<ISubBatchService, SubBatchService>();
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<IOperationService, OperationService>();
             services.AddTransient<IClientService, ClientService>();
             services.AddTransient<IWarehouseStockService, WarehouseStockService>();
+            services.AddTransient<ISupplierService, SupplierService>();
+            services.AddTransient<IUtilityService, UtilityService>();
+            
             services.AddTransient<PdfHelper>();
+            services.AddTransient<SupplierHelper>();
             services.AddTransient<DashboardHelper>();
             services.AddTransient<AccountingHelper>();
             services.AddTransient<ProductHelper>();
             services.AddTransient<IAPIFatturaInCloudService, APIFatturaInCloudService>(
                 x=> new APIFatturaInCloudService(x.GetRequiredService<IConfiguration>(), _environment.EnvironmentName));
             services.AddTransient<OrderHelper>();
+            services.AddTransient<SubBatchHelper>();
             services.AddTransient<StockHelper>();
             services.AddTransient<ClientHelper>();
+            services.AddTransient<AccountHelper>();
+            services.AddTransient<GuestHelper>();
             services.AddTransient<OrderValidation>();
             services.AddTransient<ProductValidation>();
+            services.AddTransient<OperationValidation>();
+            services.AddTransient<StockValidation>();
             
+            services.AddScoped<RemaSoftware.UtilityServices.Implementation.EmailService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationDbContext context, UserManager<MyUser> userManager, RoleManager<IdentityRole> roleManager)
@@ -137,6 +166,7 @@ namespace RemaSoftware.WebApp
             app.UseSession();
 
             app.UseRouting();
+            app.UseCors(x=>x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseNotyf();
@@ -145,8 +175,9 @@ namespace RemaSoftware.WebApp
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}");
+                endpoints.MapHub<ProductionHub>("/productionhub");
             });
-            DbInitializer.SeedUsersAndRoles(userManager, roleManager);
+            DbInitializer.SeedUsersAndRoles(userManager, roleManager, context);
         }
     }
 }

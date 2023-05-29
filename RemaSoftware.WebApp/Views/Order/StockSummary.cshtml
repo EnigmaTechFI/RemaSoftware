@@ -1,0 +1,115 @@
+@model RemaSoftware.WebApp.Models.OrderViewModel.StockSummaryViewModel
+
+@{
+    ViewData["Title"] = "Lotti in magazzino";
+}
+
+<div class="card shadow mb-4" id="order-summ-content">
+    <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
+        <h3 class="m-0 font-weight-bold text-primary">Situazione magazzino</h3>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            <table class="table" id="stockanalysis">
+                <thead>
+                <tr>
+                    <th scope="col">Lotto</th>
+                    <th scope="col">Cliente</th>
+                    <th scope="col">Codice prodotto</th>
+                    <th scope="col">Nome prodotto</th>
+                    <th scope="col">Pezzi nel lotto</th>
+                    <th scope="col">Data di consegna</th>
+                    <th scope="col">DDT associate</th>
+                    <th scope="col">Numero solleciti</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model.SubBatches)
+                {
+                    <tr id="sub-@item.SubBatchID">
+                        <td>@item.SubBatchID</td>
+                        <td>@item.Ddts_In[0].Product.Client.Name</td>
+                        <td>@item.Ddts_In[0].Product.SKU</td>
+                        <td>@item.Ddts_In[0].Product.Name</td>
+                        <td>@item.Ddts_In.Sum(s => s.Number_Piece_Now)</td>
+                        <td>@item.Ddts_In.OrderBy(s => s.DataOut).FirstOrDefault().DataOut.ToString("dd/MM/yy")</td>
+                        <td style="cursor: pointer" class="text-primary" onclick="showDDT(@item.SubBatchID)">Visualizza DDT associate</td>
+                        <td>@item.Ddts_In.Count(s => s.IsPrompted)</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="ddt_associate" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="batchModalHeader"></h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="batch_ddt"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Chiudi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+          // connessione all'hub signalr.
+        var connection = new signalR.HubConnectionBuilder()
+                          .withUrl('/productionhub')
+                          .build();
+        connection.serverTimeoutInMilliseconds = 900000;
+        
+        // gli dico cosa fare quando arriva un messaggio
+        connection.on('startOperation', function (operation) {
+          var row = document.getElementById("sub-" + operation.subBatchId)
+          if (row){
+              row.remove();
+          }
+          toastNotifySuccess("Il lotto "+ operation.subBatchId + " è entrato in produzione alla macchina" + operation.machineId);
+        });
+        
+        // gli dico cosa fare quando arriva un messaggio
+        connection.on('newSubBatchInStock', function () {
+          location.reload();
+        });
+        
+        // starto la connessione con il server
+        connection.start()
+          .then(function () {
+              console.log('connection started');
+        })
+        .catch(error => {
+          console.error(error.message);
+        });
+    });      
+    </script>
+    <script>
+        const batches = @Json.Serialize(Model.SubBatches)
+        function showDDT(subbatchId) {
+            var batch = batches.filter(obj => {
+              return obj.subBatchID === subbatchId
+            })
+            var ddt_list = ""
+            batch[0].ddts_In.forEach(function(ddt) {
+                var date = new Date(ddt.dataOut)
+                ddt_list = ddt_list +"<strong>Codice: </strong>"+ ddt.code + " - <strong>Scadenza: </strong>" + date.getDate() +"/" + (parseInt(date.getMonth()) + 1) + "/" + date.getFullYear() + "<strong> - Pezzi: </strong>" + ddt.number_Piece_Now + "<br/>"
+            })
+            $("#ddt_associate").modal('show');
+            document.getElementById("batch_ddt").innerHTML = ddt_list
+            document.getElementById("batchModalHeader").textContent = "DDT associate al lotto #" + subbatchId;
+        }
+    </script>
+}

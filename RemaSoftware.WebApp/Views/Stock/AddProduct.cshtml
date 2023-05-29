@@ -1,4 +1,8 @@
-﻿@model RemaSoftware.WebApp.Models.StockViewModel.StockViewModel
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using RemaSoftware.Domain.Constants
+@using Microsoft.AspNetCore.Mvc.Rendering
+@model RemaSoftware.WebApp.Models.StockViewModel.NewStockViewModel
+
 @{
     ViewData["Title"] = "Aggiungi Prodotto";
 }
@@ -8,53 +12,75 @@
 </div>
 <div class="card shadow mb-4">
     <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Nuovo ordine</h6>
+        <h6 class="m-0 font-weight-bold text-primary">Nuovo prodotto</h6>
     </div>
     <div class="card-body">
-        <form method="post" class="needs-validation" novalidate>
+        <form method="post">
+            @Html.HiddenFor(model => model.Suppliers)
             <div class="form-row">
-                <div class="col-md-6 mb-4">
-                    <label for="validationTooltip01">Nome Prodotto *</label>
-                    <input asp-for="Name" type="text" class="form-control" id="validationTooltip01" placeholder="Nome Prodotto" required>
-                    <span asp-validation-for="Name" class="text-danger"></span>
+                <div class="col-md-6 mb-3">
+                    <label>Nome Prodotto</label>
+                    <input asp-for="WarehouseStock.Name" type="text" class="form-control" placeholder="Nome Prodotto" required>
+                    <span asp-validation-for="WarehouseStock.Name" class="text-danger"></span>
                 </div>
-                <div class="col-md-4 mb-4">
-                    <label for="validationTooltip02">Marca</label>
-                    <input asp-for="Brand" type="text" class="form-control" id="validationTooltip02" placeholder="Marca">
+                <div class="col-md-6 mb-3 form-group">
+                    <label for="formGroupExampleInput">Unità di misura</label>
+                    <select asp-for="WarehouseStock.Measure_Unit" class="form-control">
+                        <option selected="selected" value="Nessuna">Nessuna</option>
+                        @foreach (var item in Model.UnitMeasure)
+                        {
+                            <option value="@item">@item</option>
+                        }
+                    </select>
                 </div>
             </div>
             <div class="form-row">
-                
+                <div class="col-md-6 mb-3">
+                    <div class="form-group">
+                        <label>Seleziona fornitore</label>
+                        @Html.DropDownListFor(model => model.WarehouseStock.SupplierID, new SelectList(Model.Suppliers, "SupplierID", "Name"), "-- Seleziona Fornitore --", new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label>Identificativo</label>
+                    <input asp-for="WarehouseStock.Product_Code" type="text" class="form-control" placeholder="Codice identificativo" required>
+                    <span asp-validation-for="WarehouseStock.Product_Code" class="text-danger"></span>
+                </div>
             </div>
             <div class="form-row">
                 <div class="col-md-4 mb-3">
-                    <label for="validationTooltip03" class="input-number-label">Quantità *</label>
-                    <input asp-for="Number_Piece" type="number" class="form-control" id="validationTooltip03" placeholder="Quantità" min="0" required>
-                    <span asp-validation-for="Number_Piece" class="text-danger"></span>
+                    <label class="input-number-label">Quantità</label>
+                    <input asp-for="WarehouseStock.Number_Piece" type="number" class="form-control" placeholder="Quantità" min="0" required>
+                    <span asp-validation-for="WarehouseStock.Number_Piece" class="text-danger"></span>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label for="validationTooltip04">Prezzo Unitario (IVA Inclusa) *</label>
+                    <label>Prezzo Unitario (IVA Esclusa)</label>
                     <div class="input-group-append">
-                        <input asp-for="Price_Uni" type="number" pattern="^[\d,]+$" class="form-control" id="priceUnit" placeholder="Prezzo Unitario">
+                        <input min="0" asp-for="WarehouseStock.Price_Uni" value="0,00" type="text" class="form-control" id="priceUnit" placeholder="Prezzo Unitario" required>
                         <span class="input-group-text">€</span>
                     </div>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label for="validationTooltip05">Taglia (Inserire anche l'unità di misura)</label>
-                    <input asp-for="Size" type="text" class="form-control" id="validationTooltip05" placeholder="Taglia">
+                    <label>Limite minimo (Per riordine)</label>
+                    <input asp-for="WarehouseStock.Reorder_Limit" type="number" class="form-control" placeholder="Limite minimo" min="0" required>
+                    <span asp-validation-for="WarehouseStock.Reorder_Limit" class="text-danger"></span>
                 </div>
             </div>
-            <button class="btn btn-primary" type="submit">Aggiungi</button>
+            <button class="btn btn-primary" type="submit" onclick="clickEvent()">Aggiungi</button>
         </form>
     </div>
 </div>
+
 @section Scripts
 {
     <script>
+        
         $('#priceUnit').keypress(function (e) {
             if (e.which == 46) {
                 e.preventDefault();
             }
         });
+        
     </script>
+    
 }

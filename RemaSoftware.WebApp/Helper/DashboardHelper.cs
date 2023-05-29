@@ -26,31 +26,16 @@ namespace RemaSoftware.WebApp.Helper
             _dbContext = dbContext;
             _orderService = orderService;
         }
-
-        public List<ChartDataObject> GetDataForDashboardPieChart()
-        {
-            var customers = _dbContext.Clients
-                .Include(i=>i.Orders)
-                .Where(w=>w.Orders.Count > 0)
-                .OrderByDescending(ob => ob.Orders.Count())
-                .Take(5).Select(s => 
-                    new ChartDataObject
-                    {
-                        Label = s.Name,
-                        Value = s.Orders.Count.ToString()
-                    })
-                .ToList();
-            this.SetBackgroundColorsForPieChart(ref customers);
-            return customers;
-        }
         
         public List<ChartDataObject> GetDataForDashboardAreaChart()
         {
             CultureInfo cultureInfo = new CultureInfo("it-IT");
-            var ordersPrices = _dbContext.Orders
-                .Where(w=>w.DataOut.Year == DateTime.Now.Year)
-                .OrderBy(ob=>ob.DataOut.Month)
-                .Select(s=>new {Month=s.DataOut.ToString("MMMM", cultureInfo), Totals = s.Price_Uni*s.Number_Piece})
+            var ordersPrices = _dbContext.Ddts_In
+                .Include(s => s.SubBatch)
+                .ThenInclude(s => s.Batch)
+                .Where(w=>w.DataIn.Year == DateTime.Now.Year && w.IsReso == false)
+                .OrderBy(ob=>ob.DataIn.Month)
+                .Select(s=>new {Month=s.DataIn.ToString("MMMM", cultureInfo), Totals = s.Price_Uni*s.Number_Piece})
                 .ToList();
             
             var couples = ordersPrices
@@ -87,7 +72,7 @@ namespace RemaSoftware.WebApp.Helper
             var articlesInStock = _dbContext.Warehouse_Stocks
                 .Where(w => w.Number_Piece > 0)
                 .ToList()
-                .GroupBy(gb=> new{gb.Name, gb.Brand, gb.Size})
+                .GroupBy(gb=> new{gb.Name})
                 .Select(s=>s.First()).ToList();
             
             return articlesInStock;
@@ -97,11 +82,11 @@ namespace RemaSoftware.WebApp.Helper
         {
             var result = 
                 _orderService.GetAllOrdersNearToDeadline()
-                .GroupBy(gb=>gb.ClientID).ToList()
+                .GroupBy(gb=>gb.Product.ClientID).ToList()
                 .Select(s=> new ChartDataObject
                 {
-                    Label = s.First().Client.Name,
-                    Value = s.Sum(sum=>sum.Number_Piece).ToString()
+                    Label = s.First().Product.Client.Name,
+                    Value = s.Sum(sum=>sum.Number_Piece_Now).ToString()
                 })
                 .ToList();
             return result;

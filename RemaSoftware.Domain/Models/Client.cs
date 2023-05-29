@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace RemaSoftware.Domain.Models
 {
@@ -13,7 +12,7 @@ namespace RemaSoftware.Domain.Models
         public string P_Iva { get; set; }
         [MaxLength(200)]
         public string Street { get; set; }
-        [MaxLength(10)]
+        [MaxLength(20)]
         public string StreetNumber { get; set; }
         [MaxLength(6)]
         public string Cap { get; set; }
@@ -27,12 +26,18 @@ namespace RemaSoftware.Domain.Models
         public string Nation_ISO { get; set; }
         [MaxLength(50)]
         public string Email { get; set; }
+        [MaxLength(50)]
+        public string Pec { get; set; }
         [MaxLength(15)]
         public string PhoneNumber { get; set; }
         [MaxLength(15)]
         public string Fax { get; set; }
+        [MaxLength(15)]
+        public string SDI { get; set; }
         public int FC_ClientID { get; set; }
-        public virtual ICollection<Order> Orders { get; set; } 
+        public int? Ddt_TemplateID { get; set; }
+        public Ddt_Template Ddt_Template { get; set; }
         public virtual ICollection<UserClient> UserClients { get; set; } 
+        public virtual ICollection<Ddt_Out> DdtOuts { get; set; } 
     }
 }

@@ -1,0 +1,155 @@
+@model RemaSoftware.WebApp.Models.OrderViewModel.BatchToSupplierViewModel
+
+@{
+    ViewData["Title"] = "Lotti in magazzino";
+}
+
+<link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
+
+<div class="card shadow mb-4" id="order-summ-content">
+    <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
+        <h3 class="m-0 font-weight-bold text-primary">Lotti da fornitori</h3>
+        @*<div>
+            <button class="btn btn-primary" type="button" onclick="location.href='@Url.Action("NewProduct", "Product")'">Nuovo prodotto</button>
+        </div>*@
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" id="table-batches" width="100%" cellspacing="0">
+                <thead>
+                <tr>
+                    <th>Lotto</th>
+                    <th>Codice DDT</th>
+                    <th>Fornitore</th>
+                    <th>Codice prodotto</th>
+                    <th>DDT associate</th>
+                    <th>Pezzi da fornitore</th>
+                    <th class="text-center">Azioni</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var batch in Model.Ddt_Suppliers)
+                {
+                    <tr style="cursor: pointer;">
+                        <td>@batch.DdtSupplierAssociations[0].Ddt_In.SubBatchID</td>
+                        <td>@batch.Code</td>
+                        <td>@batch.Supplier.Name</td>
+                        <td>@batch.DdtSupplierAssociations[0].Ddt_In.Product.SKU</td>
+                        <td onclick="showDDT(@batch.Ddt_Supplier_ID)">Visualizza DDT associate</td>
+                        <td>@batch.Number_Piece</td>
+                        <td class="text-center">
+                            <a style="text-decoration: none" asp-controller="Order" asp-action="SubBatchMonitoring" asp-route-id="@batch.DdtSupplierAssociations[0].Ddt_In.SubBatchID">
+                                <i class="fas fa-eye fa-lg pl-2" title="Visualizza avanzamento" style="cursor: pointer; color: #6d767e"></i>
+                            </a>
+                            <a style="text-decoration: none" asp-controller="Order" asp-action="ReloadSubBatchFromSupplier" asp-route-id="@batch.Ddt_Supplier_ID">
+                                <i class="fas fa-truck-loading fa-lg pl-2" title="Ricarico" style="cursor: pointer; color: #6d767e"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="row">
+            <div class="col-12 h5">
+                Totale pezzi da fornitori: <b>@Model.Ddt_Suppliers.Sum(s => s.Number_Piece)</b>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ddt_associate" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="batchModalHeader"></h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="batch_ddt"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Chiudi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts
+{
+    <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
+    <script>
+    
+    const ddtassociation = @Json.Serialize(Model.Ddt_Suppliers) 
+    function showDDT(ddtSupplierId) {
+            var ddtass = ddtassociation.filter(obj => {
+              return obj.ddt_Supplier_ID === ddtSupplierId
+            })
+            var ddt_list = ""
+            ddtass[0].ddtSupplierAssociations.forEach(function(ddt) {
+                ddt_list += "<strong>Codice: </strong>" + ddt.ddt_In.code + " | <strong>Pezzi: </strong>" + ddt.numberPieces + "<br/>"
+            })
+            $("#ddt_associate").modal('show');
+            document.getElementById("batch_ddt").innerHTML = ddt_list
+            document.getElementById("batchModalHeader").textContent = "DDT associate al lotto";
+        }
+
+    function DeleteStockArticle(){
+        var articleId = $("#confirm-del-modal").data("articleId");
+        $.ajax({
+            url: '@Url.Action("DeleteProduct", "Order")?' + $.param({"productId": articleId}),
+            type: 'GET',
+            success: function (data) {
+                if (data.result == true){
+                    table.row($("tr#product-" + articleId)).remove().draw();
+                    $("#confirm-del-modal").modal('toggle');
+                    toastNotifySuccess(data.toastMessage);
+                }else{
+                    toastNotifyError(data.toastMessage);
+                }
+            },
+            error: function (data){
+                toastNotifyError(data.toastMessage);
+            }
+        });
+    }
+
+    $(document).ready( function () {
+        table = $('#table-batches').DataTable({
+            "language": {
+                "lengthMenu": "Mostra _MENU_ risultati per pagina",
+                "zeroRecords": "Nessun risultato trovato",
+                "info": "Pagina _PAGE_ di _PAGES_",
+                "infoEmpty": "Nessun risultato disponibile",
+                "infoFiltered": "(filtrato da _MAX_ risultati totali)",
+                "search": "Ricerca:",
+                "paginate": {
+                    "first": "Inizio",
+                    "previous": "Precedente",
+                    "next": "Successivo",
+                    "last": "Fine"
+                }                
+            },
+            "product": [[0, 'asc']],
+            "columnDefs": [
+                { "searchable": true, "orderable": true, "targets": 0 },
+                { "searchable": true, "orderable": true, "targets": 1 },
+                { "searchable": true, "orderable": true, "targets": 2 },
+                { "searchable": true, "orderable": true, "targets": 3 },
+                { "searchable": false, "orderable": false, "targets": 4 },
+                { "searchable": false, "orderable": false, "targets": 5 },
+                { "searchable": false, "orderable": false, "targets": 6 },
+              ]
+        });
+
+        
+        
+    });
+
+    </script>
+}

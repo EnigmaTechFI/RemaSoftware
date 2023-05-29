@@ -1,0 +1,1006 @@
+@using RemaSoftware.Domain.Constants
+@model RemaSoftware.WebApp.Models.OrderViewModel.SubBatchMonitoringViewModel
+
+@{
+    ViewData["Title"] = "Lotti in magazzino";
+}
+<script>
+    var url = '@Model.DdtSupplierUrl'
+    if (url != null && url != ""){
+        window.open(url, '_blank')
+    }
+  let counter=0;
+  function counterTest(){
+    setInterval(() => {
+      counter++
+    }, 1000)    
+  }
+  counterTest()
+  function getTime(seconds, id){
+    setInterval(() => {
+      var sec = parseInt(seconds) + counter;
+      var date = new Date(sec * 1000).toISOString().substring(11, 19)
+      document.getElementById("time-"+id).innerHTML= "<span><strong>Tempo: </strong>" + date + "</span>"
+    }, 1000) 
+  }
+</script>
+<link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
+<h4 class="m-0 font-weight-bold text-primary mb-3">Analisi lotto #@Model.SubBatch.SubBatchID</h4>
+<div class="row">
+    <div class="col-xl-2 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Numero pezzi</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.SubBatch.Ddts_In.Sum(s => s.Number_Piece)</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-hashtag fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-2 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Numero solleciti</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.SubBatch.Ddts_In.Count(s => s.IsPrompted)</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-bell fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-2 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Codice prodotto</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.SubBatch.Ddts_In[0].Product.SKU</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-barcode fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-2 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Nome prodotto</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.SubBatch.Ddts_In[0].Product.Name</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-info fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-2 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Cliente</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.SubBatch.Ddts_In[0].Product.Client.Name</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-user fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-2 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Operatori attuali
+                        </div>
+                        @if (Model.SubBatch.OperationTimelines != null)
+                        {
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.SubBatch.OperationTimelines.Where(s => s.Status == OperationTimelineConstant.STATUS_WORKING).ToList().Count</div>
+                        }
+                        else
+                        {
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">Nessun operatore</div>
+                        }
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow mb-4" id="order-summ-content">
+    <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
+        <h3 class="m-0 font-weight-bold text-primary">DDT associate al lotto</h3>
+        @if (Model.SubBatch.Status != OrderStatusConstants.STATUS_COMPLETED && Model.SubBatch.Status != OrderStatusConstants.STATUS_DELIVERED)
+        {
+            <div>
+                <button class="btn btn-primary" type="button" onclick="location.href='@Url.Action("ExitToSupplier", "Order", new { id = @Model.SubBatch.SubBatchID })'">Consegna a fornitore</button>
+            </div>
+        }
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" id="table-ddts">
+                <thead>
+                <tr>
+                    <th>DDT</th>
+                    <th>N° Pezzi</th>
+                    <th>N° Pezzi attuale</th>
+                    <th>N° Pezzi da fornitore</th>
+                    <th>Data arrivo</th>
+                    <th>Data scadenza</th>
+                    <th>Priorità</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var ddt in Model.SubBatch.Ddts_In)
+                {
+                    <tr style="cursor: pointer;">
+                        <td>@ddt.Code</td>
+                        <td>@ddt.Number_Piece</td>
+                        <td>@ddt.Number_Piece_Now</td>
+                        <td>@ddt.Number_Piece_ToSupplier</td>
+                        <td>@ddt.DataIn.ToString("dd/MM/yy")</td>
+                        <td>@ddt.DataOut.ToString("dd/MM/yy")</td>
+                        <td>@OrderPriorityConstant.OrderPriority[@ddt.Priority]</td>
+                        <td class="text-center">
+                            @{
+                                if (!string.IsNullOrEmpty(ddt.Status))
+                                {
+                                    var statusDto = OrderStatusConstants.OrderStatuses[@ddt.Status];
+                                    <i class="fas fa-circle fa-lg" style="color: @statusDto?.StatusCssClass" title="@statusDto?.StatusDescription"></i>
+                                }
+                            }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="row">
+<div class="col-md-6 col-12 card shadow mb-4" id="order-summ-content">
+    <div class="d-sm-flex align-items-center justify-content-between card-header py-3 mb-1">
+        <h3 class="m-0 font-weight-bold text-primary">Stato di avanzamento produzione</h3>
+    </div>
+    @{
+        var index = 0;
+    }
+    @foreach (var item in Model.SubBatch.Batch.BatchOperations)
+    {
+        
+        if (item.Operations.Name != OtherConstants.EXTRA || item.OperationTimelines.Count != 0)
+        {
+            index++;
+            <div class="card shadow mb-1">
+                <!-- Card Header - Accordion -->
+                <a href="#collapse-@item.OperationID" class="d-block card-header py-3 collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapse-@item.OperationID">
+                    @{
+                        var operationList = item.OperationTimelines.Where(s => s.BatchOperationID == item.BatchOperationID && s.SubBatchID == Model.SubBatch.SubBatchID).ToList();
+                        var status = "";
+                        var css = "";
+                        if (operationList.Count == 0)
+                        {
+                            status = "Da effettuare";
+                            css = " badge-danger";
+                        }
+                        else if (operationList.All(s => s.Status == "C"))
+                        {
+                            status = "Conclusa";
+                            css = " badge-success";
+                        }
+                        else
+                        {
+                            status = "In corso";
+                            css = " badge-warning";
+                        }
+                    }
+                    <h6 class="m-0 font-weight-bold text-primary">@index) - @item.Operations.Name.ToUpper() - <small class="badge @css"><i class="fas fa-clock"></i> @status</small></h6>
+                </a>
+                <!-- Card Content - Collapse -->
+                <div class="collapse" id="collapse-@item.OperationID" style="">
+                    <div class="card-body">
+                        @{
+                            if (operationList.Count == 0)
+                            {
+                                <span><strong>Operazione non iniziata</strong></span>
+                            }
+                            else
+                            {
+
+                                foreach (var op in operationList)
+                                {
+                                    var end = op.Status == @OperationTimelineConstant.STATUS_WORKING ? "In corso" : op.EndDate.ToString("dd/MM/yy HH:mm");
+                                    var tot = op.Status == @OperationTimelineConstant.STATUS_WORKING ? (int)(DateTime.Now - op.StartDate).TotalMinutes : (int)(op.EndDate - op.StartDate).TotalMinutes;
+                                    if (op.MachineId != null)
+                                    {
+                                        <div><span><strong>Macchinario NR°:</strong> @op.MachineId | <strong>Inizio:</strong> @op.StartDate.ToString("dd/MM/yy HH:mm") | <strong>Fine:</strong> @end</span> | <span id="time-@op.OperationTimelineID"><strong>Tempo:</strong> @tot min</span></div>
+                                    }
+                                    else
+                                    {
+                                        <div><span><strong>Fornitore:</strong> @op.DdtSupplier.Supplier.Name | <strong>Inizio:</strong> @op.StartDate.ToString("dd/MM/yy HH:mm") | <strong>Fine:</strong> @end</span> | <span id="time-@op.OperationTimelineID"><strong>Tempo:</strong> @tot min</span></div>
+                                    }
+                                    var time = (int)(DateTime.Now - op.StartDate).TotalSeconds;
+                                    <script>
+                                    if('@op.Status' == '@OperationTimelineConstant.STATUS_WORKING'){
+                                        getTime('@time', '@op.OperationTimelineID')    
+                                    }
+                                </script>
+                                }
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+        
+    }
+</div>
+<div class="col-md-6 col-12 card shadow mb-4" id="order-summ-content">
+    <div style="width:100%; height: 500px !important;" id="planimetry">
+        
+    </div>
+</div>
+</div>
+@section Scripts
+{
+    
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/js/select2.min.js" integrity="sha512-9p/L4acAjbjIaaGXmZf0Q2bV42HetlCLbv8EP0z3rLbQED2TAFUlDvAezy7kumYqg5T8jHtDdlm1fgIsr5QzKg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+     <script src="https://cdn.datatables.net/plug-ins/1.10.11/sorting/date-eu.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="https://app.smplrspace.com/lib/smplr.js"></script>
+    <script>
+    const space = new smplr.Space({
+      spaceId: "f76edfb4-4d73-4a2d-9af1-560eccc371f7",
+      clientToken: "pub_f7ab71cd2295435ea8906179ed754e6a",
+      containerId: "planimetry",
+    });
+    var opTimeline = []
+    var sb = @Json.Serialize(Model.SubBatch)
+    if (sb.operationTimelines != null){
+        sb.operationTimelines.forEach(function (op){
+            if (op.machineId != null)
+                opTimeline.push(op)
+        })
+    }
+    let allMachine = [];
+    const macchina1 = [
+          {
+            id: '1',
+            number_operators: 0,
+            sub_batch: 0,
+            operation: '',
+            coordinates: [
+              {
+                levelIndex: 0,
+                x: 7,
+                z: -1,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 7,
+                z: -3,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 8,
+                z: -3,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 8,
+                z: -1,
+                elevation: 0
+              }
+            ]
+          }
+        ]
+    const macchina2 = [
+          {
+            id: '2',
+            number_operators: 0,
+            sub_batch: 0,
+            operation: '',
+            coordinates: [
+              {
+                levelIndex: 0,
+                x: 9,
+                z: -1,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 9,
+                z: -3,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 10,
+                z: -3,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 10,
+                z: -1,
+                elevation: 0
+              }
+            ]
+          }
+        ]
+    const macchina3 = [
+          {
+            id: '3',
+            number_operators: 0,
+            sub_batch: 0,
+            operation: '',
+            coordinates: [
+              {
+                levelIndex: 0,
+                x: 7,
+                z: -4,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 7,
+                z: -6,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 8,
+                z: -6,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 8,
+                z: -4,
+                elevation: 0
+              }
+            ]
+          }
+        ]
+    const macchina4 = [
+          {
+            id: '4',
+            number_operators: 0,
+            sub_batch: 0,
+            operation: '',
+            coordinates: [
+              {
+                levelIndex: 0,
+                x: 9,
+                z: -4,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 9,
+                z: -6,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 10,
+                z: -6,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 10,
+                z: -4,
+                elevation: 0
+              }
+            ]
+          }
+        ]
+    const macchina5 = [
+          {
+            id: '5',
+            number_operators: 0,
+            sub_batch: 0,
+            operation: '',
+            coordinates: [
+              {
+                levelIndex: 0,
+                x: 7,
+                z: -7,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 7,
+                z: -8.9,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 8,
+                z: -8.9,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 8,
+                z: -7,
+                elevation: 0
+              }
+            ]
+          }
+        ]
+    const macchina6 = [
+          {
+            id: '6',
+            number_operators: 0,
+            sub_batch: 0,
+            operation: '',
+            coordinates: [
+              {
+                levelIndex: 0,
+                x: 9,
+                z: -7,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 9,
+                z: -8.9,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 10,
+                z: -8.9,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 10,
+                z: -7,
+                elevation: 0
+              }
+            ]
+          }
+        ]
+    const macchina7 = [
+          {
+            id: '7',
+            number_operators: 0,
+            sub_batch: 0,
+            operation: '',
+            coordinates: [
+              {
+                levelIndex: 0,
+                x: 7,
+                z: -10,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 7,
+                z: -11.9,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 8,
+                z: -11.9,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 8,
+                z: -10,
+                elevation: 0
+              }
+            ]
+          }
+        ]
+    const macchina8 = [
+          {
+            id: '8',
+            number_operators: 0,
+            sub_batch: 0,
+            operation: '',
+            coordinates: [
+              {
+                levelIndex: 0,
+                x: 9,
+                z: -10,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 9,
+                z: -11.9,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 10,
+                z: -11.9,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 10,
+                z: -10,
+                elevation: 0
+              }
+            ]
+          }
+        ]
+    const macchina9 = [
+          {
+            id: '9',
+            number_operators: 0,
+            sub_batch: 0,
+            operation: '',
+            coordinates: [
+              {
+                levelIndex: 0,
+                x: 7,
+                z: -13,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 7,
+                z: -15,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 8,
+                z: -15,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 8,
+                z: -13,
+                elevation: 0
+              }
+            ]
+          }
+        ]
+    const macchina10 = [
+          {
+            id: '10',
+            number_operators: 0,
+            sub_batch: 0,
+            operation: '',
+            coordinates: [
+              {
+                levelIndex: 0,
+                x: 9,
+                z: -13,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 9,
+                z: -15,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 10,
+                z: -15,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 10,
+                z: -13,
+                elevation: 0
+              }
+            ]
+          }
+        ]
+    const macchina11 = [
+          {
+            id: '11',
+            number_operators: 0,
+            sub_batch: 0,
+            operation: '',
+            coordinates: [
+              {
+                levelIndex: 0,
+                x: 7,
+                z: -16,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 7,
+                z: -18,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 8,
+                z: -18,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 8,
+                z: -16,
+                elevation: 0
+              }
+            ]
+          }
+        ]
+    const macchina12 = [
+          {
+            id: '12',
+            number_operators: 0,
+            sub_batch: 0,
+            operation: '',
+            coordinates: [
+              {
+                levelIndex: 0,
+                x: 9,
+                z: -16,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 9,
+                z: -18,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 10,
+                z: -18,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 10,
+                z: -16,
+                elevation: 0
+              }
+            ]
+          }
+        ]
+    const macchina13 = [
+          {
+            id: '13',
+            number_operators: 0,
+            sub_batch: 0,
+            operation: '',
+            coordinates: [
+              {
+                levelIndex: 0,
+                x: 7,
+                z: -20,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 7,
+                z: -19,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 10,
+                z: -19,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 10,
+                z: -20,
+                elevation: 0
+              }
+            ]
+          }
+        ]
+    const macchina14 = [
+              {
+                id: '14',
+                number_operators: 0,
+                sub_batch: 0,
+                operation: '',
+                coordinates: [
+                  {
+                    levelIndex: 0,
+                    x: 14,
+                    z: 0,
+                    elevation: 0
+                  },
+                  {
+                    levelIndex: 0,
+                    x: 14,
+                    z: -4,
+                    elevation: 0
+                  },
+                  {
+                    levelIndex: 0,
+                    x: 17,
+                    z: -4,
+                    elevation: 0
+                  },
+                  {
+                    levelIndex: 0,
+                    x: 17,
+                    z: 0,
+                    elevation: 0
+                  }
+                ]
+              }
+            ]
+    const macchina15 = [
+      {
+        id: '15',
+        number_operators: 0,
+        sub_batch: 0,
+        operation: '',
+        coordinates: [
+          {
+            levelIndex: 0,
+            x: 14,
+            z: -5,
+            elevation: 0
+          },
+          {
+            levelIndex: 0,
+            x: 14,
+            z: -8.9,
+            elevation: 0
+          },
+          {
+            levelIndex: 0,
+            x: 17,
+            z: -8.9,
+            elevation: 0
+          },
+          {
+            levelIndex: 0,
+            x: 17,
+            z: -5,
+            elevation: 0
+          }
+        ]
+      }
+    ]
+    const macchina16 = [
+      {
+        id: '16',
+        number_operators: 0,
+        sub_batch: 0,
+        operation: '',
+        coordinates: [
+          {
+            levelIndex: 0,
+            x: 14,
+            z: -10,
+            elevation: 0
+          },
+          {
+            levelIndex: 0,
+            x: 14,
+            z: -13.8,
+            elevation: 0
+          },
+          {
+            levelIndex: 0,
+            x: 17,
+            z: -13.8,
+            elevation: 0
+          },
+          {
+            levelIndex: 0,
+            x: 17,
+            z: -10,
+            elevation: 0
+          }
+        ]
+      }
+    ]
+    const macchina98 = [
+          {
+            id: '17',
+            number_operators: 0,
+            sub_batch: 0,
+            operation: '',
+            coordinates: [
+              {
+                levelIndex: 0,
+                x: 15,
+                z: -20.9,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 15,
+                z: -26.9,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 17,
+                z: -26.9,
+                elevation: 0
+              },
+              {
+                levelIndex: 0,
+                x: 17,
+                z: -20.9,
+                elevation: 0
+              }
+            ]
+          }
+        ]
+    const macchina99 = [
+      {
+        id: '99',
+        number_operators: 0,
+        sub_batch: 0,
+        operation: '',
+        coordinates: [
+          {
+            levelIndex: 0,
+            x: 11,
+            z: -25.9,
+            elevation: 0
+          },
+          {
+            levelIndex: 0,
+            x: 11,
+            z: -22.1,
+            elevation: 0
+          },
+          {
+           levelIndex: 0,
+           x: 14,
+           z: -22.1,
+           elevation: 0
+          },
+          {
+            levelIndex: 0,
+            x: 14,
+            z: -25.9,
+            elevation: 0
+          }
+        ]
+      }
+    ]
+    
+    
+    allMachine.push(macchina1)
+    allMachine.push(macchina2)
+    allMachine.push(macchina3)
+    allMachine.push(macchina4)
+    allMachine.push(macchina5)
+    allMachine.push(macchina6)
+    allMachine.push(macchina7)
+    allMachine.push(macchina8)
+    allMachine.push(macchina9)
+    allMachine.push(macchina10)
+    allMachine.push(macchina11)
+    allMachine.push(macchina12)
+    allMachine.push(macchina13)
+    allMachine.push(macchina14)
+    allMachine.push(macchina15)
+    allMachine.push(macchina16)
+    allMachine.push(macchina98)
+    allMachine.push(macchina99)
+    
+    
+    opTimeline.forEach(function (operation){
+        if (operation.status == '@OperationTimelineConstant.STATUS_WORKING'){
+            machine = allMachine.filter(
+               function(data){ 
+                  if (data[0].id == operation.machineId){
+                    data[0].number_operators++; 
+                    data[0].sub_batch = operation.subBatchID; 
+                    data[0].operation = operation.batchOperation.operations.name; 
+                  }
+               }
+            );
+       }
+    })
+    
+    space.startViewer({
+      preview: false,
+      loadingMessage: "Loading planimetry",
+      mode: '3d',
+      allowModeChange: true,
+      onReady: () => addData(),
+    }) 
+    
+    function addData(){
+      allMachine.forEach(function (unit){
+        let tooltip = ``;
+        let color = '#dc3545'
+        if (unit[0].number_operators > 0)
+        {
+           tooltip = `In lavorazione a questa macchina.`
+           color = '#28a745'
+        }
+        space.addDataLayer({
+            id: unit[0].id,
+            type: 'polygon',
+            data: unit,
+            tooltip: d => tooltip,
+            color: color
+          })
+        })
+      
+    }
+    
+</script>
+    <script>
+     $(document).ready( function () {
+            table = $('#table-ddts').DataTable({
+                "language": {
+                    "lengthMenu": "Mostra _MENU_ risultati per pagina",
+                    "zeroRecords": "Nessun risultato trovato",
+                    "info": "Pagina _PAGE_ di _PAGES_",
+                    "infoEmpty": "Nessun risultato disponibile",
+                    "infoFiltered": "(filtrato da _MAX_ risultati totali)",
+                    "search": "Ricerca:",
+                    "paginate": {
+                        "first": "Inizio",
+                        "previous": "Precedente",
+                        "next": "Successivo",
+                        "last": "Fine"
+                    }                
+                },
+                "product": [[0, 'asc']],
+                "columnDefs": [
+                    { "searchable": true, "orderable": true, "targets": 0 },
+                    { "searchable": false, "orderable": false, "targets": 1 },
+                    { "searchable": false, "orderable": false, "targets": 2 },
+                    { "searchable": false, "orderable": false, "targets": 3 },
+                    { "searchable": false, "orderable": true, "targets": 4, "type": "date-eu" },
+                    { "searchable": false, "orderable": true, "targets": 5, "type": "date-eu" },
+                    { "searchable": true, "orderable": false, "targets": 6 },
+                    { "searchable": false, "orderable": false, "targets": 7 },
+                  ]
+            });
+        });
+    
+    </script>
+}

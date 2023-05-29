@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace RemaSoftware.Domain.Constants
 {
     public static class OrderStatusConstants
@@ -12,9 +9,12 @@ namespace RemaSoftware.Domain.Constants
         public static readonly string STATUS_WORKING_DESC = "In lavorazione";
         
         public const string STATUS_COMPLETED = "C";
-        public static readonly string STATUS_COMPLETED_DESC = "In consegna";
+        public static readonly string STATUS_COMPLETED_DESC = "Completato";
+        
+        public const string STATUS_PARTIALLY_COMPLETED = "D";
+        public static readonly string STATUS_PARTIALLY_COMPLETED_DESC = "Completato parzialmente";
 
-        public const string STATUS_DELIVERED = "D";
+        public const string STATUS_DELIVERED = "F";
         public static readonly string STATUS_DELIVERED_DESC = "Consegnato";
 
         public static readonly Dictionary<string, StatusDto> OrderStatuses = new Dictionary<string, StatusDto>
@@ -35,6 +35,15 @@ namespace RemaSoftware.Domain.Constants
                     Status = STATUS_WORKING,
                     StatusDescription = STATUS_WORKING_DESC,
                     StatusCssClass = "orange"
+                }
+            },
+            {
+                STATUS_PARTIALLY_COMPLETED,
+                new StatusDto
+                {
+                    Status = STATUS_PARTIALLY_COMPLETED,
+                    StatusDescription = STATUS_PARTIALLY_COMPLETED_DESC,
+                    StatusCssClass = "yellow"
                 }
             },
             {

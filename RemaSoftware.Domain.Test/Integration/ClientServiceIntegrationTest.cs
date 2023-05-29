@@ -1,5 +1,4 @@
 using System;
-using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
 using RemaSoftware.Domain.Services.Impl;
 using Xunit;

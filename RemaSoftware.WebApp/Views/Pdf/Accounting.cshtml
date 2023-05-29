@@ -87,7 +87,8 @@
                             <th>Data Entrata</th>
                             <th>Data Scadenza</th>
                             <th>N&deg; Pezzi Iniziale</th>
-                            <th>N&deg; Pezzi Attuale</th>
+                            <th>N&deg; Pezzi in azienda</th>
+                            <th>N&deg; Pezzi da fornitori</th>
                             <th>Status</th>
                         </tr>
                     </thead>
@@ -95,14 +96,15 @@
                         @foreach (var order in Model.OrdersNotCompleted)
                         {
                             <tr>
-                                <td>@order.DDT</td>
-                                <td>@order.SKU</td>
-                                <td>@order.Name</td>
-                                <td>@order.Client.Name</td>
+                                <td>@order.Code</td>
+                                <td>@order.Product.SKU</td>
+                                <td>@order.Product.Name</td>
+                                <td>@order.Product.Client.Name</td>
                                 <td>@order.DataIn.ToString("d", new CultureInfo("it-IT"))</td>
                                 <td>@order.DataOut.ToString("d", new CultureInfo("it-IT"))</td>
                                 <td>@order.Number_Piece</td>
-                                <td>@order.Number_Pieces_InStock</td>
+                                <td>@order.Number_Piece_Now</td>
+                                <td>@order.Number_Piece_ToSupplier</td>
                                 <td class="text-center">
                                     @{
                                         if (!string.IsNullOrEmpty(order.Status))

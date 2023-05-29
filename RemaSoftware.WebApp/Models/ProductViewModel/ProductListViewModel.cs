@@ -7,4 +7,5 @@ namespace RemaSoftware.WebApp.Models.ProductViewModel
     {
         public List<Product> Products { get; set; }
     }
+
 }

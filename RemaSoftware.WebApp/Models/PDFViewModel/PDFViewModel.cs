@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using RemaSoftware.Domain.Models;
+﻿using RemaSoftware.Domain.Models;
 
 namespace RemaSoftware.WebApp.Models.PDFViewModel
 {
     public class PDFViewModel
     {
-        public Order Order { get; set; }
-
+        public string QRCode;
         public string Photo { get; set; }
+        public string BasePathImages { get; set; }
+        public SubBatch SubBatch { get; set; }
     }
 }

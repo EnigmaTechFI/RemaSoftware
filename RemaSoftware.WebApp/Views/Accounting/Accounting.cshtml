@@ -41,6 +41,7 @@
                         <th>Cliente</th>
                         <th>N&deg; Pezzi Attuale</th>
                         <th>Fatturato Attuale</th>
+                        <th>Azioni</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -50,6 +51,11 @@
                             <td>@order.Client</td>
                             <td>@order.NumberPiecesInStock</td>
                             <td>@order.TotPriceInStock.ToString("0.00")&#8364;</td>
+                            <td class="text-center">
+                            <a style="text-decoration: none" asp-action="AccountingClient" asp-controller="Accounting" asp-route-Id="@order.ClientID">
+                                <i class="fas fa-eye fa-lg pl-2" title="Contabilità cliente" style="cursor: pointer; color:  #6d767e;"></i>
+                            </a>
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -70,12 +76,12 @@
                     <tr>
                         <th>DDT</th>
                         <th>SKU</th>
-                        <th>Nome</th>
                         <th>Cliente</th>
                         <th>Data Entrata</th>
                         <th>Data Scadenza</th>
                         <th>N&deg; Pezzi Iniziale</th>
-                        <th>N&deg; Pezzi Attuale</th>
+                        <th>N&deg; Pezzi in azienda</th>
+                        <th>N&deg; Pezzi da fornitori</th>
                         <th>Prezzo Unitario</th>
                         <th>Status</th>
                     </tr>
@@ -84,14 +90,14 @@
                     @foreach (var order in Model.OrdersNotCompleted)
                     {
                         <tr>
-                            <td>@order.DDT</td>
-                            <td>@order.SKU</td>
-                            <td>@order.Name</td>
-                            <td>@order.Client.Name</td>
+                            <td>@order.Code</td>
+                            <td>@order.Product.SKU</td>
+                            <td>@order.Product.Client.Name</td>
                             <td>@order.DataIn.ToString("d", new CultureInfo("it-IT"))</td>
                             <td>@order.DataOut.ToString("d", new CultureInfo("it-IT"))</td>
                             <td>@order.Number_Piece</td>
-                            <td>@order.Number_Pieces_InStock</td>
+                            <td>@order.Number_Piece_Now</td>
+                            <td>@order.Number_Piece_ToSupplier</td>
                             <td>@order.Price_Uni.ToString("0.00")&#8364;</td>
                             <td class="text-center">
                                 @{
@@ -112,7 +118,6 @@
 <input type="button" class="btn btn-primary" value="Stampa resoconto" onclick="PrintPDF()">
 @section Scripts
 {
-
     <script>
         function PrintPDF() {
             var aElement = document.createElement("a");

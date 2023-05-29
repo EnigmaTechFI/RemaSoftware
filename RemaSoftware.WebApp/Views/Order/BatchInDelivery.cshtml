@@ -1,0 +1,136 @@
+@using RemaSoftware.Domain.Constants
+@model RemaSoftware.WebApp.Models.OrderViewModel.BatchInDeliveryViewModel
+
+@{
+    ViewData["Title"] = "Lotti in consegna";
+}
+
+<link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
+
+<div class="card shadow mb-4" id="order-summ-content">
+    <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
+        <h3 class="m-0 font-weight-bold text-primary">Ordini pronti per la consegna</h3>
+        @*<div>
+            <button class="btn btn-primary" type="button" onclick="location.href='@Url.Action("NewProduct", "Product")'">Nuovo prodotto</button>
+        </div>*@
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" id="table-batches" width="100%" cellspacing="0">
+                <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>DDT associate</th>
+                    <th>N° Pezzi</th>
+                    <th>N° Scarti lavorati</th>
+                    <th>N° Persi</th>
+                    <th>N° Mancanti</th>
+                    <th class="text-center">Azioni</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model.DdtOuts)
+                {
+                    <tr style="cursor: pointer;">
+                        <td>@item.Ddt_Associations[0].Ddt_In.Product.Client.Name</td>
+                        <td onclick="showDDT(@item.Ddt_Out_ID)">Visualizza DDT associate</td>
+                        <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.BUONI).Sum(s=> s.NumberPieces)</td>
+                        <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.SCARTI).Sum(s=> s.NumberPieces)</td>
+                        <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.PERSI).Sum(s=> s.NumberPieces)</td>
+                        <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.MANCANTI).Sum(s=> s.NumberPieces)</td>
+                        <td class="text-center">
+                            <a style="text-decoration: none" asp-action="EmitDDT" asp-controller="Order" asp-route-id="@item.Ddt_Out_ID">
+                                <i class="fas fa-truck fa-lg pl-2" style="cursor: pointer; color: #6d767e;" title="Emetti DDT"></i>
+                            </a>
+                            <a style="text-decoration: none" asp-controller="Order" asp-action="PartialDDT" asp-route-id="@item.Ddt_Out_ID" asp-route-clientId="@item.ClientID">
+                                <i class="fas fa-eye fa-lg pl-2" title="Visualizza ddt" style="cursor: pointer; color: #6d767e"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="row">
+            <div class="col-12 h5">
+                Totale pezzi in consegna: <b>@Model.DdtOuts.Sum(s => s.Ddt_Associations.Sum(s => s.NumberPieces))</b>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ddt_associate" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="batchModalHeader">DDT in uscita</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="batch_ddt"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Chiudi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <script>
+    const ddts = @Json.Serialize(Model.DdtOuts)
+    function showDDT(ddt_Out_ID) {
+        var ddt = ddts.filter(obj => {
+          return obj.ddt_Out_ID === ddt_Out_ID
+        })
+        var ddt_list = ""
+        ddt[0].ddt_Associations.forEach(function(ddt) {
+            ddt_list = ddt_list + "<strong>Codice: </strong>" +  ddt.ddt_In.code + " - <strong>N° pezzi:</strong> "+ ddt.numberPieces + " - <strong>Tipo: </strong> " + ddt.typePieces + "<br/>"
+        })
+        $("#ddt_associate").modal('show');
+        document.getElementById("batch_ddt").innerHTML = ddt_list
+    }
+
+   
+    $(document).ready( function () {
+        var url = '@Model.pdfUrl'
+        if (url != null && url != "empty"){
+            window.open(url, '_blank')
+        }
+        table = $('#table-batches').DataTable({
+            "language": {
+                "lengthMenu": "Mostra _MENU_ risultati per pagina",
+                "zeroRecords": "Nessun risultato trovato",
+                "info": "Pagina _PAGE_ di _PAGES_",
+                "infoEmpty": "Nessun risultato disponibile",
+                "infoFiltered": "(filtrato da _MAX_ risultati totali)",
+                "search": "Ricerca:",
+                "paginate": {
+                    "first": "Inizio",
+                    "previous": "Precedente",
+                    "next": "Successivo",
+                    "last": "Fine"
+                }                
+            },
+            "product": [[0, 'asc']],
+            "columnDefs": [
+                { "searchable": true, "orderable": true, "targets": 0 },
+                { "searchable": false, "orderable": false, "targets": 1 },
+                { "searchable": false, "orderable": true, "targets": 2 },
+                { "searchable": false, "orderable": true, "targets": 3 },
+                { "searchable": false, "orderable": true, "targets": 4 },
+                { "searchable": false, "orderable": true, "targets": 5 },
+                { "searchable": false, "orderable": false, "targets": 6 },
+              ]
+        });
+    });
+
+    </script>
+}

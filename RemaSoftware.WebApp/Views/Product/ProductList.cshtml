@@ -1,4 +1,5 @@
-﻿@model RemaSoftware.WebApp.Models.ProductViewModel.ProductListViewModel
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model RemaSoftware.WebApp.Models.ProductViewModel.ProductListViewModel
 
 @{
     ViewData["Title"] = "Lista Prodotti";
@@ -32,15 +33,17 @@
                         <td>@product.SKU</td>
                         <td>@product.Name</td>
                         <td>@product.Client.Name</td>
-                        <td>@product.Ddts_In.Sum(s=> s.Number_Piece)</td>
+                        <td>@product.Ddts_In.Sum(s=> s.Number_Piece_Now)</td>
                         <td class="text-center">
                             <a style="text-decoration: none" asp-action="NewOrder" asp-controller="Order" asp-route-productId="@product.ProductID">
-                                <i class="fas fa-file-text fa-lg pl-2" title="Registra commessa" style="cursor: pointer; color: lightgray"></i>
+                                <i class="fas fa-file-text fa-lg pl-2" title="Registra commessa" style="cursor: pointer; color:  #6d767e;"></i>
                             </a>
                             <a style="text-decoration: none" asp-action="UpdateProduct" asp-controller="Product" asp-route-productId="@product.ProductID">
-                                <i class="fas fa-pen fa-lg pl-2" title="Modifica prodotto" style="cursor: pointer; color: lightgray"></i>
+                                <i class="fas fa-pen fa-lg pl-2" title="Modifica prodotto" style="cursor: pointer; color:  #6d767e;"></i>
                             </a>
-                            <i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer; color: lightgray" title="Elimina prodotto" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDataArticleId('#confirm-del-modal', @product.ProductID)"></i>                        
+                            <a style="text-decoration: none" asp-action="ViewProduct" asp-controller="Product" asp-route-id="@product.ProductID">
+                                <i class="fas fa-eye fa-lg pl-2" title="Visualizza prodotto" style="cursor: pointer; color:  #6d767e;"></i>
+                            </a>
                         </td>
                     </tr>
                 }
@@ -62,7 +65,7 @@
             <div class="modal-body">Sei sicuro di voler eliminare questo prodotto?</div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
-                <button class="btn btn-primary" onclick="DeleteProduct()">Elimina</button>
+                <button class="btn btn-danger" onclick="DeleteProduct()">Elimina</button>
             </div>
         </div>
     </div>
@@ -73,62 +76,37 @@
 {
     <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
     <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
-
     <script>
-
-    function SetDataArticleId(elementName, articleId){
-        $(elementName).data("articleId", articleId );
-    }
-
-    function DeleteProduct(){
-        var articleId = $("#confirm-del-modal").data("articleId");
-        $.ajax({
-            url: '@Url.Action("DeleteProduct", "Product")?' + $.param({"productId": articleId}),
-            type: 'GET',
-            success: function (data) {
-                if (data.result == "Success"){
-                    table.row($("tr#product-" + articleId)).remove().draw();
-                    $("#confirm-del-modal").modal('toggle');
-                    toastNotifySuccess(data.toastMessage);
-                }else{
-                    toastNotifyError(data.toastMessage);
-                }
-            },
-            error: function (data){
-                toastNotifyError(data.toastMessage);
-            }
+        function SetDataArticleId(elementName, articleId){
+            $(elementName).data("articleId", articleId );
+        }
+    
+        $(document).ready( function () {
+            table = $('#table-products').DataTable({
+                "language": {
+                    "lengthMenu": "Mostra _MENU_ risultati per pagina",
+                    "zeroRecords": "Nessun risultato trovato",
+                    "info": "Pagina _PAGE_ di _PAGES_",
+                    "infoEmpty": "Nessun risultato disponibile",
+                    "infoFiltered": "(filtrato da _MAX_ risultati totali)",
+                    "search": "Ricerca:",
+                    "paginate": {
+                        "first": "Inizio",
+                        "previous": "Precedente",
+                        "next": "Successivo",
+                        "last": "Fine"
+                    }                
+                },
+                "product": [[0, 'asc']],
+                "columnDefs": [
+                    { "searchable": true, "orderable": true, "targets": 0 },
+                    { "searchable": true, "orderable": true, "targets": 1 },
+                    { "searchable": true, "orderable": true, "targets": 2 },
+                    { "searchable": false, "orderable": false, "targets": 3 },
+                    { "searchable": false, "orderable": false, "targets": 4 },
+                  ]
+            });
+     
         });
-    }
-
-    $(document).ready( function () {
-        table = $('#table-products').DataTable({
-            "language": {
-                "lengthMenu": "Mostra _MENU_ risultati per pagina",
-                "zeroRecords": "Nessun risultato trovato",
-                "info": "Pagina _PAGE_ di _PAGES_",
-                "infoEmpty": "Nessun risultato disponibile",
-                "infoFiltered": "(filtrato da _MAX_ risultati totali)",
-                "search": "Ricerca:",
-                "paginate": {
-                    "first": "Inizio",
-                    "previous": "Precedente",
-                    "next": "Successivo",
-                    "last": "Fine"
-                }                
-            },
-            "product": [[0, 'asc']],
-            "columnDefs": [
-                { "searchable": true, "orderable": true, "targets": 0 },
-                { "searchable": true, "orderable": true, "targets": 1 },
-                { "searchable": true, "orderable": true, "targets": 2 },
-                { "searchable": false, "orderable": false, "targets": 3 },
-                { "searchable": false, "orderable": false, "targets": 4 },
-              ]
-        });
-
-        
-        
-    });
-
     </script>
 }

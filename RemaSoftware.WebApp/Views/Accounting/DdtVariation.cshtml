@@ -1,0 +1,313 @@
+@using RemaSoftware.Domain.Constants
+@using RemaSoftware.WebApp.Models.OrderViewModel
+@model RemaSoftware.WebApp.Models.AccountingViewModel.DdtVariationViewModel
+
+@{
+    ViewData["Title"] = "Variazioni DDT";
+}
+
+<link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
+
+<div class="card shadow mb-4" id="order-summ-content">
+    <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
+        <h3 class="m-0 font-weight-bold text-primary">Variazioni prezzo DDT</h3>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="table-ddt" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>DDT</th>
+                        <th>Prz. Unitario</th>
+                        <th>Richiesta variazione</th>
+                        <th>Nuovo prezzo</th>
+                        <th>Azioni</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var subBatch in Model.SubBatches)
+                {
+                    foreach (var ddt in subBatch.Ddts_In.Where(s => !s.IsReso).ToList())
+                    {
+                        <tr id="ddt-@ddt.Ddt_In_ID">
+                            <td>@ddt.Product.Client.Name</td>
+                            <td>@ddt.Code</td>
+                            <td>&euro;@ddt.Price_Uni.ToString("0.00")</td>
+                            <td>@{
+                                    var pricePending = ddt.PriceIsPending ? "SI" : "NO";   
+                                }
+                                @pricePending
+                            </td>
+                            <td>@{
+                                    var newPrice = ddt.PendingPrice > 0 ? ddt.PendingPrice.ToString("0.00") : "-";   
+                                }
+                                @newPrice
+                            </td>
+                            <td class="text-center">
+                                @if (ddt.PriceIsPending)
+                                {
+                                    <a style="text-decoration: none" onclick="setconfirmVariationId(@ddt.Ddt_In_ID)">
+                                        <i class="fas fa-check fa-lg pl-2" style="cursor: pointer; color: #6d767e;" title="Conferma variazione"></i>
+                                    </a>
+                                    <a style="text-decoration: none" onclick="setdeleteVariationId(@ddt.Ddt_In_ID)">
+                                        <i class="fas fa-times fa-lg pl-2" style="cursor: pointer; color: #6d767e;" title="Rifuta variazione"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a style="text-decoration: none" onclick="setrequestVariationId(@ddt.Ddt_In_ID)">
+                                        <i class="fas fa-handshake-o fa-lg pl-2" style="cursor: pointer; color: #6d767e;" title="Richiedi variazione"></i>
+                                    </a>
+                                    @if (ddt.Status != OrderStatusConstants.STATUS_ARRIVED)
+                                    {
+                                        <a style="text-decoration: none" asp-controller="Order" asp-action="SubBatchMonitoring" asp-route-id="@ddt.SubBatchID">
+                                            <i class="fas fa-eye fa-lg pl-2" title="Visualizza avanzamento" style="cursor: pointer; color: #6d767e"></i>
+                                        </a>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirm-variation" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Conferma variazione prezzo</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Sei sicuro di voler confermare la variazione di prezzo?</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
+                <button class="btn btn-success" onclick="ConfirmVariation()">Conferma</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="delete-variation" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Elimina variazione prezzo</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Sei sicuro di voler eliminare la variazione di prezzo?</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
+                <button class="btn btn-danger" onclick="DeleteVariation()">Elimina</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="request-variation" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Richiedi variazione prezzo</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="newPrice">Nuovo prezzo unitario (IVA esclusa) *</label>
+                    <div class="input-group-append">
+                        <input min="0" id="newPrice" type="text" class="form-control" placeholder="Prezzo Unitario">
+                        <span class="input-group-text">€</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="mailaddress">Indirizzo Mail</label>
+                    <input type="email" class="form-control" id="mailaddress" placeholder="Indirizzo mail"/>
+                </div>
+                <div class="form-group">
+                    <label for="mailmessage">Messaggio Mail</label>
+                    <textarea  class="form-control" id="mailmessage" placeholder="Messaggio"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
+                <button class="btn btn-primary" onclick="RequestVariation()">Invia</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="loader-cont">
+    <div class="spinner-grow" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+
+@{await Html.RenderPartialAsync("../Order/_CopyOrderModal", new CopyOrderViewModel());}
+
+@section Scripts
+{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
+    <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/js/select2.min.js" integrity="sha512-9p/L4acAjbjIaaGXmZf0Q2bV42HetlCLbv8EP0z3rLbQED2TAFUlDvAezy7kumYqg5T8jHtDdlm1fgIsr5QzKg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.10.11/sorting/date-eu.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+    let enable = true;
+    
+    let confirmVariationId, deleteVariationId, requestVariationId;
+    
+    $('#newPrice').keypress(function (e) {
+        if (e.which == 46) {
+            e.preventDefault();
+        }
+    });
+    
+    function setconfirmVariationId(id){
+        confirmVariationId = id;
+        $("#confirm-variation").modal('show');
+    }
+    function setdeleteVariationId(id){
+        deleteVariationId = id;
+        $("#delete-variation").modal('show');
+    }
+    function setrequestVariationId(id){
+        requestVariationId = id;
+        $("#request-variation").modal('show');
+    }
+
+    function SetDataArticleId(elementName, articleId){
+        $(elementName).data("articleId", articleId );
+    }
+    
+    function ConfirmVariation(){
+        $(".loader-cont").show()
+        $.ajax({
+            url: '@Url.Action("ConfirmVariation", "Accounting")?' + $.param({"id": confirmVariationId}),
+            type: 'GET',
+            success: function (data) {                    
+                if (data.result){
+                    table.row($("tr#ddt-" + confirmVariationId)).remove().draw();
+                    $("#confirm-variation").modal('hide');
+                    toastNotifySuccess(data.message);
+                }
+                else{
+                    toastNotifyError(data.message);
+                }
+                $(".loader-cont").hide()
+            },
+            error: function (){
+                toastNotifyError("Controllare parametri inseriti.");
+                $(".loader-cont").hide()
+            }
+        });
+    }
+    
+    function DeleteVariation(){
+        $(".loader-cont").show()
+        $.ajax({
+            url: '@Url.Action("DeleteVariation", "Accounting")?' + $.param({"id": deleteVariationId}),
+            type: 'GET',
+            success: function (data) {                    
+                if (data.result){
+                    table.row($("tr#ddt-" + deleteVariationId)).remove().draw();
+                    $("#delete-variation").modal('hide');
+                    toastNotifySuccess(data.message);
+                }
+                else{
+                    toastNotifyError(data.message);
+                }
+                $(".loader-cont").hide()
+            },
+            error: function (data){
+                toastNotifyError(data.message);
+                $(".loader-cont").hide()
+            }
+        });
+    }
+    
+    function RequestVariation(){
+        $(".loader-cont").show()
+        var mail = document.getElementById("mailaddress").value
+        var price = document.getElementById("newPrice").value
+        var message = document.getElementById("mailmessage").value
+        $.ajax({
+            url: '@Url.Action("RequestVariation", "Accounting")?' 
+            + $.param({"id": requestVariationId}) + "&"
+            + $.param({"price": price}) + "&"
+            + $.param({"mail": mail}) + "&"
+            + $.param({"message": message}),
+            type: 'GET',
+            success: function (data) {                    
+                if (data.result){
+                    toastNotifySuccess(data.message);
+                    location.reload()
+                }
+                else{
+                    toastNotifyError(data.message);
+                }
+                $(".loader-cont").hide()
+            },
+            error: function (data){
+                toastNotifyError(data.message);
+                $(".loader-cont").hide()
+            }
+        });
+    }
+
+    $(document).ready( function () {
+        table = $('#table-ddt').DataTable({
+            "language": {
+                "lengthMenu": "Mostra _MENU_ risultati per pagina",
+                "zeroRecords": "Nessun risultato trovato",
+                "info": "Pagina _PAGE_ di _PAGES_",
+                "infoEmpty": "Nessun risultato disponibile",
+                "infoFiltered": "(filtrato da _MAX_ risultati totali)",
+                "search": "Ricerca:",
+                "paginate": {
+                    "first": "Inizio",
+                    "previous": "Precedente",
+                    "next": "Successivo",
+                    "last": "Fine"
+                }                
+            },
+            "order": [[0, 'asc']],
+            "columnDefs": [
+                { "searchable": true, "orderable": true, "targets": 0 },
+                { "searchable": true, "orderable": true, "targets": 1 },
+                { "searchable": false, "orderable": false, "targets": 2 },
+                { "searchable": true, "orderable": true, "targets": 3 },
+                { "searchable": false, "orderable": false, "targets": 4 },
+                { "searchable": false, "orderable": false, "targets": 5 },
+              ]
+        });
+
+        
+        
+    });
+
+    function formatDate(timestamp){
+        var x=new Date(timestamp);
+        var dd = x.getDate();
+        var mm = x.getMonth()+1;
+        var yy = x.getFullYear();
+        return dd +"/" + mm+"/" + yy;
+     }
+
+    function setOrderId(OrderIdToDuplicate) {
+        $("#id_ordine").val(OrderIdToDuplicate)
+    }
+    
+    </script>
+}

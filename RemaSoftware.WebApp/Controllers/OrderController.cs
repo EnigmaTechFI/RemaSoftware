@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
@@ -9,11 +8,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NLog;
-using RemaSoftware.UtilityServices;
 using Microsoft.Extensions.Configuration;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
+using RemaSoftware.WebApp.DTOs;
 using RemaSoftware.WebApp.Helper;
 using RemaSoftware.WebApp.Models.OrderViewModel;
 using RemaSoftware.WebApp.Models.PDFViewModel;
@@ -21,91 +20,158 @@ using RemaSoftware.WebApp.Validation;
 
 namespace RemaSoftware.WebApp.Controllers
 {
-    [Authorize]
+    
     public class OrderController : Controller
     {
         private readonly IOrderService _orderService;
-        private readonly IAPIFatturaInCloudService _apiFatturaInCloud;
+        
         private readonly INotyfService _notyfService;
         private readonly IClientService _clientService;
         private readonly IOperationService _operationService;
-        private readonly IImageService _imageService;
         private readonly IConfiguration _configuration;
         private readonly OrderHelper _orderHelper;
         private readonly OrderValidation _orderValidation;
-        private readonly string _basePathForImages;
+        private readonly IProductService _productService;
+        private readonly ISubBatchService _subBatchService;
 
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public OrderController(IOrderService orderService, IClientService clientService, IOperationService operationService,
-            IImageService imageService, IAPIFatturaInCloudService apiFatturaInCloudService,
-            INotyfService notyfService, IConfiguration configuration, OrderHelper orderHelper, OrderValidation orderValidation)
+            INotyfService notyfService, IConfiguration configuration, OrderHelper orderHelper, OrderValidation orderValidation, IProductService productService, ISubBatchService subBatchService)
         {
             _orderService = orderService;
             _clientService = clientService;
             _operationService = operationService;
-            _imageService = imageService;
-            _apiFatturaInCloud = apiFatturaInCloudService;
             _notyfService = notyfService;
             _configuration = configuration;
             _orderHelper = orderHelper;
-            _basePathForImages =
-                (Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName + _configuration["ImagePath"]).Replace("/", "\\");
             _orderValidation = orderValidation;
+            _productService = productService;
+            _subBatchService = subBatchService;
         }
 
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente +"," +Roles.COQ)]
+        [HttpPost]
+        public JsonResult EndOrder([FromBody] SubBatchToEndDto dto)
+        {
+            try
+            {
+                return new JsonResult(new { Result = true, Data = _orderHelper.EndOrder(dto), ToastMessage="Ordine concluso correttamente."});
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(new { Result = false, Data = 0, ToastMessage=e.Message});
+            }
+        }
+        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente +"," +Roles.COQ)]
+        [HttpPost]
+        public IActionResult SubBatchAtControl(QualityControlViewModel model)
+        {
+            try
+            {
+                _orderHelper.RegisterBatchAtCOQ(model.subBatchId);
+                return RedirectToAction("QualityControl");
+            }
+            catch (Exception e)
+            {
+                _notyfService.Error(e.Message);
+                return RedirectToAction("QualityControl");
+            }
+            
+        }
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente+"," +Roles.COQ)]
         [HttpGet]
-        public IActionResult OrderSummary()
+        public IActionResult QualityControl()
+        {
+            return View(_orderHelper.GetQualityControlViewModel());
+        }
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpGet]
+        public IActionResult SubBatchMonitoring(int id, string url = "")
+        {
+            return View(_orderHelper.GetSubBatchMonitoring(id, url));
+        }
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpGet]
+        public IActionResult OrderSummary(int subBatchId = 0)
         {
             return View(new OrderSummaryViewModel()
             {
-                Ddt_In = _orderHelper.GetAllDdtIn_NoPagination()
+                Ddt_In = _orderHelper.GetAllDdtInActive_NoPagination(),
+                SubBatchId = subBatchId
             });
         }
-
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpGet]
-        public JsonResult OrderSummaryCompleted()
+        public IActionResult OrderSummaryEnded()
         {
-            var orders = _orderService.GetOrdersCompleted();
-            return new JsonResult(new { Orders = orders });
-        }
-
-        public IActionResult DownloadPdfOrder(int orderId)
-        {
-            var vm = new PDFViewModel();
-                
-            var order = _orderService.GetOrderWithOperationsById(orderId);
-            vm.Order = order;
-            if (!string.IsNullOrEmpty(order.Image_URL))
+            return View(new OrderSummaryViewModel()
             {
-                var path = Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName + _configuration["ImagePath"] + order.Image_URL;
-                try
-                {
-                    var photo = System.IO.File.ReadAllBytes(path);
-                    var base64 = Convert.ToBase64String(photo);
-                    var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
-                    vm.Photo = imgSrc;
-                }
-                catch (Exception e)
-                {
-                    Logger.Error(e, $"Immagine non trovata. Path: {path}");
-                    _notyfService.Error("Errore durante la generazione del pdf.");
-                    return RedirectToAction("OrderSummary");
-                }
-            } 
+                Ddt_In = _orderHelper.GetAllDdtInEnded_NoPagination()
+            });
+        }
+        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpGet]
+        public IActionResult DownloadPdfOrder(int id)
+        {
+            var subBatch = _subBatchService.GetSubBatchById(id);
+            var vm = new PDFViewModel()
+            {
+                QRCode = _orderHelper.CreateQRCode(id),
+                SubBatch = subBatch,
+                BasePathImages = $"{_configuration["ApplicationUrl"]}{_configuration["ImagesEndpoint"]}order/"
+            };
             return View("../Pdf/SingleOrderSummary", vm);
         }
         
-        /*VERSIONE 2.0*/
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpGet]
+        public IActionResult EditOrder(int id)
+        {
+            var ddt = _orderHelper.GetDdtInById(id);
+            var vm = new NewOrderViewModel
+            {
+                Price = ddt.Price_Uni.ToString("0.00").Replace(".", ","),
+                Ddt_In = ddt,
+            };
+            return View(vm);
+        }
+        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpPost]
+        public IActionResult EditOrder(NewOrderViewModel model)
+        {
+            try {
+                var validationResult = _orderValidation.ValidateEditOrderViewModelAndSetDefaultData(model);
+                if (validationResult != "")
+                {
+                    _notyfService.Error(validationResult);
+                    return View(NewOrderViewModelThrow(model));
+                }
+                var result = _orderHelper.EditDdtIn(model);
+                _notyfService.Success("Commessa aggiornata correttamente");
+                return RedirectToAction("OrderSummary", "Order", new {subBatchId = result.SubBatchID});
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                _notyfService.Error("Errore durante l&#39;aggiornamento dell&#39;ordine.");
+                return View(NewOrderViewModelThrow(model));
+            }
+        }
 
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpGet]
         public IActionResult NewOrder(int productId)
         {
+            var products = productId == 0 ? _productService.GetAllProducts() : new List<Product>();
             var vm = new NewOrderViewModel
             {
                 Clients = _clientService.GetAllClients(),
-                Operations = _operationService.GetAllOperations()?.Select(s=>new SelectListItem
+                Operations = _operationService.GetAllOperationsWithOutCOQAndEXTRA()?.Select(s=>new SelectListItem
                 {
                     Text = s.Name,
                     Value = $"{s.OperationID}-{s.Name}"
@@ -113,226 +179,336 @@ namespace RemaSoftware.WebApp.Controllers
                 Ddt_In = new Ddt_In()
                 {
                     ProductID = productId,
-                }
+                },
+                Products = products
             };
             return View(vm);
         }
+        private NewOrderViewModel NewOrderViewModelThrow(NewOrderViewModel model)
+        {
+            var op = _operationService.GetAllOperationsWithOutCOQAndEXTRA();
+            model.Operations = op?.Select(s => new SelectListItem
+            {
+                Text = s.Name,
+                Value = $"{s.OperationID}-{s.Name}"
+            }).ToList();
+            if (model.Ddt_In.ProductID != 0)
+            {
+                model.Products = new List<Product>();
+            }
+            else
+            {
+                model.Products = _productService.GetAllProducts();
+            }
 
+            return model;
+        }
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpPost]
         public IActionResult NewOrder(NewOrderViewModel model)
         {
-            try {
+            try
+            {
                 var validationResult = _orderValidation.ValidateNewOrderViewModelAndSetDefaultData(model);
                 if (validationResult != "")
                 {
                     _notyfService.Error(validationResult);
-                    return RedirectToAction("NewOrder", new { productId = model.Ddt_In.ProductID });
+                    return View(NewOrderViewModelThrow(model));
                 }
-                _orderHelper.AddNewDdtIn(model);
+                var result = _orderHelper.AddNewDdtIn(model);
                 _notyfService.Success("Commessa registrata correttamente");
-                return RedirectToAction("NewOrder", new { productId = model.Ddt_In.ProductID });
+                return RedirectToAction("OrderSummary", "Order", new{subBatchId = result.SubBatchID});
             }
             catch (Exception e)
             {
-                Logger.Error($"Errore durante la creazione dell'ordine.");
-                _notyfService.Error(e.Message);
-                return RedirectToAction("NewOrder", new { productId = model.Ddt_In.ProductID });
+                Logger.Error(e, e.Message);
+                _notyfService.Error("Errore durante la creazione dell'ordine.");
+                return View(NewOrderViewModelThrow(model));
             }
         }
-
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpGet]
         public IActionResult BatchInStock()
         {
             return View(new BatchInStockViewModel()
             {
-                Batches = _orderHelper.GetBatchByDDTStatus("A")
+                SubBatches = _orderHelper.GetSubBatchesStatus(OrderStatusConstants.STATUS_ARRIVED)
             });
         }
-
-        /*END VERSIONE 2.0*/
-
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpGet]
-        public IActionResult GetEditOrderOperationsModal(int orderId)
+        public async Task<IActionResult> EmitDDT(int id)
         {
-            var vm = new EditOrderOperationsViewModel();
-            
-            var order = _orderService.GetOrderWithOperationsById(orderId);
-            if (order == null)
-            {
-                Logger.Error($"GetOperationsForEdit - order not found for id: {orderId}");
-                return new JsonResult(new { Result = false, ToastMessage="Ordine non trovato."});
-            }
-            vm.OrderId = orderId;
-            
-            var allAvailableOperations = _operationService.GetAllOperations();
-            vm.Operations = allAvailableOperations?.Select(s => new SelectListItem
-            {
-                Text = s.Name,
-                Value = $"{s.OperationID}-{s.Name}"
-            }).ToList();
-            
-            vm.OperationsSelected = order.Order_Operation.Select(s => $"{s.OperationID}-{s.Operations.Name}").ToList();
-            
-            return PartialView("_EditOrderOperationsModal", vm);
-        }
-        
-        public JsonResult GetOperationsByOrderId(int orderId)
-        {
-            var ops = _orderService.GetOperationsByOrderId(orderId)
-                .Select(s=>$"{s.OperationID}-{s.Name}").ToArray();
-            return new JsonResult(new { Result = ops});
-        }
-
-        public JsonResult SaveDuplicateOrder(CopyOrderViewModel model)
-        {
-            var validationResult = this.ValidateDuplicateOrderViewModel(model);
-            if (validationResult != "")
-                return new JsonResult(new {Result = false, ToastMessage = validationResult});
-            
-            var oldOrder = _orderService.GetOrderWithOperationsById(model.OrderId);
-            Order newOrder = new Order()
-            {
-                DDT = model.Code_DDT,
-                Number_Piece = model.NumberPiece,
-                Number_Pieces_InStock = model.NumberPiece,
-                DataIn = DateTime.UtcNow,
-                ClientID = oldOrder.ClientID,
-                DataOut = oldOrder.DataOut,
-                Description = oldOrder.Description,
-                Image_URL = oldOrder.Image_URL,
-                Name = oldOrder.Name,
-                Note = oldOrder.Note,
-                SKU = oldOrder.SKU,
-                Price_Uni = oldOrder.Price_Uni,
-                Status = OrderStatusConstants.STATUS_ARRIVED
-            };
-
-            // aggiungo all'ordine le operazioni selezionate
-            newOrder.Order_Operation = oldOrder.Order_Operation.Select(s => new Order_Operation
-            {
-                OperationID = s.OperationID,
-                Ordering = s.Ordering
-            }).ToList();
-
             try
             {
-                var addedOrder = _orderHelper.AddOrderAndSendToFattureInCloud(newOrder);
-                return new JsonResult(new { Result = true, OrderId = addedOrder.OrderID, ToastMessage = "Ordine duplicato con successo" });
+                return RedirectToAction("BatchInDelivery", new {pdfUrl = await _orderHelper.EmitDDT(id)}); 
             }
             catch (Exception e)
-            {
-                Logger.Error($"Errore durante la duplicazione dell'ordine: {model.OrderId}.");
-                return new JsonResult(new { Result = false, ToastMessage = "Errore durante la duplicazione dell'ordine." });
-            }
-
-        }
-        
-        public JsonResult EditOrderOperations(EditOrderOperationsViewModel model)
-        {
-            try
-            {
-                var operationsFromUser = model.OperationsSelected.Select((s, index) => new Operation
-                {
-                    OperationID = int.Parse(s.Split("-").First()),
-                    Name = s.Split("-").Last()
-                }).ToList();
-                
-                var newOperationsToCreate = operationsFromUser.Where(w => w.OperationID == 0).ToList();
-                
-                var addedOps = _operationService.AddOperations(
-                    newOperationsToCreate
-                );
-                
-                foreach (var opAdded in addedOps)
-                {
-                    var aa = operationsFromUser.Single(s => s.Name == opAdded.Name);
-                    aa.OperationID = opAdded.OperationID;
-                }
-                
-                // rimuovo tutte le operazioni per quell'ordine e le riaggiungo
-                _operationService.RemoveAllOrderOperations(model.OrderId);
-                _orderService.AddOrderOperation(model.OrderId, operationsFromUser.Select(s=>s.OperationID).ToList());
-                
-                return new JsonResult(new { Result = true, ToastMessage="Operazioni modificate correttamente."});
-            }
-            catch (Exception e)
-            {
-                Logger.Error($"Errore durante la modifica delle operazioni dell'ordine: {model.OrderId}.");
-                return new JsonResult(new { Result = false, ToastMessage="Errore durante la modifica delle operazioni dell'ordine."});
-            }
-        }
-        
-        public JsonResult GetOrderBySKU(string orderSKU)
-        {
-            var order = _orderService.GetOrderBySKU(orderSKU);
-
-            if (order == null || orderSKU == null)
-            {
-                return new JsonResult(new {ToastMessage = $"Errore durante il recupero dell\\'ordine." });
-            }
-            
-            return new JsonResult(new {Result = true, Data = order});
-        }
-
-        public ActionResult GetImageByOrderId(int orderId)
-        {
-            var order = _orderService.GetOrderById(orderId);
-            
-            try
-            {
-                var fileByte = System.IO.File.ReadAllBytes(_basePathForImages + order.Image_URL);
-                return File(fileByte, "image/png");
-            }
-            catch (Exception e)
-            {
-                return NotFound();
-            }
-        }
-
-        [HttpGet]
-        public IActionResult OrdersNotExtinguished()
-        {
-            var vm = _orderService.GetOrdersNotCompleted().ToList(); 
-            return View(vm);
-        }
-
-        [HttpPost]
-        public IActionResult UpdateOrderStatus(int orderId, string currentStatus, int outgoing_orders)
-        {
-            try
-            {
-                _orderService.UpdateOrderStatus(orderId, outgoing_orders);
-                _notyfService.Success("Numero pezzi modificato correttamente");
-            }
-            catch(Exception e)
             {
                 _notyfService.Error(e.Message);
+                return RedirectToAction("BatchInDelivery");
             }
-
-            return RedirectToAction("OrdersNotExtinguished");
+            
+        }
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpGet]
+        public IActionResult DDTEmitted()
+        {
+            return View(_orderHelper.GetDDTEmittedViewModel());
+        }
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpGet]
+        public IActionResult BatchInDelivery(string pdfUrl = "empty")
+        {
+            return View(new BatchInDeliveryViewModel()
+            {
+                pdfUrl = pdfUrl,
+                DdtOuts = _orderHelper.GetDdtsInDelivery()
+            });
+        }
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpGet]
+        public JsonResult DeleteDDT(int id)
+        {
+            try
+            {
+                return new JsonResult(new {Data = _orderHelper.DeleteDDT(id), Error = ""});
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(new {Data = "", Error = e.Message});
+            }
         }
 
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpGet]
+        public IActionResult BatchInProduction()
+        {
+            return View(new BatchInProductionViewModel()
+            {
+                SubBatches = _orderHelper.GetSubBatchesStatus(OrderStatusConstants.STATUS_WORKING)
+            });
+        }
+        
         public JsonResult DeleteProduct(int productId)
         {
             try
             {
-                var order = _orderService.GetOrderById(productId);
-                var result = _apiFatturaInCloud.DeleteOrder(order.ID_FattureInCloud);
+                return new JsonResult(new { Error = "", Data = _orderHelper.DeleteOrder(productId), ToastMessage = $"Ordine eliminato correttamente" });
             }
             catch(Exception e)
             {
                 Logger.Error(e, $"Problema di connessione con FattureInCloud");
-                return new JsonResult(new { Error = e, ToastMessage = $"Problema di connessione con FattureInCloud.Contattare gli sviluppatori" });
+                return new JsonResult(new { Error = e.Message, Data = 0, ToastMessage = $"Problema di connessione con FattureInCloud.Contattare gli sviluppatori" });
             }
+        }
+        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpGet]
+        public IActionResult PartialDDT(int id, int clientId)
+        {
             try
             {
-                var deleteResult = _orderService.DeleteOrderByID(productId);
-                return new JsonResult(new { Result = deleteResult, ToastMessage = "Articolo di magazzino eliminato correttamente." });
+                return View(_orderHelper.GetPartialDDTViewModel(id, clientId));
             }
             catch (Exception e)
             {
-                Logger.Error(e, $"Error deleting stockArticle: {productId}");
-                return new JsonResult(new { Error = e, ToastMessage = $"Errore durante l\\'eliminazione dell\\'articolo di magazzino." });
+                Logger.Error(e.Message, e);
+                _notyfService.Error("Errore durante il recupero delle ddt.");
+                return RedirectToAction("BatchInDelivery");
+            }
+        }
+        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpPost]
+        public async Task<IActionResult> PartialDDT(PartialDDTViewModel model)
+        {
+            try
+            {
+                return RedirectToAction("BatchInDelivery", new {pdfUrl = await _orderHelper.EmitPartialDdtIn(model)});
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.Message, e);
+                _notyfService.Error(e.Message);
+                return RedirectToAction("PartialDDT", new {id = model.DdtId, clientId = model.ClientId});
+            }
+        }
+        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente+"," + Roles.Magazzino)]
+        [HttpGet]
+        public IActionResult StockSummary()
+        {
+            try
+            {
+                return View(_orderHelper.GetStockSummaryViewModel());
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.Message, e);
+                return RedirectToAction("BatchInStock", "Order");
+            }
+        }
+        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpGet]
+        public JsonResult StockVariation(int id, int pieces)
+        {
+            try
+            {
+                _orderHelper.StockVariation(id, pieces);
+                return new JsonResult(new { Result = true,  Message = "Variazione inventario effettuata correttamente." });
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(new { Result = false, Message=e.Message});
+            }
+        }
+        
+        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpGet]
+        public JsonResult DeleteDdtAssociation(int id)
+        {
+            try
+            {
+                _orderHelper.DeleteDdtAssociation(id);
+                return new JsonResult(new { Result = true, Data = id,  Message = "DDT di uscita annullata correttamente." });
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(new { Result = false, Data = 0, Message=e.Message});
+            }
+        }
+        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpGet]
+        public IActionResult BatchToSupplier()
+        {
+            try
+            {
+                return View(_orderHelper.GetBatchToSupplierViewModel());
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                return RedirectToAction("Index", "Home");
+            }
+            
+        }
+        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpGet]
+        public IActionResult ReloadSubBatchFromSupplier(int id)
+        {
+            try
+            {
+                return View(_orderHelper.GetReloadSubBatchFromSupplierViewModel(id));
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                return RedirectToAction("Index", "Home");
+            }
+            
+        }
+        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpPost]
+        public IActionResult ReloadSubBatchFromSupplier(ReloadSubBatchFromSupplierViewModel model)
+        {
+            try
+            {
+                _orderHelper.ReloadSubBatchFromSupplier(model);
+                return RedirectToAction("BatchToSupplier");
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                _notyfService.Error(e.Message);
+                return RedirectToAction("ReloadSubBatchFromSupplier", new{id = model.DDTSupplierId});
+            }
+            
+        }
+        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpGet]
+        public IActionResult ExitToSupplier(int id)
+        {
+            try
+            {
+                return View(_orderHelper.GetExitToSupplierViewModel(id));
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                return RedirectToAction("SubBatchMonitoring", new { id = id });
+            }
+            
+        }
+        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpPost]
+        public IActionResult ExitToSupplier(ExitToSupplierViewModel model)
+        {
+            try
+            {
+                var validationResult = _orderValidation.ValidateDDTSupplier(model);
+                if (validationResult != "")
+                {
+                    _notyfService.Error(validationResult);
+                    return RedirectToAction("ExitToSupplier", new{id =model.SubBatch.SubBatchID});
+                }
+                var result = _orderHelper.RegisterExitSubBatch(model);
+                return RedirectToAction("SubBatchMonitoring", new { id = model.SubBatch.SubBatchID, url = result});
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                _notyfService.Error(e.Message);
+                return RedirectToAction("ExitToSupplier", new { id = model.SubBatch.SubBatchID });
+            }
+            
+        }
+        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpGet]
+        public IActionResult DuplicateOrder(int id)
+        {
+            try
+            {
+                return View(_orderHelper.GetDuplicateOrderViewModelForDuplicate(id));
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                _notyfService.Error(e.Message);
+                return RedirectToAction("OrderSummary");
+            }
+        }
+        
+        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpPost]
+        public IActionResult DuplicateOrder(DuplicateOrderViewModel model)
+        {
+            try
+            {
+                var validationResult = _orderValidation.ValidateDuplicateOrderViewModelAndSetDefaultData(model);
+                if (validationResult != "")
+                {
+                    _notyfService.Error(validationResult);
+                    return View(model);
+                }
+                var result = _orderHelper.AddDuplicateDdtIn(model);
+                _notyfService.Success("Commessa registrata correttamente");
+                return RedirectToAction("OrderSummary", "Order", new{subBatchId = result.SubBatchID});
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                _notyfService.Error("Errore durante la creazione dell'ordine.");
+                return View(model);
             }
         }
 
@@ -346,5 +522,6 @@ namespace RemaSoftware.WebApp.Controllers
         }
 
         #endregion
+
     }
 }

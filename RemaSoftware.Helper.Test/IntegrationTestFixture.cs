@@ -35,20 +35,6 @@ public class IntegrationTestFixture : IDisposable
             P_Iva = "123123123123123",
             StreetNumber = "70"
         });
-        this.DbContext.Orders.Add(new Order()
-        {
-            Name = "Order1",
-            Status = "A",
-            DataIn = DateTime.Now,
-            DataOut = DateTime.Now.AddDays(10),
-            DDT ="DDT1",
-            Number_Piece = 100,
-            Number_Pieces_InStock = 100,
-            Price_Uni = 15,
-            SKU = "SKU1",
-            Client = clinte1.Entity,
-            Image_URL = ""
-        });
         
         DbContext.SaveChanges();
     }

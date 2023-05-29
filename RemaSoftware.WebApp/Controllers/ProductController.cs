@@ -4,32 +4,32 @@ using Microsoft.AspNetCore.Mvc;
 using RemaSoftware.WebApp.Helper;
 using RemaSoftware.WebApp.Models.ProductViewModel;
 using System;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using RemaSoftware.Domain.Constants;
 
 namespace RemaSoftware.WebApp.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
     public class ProductController : Controller
     {
         private readonly ClientHelper _clientHelper;
         private readonly ProductHelper _productHelper;
         private readonly INotyfService _notyfToastService;
+        private readonly IConfiguration _configuration;
 
-        public ProductController(ClientHelper clientHelper, ProductHelper productHelper, INotyfService notyfToastService)
+        public ProductController(ClientHelper clientHelper, ProductHelper productHelper, INotyfService notyfToastService, IConfiguration configuration)
         {
             _clientHelper = clientHelper;
             _productHelper = productHelper;
             _notyfToastService = notyfToastService;
+            _configuration = configuration;
         }
 
         [HttpGet]
         public IActionResult ProductList()
         {
-            var vm = new ProductListViewModel
-            {
-                Products = _productHelper.GetAllProducts()
-            };
-
-            return View(vm);
+            return View(_productHelper.GetProductListViewModel());
         }
 
         [HttpGet]
@@ -42,15 +42,27 @@ namespace RemaSoftware.WebApp.Controllers
 
             return View(vm);
         }
+        
+        [HttpGet]
+        public IActionResult ViewProduct(int id)
+        {
+            var vm = new ProductViewModel
+            {
+                Product = _productHelper.GetProductById(id),
+                BasePathImages = $"{_configuration["ApplicationUrl"]}{_configuration["ImagesEndpoint"]}order/"
+            };
+
+            return View(vm);
+        }
 
         [HttpPost]
-        public IActionResult NewProduct(NewProductViewModel model)
+        public async Task<IActionResult> NewProduct(NewProductViewModel model)
         {
             try
             {
-                _productHelper.AddProduct(model);
+                var product = await _productHelper.AddProduct(model);
                 _notyfToastService.Success("Prodotto aggiunto correttamente");
-                return RedirectToAction("ProductList");
+                return RedirectToAction("NewOrder", "Order", new{ productId = product.ProductID});
             }
             catch(Exception ex)
             {
@@ -81,17 +93,16 @@ namespace RemaSoftware.WebApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdateProduct(UpdateProductViewModel model)
+        public async Task<IActionResult> UpdateProduct(UpdateProductViewModel model)
         {
             try
             {
-                _productHelper.UpdateProduct(model);
+                await _productHelper.UpdateProduct(model);
                 _notyfToastService.Success("Prodotto aggiornato correttamente");
                 return RedirectToAction("ProductList");
             }
             catch (Exception ex)
             {
-                model.Clients = _clientHelper.GetAllClients();
                 _notyfToastService.Error(ex.Message);
                 return View(model);
             }
