@@ -245,10 +245,10 @@
                         <tr onclick="SetEmployeeAttendanceId('#new-modal', @presenza.Key.EmployeeID)">
                             <td style="width: 150px;">
                                 <div style="display: inline-block; white-space: nowrap; box-sizing: border-box; width: 80%; float:  left;">
-                                  <div style="white-space: nowrap;"><b>@presenza.Key.Name </b></div> <div style="white-space: nowrap;"><b> @presenza.Key.Surname</b> </div>
+                                  <div style="white-space: nowrap; font-size: 18px;"><b>@presenza.Key.Name </b></div> <div style="white-space: nowrap; font-size: 18px;"><b> @presenza.Key.Surname</b> </div>
                                 </div>
                               <button style="display: inline-block; cursor: pointer; border: 0px; background-color: white; box-sizing: border-box; width: 20%; float:  right;" title="Nuova Entrata/Uscita" data-toggle="modal" data-target="#new-modal">
-                                <span style="color: green; font-weight: bold; font-size: 25px; line-height: 40px; display: inline-block; text-align: center; width: 100%;">+</span>
+                                <span style="color: green; font-weight: bold; font-size: 30px; line-height: 40px; display: inline-block; text-align: center; width: 100%;">+</span>
                               </button>
                             </td>
                             @for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, Model.Mouth); giorno++)
@@ -262,8 +262,8 @@
                                     {
                                         <td style="background-color: #ededed;">
                                             <a style="cursor: pointer;" title="Modifica Entrata/Uscita" data-toggle="modal" data-target="#modify-modal" onclick="SetDataAttendanceId('#modify-modal', @attendanceForDay.AttendanceID), SetDataAttendanceId('#confirm-del-modal', @attendanceForDay.AttendanceID)">
-                                                  <div style="color: green;"><b> @attendanceForDay.DateIn.ToString(@"HH\:mm")</b> </div>
-                                                 <div style="color: red;"><b> @attendanceForDay.DateOut.ToString(@"HH\:mm")</b> </div>
+                                                  <div style="color: white; background-color: green; border-radius: 10px; padding: 2px 8px 2px 8px;"><b> @attendanceForDay.DateIn.ToString(@"HH\:mm")</b> </div>
+                                                  <div style="color: white; background-color: red; border-radius: 10px; padding: 2px 8px 2px 8px; margin-top: 3px;"><b> @attendanceForDay.DateOut?.ToString(@"HH\:mm")</b> </div>
                                             </a>
                                         </td>
                                     }
@@ -271,8 +271,8 @@
                                     {
                                         <td>
                                             <a style="cursor: pointer;" title="Modifica Entrata/Uscita" data-toggle="modal" data-target="#modify-modal" onclick="SetDataAttendanceId('#modify-modal', @attendanceForDay.AttendanceID), SetDataAttendanceId('#confirm-del-modal', @attendanceForDay.AttendanceID)">
-                                                <div style="color: green;"> <b> @attendanceForDay.DateIn.ToString(@"HH\:mm")</b> </div>
-                                                <div style="color: red;"><b>@attendanceForDay.DateOut.ToString(@"HH\:mm")</b> </div>
+                                                <div style="color: white; background-color: green; border-radius: 10px; padding: 2px 8px 2px 8px;"> <b> @attendanceForDay.DateIn.ToString(@"HH\:mm")</b> </div>
+                                                <div style="color: white; background-color: red; border-radius: 10px; padding: 2px 8px 2px 8px; margin-top: 3px;"><b>@attendanceForDay.DateOut?.ToString(@"HH\:mm")</b> </div>
                                             </a>
                                         </td>
                                     }

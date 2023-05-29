@@ -1,7 +1,9 @@
+using System.Globalization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging.Console;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Data;
+using System;
+using System.Text.RegularExpressions;
 
 namespace RemaSoftware.Domain.Services.Impl;
 
@@ -30,7 +32,7 @@ namespace RemaSoftware.Domain.Services.Impl;
                 if (DateTime.Compare(newInDateTime, new DateTime(0001, 01, 01, 00, 00, 00)) != 0)
                     attendance.DateIn = attendance.DateIn.Date + newInDateTime.TimeOfDay;
                 if (DateTime.Compare(newOutDateTime, new DateTime(0001, 01, 01, 00, 00, 00)) != 0)
-                    attendance.DateOut = attendance.DateOut.Date + newOutDateTime.TimeOfDay;
+                    attendance.DateOut = attendance.DateOut?.Date + newOutDateTime.TimeOfDay;
 
                 _dbContext.SaveChanges();
             }
@@ -65,6 +67,56 @@ namespace RemaSoftware.Domain.Services.Impl;
                 .OrderBy(i => i.EmployeeID)
                 .ThenBy(i => i.DateIn)
                 .ToList();
+        }
+
+        public async Task UpdateAttendanceList(List<string> userIdList, List<string> userClockList)
+        {
+            for(int i=0; i<userIdList.Count; i++)
+            {
+                DateTime userClockDate1 = DateTime.ParseExact(userClockList[i], "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+
+                // Controlla se esiste un elemento in Attendance con timestart o timeend uguale a userClock.Time
+                bool exists = _dbContext.Attendances
+                    .Any(a => (a.DateIn.Date == userClockDate1.Date || (a.DateOut.HasValue && a.DateOut.Value.Date == userClockDate1.Date)) && a.Employee.FluidaId == userIdList[i]);
+
+                if (!exists)
+                {
+                    // Cerca se esiste un elemento in Attendance con timestart non nullo e timeend nullo
+                    var existingAttendance = _dbContext.Attendances
+                        .FirstOrDefault(a => a.DateIn != null && a.DateOut == null && a.Employee.FluidaId == userIdList[i]);
+
+                    if (existingAttendance != null)
+                    {
+                        // Se esiste un elemento con timestart non nullo e timeend nullo, aggiorna il timeend con userClock.Time
+                        string dateFormat = "MM/dd/yyyy HH:mm:ss";
+                        DateTime dateIn;
+                        DateTime.TryParseExact(userClockList[i], dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateIn);
+                        existingAttendance.DateOut = dateIn;
+                    }
+                    else
+                    {
+                        // Se non esiste un elemento, crea una nuova riga in Attendance
+                        var employee = _dbContext.Employees.FirstOrDefault(e => e.FluidaId == userIdList[i]);
+                        if (employee != null)
+                        {
+                            string dateFormat = "MM/dd/yyyy HH:mm:ss";
+                            DateTime dateIn;
+                            DateTime.TryParseExact(userClockList[i], dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateIn);
+                            Attendance newAttendance = new Attendance
+                            {
+                                DateIn = dateIn,
+                                DateOut = null,
+                                EmployeeID = employee.EmployeeID
+                            };
+
+                            _dbContext.Attendances.Add(newAttendance);
+                        }
+                    }
+
+                    // Salva le modifiche nel database
+                    _dbContext.SaveChanges();
+                }
+            }
         }
     }
 

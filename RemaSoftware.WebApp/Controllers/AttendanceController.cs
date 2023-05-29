@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGeneration;
 using NLog;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.WebApp.DTOs;
@@ -25,11 +27,12 @@ namespace RemaSoftware.WebApp.Controllers
         }
         
         [HttpGet]
-        public IActionResult Attendance(int mouth, int year)
+        public async Task<IActionResult> Attendance(int month, int year)
         {
             try
             {
-                return View(_employeeHelper.GetAttendanceViewModel(mouth, year));
+                await _attendanceHelper.UpdateAttendance(month, year);
+                return View(_employeeHelper.GetAttendanceViewModel(month, year));
             }
             catch (Exception e)
             {
