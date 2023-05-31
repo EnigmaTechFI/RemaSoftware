@@ -377,11 +377,14 @@ namespace RemaSoftware.WebApp.Helper
                         ddt_out_id = ddts_out[0].Ddt_Out_ID;
                     }
 
+                        
                     foreach (var item in subBatch.Ddts_In.OrderBy(s => s.DataIn).ToList())
                     {
                         item.Ddt_Associations ??= new List<Ddt_Association>();
+                        
+                        var countAssociation = _orderService.GetDDTAssociationsByDDTIn(_orderService.GetDdtInById(item.Ddt_In_ID));
 
-                        if (item.NumberMissingPiece > 0 && item.Ddt_Associations.Count == 0)
+                        if (item.NumberMissingPiece > 0 && item.Ddt_Associations.Count == 0 && countAssociation.Count == 0)
                         {
                             item.Ddt_Associations.Add(new Ddt_Association()
                             {
@@ -566,12 +569,7 @@ namespace RemaSoftware.WebApp.Helper
             ddtOut.FC_Ddt_Out_ID = result.Item2;
             ddtOut.Url = result.Item1;
             ddtOut.Code = result.Item3;
-            
-            foreach(var item in ddtOut.Ddt_Associations)
-            {
-                item.Ddt_In.NumberMissingPiece = 0;
-            }
-            
+
             try
             {
                 _orderService.UpdateDdtOut(ddtOut);
@@ -979,6 +977,7 @@ namespace RemaSoftware.WebApp.Helper
             {
                 try
                 {
+                    
                     var ddtSupplier = _orderService.GetDdtSupplierById(model.DDTSupplierId);
                     if (model.LostPieces + model.WastePieces + model.OkPieces > ddtSupplier.Number_Piece)
                         throw new Exception("Il totale dei pezzi inserito è maggiore dei pezzi attualmente in azienda.");
@@ -989,6 +988,7 @@ namespace RemaSoftware.WebApp.Helper
                     ddtSupplier.NumberWastePiece += model.WastePieces;
                     ddtSupplier.Number_Piece -= (model.OkPieces + model.LostPieces + model.WastePieces);
                     var ddts = new List<Ddt_In>();
+                    
                     foreach (var item in ddtSupplier.DdtSupplierAssociations)
                     {
                         if (item.Ddt_In.Number_Piece_ToSupplier > 0)
@@ -996,6 +996,7 @@ namespace RemaSoftware.WebApp.Helper
                             ddts.Add(item.Ddt_In);
                         }
                     }
+                    
                     ddts = ddts.OrderBy(s => s.DataIn).ToList();
                     var now = DateTime.Now;
                     var ddt_out_id = 0;

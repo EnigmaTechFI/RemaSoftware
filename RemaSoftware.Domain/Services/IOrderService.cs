@@ -47,5 +47,6 @@ namespace RemaSoftware.Domain.Services
         Ddt_Supplier GetDdtSupplierById(int modelDdtSupplierId);
         void UpdateDDtInRange(List<Ddt_In> ddts);
         void DeleteDDTAssociations(List<Ddt_Association> ddtDdtAssociations);
+        public List<Ddt_Association> GetDDTAssociationsByDDTIn(Ddt_In Id);
     }
 }
