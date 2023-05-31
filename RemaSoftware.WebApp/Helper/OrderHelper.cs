@@ -85,7 +85,7 @@ namespace RemaSoftware.WebApp.Helper
         {
             using (var transaction = _dbContext.Database.BeginTransaction())
             {
-                try
+                try 
                 {
                     var newSubbatch = false;
                     var operationsSelected = model.OperationsSelected.Where(w => !w.StartsWith("0"))

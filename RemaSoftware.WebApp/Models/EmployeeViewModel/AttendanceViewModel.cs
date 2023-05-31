@@ -10,7 +10,7 @@ namespace RemaSoftware.WebApp.Models.EmployeeViewModel
         
         public List<Employee> Employees { get; set; }
         
-        public int Mouth { get; set; }
+        public int Month { get; set; }
         
         public int Year { get; set; }
     }

@@ -191,19 +191,19 @@
         <div class="row mb-4">
             <div class="col-3 ml-4 mt-3">
                 <label for="mese">Mese:</label>
-                <select id="mese" name="mouth" class="form-control">
-                    <option value="01" selected="@(Model.Mouth == 01)">Gennaio</option>
-                    <option value="02" selected="@(Model.Mouth == 02)">Febbraio</option>
-                    <option value="03" selected="@(Model.Mouth == 03)">Marzo</option>
-                    <option value="04" selected="@(Model.Mouth == 04)">Aprile</option>
-                    <option value="05" selected="@(Model.Mouth == 05)">Maggio</option>
-                    <option value="06" selected="@(Model.Mouth == 06)">Giugno</option>
-                    <option value="07" selected="@(Model.Mouth == 07)">Luglio</option>
-                    <option value="08" selected="@(Model.Mouth == 08)">Agosto</option>
-                    <option value="09" selected="@(Model.Mouth == 09)">Settembre</option>
-                    <option value="10" selected="@(Model.Mouth == 10)">Ottobre</option>
-                    <option value="11" selected="@(Model.Mouth == 11)">Novembre</option>
-                    <option value="12" selected="@(Model.Mouth == 12)">Dicembre</option>
+                <select id="mese" name="month" class="form-control">
+                    <option value="01" selected="@(Model.Month == 01)">Gennaio</option>
+                    <option value="02" selected="@(Model.Month == 02)">Febbraio</option>
+                    <option value="03" selected="@(Model.Month == 03)">Marzo</option>
+                    <option value="04" selected="@(Model.Month == 04)">Aprile</option>
+                    <option value="05" selected="@(Model.Month == 05)">Maggio</option>
+                    <option value="06" selected="@(Model.Month == 06)">Giugno</option>
+                    <option value="07" selected="@(Model.Month == 07)">Luglio</option>
+                    <option value="08" selected="@(Model.Month == 08)">Agosto</option>
+                    <option value="09" selected="@(Model.Month == 09)">Settembre</option>
+                    <option value="10" selected="@(Model.Month == 10)">Ottobre</option>
+                    <option value="11" selected="@(Model.Month == 11)">Novembre</option>
+                    <option value="12" selected="@(Model.Month == 12)">Dicembre</option>
                 </select>
 
 
@@ -226,9 +226,9 @@
             <table class="table table-bordered" id="table-stock" width="100%" cellspacing="0">
                 <tr>
                     <th>Presenze</th>
-                        @for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, Model.Mouth); giorno++)
+                        @for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, Model.Month); giorno++)
                         {
-                            DateTime dataCorrente = new DateTime(Model.Year, Model.Mouth, giorno);
+                            DateTime dataCorrente = new DateTime(Model.Year, Model.Month, giorno);
                             if (dataCorrente.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
                             {
                                 <th class="text-center" style="background-color: #d3d3d3;">@giorno</th>
@@ -251,9 +251,9 @@
                                 <span style="color: green; font-weight: bold; font-size: 30px; line-height: 40px; display: inline-block; text-align: center; width: 100%;">+</span>
                               </button>
                             </td>
-                            @for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, Model.Mouth); giorno++)
+                            @for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, Model.Month); giorno++)
                             {
-                                DateTime dataCorrente = new DateTime(Model.Year, Model.Mouth, giorno);
+                                DateTime dataCorrente = new DateTime(Model.Year, Model.Month, giorno);
                                 var attendanceForDay = presenza.FirstOrDefault(a => a.DateIn.Day == giorno);
                 
                                 @if (attendanceForDay != null)

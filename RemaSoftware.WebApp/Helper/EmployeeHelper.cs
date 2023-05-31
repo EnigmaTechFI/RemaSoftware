@@ -48,9 +48,9 @@ public class EmployeeHelper
         _employeeService.DeleteEmployeeById(employeeId);
     }
     
-    public EmployeeViewModel GetEmployeeById(int id, int mouth, int year)
+    public EmployeeViewModel GetEmployeeById(int id, int month, int year)
     {
-        var m = mouth;
+        var m = month;
         var y = year;
         if (year == 0)
         {
@@ -61,14 +61,14 @@ public class EmployeeHelper
         {
             Employee = _employeeService.GetEmployeeById(id),
             Attendances = _attendanceService.getAttendanceById(id, m, y),
-            Mouth = m,
+            Month = m,
             Year = y
         };
     }
     
-    public AttendanceViewModel GetAttendanceViewModel(int mouth, int year)
+    public AttendanceViewModel GetAttendanceViewModel(int month, int year)
     {
-        var m = mouth;
+        var m = month;
         var y = year;
         if (year == 0)
         {
@@ -80,14 +80,14 @@ public class EmployeeHelper
         {
             Attendances = GetAllAttendance(m, y),
             Employees = _employeeService.GetEmployeesWithoutAttendances(m, y),
-            Mouth = m,
+            Month = m,
             Year = y
         };
     }
     
-    public List<Attendance> GetAllAttendance(int mouth, int year)
+    public List<Attendance> GetAllAttendance(int month, int year)
     {
-        return _employeeService.GetAllAttendance(mouth, year);
+        return _employeeService.GetAllAttendance(month, year);
     }
 
     public async Task<string> EditEmployee(EmployeeViewModel model)
