@@ -435,5 +435,11 @@ namespace RemaSoftware.Domain.Services.Impl
             _dbContext.RemoveRange(ddtDdtAssociations);
             _dbContext.SaveChanges();
         }
+        
+        public List<Ddt_Association> GetDDTAssociationsByDDTIn(Ddt_In Id)
+        {
+            return _dbContext.Ddt_Associations
+                .Where(s => s.Ddt_In == Id).ToList();           
+        }
     }
 }

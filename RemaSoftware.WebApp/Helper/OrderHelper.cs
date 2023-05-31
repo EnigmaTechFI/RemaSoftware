@@ -284,7 +284,7 @@ namespace RemaSoftware.WebApp.Helper
             }
             catch (Exception e)
             {
-                throw new Exception("Errore nel recuper del lotto.");
+                throw new Exception("Errore nel recupero del lotto.");
             }
 
             if (subBatch.OperationTimelines != null && subBatch.OperationTimelines.Where(s => s.MachineId != null).ToList().Any(s =>
@@ -377,18 +377,20 @@ namespace RemaSoftware.WebApp.Helper
                         ddt_out_id = ddts_out[0].Ddt_Out_ID;
                     }
 
+                        
                     foreach (var item in subBatch.Ddts_In.OrderBy(s => s.DataIn).ToList())
                     {
                         item.Ddt_Associations ??= new List<Ddt_Association>();
-
-                        if (item.NumberMissingPiece > 0 && item.Ddt_Associations.Count == 0)
+                        var missingPiecesEmitted = item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.MANCANTI)
+                            .Sum(s => s.NumberPieces);
+                        if (item.NumberMissingPiece > 0 && missingPiecesEmitted < item.NumberMissingPiece)
                         {
                             item.Ddt_Associations.Add(new Ddt_Association()
                             {
                                 Date = now,
                                 Ddt_In_ID = item.Ddt_In_ID,
                                 Ddt_Out_ID = ddt_out_id,
-                                NumberPieces = item.NumberMissingPiece,
+                                NumberPieces = item.NumberMissingPiece - missingPiecesEmitted,
                                 TypePieces = PiecesType.MANCANTI
                             });
                         }
@@ -566,6 +568,7 @@ namespace RemaSoftware.WebApp.Helper
             ddtOut.FC_Ddt_Out_ID = result.Item2;
             ddtOut.Url = result.Item1;
             ddtOut.Code = result.Item3;
+
             try
             {
                 _orderService.UpdateDdtOut(ddtOut);
@@ -973,6 +976,7 @@ namespace RemaSoftware.WebApp.Helper
             {
                 try
                 {
+                    
                     var ddtSupplier = _orderService.GetDdtSupplierById(model.DDTSupplierId);
                     if (model.LostPieces + model.WastePieces + model.OkPieces > ddtSupplier.Number_Piece)
                         throw new Exception("Il totale dei pezzi inserito è maggiore dei pezzi attualmente in azienda.");
@@ -983,6 +987,7 @@ namespace RemaSoftware.WebApp.Helper
                     ddtSupplier.NumberWastePiece += model.WastePieces;
                     ddtSupplier.Number_Piece -= (model.OkPieces + model.LostPieces + model.WastePieces);
                     var ddts = new List<Ddt_In>();
+                    
                     foreach (var item in ddtSupplier.DdtSupplierAssociations)
                     {
                         if (item.Ddt_In.Number_Piece_ToSupplier > 0)
@@ -990,6 +995,7 @@ namespace RemaSoftware.WebApp.Helper
                             ddts.Add(item.Ddt_In);
                         }
                     }
+                    
                     ddts = ddts.OrderBy(s => s.DataIn).ToList();
                     var now = DateTime.Now;
                     var ddt_out_id = 0;
