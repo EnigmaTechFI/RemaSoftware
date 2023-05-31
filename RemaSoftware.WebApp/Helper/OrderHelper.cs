@@ -381,17 +381,16 @@ namespace RemaSoftware.WebApp.Helper
                     foreach (var item in subBatch.Ddts_In.OrderBy(s => s.DataIn).ToList())
                     {
                         item.Ddt_Associations ??= new List<Ddt_Association>();
-                        
-                        var countAssociation = _orderService.GetDDTAssociationsByDDTIn(_orderService.GetDdtInById(item.Ddt_In_ID));
-
-                        if (item.NumberMissingPiece > 0 && item.Ddt_Associations.Count == 0 && countAssociation.Count == 0)
+                        var missingPiecesEmitted = item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.MANCANTI)
+                            .Sum(s => s.NumberPieces);
+                        if (item.NumberMissingPiece > 0 && missingPiecesEmitted < item.NumberMissingPiece)
                         {
                             item.Ddt_Associations.Add(new Ddt_Association()
                             {
                                 Date = now,
                                 Ddt_In_ID = item.Ddt_In_ID,
                                 Ddt_Out_ID = ddt_out_id,
-                                NumberPieces = item.NumberMissingPiece,
+                                NumberPieces = item.NumberMissingPiece - missingPiecesEmitted,
                                 TypePieces = PiecesType.MANCANTI
                             });
                         }

@@ -226,6 +226,8 @@ public class SubBatchService : ISubBatchService
             .ThenInclude(s => s.DdtSupplier)
             .ThenInclude(s => s.Supplier)
             .Include(s => s.Ddts_In)
+            .ThenInclude(s => s.Ddt_Associations)
+            .Include(s => s.Ddts_In)
             .ThenInclude(s => s.Product)
             .ThenInclude(s => s.Client)
             .SingleOrDefault(s => s.SubBatchID == id);
