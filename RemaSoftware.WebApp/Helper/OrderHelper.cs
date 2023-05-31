@@ -284,7 +284,7 @@ namespace RemaSoftware.WebApp.Helper
             }
             catch (Exception e)
             {
-                throw new Exception("Errore nel recuper del lotto.");
+                throw new Exception("Errore nel recupero del lotto.");
             }
 
             if (subBatch.OperationTimelines != null && subBatch.OperationTimelines.Where(s => s.MachineId != null).ToList().Any(s =>
@@ -566,6 +566,12 @@ namespace RemaSoftware.WebApp.Helper
             ddtOut.FC_Ddt_Out_ID = result.Item2;
             ddtOut.Url = result.Item1;
             ddtOut.Code = result.Item3;
+            
+            foreach(var item in ddtOut.Ddt_Associations)
+            {
+                item.Ddt_In.NumberMissingPiece = 0;
+            }
+            
             try
             {
                 _orderService.UpdateDdtOut(ddtOut);
