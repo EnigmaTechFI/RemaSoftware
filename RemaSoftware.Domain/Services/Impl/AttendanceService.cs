@@ -85,9 +85,9 @@ namespace RemaSoftware.Domain.Services.Impl;
                     var existingAttendance = _dbContext.Attendances
                         .FirstOrDefault(a => a.DateIn != null && a.DateOut == null && a.Employee.FluidaId == userIdList[i]);
 
-                    if (existingAttendance != null)
+                    if (existingAttendance != null && existingAttendance.DateIn.Date == userClockDate1.Date)
                     {
-                        // Se esiste un elemento con timestart non nullo e timeend nullo, aggiorna il timeend con userClock.Time
+                        // Se esiste un elemento con timestart non nullo e timeend nullo e se quell'elemento ha data uguale, aggiorna il timeend con userClock.Time
                         string dateFormat = "MM/dd/yyyy HH:mm:ss";
                         DateTime dateIn;
                         DateTime.TryParseExact(userClockList[i], dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateIn);
