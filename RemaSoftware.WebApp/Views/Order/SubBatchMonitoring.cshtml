@@ -155,6 +155,7 @@
                     <th>Data arrivo</th>
                     <th>Data scadenza</th>
                     <th>Priorità</th>
+                    <th>Sollecito</th>
                     <th>Status</th>
                 </tr>
                 </thead>
@@ -169,6 +170,29 @@
                         <td>@ddt.DataIn.ToString("dd/MM/yy")</td>
                         <td>@ddt.DataOut.ToString("dd/MM/yy")</td>
                         <td>@OrderPriorityConstant.OrderPriority[@ddt.Priority]</td>
+                        <td>@if (@ddt.IsPrompted)
+                            {
+                                <span id="si-icon" style="cursor: pointer">
+                                    SI
+                                    @if (@ddt.Client_Note != null)
+                                    {
+                                        <i class="far fa-eye ml-2"></i>
+                                    }
+                                </span>
+                                @if (@ddt.Client_Note != null)
+                                {
+                                    <div id="message" style="display: none; display: none; position: absolute; background-color: white; border: 1px solid grey; padding: 4px;">
+                                        @ddt.Client_Note
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <span>
+                                    NO
+                                </span>
+                            }
+                        </td>
                         <td class="text-center">
                             @{
                                 if (!string.IsNullOrEmpty(ddt.Status))
@@ -971,7 +995,7 @@
     }
     
 </script>
-    <script>
+     <script>
      $(document).ready( function () {
             table = $('#table-ddts').DataTable({
                 "language": {
@@ -999,6 +1023,14 @@
                     { "searchable": true, "orderable": false, "targets": 6 },
                     { "searchable": false, "orderable": false, "targets": 7 },
                   ]
+            });
+        });
+        
+        $(document).ready(function() {
+            $("#si-icon").mouseover(function() {
+                $("#message").show(); // Visualizza il messaggio quando si passa sopra l'icona
+            }).mouseout(function() {
+                $("#message").hide(); // Nascondi il messaggio quando si esce dall'icona
             });
         });
     

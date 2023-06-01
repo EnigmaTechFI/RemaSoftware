@@ -165,7 +165,7 @@ namespace RemaSoftware.UtilityServices.Implementation
             return false;
         }
 
-        public void SendEmailPrompt(List<string> email, string ddtCode)
+        public void SendEmailPrompt(List<string> email, string ddtCode, string note)
         {
            try
             {
@@ -186,6 +186,7 @@ namespace RemaSoftware.UtilityServices.Implementation
                 
                 MailText = MailText.Replace("[CodiceDDT]", ddtCode);  
                 MailText = MailText.Replace("[login]", login);
+                MailText = MailText.Replace("[note]", note);
 
                 mailMessage.Body =  MailText;
                 SmtpClient client = new SmtpClient();

@@ -158,13 +158,14 @@ public class GuestHelper
         };
     }
 
-    public void SendPrompt(int ddtId, IList<MyUser> users, string userId)
+    public void SendPrompt(int ddtId, IList<MyUser> users, string userId, string note)
     {
         var ddt = _orderService.GetDdtInById(ddtId);
         if (ddt.Product.ClientID != _clientService.GetClientIdByUserId(userId))
             throw new Exception("Errore durante la richiesta di sollecito.");
         ddt.IsPrompted = true;
+        ddt.Client_Note = note;
         _orderService.UpdateDDtIn(ddt);
-        _emailService.SendEmailPrompt(users.Select(s => s.Email).ToList(), ddt.Code);
+        _emailService.SendEmailPrompt(users.Select(s => s.Email).ToList(), ddt.Code, note);
     }
 }
