@@ -1,4 +1,5 @@
-﻿@model RemaSoftware.WebApp.Models.EmployeeViewModel.AttendanceViewModel
+﻿@using RemaSoftware.Domain.Models
+@model RemaSoftware.WebApp.Models.EmployeeViewModel.AttendanceViewModel
 
 @{
     ViewData["Title"] = "Gestione Presenze";
@@ -8,6 +9,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
@@ -16,7 +18,7 @@
     </div>
     <form method="get" action="/Attendance/Attendance">
         <div class="row mb-4">
-            <div class="col-3 ml-4 mt-3">
+            <div class="col-2 mt-3 ml-3">
                 <label for="mese">Mese:</label>
                 <select id="mese" name="month" class="form-control">
                     <option value="01" selected="@(Model.Month == 01)">Gennaio</option>
@@ -35,7 +37,7 @@
 
 
             </div>
-            <div class="col-3 ml-3 mt-3">
+            <div class="col-2 mt-3">
                 <label for="anno">Anno:</label>
                 <select id="anno" name="year" class="form-control">
                     <option value="2023" selected="@(Model.Year == 2023)">2023</option>
@@ -43,9 +45,27 @@
                     <option value="2025" selected="@(Model.Year == 2025)">2025</option>
                 </select>
             </div>
-            <div class="col-3 ml-3 mt-5">
+            <div class="col-1 mt-5">
                 <input type="submit" value="Visualizza" class="btn btn-primary text-white"/>
             </div>
+            <div class="col-2 mt-5">
+                <input data-toggle="modal" data-target="#new-modal" type="button" value="Aggiungi a tutti" class="btn btn-primary text-white" id="exportBtn" onclick="AllEmployeeAttendanceId('#modify-modal')"/>
+            </div>
+            <div class="col-2 mt-5">
+            </div>
+            <div class="col-1 mt-5">
+                <input type="button" value="Esporta TXT" class="btn btn-primary text-white" id="exportBtn" />
+            </div>
+            <div class="col-1 mt-5">
+                <input type="button" value="Invia TXT" class="btn btn-primary text-white" id="exportBtn"/>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="ml-5" style="width: 20px; height: 20px; background-color: green; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;"> Presenza</div>
+            <div class="ml-5" style="width: 20px; height: 20px; background-color: red; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;"> Assenza</div>
+            <div class="ml-5" style="width: 20px; height: 20px; background-color: orange; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;"> Malattia</div>
+            <div class="ml-5" style="width: 20px; height: 20px; background-color: #36b9cc; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;"> Festivo</div>
+            <div class="ml-5" style="width: 20px; height: 20px; background-color: #f6c23e; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;"> Ferie</div>
         </div>
     </form>
     <div class="card-body">
@@ -53,83 +73,194 @@
             <table class="table table-bordered" id="table-stock" width="100%" cellspacing="0">
                 <tr>
                     <th>Impiegato</th>
+                    @for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, Model.Month); giorno++)
+                    {
+                        DateTime dataCorrente = new DateTime(Model.Year, Model.Month, giorno);
+                        if (dataCorrente.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
+                        {
+                            <th class="text-center" style="background-color: #d3d3d3;">@giorno</th>
+                        }
+                        else
+                        {
+                            <th class="text-center">@giorno</th>
+                        }
+                    }
+                    <td><b>Totale ore</b></td>
+                </tr>
+
+                @foreach (var presenza in Model.Attendances.GroupBy(a => a.Employee))
+                {
+                    <tr onclick="SetEmployeeAttendanceId('#new-modal', @presenza.Key.EmployeeID)">
+                        <td style="width: 150px;">
+                            <div style="display: inline-block; white-space: nowrap; box-sizing: border-box; width: 80%; float:  left;">
+                                <div style="white-space: nowrap; font-size:  18px;"><b>@presenza.Key.Name </b></div>
+                                <div style="white-space: nowrap; font-size:  18px;"><b> @presenza.Key.Surname</b> </div>
+                            </div>
+                            <button style="display: inline-block; cursor: pointer; border: 0px; background-color: white; box-sizing: border-box; width: 20%; float:  right;" title="Nuova Entrata/Uscita" data-toggle="modal" data-target="#new-modal">
+                                <span style="color: green; font-weight: bold; font-size: 30px; line-height: 40px; display: inline-block; text-align: center; width: 100%;">+</span>
+                            </button>
+                        </td>
                         @for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, Model.Month); giorno++)
                         {
                             DateTime dataCorrente = new DateTime(Model.Year, Model.Month, giorno);
+                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno);
+
                             if (dataCorrente.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
                             {
-                                <th class="text-center" style="background-color: #d3d3d3;">@giorno</th>
+                                <td style="background-color: #ededed;">
+                                    @foreach (var presence in attendancesForDay)
+                                    {
+                                        <a style="cursor: pointer;" data-toggle="modal" data-target="#modify-modal" onclick="SetDataAttendanceId('#modify-modal', @presence.AttendanceID), SetDataAttendanceId('#confirm-del-modal', @presence.AttendanceID)">
+                                            @if (presence.Type == "Presenza")
+                                            {
+                                                <div style="color: white; background-color: green; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Presenza">
+                                                    <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                                </div>
+                                            }
+                                            @if (presence.Type == "Assenza")
+                                            {
+                                                <div style="color: white; background-color: red; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Assenza">
+                                                    <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                                </div>
+                                            }
+                                            @if (presence.Type == "Malattia")
+                                            {
+                                                <div style="color: white; background-color: #F17831; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Malattia">
+                                                    <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                                </div>
+                                            }
+                                            @if (presence.Type == "Festivo")
+                                            {
+                                                <div style="color: white; background-color: #36b9cc; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Festivo">
+                                                    <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                                </div>
+                                            }
+                                            @if (presence.Type == "Ferie")
+                                            {
+                                                <div style="color: white; background-color: #f6c23e; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ferie">
+                                                    <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                                </div>
+                                            }
+                                        </a>
+                                    }
+                                </td>
                             }
                             else
                             {
-                                <th class="text-center">@giorno</th>
+                                <td>
+                                    @foreach (var presence in attendancesForDay)
+                                    {
+                                        <a style="cursor: pointer;" title="Modifica Entrata/Uscita" data-toggle="modal" data-target="#modify-modal" onclick="SetDataAttendanceId('#modify-modal', @presence.AttendanceID), SetDataAttendanceId('#confirm-del-modal', @presence.AttendanceID)">
+                                            @if (presence.Type == "Presenza")
+                                            {
+                                                <div style="color: white; background-color: green; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Presenza">
+                                                    <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                                </div>
+                                            }
+                                            @if (presence.Type == "Assenza")
+                                            {
+                                                <div style="color: white; background-color: red; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Assenza">
+                                                    <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                                </div>
+                                            }
+                                            @if (presence.Type == "Malattia")
+                                            {
+                                                <div style="color: white; background-color: #F17831; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Malattia">
+                                                    <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                                </div>
+                                            }
+                                            @if (presence.Type == "Festivo")
+                                            {
+                                                <div style="color: white; background-color: #36b9cc; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Festivo">
+                                                    <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                                </div>
+                                            }
+                                            @if (presence.Type == "Ferie")
+                                            {
+                                                <div style="color: white; background-color: #f6c23e; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ferie">
+                                                    <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                                </div>
+                                            }
+                                        </a>
+                                    }
+                                </td>
                             }
                         }
-                    </tr>
-                
-                    @foreach (var presenza in Model.Attendances.GroupBy(a => a.Employee))
-                    {
-                        <tr onclick="SetEmployeeAttendanceId('#new-modal', @presenza.Key.EmployeeID)">
-                            <td style="width: 150px;">
-                                <div style="display: inline-block; white-space: nowrap; box-sizing: border-box; width: 80%; float:  left;">
-                                  <div style="white-space: nowrap; font-size:  18px;"><b>@presenza.Key.Name </b></div> <div style="white-space: nowrap; font-size:  18px;"><b> @presenza.Key.Surname</b> </div>
-                                </div>
-                              <button style="display: inline-block; cursor: pointer; border: 0px; background-color: white; box-sizing: border-box; width: 20%; float:  right;" title="Nuova Entrata/Uscita" data-toggle="modal" data-target="#new-modal">
-                                <span style="color: green; font-weight: bold; font-size: 30px; line-height: 40px; display: inline-block; text-align: center; width: 100%;">+</span>
-                              </button>
-                            </td>
-                            @for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, Model.Month); giorno++)
+                        
+                        @{
+                            TimeSpan? totalTimePresence = TimeSpan.Zero;
+                            TimeSpan? totalTimeAbsence = TimeSpan.Zero;
+                            TimeSpan? totalTimeIllness = TimeSpan.Zero;
+                            TimeSpan? totalTimeHoliday = TimeSpan.Zero;
+                            TimeSpan? totalTimeVacation = TimeSpan.Zero;
+                            
+                            foreach (var item in presenza)
                             {
-                                DateTime dataCorrente = new DateTime(Model.Year, Model.Month, giorno);
-                                var attendanceForDay = presenza.FirstOrDefault(a => a.DateIn.Day == giorno);
-                
-                                @if (attendanceForDay != null)
-                                {
-                                    if (dataCorrente.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
-                                    {
-                                        <td style="background-color: #ededed;">
-                                            <a style="cursor: pointer;" title="Modifica Entrata/Uscita" data-toggle="modal" data-target="#modify-modal" onclick="SetDataAttendanceId('#modify-modal', @attendanceForDay.AttendanceID), SetDataAttendanceId('#confirm-del-modal', @attendanceForDay.AttendanceID)">
-                                                  <div style="color: white; background-color: green; border-radius: 10px; padding: 2px 8px 2px 8px;"><b> @attendanceForDay.DateIn.ToString(@"HH\:mm")</b> </div>
-                                                  <div style="color: white; background-color: red; border-radius: 10px; padding: 2px 8px 2px 8px; margin-top: 3px;"><b> @attendanceForDay.DateOut?.ToString(@"HH\:mm")</b> </div>
-                                            </a>
-                                        </td>
-                                    }
-                                    else
-                                    {
-                                        <td>
-                                            <a style="cursor: pointer;" title="Modifica Entrata/Uscita" data-toggle="modal" data-target="#modify-modal" onclick="SetDataAttendanceId('#modify-modal', @attendanceForDay.AttendanceID), SetDataAttendanceId('#confirm-del-modal', @attendanceForDay.AttendanceID)">
-                                                <div style="color: white; background-color: green; border-radius: 10px; padding: 2px 8px 2px 8px;"><b> @attendanceForDay.DateIn.ToString(@"HH\:mm")</b> </div>
-                                                <div style="color: white; background-color: red; border-radius: 10px; padding: 2px 8px 2px 8px; margin-top: 3px;"><b>@attendanceForDay.DateOut?.ToString(@"HH\:mm")</b> </div>
-                                            </a>
-                                        </td>
-                                    }
-                                }
-                                else if(dataCorrente.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
-                                {
-                                    <td style="background-color: #ededed;">
-                                    </td>
-
-                                }
-                                else
-                                {
-                                    <td>
-                                    </td>
-                                }
+                                if (item.Type == "Presenza" && item.DateOut != null)
+                                    totalTimePresence += item.DateOut - item.DateIn;
+                                
+                                if (item.Type == "Assenza" && item.DateOut != null)
+                                    totalTimeAbsence += item.DateOut - item.DateIn;
+                                
+                                if (item.Type == "Malattia" && item.DateOut != null)
+                                    totalTimeIllness += item.DateOut - item.DateIn;
+                                
+                                if (item.Type == "Festivo" && item.DateOut != null)
+                                    totalTimeHoliday += item.DateOut - item.DateIn;
+                                
+                                if (item.Type == "Ferie" && item.DateOut != null)
+                                    totalTimeVacation += item.DateOut - item.DateIn;
                             }
-                        </tr>
-                    }
+                        }
 
-                  
+                        <td>
+                            @if (totalTimePresence != TimeSpan.Zero)
+                            {
+                                <div class="text-center" style="color: white; background-color: green; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Totale ore presenza">
+                                    <b style="white-space: nowrap;">@(totalTimePresence?.ToString(@"hh\:mm")) h</b>
+                                </div>
+                            }
+                            @if (totalTimeAbsence != TimeSpan.Zero)
+                            {
+                                <div class="text-center" style="color: white; background-color: red; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Totale ore assenza">
+                                    <b style="white-space: nowrap;">@(totalTimeAbsence?.ToString(@"hh\:mm")) h</b>
+                                </div>
+                            }
+                            @if (totalTimeIllness != TimeSpan.Zero)
+                            {
+                                <div class="text-center" style="color: white; background-color: #F17831; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Totale ore malattia">
+                                    <b style="white-space: nowrap;">@(totalTimeIllness?.ToString(@"hh\:mm")) h</b>
+                                </div>
+                            }
+                            @if (totalTimeHoliday != TimeSpan.Zero)
+                            {
+                                <div class="text-center" style="color: white; background-color: #36b9cc; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Totale ore festivo">
+                                    <b style="white-space: nowrap;">@(totalTimeHoliday?.ToString(@"hh\:mm")) h</b>
+                                </div>
+                            }
+                            @if (totalTimeVacation != TimeSpan.Zero)
+                            {
+                                <div class="text-center" style="color: white; background-color: #f6c23e; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Totale ore ferie">
+                                    <b style="white-space: nowrap;">@(totalTimeVacation?.ToString(@"hh\:mm")) h</b>
+                                </div>
+                            }
+
+                        </td>
+                    </tr>
+                }
+
+
                 @foreach (var employee in Model.Employees)
                 {
                     <tr onclick="SetEmployeeAttendanceId('#new-modal', @employee.EmployeeID)">
                         <td>
-                          <div style="display: inline-block; white-space: nowrap; box-sizing: border-box; width: 80%; float:  left;">
-                          <div style="white-space: nowrap; font-size:  18px;"><b>@employee.Name </b></div> <div style="white-space: nowrap; font-size:  18px;"><b> @employee.Surname</b> </div>
-                          </div>
-                          <button style="display: inline-block; cursor: pointer; border: 0px; background-color: white; box-sizing: border-box; width: 20%; float:  right;" title="Nuova Entrata/Uscita" data-toggle="modal" data-target="#new-modal">
-                            <span style="color: green; font-weight: bold; font-size: 30px; line-height: 40px; display: inline-block; text-align: center; width: 100%;">+</span>
-                          </button>
+                            <div style="display: inline-block; white-space: nowrap; box-sizing: border-box; width: 80%; float:  left;">
+                                <div style="white-space: nowrap; font-size:  18px;"><b>@employee.Name </b></div>
+                                <div style="white-space: nowrap; font-size:  18px;"><b> @employee.Surname</b> </div>
+                            </div>
+                            <button style="display: inline-block; cursor: pointer; border: 0px; background-color: white; box-sizing: border-box; width: 20%; float:  right;" title="Nuova Entrata/Uscita" data-toggle="modal" data-target="#new-modal">
+                                <span style="color: green; font-weight: bold; font-size: 30px; line-height: 40px; display: inline-block; text-align: center; width: 100%;">+</span>
+                            </button>
                         </td>
                         @for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, Model.Month); giorno++)
                         {
@@ -138,7 +269,9 @@
                             {
                                 <td style="background-color: #ededed;">
                                 </td>
-                            }else{
+                            }
+                            else
+                            {
                                 <td>
                                 </td>
                             }
@@ -146,7 +279,7 @@
                     </tr>
                 }
             </table>
-            
+
         </div>
     </div>
 </div>
@@ -218,6 +351,18 @@
                         <input class="form-control" type="date" id="DataInOut" />
                     </div>
                 </div>
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <label class="form-check-label"><b>Tipo di registrazione</b></label>
+                        <select id="Type" class="form-control">
+                            <option selected="selected" value="Presenza">Presenza</option>
+                            <option value="Assenza">Assenza</option>
+                            <option value="Festivo">Festivo</option>
+                            <option value="Malattia">Malattia</option>
+                            <option value="Ferie">Ferie</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col-6">
                         <label class="form-check-label"><b>Orario Ingresso</b></label>
@@ -231,7 +376,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
                 <button class="btn btn-primary" onclick="NewAttendance()">Conferma</button>
             </div>
         </div>
@@ -255,6 +400,10 @@
             $(elementName).data("data", data);
         }
         
+        function AllEmployeeAttendanceId(elementName){
+            $(elementName).data("employeeId", null);
+        }
+                
         function DeleteAttendance(){
             var attendanceId = $("#confirm-del-modal").data("attendanceId");
             $.ajax({
@@ -289,6 +438,7 @@
             var dataInOut = $('#DataInOut').val();
             var timeIn = $('#TimeIn').val();
             var timeOut = $('#TimeOut').val();
+            var type = $('#Type').val();
             
             var inDateTime = moment(dataInOut + ' ' + timeIn, 'YYYY-MM-DD HH:mm').utcOffset('+02:00');
             var outDateTime = moment(dataInOut + ' ' + timeOut, 'YYYY-MM-DD HH:mm').utcOffset('+02:00');
@@ -299,14 +449,28 @@
             var model = {
                 attendanceId: employeeId,
                 InId: inIdFormatted,
-                OutId: outIdFormatted
+                OutId: outIdFormatted,
+                Type: type
             }
-        
-            $.post('@Url.Action("NewAttendance", "Attendance")', model, function (data){
-                $("#new-modal").modal('toggle');
-            });
+            if (employeeId != null){
+                $.post('@Url.Action("NewAttendance", "Attendance")', model, function (data){
+                    $("#new-modal").modal('toggle');
+                });
+            }else{
+                $.post('@Url.Action("NewAllAttendance", "Attendance")', model, function (data){
+                    $("#new-modal").modal('toggle');
+                });
+            }
         }
 
+        $(document).ready(function() {
+            $('#exportBtn').click(function() {
+              $.post('/Attendance/ExportAttendance', function() {})
+              .done(function() {})
+              .fail(function() {});
+            });
+          });
+         
     </script>
 
 }

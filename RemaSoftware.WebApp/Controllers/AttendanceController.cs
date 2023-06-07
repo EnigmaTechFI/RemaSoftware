@@ -85,5 +85,49 @@ namespace RemaSoftware.WebApp.Controllers
                 Logger.Error("Errore durante l'aggiunta della presenza.");
             }
         }
+        
+        [HttpPost]
+        public void NewAllAttendance(ModifyAttendanceDTO model)
+        {
+            try
+            {
+                _attendanceHelper.NewAllAttendance(model);
+                _notyfService.Success("Aggiunta completata.");
+            }
+            catch (Exception e)
+            {
+                _notyfService.Error("Errore durante l'aggiunta della presenza.");
+                Logger.Error("Errore durante l'aggiunta della presenza.");
+            }
+        }
+        
+        [HttpPost]
+        public void ExportAttendance()
+        {
+            try
+            {
+                _attendanceHelper.ExportAttendance();
+            }
+            catch (Exception e)
+            {
+                _notyfService.Error("Errore durante l'esportazione delle presenze.");
+                Logger.Error("Errore durante l'aggiunta della presenza.");
+            }
+        }
+        
+        [HttpPost]
+        public void SendAttendance(ModifyAttendanceDTO model)
+        {
+            try
+            {
+                //Help di creazione del txt e dell'invio
+                _notyfService.Success("Invio completato.");
+            }
+            catch (Exception e)
+            {
+                _notyfService.Error("Errore durante l'invio delle presenze.");
+                Logger.Error("Errore durante l'aggiunta della presenza.");
+            }
+        }
     }
 }

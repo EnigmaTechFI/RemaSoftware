@@ -5,11 +5,12 @@ namespace RemaSoftware.Domain.Services;
 
     public interface IAttendanceService
     {
-        public bool DeleteAttendanceById(int attendanceId);
+        public bool DeleteAttendanceById(Attendance attendance);
         public void ModifyAttendance(int modelAttendanceId, DateTime modelInId, DateTime modelOutId);
-        public void NewAttendance(int employeeId, DateTime modelInId, DateTime modelOutId);
+        public void NewAttendance(int employeeId, DateTime modelInId, DateTime? modelOutId, string type);
         public List<Attendance> getAttendanceById(int id, int mouth, int year);
-        public Task UpdateAttendanceList(List<string> userIdList, List<string> userClockList);
+        public Task UpdateAttendanceListWithPresence(List<string> userIdList, List<string> userClockList);
+        public Attendance getOneAttendanceById(int attendanceid);
 
     }
 

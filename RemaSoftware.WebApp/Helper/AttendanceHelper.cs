@@ -4,26 +4,26 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
 using RemaSoftware.WebApp.DTOs;
-using RemaSoftware.WebApp.Models.StockViewModel;
-
 
 namespace RemaSoftware.WebApp.Helper;
 
 public class AttendanceHelper
 {
     private readonly IAttendanceService _attendanceService;
+    private readonly IEmployeeService _employeeService;
 
-    public AttendanceHelper(IAttendanceService attendanceService)
+    public AttendanceHelper(IAttendanceService attendanceService, IEmployeeService employeeService)
     {
         _attendanceService = attendanceService;
+        _employeeService = employeeService;
     }
 
-    public void DeleteAttendance(int attendanceId)
+    public async Task DeleteAttendance(int attendanceId)
     {
-        _attendanceService.DeleteAttendanceById(attendanceId);
+        var attendance = _attendanceService.getOneAttendanceById(attendanceId);
+        _attendanceService.DeleteAttendanceById(attendance);
     }
 
     public void ModifyAttendance(ModifyAttendanceDTO model)
@@ -33,7 +33,14 @@ public class AttendanceHelper
     
     public void NewAttendance(ModifyAttendanceDTO model)
     {
-        _attendanceService.NewAttendance(model.AttendanceId, model.InId, model.OutId);
+        _attendanceService.NewAttendance(model.AttendanceId, model.InId, model.OutId, model.Type);
+    }
+    
+    public void NewAllAttendance(ModifyAttendanceDTO model)
+    {
+        var allEmployees = _employeeService.GetAllEmployees();
+        foreach(var employee in allEmployees)
+            _attendanceService.NewAttendance(employee.EmployeeID, model.InId, model.OutId, model.Type);
     }
 
     public async Task UpdateAttendance(int month, int year)
@@ -69,27 +76,47 @@ public class AttendanceHelper
                 List<string> userIdList = new List<string>();
                 List<string> userClockList = new List<string>();
 
-
                 foreach (dynamic record in records)
                 {
-                    string userId = record.user_id;
+                    string userId = record.contract_id;
                     List<dynamic> days = record.days.ToObject<List<dynamic>>();
 
                     foreach (dynamic day in days)
                     {
-                        string clockAt = day.clock_records[0].clock_at;
-                        userIdList.Add($"{userId}");
-                        userClockList.Add($"{clockAt}");
+                        List<dynamic> clockRecords = day.clock_records.ToObject<List<dynamic>>();
+                        foreach (dynamic clockRecord in clockRecords)
+                        {
+                            string clockAt = clockRecord.clock_at;
+                            userIdList.Add($"{userId}");
+                            userClockList.Add($"{clockAt}");
+                        }
                     }
                 }
 
-                await _attendanceService.UpdateAttendanceList(userIdList, userClockList);
+                await _attendanceService.UpdateAttendanceListWithPresence(userIdList, userClockList);
+
             }
         }
-        else
-        {
-            Console.WriteLine("Errore nella chiamata all'API");
-        }
+    }
+    
+    public void ExportAttendance()
+    {
+        CreateTxtAttendance();
+
+        //Download il file
+    }
+    
+    public void SendAttendance()
+    {
+        CreateTxtAttendance();
+        
+        //Invio diretto al coso del lavoro
+    }
+    
+    private void CreateTxtAttendance()
+    {
+        var ciao = 0;
+        //Creazione del file
     }
 
 }
