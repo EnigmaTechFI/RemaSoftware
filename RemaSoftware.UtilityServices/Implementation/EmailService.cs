@@ -242,6 +242,53 @@ namespace RemaSoftware.UtilityServices.Implementation
                 throw new Exception("Errore durante l&#39;invio della mail per variazione prezzo DDT.");
             }
         }
+        
+        public bool SendEmailAttendance(string period, string email, string attendance)
+        {
+            try
+            {
+                MailMessage mailMessage = new MailMessage();
+                var mailAddressSender = _configuration["EmailConfig:EmailAddress"];
+                mailMessage.From = new MailAddress(mailAddressSender);
+                mailMessage.To.Add(new MailAddress(email));
+ 
+                mailMessage.Subject = "Resoconto Presenze Mensili";
+                mailMessage.IsBodyHtml = true;
+                string FilePath = "wwwroot/MailTemplate/mail-attendance.html";  
+                StreamReader str = new StreamReader(FilePath);  
+                string MailText = str.ReadToEnd();
+                str.Close();
+                
+                Attachment attachment = new Attachment(attendance);
+                mailMessage.Attachments.Add(attachment);
+                
+                MailText = MailText.Replace("[period]", period);
+
+                mailMessage.Body =  MailText;
+
+                SmtpClient client = new SmtpClient();
+                var mailPwd = _configuration["EmailConfig:Password"];
+                
+                client.Credentials = new System.Net.NetworkCredential(mailAddressSender, mailPwd);
+                client.Host = _configuration["EmailConfig:SmtpServer"];
+                client.Port = int.Parse(_configuration["EmailConfig:Port"]);
+                client.EnableSsl = true;
+                try
+                {
+                    client.Send(mailMessage);
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, "Errore durante l'invio della mail per il recupero della password.");
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Errore durante il processo di invio della mail per il recupero della password.");
+            }
+            return false;
+        }
     }
 
 }

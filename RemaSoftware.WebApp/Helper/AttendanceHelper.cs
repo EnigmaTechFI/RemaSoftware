@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using RemaSoftware.Domain.Services;
+using RemaSoftware.UtilityServices.Interface;
 using RemaSoftware.WebApp.DTOs;
 
 namespace RemaSoftware.WebApp.Helper;
@@ -13,11 +15,13 @@ public class AttendanceHelper
 {
     private readonly IAttendanceService _attendanceService;
     private readonly IEmployeeService _employeeService;
+    private readonly IEmailService _emailService;
 
-    public AttendanceHelper(IAttendanceService attendanceService, IEmployeeService employeeService)
+    public AttendanceHelper(IAttendanceService attendanceService, IEmployeeService employeeService, IEmailService emailService)
     {
         _attendanceService = attendanceService;
         _employeeService = employeeService;
+        _emailService = emailService;
     }
 
     public async Task DeleteAttendance(int attendanceId)
@@ -98,25 +102,43 @@ public class AttendanceHelper
             }
         }
     }
-    
-    public void ExportAttendance()
-    {
-        CreateTxtAttendance();
 
-        //Download il file
-    }
-    
-    public void SendAttendance()
+    public void SendAttendance(int month, int year, string mail)
     {
-        CreateTxtAttendance();
+        string filePath = CreateTxtAttendance();
         
-        //Invio diretto al coso del lavoro
+        if (!string.IsNullOrEmpty(filePath))
+        {
+            _emailService.SendEmailAttendance("14/07/2023 - 15/07/2023", "alessio.corsi.lv@gmail.com", filePath);
+            Task.Delay(1000).ContinueWith(_ =>
+            {
+                try
+                {
+                    File.Delete(filePath);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Si è verificato un errore durante l'eliminazione del file: " + ex.Message);
+                }
+            });
+        }
     }
-    
-    private void CreateTxtAttendance()
+
+    static string CreateTxtAttendance()
     {
-        var ciao = 0;
-        //Creazione del file
+        string fileText = "00000000000000101010101010000000000000000000000000000000000000010101010000";
+        string filePath = Path.GetTempFileName() + ".txt";
+
+        try
+        {
+            File.WriteAllText(filePath, fileText);
+            return filePath;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Si è verificato un errore durante la creazione del file: " + ex.Message);
+            return null;
+        }
     }
 
 }

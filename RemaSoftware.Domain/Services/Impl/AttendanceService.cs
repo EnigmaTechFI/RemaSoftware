@@ -83,6 +83,16 @@ namespace RemaSoftware.Domain.Services.Impl;
                 .ToList();
         }
         
+        public List<Attendance> getAttendanceByFluidaId(string id, int month, int year)
+        {
+            return _dbContext.Attendances
+                .Include(t => t.Employee)
+                .Where(i => i.DateIn.Month == month && i.DateIn.Year == year && i.Employee.FluidaId == id)
+                .OrderBy(i => i.EmployeeID)
+                .ThenBy(i => i.DateIn)
+                .ToList();
+        }
+        
         public Attendance getOneAttendanceById(int attendanceid)
         {
             return _dbContext.Attendances.SingleOrDefault(a => a.AttendanceID == attendanceid);
@@ -112,11 +122,33 @@ namespace RemaSoftware.Domain.Services.Impl;
 
                     if (existingAttendance != null)
                     {
-                        // Se esiste un elemento con timestart non nullo e timeend nullo e se quell'elemento ha data uguale, aggiorna il timeend con userClock.Time
                         string dateFormat = "MM/dd/yyyy HH:mm:ss";
                         DateTime dateIn;
                         DateTime.TryParseExact(userClockList[i], dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateIn);
-                        existingAttendance.DateOut = dateIn;
+
+                        // Calculate the total duration of attendances for the specified day
+                        TimeSpan totalDuration = TimeSpan.Zero;
+                        var end = false;
+                        foreach (var attendance in getAttendanceByFluidaId(userIdList[i], existingAttendance.DateIn.Month, existingAttendance.DateIn.Year))
+                        {
+                            if (attendance.DateIn.Date != null && attendance.DateOut?.Date != null && attendance.DateIn.Date == dateIn.Date && attendance.Type == "Presenza" && !end)
+                            {
+                                totalDuration += (attendance.DateOut - attendance.DateIn) ?? TimeSpan.Zero;
+                                if (totalDuration <= TimeSpan.FromHours(1) ){
+                                    existingAttendance.DateOut = dateIn;
+                                    end = true;
+                                }
+                                else
+                                {
+                                    existingAttendance.DateOut = dateIn - (totalDuration - TimeSpan.FromDays(1));
+                                    end = true;
+                                }
+                            }
+                            else
+                            {
+                                existingAttendance.DateOut = dateIn;
+                            }
+                        }
                     }
                     else
                     {

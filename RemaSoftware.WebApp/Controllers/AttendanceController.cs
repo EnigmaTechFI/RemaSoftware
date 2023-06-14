@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.Web.CodeGeneration;
 using NLog;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.WebApp.DTOs;
@@ -100,27 +99,13 @@ namespace RemaSoftware.WebApp.Controllers
                 Logger.Error("Errore durante l'aggiunta della presenza.");
             }
         }
-        
+
         [HttpPost]
-        public void ExportAttendance()
+        public void SendAttendance(int month, int year, string mail)
         {
             try
             {
-                _attendanceHelper.ExportAttendance();
-            }
-            catch (Exception e)
-            {
-                _notyfService.Error("Errore durante l'esportazione delle presenze.");
-                Logger.Error("Errore durante l'aggiunta della presenza.");
-            }
-        }
-        
-        [HttpPost]
-        public void SendAttendance(ModifyAttendanceDTO model)
-        {
-            try
-            {
-                //Help di creazione del txt e dell'invio
+                _attendanceHelper.SendAttendance(month, year, mail);
                 _notyfService.Success("Invio completato.");
             }
             catch (Exception e)
@@ -129,5 +114,6 @@ namespace RemaSoftware.WebApp.Controllers
                 Logger.Error("Errore durante l'aggiunta della presenza.");
             }
         }
+        
     }
 }

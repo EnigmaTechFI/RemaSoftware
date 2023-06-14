@@ -45,19 +45,14 @@
                     <option value="2025" selected="@(Model.Year == 2025)">2025</option>
                 </select>
             </div>
-            <div class="col-1 mt-5">
+            <div class="col-2 mt-5">
                 <input type="submit" value="Visualizza" class="btn btn-primary text-white"/>
             </div>
             <div class="col-2 mt-5">
                 <input data-toggle="modal" data-target="#new-modal" type="button" value="Aggiungi a tutti" class="btn btn-primary text-white" id="exportBtn" onclick="AllEmployeeAttendanceId('#modify-modal')"/>
             </div>
             <div class="col-2 mt-5">
-            </div>
-            <div class="col-1 mt-5">
-                <input type="button" value="Esporta TXT" class="btn btn-primary text-white" id="exportBtn" />
-            </div>
-            <div class="col-1 mt-5">
-                <input type="button" value="Invia TXT" class="btn btn-primary text-white" id="exportBtn"/>
+                <input type="button" data-toggle="modal" data-target="#modaltxt" value="Invia documento di testo" class="btn btn-primary text-white" id="sendTXT"/>
             </div>
         </div>
         <div class="row mb-2">
@@ -383,6 +378,32 @@
     </div>
 </div>
 
+<div class="modal fade" id="modaltxt" tabindex="-1" role="dialog" aria-labelledby="modal-head" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-head">Invio dei dati per mail </h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="pb-2 font-italic h6">Modificare mail se necessario:</p>
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <label class="form-check-label"><b>Mail</b></label>
+                        <input class="form-control" type="email" id="mailsend" value="alessio.corsi.lv@gmail.com" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
+                <button class="btn btn-primary" onclick="SendAttendance()">Invia</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts
 {
 
@@ -462,14 +483,30 @@
                 });
             }
         }
-
-        $(document).ready(function() {
-            $('#exportBtn').click(function() {
-              $.post('/Attendance/ExportAttendance', function() {})
-              .done(function() {})
-              .fail(function() {});
-            });
-          });
+            
+        function SendAttendance() {
+           var month = $('#mese').val();
+           var year = $('#anno').val();
+           var mail = $('#mailsend').val();
+       
+           var model = {
+               month: month,
+               year: year,
+               mail: mail
+           }
+       
+           $.ajax({
+               url: '@Url.Action("SendAttendance", "Attendance")',
+               type: 'POST',
+               data: model,
+               success: function () {
+                   $("#modaltxt").modal('toggle');
+               },
+               error: function () {
+                   // Gestione dell'errore (se necessario)
+               }
+           });
+        }
          
     </script>
 
