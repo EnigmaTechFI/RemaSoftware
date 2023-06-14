@@ -6,6 +6,7 @@ using RemaSoftware.WebApp.Models.OrderViewModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using NLog;
 using QRCoder;
 using RemaSoftware.Domain.Constants;
@@ -29,10 +30,11 @@ namespace RemaSoftware.WebApp.Helper
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly ISupplierService _supplierService;
         private IClientService _clientService;
+        private readonly IConfiguration _configuration;
 
         public OrderHelper(IOrderService orderService, IAPIFatturaInCloudService apiFatturaInCloudService,
             ApplicationDbContext dbContext, IProductService productService, ISubBatchService subBatchService,
-            IOperationService operationService, IEmailService emailService, ProductionHub productionHub, IAPIFatturaInCloudService apiFatturaInCloud, ISupplierService supplierService, IClientService clientService)
+            IOperationService operationService, IEmailService emailService, ProductionHub productionHub, IAPIFatturaInCloudService apiFatturaInCloud, ISupplierService supplierService, IClientService clientService, IConfiguration configuration)
         {
             _orderService = orderService;
             _apiFatturaInCloudService = apiFatturaInCloudService;
@@ -45,6 +47,7 @@ namespace RemaSoftware.WebApp.Helper
             _apiFatturaInCloud = apiFatturaInCloud;
             _supplierService = supplierService;
             _clientService = clientService;
+            _configuration = configuration;
         }
 
         public Ddt_In GetDdtInById(int id)
@@ -58,7 +61,8 @@ namespace RemaSoftware.WebApp.Helper
             return new SubBatchMonitoringViewModel()
             {
                 DdtSupplierUrl = url,
-                SubBatch = _subBatchService.GetSubBatchById(id)
+                SubBatch = _subBatchService.GetSubBatchById(id),
+                BasePathImages = $"{_configuration["ApplicationUrl"]}{_configuration["ImagesEndpoint"]}order/"
             };
         }
 
