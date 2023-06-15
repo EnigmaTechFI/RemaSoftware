@@ -10,7 +10,6 @@ using RemaSoftware.WebApp.Helper;
 
 namespace RemaSoftware.WebApp.Controllers
 {
-    [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
     public class AttendanceController : Controller
     {
         private readonly INotyfService _notyfService;
@@ -25,6 +24,7 @@ namespace RemaSoftware.WebApp.Controllers
             _attendanceHelper = attendanceHelper;
         }
         
+        [Authorize(Roles = Roles.Admin)]
         [HttpGet]
         public async Task<IActionResult> Attendance(int month, int year)
         {
@@ -41,6 +41,8 @@ namespace RemaSoftware.WebApp.Controllers
             }
         }
         
+        [Authorize(Roles = Roles.Admin)]
+        [HttpPost]
         public void DeleteAttendance(int attendanceId)
         {
             try
@@ -55,6 +57,7 @@ namespace RemaSoftware.WebApp.Controllers
             }
         }
         
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost]
         public void ModifyAttendance(ModifyAttendanceDTO model)
         {
@@ -70,6 +73,7 @@ namespace RemaSoftware.WebApp.Controllers
             }
         }
         
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost]
         public void NewAttendance(ModifyAttendanceDTO model)
         {
@@ -85,6 +89,7 @@ namespace RemaSoftware.WebApp.Controllers
             }
         }
         
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost]
         public void NewAllAttendance(ModifyAttendanceDTO model)
         {
@@ -100,6 +105,7 @@ namespace RemaSoftware.WebApp.Controllers
             }
         }
 
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost]
         public void SendAttendance(int month, int year, string mail)
         {

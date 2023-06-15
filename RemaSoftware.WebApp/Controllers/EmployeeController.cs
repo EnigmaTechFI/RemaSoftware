@@ -11,7 +11,7 @@ using RemaSoftware.WebApp.Validation;
 
 namespace RemaSoftware.WebApp.Controllers
 {
-    [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+    
     public class EmployeeController : Controller
     {
         private readonly INotyfService _notyfService;
@@ -26,6 +26,7 @@ namespace RemaSoftware.WebApp.Controllers
             _employeeValidation = employeeValidation;
         }
 
+        [Authorize(Roles = Roles.Admin)]
         [HttpGet]
         public IActionResult NewEmployee()
         {
@@ -41,6 +42,7 @@ namespace RemaSoftware.WebApp.Controllers
             }
         }
         
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost]
         public IActionResult NewEmployee(EmployeeViewModel model)
         {
@@ -64,6 +66,7 @@ namespace RemaSoftware.WebApp.Controllers
             return View();
         }
         
+        [Authorize(Roles = Roles.Admin)]
         [HttpGet]
         public IActionResult EmployeeList()
         {
@@ -79,6 +82,7 @@ namespace RemaSoftware.WebApp.Controllers
             }
         }
         
+        [Authorize(Roles = Roles.Admin)]
         public JsonResult DeleteEmployee(int employeeId)
         {
             try
@@ -93,6 +97,7 @@ namespace RemaSoftware.WebApp.Controllers
             }
         }
         
+        [Authorize(Roles = Roles.Admin)]
         [HttpGet]
         public IActionResult ViewEmployee(int id, int mouth, int year)
         {
@@ -108,6 +113,7 @@ namespace RemaSoftware.WebApp.Controllers
             }
         }
         
+        [Authorize(Roles = Roles.Admin)]
         [HttpGet]
         public IActionResult ModifyEmployee(int id)
         {
@@ -123,6 +129,7 @@ namespace RemaSoftware.WebApp.Controllers
             }
         }
         
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost]
         public async Task<IActionResult> ModifyEmployee(EmployeeViewModel model)
         {
