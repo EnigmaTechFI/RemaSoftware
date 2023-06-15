@@ -1,0 +1,150 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using RemaSoftware.Domain.Constants
+@model RemaSoftware.WebApp.Models.EmployeeViewModel.EmployeeViewModel
+
+@{
+    ViewData["Title"] = "Modifica Impiegato";
+}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">@Model.Employee.Name @Model.Employee.Surname</h1>
+</div>
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Aggiorna informazioni impiegato</h6>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            @Html.HiddenFor(model => model.Employee.EmployeeID)
+            @Html.HiddenFor(model => model.Employee.Gender)
+            @Html.HiddenFor(model => model.Employee.TaxID)
+            @Html.HiddenFor(model => model.Employee.Name)
+            @Html.HiddenFor(model => model.Employee.Surname)
+            @Html.HiddenFor(model => model.Employee.number)
+            @Html.HiddenFor(model => model.Employee.BirthPlace)
+            @Html.HiddenFor(model => model.Employee.BirthDate)
+
+            <div class="form-row">
+                <div class="col-md-4 mb-4">
+                    <label>Mansione</label>
+                    <input asp-for="Employee.Task" type="text" class="form-control" value="@Model.Employee.Task">
+                    <span asp-validation-for="Employee.Task" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <label>Livello</label>
+                    <input asp-for="Employee.Level" type="text" class="form-control" value="@Model.Employee.Level">
+                    <span asp-validation-for="Employee.Level" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <label>Numero ore di lavoro</label>
+                    <input asp-for="Employee.NumberHour" type="text" class="form-control" value="@Model.Employee.NumberHour" required>
+                    <span asp-validation-for="Employee.NumberHour" class="text-danger"></span>
+                </div>
+            </div>
+             <div class="form-row">
+                 <div class="col-md-6 mb-4">
+                     <label>Modifica data di inizio rapporto</label>
+                     <div class='input-group date'>
+                         <input placeholder="Data di inizio rapporto" type='text' class="form-control bg-white" id='datetimepicker1' asp-for="Employee.StartRelationship" />
+                         <span class="input-group-addon">
+                             <span class="glyphicon glyphicon-calendar"></span>
+                         </span>
+                     </div>
+                 </div>
+                 <div class="col-md-6 mb-4">
+                     <label>Modifica data di fine rapporto</label>
+                     <div class='input-group date'>
+                         <input placeholder="Data di fine rapporto" type='text' class="form-control bg-white" id='datetimepicker2' asp-for="Employee.EndRelationship" />
+                         <span class="input-group-addon">
+                             <span class="glyphicon glyphicon-calendar"></span>
+                         </span>
+                     </div>
+                 </div>
+             </div>
+            <div class="form-row">
+                <div class="col-md-4 mb-3 form-group">
+                    <label for="formGroupExampleInput">Tipo di relazione</label>
+                    <select asp-for="@Model.Employee.TypeRelationship" class="form-control">
+                        <option selected="selected" value="Nessuna">Nessuna</option>
+                        <option value="@TypeRelationship.LavoroDipendente">Dipendente</option>
+                        <option value="@TypeRelationship.Somministrato">Somministrato</option>
+                        <option value="@TypeRelationship.LavoroDipendente">Lavoro dipendente</option>
+                        <option value="@TypeRelationship.ParasubCalendario">Parasub. con calendario</option>                        
+                        <option value="@TypeRelationship.ParasubSenzaCalendario">Parasub. senza calendario</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3 form-group">
+                    <label for="formGroupExampleInput">Tipo di posizione</label>
+                    <select asp-for="@Model.Employee.TypePosition" class="form-control">
+                        <option selected="selected" value="Nessuna">Nessuna</option>
+                        <option value="@TypePosition.InServizio">In servizio</option>
+                        <option value="@TypePosition.MaternitàAnticipata">Maternità anticipata</option>
+                        <option value="@TypePosition.MaternitàFacoltativa">Maternità facoltativa</option>
+                        <option value="@TypePosition.MaternitàObbligatoria">Maternità obbligatioria</option>
+                        <option value="@TypePosition.SospensioneAspettativa">Sospensione o aspettativa</option>
+                    </select>
+                </div>
+                 <div class="col-md-4 mb-4">
+                    <label>Codice fluida</label>
+                    <input asp-for="Employee.FluidaId" type="text" class="form-control" value="@Model.Employee.FluidaId">
+                    <span asp-validation-for="Employee.FluidaId" class="text-danger"></span>
+                </div>
+            </div>
+            <button class="btn btn-primary" type="submit" onclick="clickEvent()">Aggiorna</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts
+{
+    
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+            <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/js/select2.min.js" integrity="sha512-9p/L4acAjbjIaaGXmZf0Q2bV42HetlCLbv8EP0z3rLbQED2TAFUlDvAezy7kumYqg5T8jHtDdlm1fgIsr5QzKg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+     <script>
+            
+        $('#priceUnit').keypress(function (e) {
+            if (e.which == 46) {
+                e.preventDefault();
+            }
+        });
+        
+        let date1 = new Date("@Model.Employee.StartRelationship").toLocaleDateString('it-IT');
+        let date2 = new Date("@Model.Employee.EndRelationship").toLocaleDateString('it-IT');
+                        
+        $("#datetimepicker1").flatpickr({
+            dateFormat: "d/m/Y",
+            defaultDate: date1,
+            locale: {
+                weekdays: {
+                    shorthand: ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'],
+                    longhand: ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'],
+                },
+                    months: {
+                        shorthand: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Оtt', 'Nov', 'Dic'],
+                        longhand: ['Gennaio', 'Febbraio', 'Мarzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'],
+                    }
+            }
+
+        });
+        
+        $("#datetimepicker2").flatpickr({
+            dateFormat: "d/m/Y",
+            defaultDate: date2,
+            locale: {
+                weekdays: {
+                    shorthand: ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'],
+                    longhand: ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'],
+                },
+                    months: {
+                        shorthand: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Оtt', 'Nov', 'Dic'],
+                        longhand: ['Gennaio', 'Febbraio', 'Мarzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'],
+                    }
+            }
+
+        });
+        
+    </script>
+}

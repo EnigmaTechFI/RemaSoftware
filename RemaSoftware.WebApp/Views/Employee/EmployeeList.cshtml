@@ -1,0 +1,144 @@
+﻿@model RemaSoftware.WebApp.Models.EmployeeViewModel.EmployeeListViewModel
+
+@{
+    ViewData["Title"] = "Lista impiegati";
+}
+
+<link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
+
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
+        <h3 class="m-0 font-weight-bold text-primary">Lista impiegati</h3>
+        <div>
+            <button class="btn btn-primary" type="button" onclick="location.href='@Url.Action("NewEmployee", "Employee")'">Aggiungi impiegato</button>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="table-stock" width="100%" cellspacing="0">
+                <thead>
+                <tr>
+                    <th>Matricola</th>
+                    <th>Nome</th>
+                    <th>Cognome</th>
+                    <th>Data di nascita</th>
+                    <th>Sesso</th>
+                    <th>Codice fiscale</th>
+                    <th>Azioni</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var employee in Model.Employees)
+                {
+                    <tr id="item-@employee.EmployeeID" form="form-@employee.EmployeeID">
+                        <td class="number-@employee.number">@employee.number</td>
+                        <td class="name-@employee.Name">@employee.Name</td>
+                        <td class="surname-@employee.Surname">@employee.Surname</td>
+                        <td class="birth-@employee.BirthDate.ToString("dd/MM/yyyy")">@employee.BirthDate.ToString("dd/MM/yyyy")</td>
+                        <td class="gender-@employee.Gender">@employee.Gender</td>
+                        <td class="tax-@employee.TaxID">@employee.TaxID</td>
+                        <td class="text-center editicon-@employee.EmployeeID">
+                            <a style="text-decoration: none" asp-controller="Employee" asp-action="ViewEmployee" asp-route-id="@employee.EmployeeID">
+                                <i class="fas fa-eye fa-lg pl-2" title="Visualizza" style="cursor: pointer; color: #6d767e"></i>
+                            </a>
+                            <a style="text-decoration: none" asp-controller="Employee" asp-action="ModifyEmployee" asp-route-id="@employee.EmployeeID">
+                             <i class="fas fa-pen fa-lg pl-2" style="cursor: pointer; color: #6d767e;" title="Modifica"></i> 
+                             </a>
+                            <i class="fas fa-trash fa-lg pl-2 del-employee" style="cursor: pointer; color: #6d767e;" id="@employee.EmployeeID" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDataEmployeeId('#confirm-del-modal', @employee.EmployeeID)"></i>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="confirm-del-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Conferma eliminazione</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Sei sicuro di voler eliminare l'impiegato?</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
+                <button class="btn btn-danger" onclick="DeleteEmployee()">Elimina</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
+    
+    <script>
+    var table;
+    $(document).ready( function () {
+        table = $('#table-stock').DataTable({
+            "language": {
+                "lengthMenu": "Mostra _MENU_ risultati per pagina",
+                "zeroRecords": "Nessun risultato trovato",
+                "info": "Pagina _PAGE_ di _PAGES_",
+                "infoEmpty": "Nessun risultato disponibile",
+                "infoFiltered": "(filtrato da _MAX_ risultati totali)",
+                "search": "Ricerca:",
+                "paginate": {
+                    "first": "Inizio",
+                    "previous": "Precedente",
+                    "next": "Successivo",
+                    "last": "Fine"
+                }
+            },
+            "columnDefs": [
+                { "searchable": true, "orderable": true, "targets": 0 },
+                { "searchable": true, "orderable": true, "targets": 1 },
+                { "searchable": true, "orderable": true, "targets": 2 },
+                { "searchable": false, "orderable": false, "targets": 3 },
+                { "searchable": false, "orderable": false, "targets": 4 },
+                { "searchable": false, "orderable": false, "targets": 5 },
+                { "searchable": false, "orderable": false, "targets": 6 },
+              ]
+        });
+    } );
+    
+    $(document).on("click", ".del-employee", function () {
+         var employeeId = $(this).attr('id');
+         $(".modal-body #modal-addrem-employeeId").val( parseInt(employeeId) );
+    });
+    
+    function SetDataEmployeeId(elementName, employeeId){
+        $(elementName).data("employeeId", employeeId );
+    }
+    
+    function DeleteEmployee(){
+        var employeeId = $("#confirm-del-modal").data("employeeId");
+        $.ajax({
+            url: '@Url.Action("DeleteEmployee", "Employee")?' + $.param({"EmployeeId": employeeId}),
+            type: 'GET',
+            success: function (data) {
+                if (data.result == true){
+                    table.row($("tr#employee-" + employeeId)).remove().draw();
+                    $("#confirm-del-modal").modal('toggle');
+                    toastNotifySuccess(data.toastMessage);
+                }else{
+                    toastNotifyError(data.toastMessage);
+                }
+            },
+            error: function (data){
+                toastNotifyError("Errore durante l'eliminazione dell'impiegato.");
+            }
+        });
+    }
+    
+    
+    </script>>
+}
+
+
+    
