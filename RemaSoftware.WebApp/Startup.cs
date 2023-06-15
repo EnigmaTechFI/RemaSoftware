@@ -11,6 +11,7 @@ using AspNetCoreHero.ToastNotification;
 using AspNetCoreHero.ToastNotification.Extensions;
 using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using RemaSoftware.Domain;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
 using RemaSoftware.Domain.Services.Impl;
@@ -80,8 +81,6 @@ namespace RemaSoftware.WebApp
                     }
                 };
             });
-            
-            
 
             var mvcBuilder = services.AddControllersWithViews().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
@@ -122,7 +121,9 @@ namespace RemaSoftware.WebApp
             services.AddTransient<IWarehouseStockService, WarehouseStockService>();
             services.AddTransient<ISupplierService, SupplierService>();
             services.AddTransient<IUtilityService, UtilityService>();
-            
+            services.AddTransient<IEmployeeService, EmployeeService>();
+            services.AddTransient<IAttendanceService, AttendanceService>();
+
             services.AddTransient<PdfHelper>();
             services.AddTransient<SupplierHelper>();
             services.AddTransient<DashboardHelper>();
@@ -136,10 +137,14 @@ namespace RemaSoftware.WebApp
             services.AddTransient<ClientHelper>();
             services.AddTransient<AccountHelper>();
             services.AddTransient<GuestHelper>();
+            services.AddTransient<AttendanceHelper>();
+            services.AddTransient<EmployeeHelper>();
             services.AddTransient<OrderValidation>();
             services.AddTransient<ProductValidation>();
             services.AddTransient<OperationValidation>();
             services.AddTransient<StockValidation>();
+            services.AddTransient<EmployeeValidation>();
+
             
             services.AddScoped<RemaSoftware.UtilityServices.Implementation.EmailService>();
         }
@@ -180,4 +185,5 @@ namespace RemaSoftware.WebApp
             DbInitializer.SeedUsersAndRoles(userManager, roleManager, context);
         }
     }
+    
 }

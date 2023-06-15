@@ -81,6 +81,22 @@
     <Content Update="wwwroot\MailTemplate\under-limit.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Update="wwwroot\MailTemplate\mail-attendance.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\MailTemplate\attendance-notify.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+<<<<<<< HEAD
+    <Content Update="wwwroot\MailTemplate\under-limit.html">
+=======
+    <Content Update="wwwroot\MailTemplate\mail-attendance.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\MailTemplate\attendance-notify.html">
+>>>>>>> Timekeeper
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -90,6 +106,7 @@
   <ItemGroup>
     <_ContentIncludedByDefault Remove="wwwroot\TemplateMail\new-account-mail.html" />
     <_ContentIncludedByDefault Remove="wwwroot\MailTemplate\mail-new-account.html" />
+    <_ContentIncludedByDefault Remove="Views\Employee\EmployeeList.cshtml" />
   </ItemGroup>
 
 </Project>
