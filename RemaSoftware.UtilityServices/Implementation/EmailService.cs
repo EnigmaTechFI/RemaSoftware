@@ -166,7 +166,7 @@ namespace RemaSoftware.UtilityServices.Implementation
             return false;
         }
 
-        public void SendEmailPrompt(List<string> email, string ddtCode)
+        public void SendEmailPrompt(List<string> email, string ddtCode, string note)
         {
            try
             {
@@ -341,7 +341,6 @@ namespace RemaSoftware.UtilityServices.Implementation
 
             return false;
         }
-    }
 
         public void SendEmployeeAttendance(List<Employee> employees, List<string> email)
         {
