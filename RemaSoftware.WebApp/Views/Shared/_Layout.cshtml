@@ -144,7 +144,7 @@
                 </a>
             </li>
         }
-        @if (User.IsInRole(Roles.Cliente))
+        @if (User.IsInRole(Roles.Cliente)) 
         {
             <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "BatchInStock" ? "active" : "")">
                 <a class="nav-link" asp-action="BatchInStock" asp-controller="Guest">
@@ -196,11 +196,20 @@
             <div class="sidebar-heading">
                 Anagrafiche
             </div>
+            @if (User.IsInRole(Roles.Admin))
+            {
+                <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Employee" ? "active" : "")">
+                    <a class="nav-link" asp-action="EmployeeList" asp-controller="Employee">
+                        <i class="fas fa-fw fa-address-card"></i>
+                        <span>Impiegati</span>
+                    </a>
+                </li>
+            }
             <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Client" ? "active" : "")">
-                <a class="nav-link" asp-action="ClientList" asp-controller="Client">
-                    <i class="fas fa-fw fa-address-card"></i>
-                    <span>Clienti</span>
-                </a>
+            <a class="nav-link" asp-action="ClientList" asp-controller="Client">
+                <i class="fas fa-fw fa-address-card"></i>
+                <span>Clienti</span>
+            </a>
             </li>
             <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Supplier" ? "active" : "")">
                 <a class="nav-link" asp-action="List" asp-controller="Supplier">
@@ -248,6 +257,12 @@
                 Amministrazione
             </div>
         
+            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Attendance" ? "active" : "")">
+                <a class="nav-link" asp-action="Attendance" asp-controller="Attendance">
+                    <i class="fas fa-fw fa-calculator"></i>
+                    <span>Presenze</span>
+                </a>
+            </li>
             <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Accounting" ? "active" : "")">
                 <a class="nav-link" asp-action="Accounting" asp-controller="Accounting">
                     <i class="fas fa-fw fa-calculator"></i>

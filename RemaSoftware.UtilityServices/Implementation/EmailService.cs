@@ -4,6 +4,7 @@ using System.IO;
 using System.Net.Mail;
 using Microsoft.Extensions.Configuration;
 using NLog;
+using RemaSoftware.Domain.Models;
 using RemaSoftware.UtilityServices.Interface;
 
 namespace RemaSoftware.UtilityServices.Implementation
@@ -165,7 +166,7 @@ namespace RemaSoftware.UtilityServices.Implementation
             return false;
         }
 
-        public void SendEmailPrompt(List<string> email, string ddtCode)
+        public void SendEmailPrompt(List<string> email, string ddtCode, string note)
         {
            try
             {
@@ -242,6 +243,53 @@ namespace RemaSoftware.UtilityServices.Implementation
                 throw new Exception("Errore durante l&#39;invio della mail per variazione prezzo DDT.");
             }
         }
+        
+        public bool SendEmailAttendance(string period, string email, string attendance)
+        {
+            try
+            {
+                MailMessage mailMessage = new MailMessage();
+                var mailAddressSender = _configuration["EmailConfig:EmailAddress"];
+                mailMessage.From = new MailAddress(mailAddressSender);
+                mailMessage.To.Add(new MailAddress(email));
+ 
+                mailMessage.Subject = "Resoconto Presenze Mensili";
+                mailMessage.IsBodyHtml = true;
+                string FilePath = "wwwroot/MailTemplate/mail-attendance.html";  
+                StreamReader str = new StreamReader(FilePath);  
+                string MailText = str.ReadToEnd();
+                str.Close();
+                
+                Attachment attachment = new Attachment(attendance);
+                mailMessage.Attachments.Add(attachment);
+                
+                MailText = MailText.Replace("[period]", period);
+
+                mailMessage.Body =  MailText;
+
+                SmtpClient client = new SmtpClient();
+                var mailPwd = _configuration["EmailConfig:Password"];
+                
+                client.Credentials = new System.Net.NetworkCredential(mailAddressSender, mailPwd);
+                client.Host = _configuration["EmailConfig:SmtpServer"];
+                client.Port = int.Parse(_configuration["EmailConfig:Port"]);
+                client.EnableSsl = true;
+                try
+                {
+                    client.Send(mailMessage);
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, "Errore durante l'invio della mail per il recupero della password.");
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Errore durante il processo di invio della mail per il recupero della password.");
+            }
+            return false;
+        }
 
         public bool SendEmailStock(int id, string name, string sku, string supplierName, string mail)
         {
@@ -293,6 +341,51 @@ namespace RemaSoftware.UtilityServices.Implementation
 
             return false;
         }
-    }
 
+        public void SendEmployeeAttendance(List<Employee> employees, List<string> email)
+        {
+            try
+            {
+                MailMessage mailMessage = new MailMessage();
+                var mailAddressSender = _configuration["EmailConfig:EmailAddress"];
+                mailMessage.From = new MailAddress(mailAddressSender);
+                mailMessage.To.Add(new MailAddress(email[0]));
+                for(int i = 1; i< email.Count; i++)
+                    mailMessage.CC.Add(email[i]);
+                mailMessage.Subject = "Resoconto mancate timbrature";
+                mailMessage.IsBodyHtml = true;
+                string FilePath = "wwwroot/MailTemplate/attendance-notify.html";  
+                StreamReader str = new StreamReader(FilePath);  
+                string MailText = str.ReadToEnd();  
+                str.Close();
+
+                string tmpName = null;
+                foreach(var item in employees)
+                {
+                    tmpName = tmpName + item.Name + " " + item.Surname + "</br>";
+                }
+                MailText = MailText.Replace("[Impiegati]", tmpName);  
+
+                mailMessage.Body =  MailText;
+                SmtpClient client = new SmtpClient();
+                var mailPwd = _configuration["EmailConfig:Password"];
+                client.Credentials = new System.Net.NetworkCredential(mailAddressSender, mailPwd);
+                client.Host = _configuration["EmailConfig:SmtpServer"];
+                client.Port = int.Parse(_configuration["EmailConfig:Port"]);
+                client.EnableSsl = true;
+                try
+                {
+                    client.Send(mailMessage);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, "Errore durante l'invio della mail per la comunicazione dell'account.");
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Errore durante l'invio della mail per la comunicazione dell'account.");
+            }
+        }
+    }
 }

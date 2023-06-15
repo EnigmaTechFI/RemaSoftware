@@ -87,10 +87,13 @@
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
-            <div class="modal-body">Sei sicuro di voler sollecitare questa DDT?</div>
+            <div class="modal-body">
+                Sei sicuro di voler sollecitare questa DDT?
+                <textarea class="form-control" style="margin-top: 10px;" id="note" placeholder="Inserisci nota qui" type="text"></textarea>
+            </div>            
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
-                <button class="btn btn-danger" onclick="SendPrompt()">Conferma</button>
+                <button class="btn btn-primary" onclick="SendPrompt()">Conferma</button>
             </div>
         </div>
     </div>
@@ -114,8 +117,11 @@
     }
     
     function SendPrompt() {
+        var noteValue = $("#note").val(); // Ottieni il valore della nota dalla textarea
+    
+        // Effettua la chiamata AJAX includendo il valore della nota nel parametro
         $.ajax({
-            url: '@Url.Action("PromptDdt", "Guest")?' + $.param({"id": ddtId}),
+            url: '@Url.Action("PromptDdt", "Guest")?' + $.param({"id": ddtId, "note": noteValue}),
             type: 'GET',
             success: function (data) {                    
                 if (data.result == true){
@@ -123,14 +129,14 @@
                     document.getElementById("sollecito-" + ddtId).remove();
                     document.getElementById("sollecito-text-" + ddtId).textContent = "SI"
                     toastNotifySuccess(data.error);
-                }else{
+                } else {
                     toastNotifyError(data.error);
                 }
             },
             error: function (data){
                 toastNotifyError(data.error);
             }
-        });  
+        });
     }
     
     $(document).ready( function () {

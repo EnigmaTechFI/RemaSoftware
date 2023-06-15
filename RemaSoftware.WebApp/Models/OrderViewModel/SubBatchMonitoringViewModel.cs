@@ -6,4 +6,6 @@ public class SubBatchMonitoringViewModel
 {
     public SubBatch SubBatch { get; set; }
     public string DdtSupplierUrl { get; set; }
+    public string BasePathImages { get; set; }
+
 }
