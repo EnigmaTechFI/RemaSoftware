@@ -4,6 +4,7 @@ using System.IO;
 using System.Net.Mail;
 using Microsoft.Extensions.Configuration;
 using NLog;
+using RemaSoftware.Domain.Models;
 using RemaSoftware.UtilityServices.Interface;
 
 namespace RemaSoftware.UtilityServices.Implementation
@@ -289,6 +290,51 @@ namespace RemaSoftware.UtilityServices.Implementation
             }
             return false;
         }
-    }
 
+        public void SendEmployeeAttendance(List<Employee> employees, List<string> email)
+        {
+            try
+            {
+                MailMessage mailMessage = new MailMessage();
+                var mailAddressSender = _configuration["EmailConfig:EmailAddress"];
+                mailMessage.From = new MailAddress(mailAddressSender);
+                mailMessage.To.Add(new MailAddress(email[0]));
+                for(int i = 1; i< email.Count; i++)
+                    mailMessage.CC.Add(email[i]);
+                mailMessage.Subject = "Resoconto mancate timbrature";
+                mailMessage.IsBodyHtml = true;
+                string FilePath = "wwwroot/MailTemplate/attendance-notify.html";  
+                StreamReader str = new StreamReader(FilePath);  
+                string MailText = str.ReadToEnd();  
+                str.Close();
+
+                string tmpName = null;
+                foreach(var item in employees)
+                {
+                    tmpName = tmpName + item.Name + " " + item.Surname + "</br>";
+                }
+                MailText = MailText.Replace("[Impiegati]", tmpName);  
+
+                mailMessage.Body =  MailText;
+                SmtpClient client = new SmtpClient();
+                var mailPwd = _configuration["EmailConfig:Password"];
+                client.Credentials = new System.Net.NetworkCredential(mailAddressSender, mailPwd);
+                client.Host = _configuration["EmailConfig:SmtpServer"];
+                client.Port = int.Parse(_configuration["EmailConfig:Port"]);
+                client.EnableSsl = true;
+                try
+                {
+                    client.Send(mailMessage);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, "Errore durante l'invio della mail per la comunicazione dell'account.");
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Errore durante l'invio della mail per la comunicazione dell'account.");
+            }
+        }
+    }
 }

@@ -11,6 +11,6 @@ namespace RemaSoftware.Domain.Services;
         public List<Attendance> getAttendanceById(int id, int mouth, int year);
         public Task UpdateAttendanceListWithPresence(List<string> userIdList, List<string> userClockList);
         public Attendance getOneAttendanceById(int attendanceid);
-
+        public List<Attendance> getAllAttendanceForDay();
     }
 

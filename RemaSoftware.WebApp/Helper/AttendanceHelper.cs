@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
+using RemaSoftware.Domain.Constants;
+using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
 using RemaSoftware.UtilityServices.Interface;
 using RemaSoftware.WebApp.DTOs;
@@ -16,12 +20,14 @@ public class AttendanceHelper
     private readonly IAttendanceService _attendanceService;
     private readonly IEmployeeService _employeeService;
     private readonly IEmailService _emailService;
+    private readonly UserManager<MyUser> _userManager;
 
-    public AttendanceHelper(IAttendanceService attendanceService, IEmployeeService employeeService, IEmailService emailService)
+    public AttendanceHelper(IAttendanceService attendanceService, UserManager<MyUser> userManager, IEmployeeService employeeService, IEmailService emailService)
     {
         _attendanceService = attendanceService;
         _employeeService = employeeService;
         _emailService = emailService;
+        _userManager = userManager;
     }
 
     public async Task DeleteAttendance(int attendanceId)
@@ -101,6 +107,7 @@ public class AttendanceHelper
 
             }
         }
+        await ControlFirstAttendance();
     }
 
     public void SendAttendance(int month, int year, string mail)
@@ -141,4 +148,35 @@ public class AttendanceHelper
         }
     }
 
+    public async Task ControlFirstAttendance()
+    {
+        List<Attendance> attendances = _attendanceService.getAllAttendanceForDay();
+        List<Employee> employees = _employeeService.GetAllEmployees();
+
+        List<Employee> employeesAttendance = new List<Employee>();
+
+        foreach (var employee in employees)
+        {
+            bool hasAttendance = false;
+
+            foreach (var attendance in attendances)
+            {
+                if (attendance.EmployeeID == employee.EmployeeID)
+                {
+                    hasAttendance = true;
+                }
+            }
+
+            if (!hasAttendance && DateTime.Now.TimeOfDay > new TimeSpan(7, 30, 0) && DateTime.Now.TimeOfDay < new TimeSpan(9, 30, 0))
+            {
+                employeesAttendance.Add(employee);
+            }
+        }
+
+        if (employeesAttendance.Count != 0)
+        {
+            var users = await _userManager.GetUsersInRoleAsync(Roles.Admin);
+            _emailService.SendEmployeeAttendance(employeesAttendance, users.Select(s => s.Email).ToList());   
+        }
+    }
 }

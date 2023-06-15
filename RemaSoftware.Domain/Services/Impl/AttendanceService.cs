@@ -2,8 +2,6 @@ using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Data;
-using System;
-using System.Text.RegularExpressions;
 
 namespace RemaSoftware.Domain.Services.Impl;
 
@@ -128,26 +126,31 @@ namespace RemaSoftware.Domain.Services.Impl;
 
                         // Calculate the total duration of attendances for the specified day
                         TimeSpan totalDuration = TimeSpan.Zero;
-                        var end = false;
+                        var controlend = false;
                         foreach (var attendance in getAttendanceByFluidaId(userIdList[i], existingAttendance.DateIn.Month, existingAttendance.DateIn.Year))
                         {
-                            if (attendance.DateIn.Date != null && attendance.DateOut?.Date != null && attendance.DateIn.Date == dateIn.Date && attendance.Type == "Presenza" && !end)
+                            if (attendance.DateIn.Date != null && attendance.DateOut?.Date != null && attendance.DateIn.Date == dateIn.Date && attendance.Type == "Presenza")
                             {
                                 totalDuration += (attendance.DateOut - attendance.DateIn) ?? TimeSpan.Zero;
-                                if (totalDuration <= TimeSpan.FromHours(1) ){
-                                    existingAttendance.DateOut = dateIn;
-                                    end = true;
-                                }
-                                else
-                                {
-                                    existingAttendance.DateOut = dateIn - (totalDuration - TimeSpan.FromDays(1));
-                                    end = true;
-                                }
+                                if (totalDuration == TimeSpan.FromHours(8))
+                                    controlend = true;
                             }
-                            else
+                        }
+                        totalDuration += dateIn - existingAttendance.DateIn;
+                        if (totalDuration <= TimeSpan.FromHours(8) || controlend){
+                            existingAttendance.DateOut = dateIn;
+                        }
+                        else
+                        {
+                            Attendance newAttendance = new Attendance
                             {
-                                existingAttendance.DateOut = dateIn;
-                            }
+                                DateIn = dateIn,
+                                DateOut = dateIn,
+                                EmployeeID = existingAttendance.EmployeeID,
+                                Type = "Eliminato"
+                            };
+                            existingAttendance.DateOut = dateIn.AddHours(-totalDuration.TotalHours + 8);
+                            _dbContext.Attendances.Add(newAttendance);
                         }
                     }
                     else
@@ -175,10 +178,19 @@ namespace RemaSoftware.Domain.Services.Impl;
                         }
                     }
 
-                    // Salva le modifiche nel database
                     _dbContext.SaveChanges();
                 }
             }
+        }
+        
+        public List<Attendance> getAllAttendanceForDay()
+        {
+            return _dbContext.Attendances
+                .Include(t => t.Employee)
+                .Where(i => i.DateIn.Date == DateTime.Now.Date)
+                .OrderBy(i => i.EmployeeID)
+                .ThenBy(i => i.DateIn)
+                .ToList();
         }
     }
 

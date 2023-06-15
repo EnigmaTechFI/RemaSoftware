@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using RemaSoftware.Domain.Models;
 
 namespace RemaSoftware.UtilityServices.Interface
 {
@@ -11,6 +12,6 @@ namespace RemaSoftware.UtilityServices.Interface
         void SendEmailPrompt(List<string> email, string ddtCode);
         public void SendEmailPriceVariation(string price, string mail, string message, string ddtCode, string cliente);
         public bool SendEmailAttendance(string period, string email, string attendance);
-
+        public void SendEmployeeAttendance(List<Employee> employees, List<string> email);
     }
 }
