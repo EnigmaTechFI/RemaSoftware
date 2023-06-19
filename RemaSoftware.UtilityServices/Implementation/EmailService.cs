@@ -166,7 +166,7 @@ namespace RemaSoftware.UtilityServices.Implementation
             return false;
         }
 
-        public void SendEmailPrompt(List<string> email, string ddtCode)
+        public void SendEmailPrompt(List<string> email, string ddtCode, string note)
         {
            try
             {
@@ -288,6 +288,57 @@ namespace RemaSoftware.UtilityServices.Implementation
             {
                 Logger.Error(e, "Errore durante il processo di invio della mail per il recupero della password.");
             }
+            return false;
+        }
+
+        public bool SendEmailStock(int id, string name, string sku, string supplierName, string mail)
+        {
+            try
+            {
+                MailMessage mailMessage = new MailMessage();
+                var mailAddressSender = _configuration["EmailConfig:EmailAddress"];
+                mailMessage.From = new MailAddress(mailAddressSender);
+                
+                mailMessage.To.Add(new MailAddress(mail));
+
+                mailMessage.Subject = "Prodotto magazzino sotto limite scorte";
+                mailMessage.IsBodyHtml = true;
+                string FilePath = "wwwroot/MailTemplate/under-limit.html";
+                StreamReader str = new StreamReader(FilePath);
+                string MailText = str.ReadToEnd();
+                str.Close();
+
+                MailText = MailText.Replace("[id]", id.ToString());
+                MailText = MailText.Replace("[name]", name);
+                MailText = MailText.Replace("[supplierName]", supplierName);
+                MailText = MailText.Replace("[sku]", sku);
+
+
+
+                mailMessage.Body = MailText;
+
+                SmtpClient client = new SmtpClient();
+                var mailPwd = _configuration["EmailConfig:Password"];
+
+                client.Credentials = new System.Net.NetworkCredential(mailAddressSender, mailPwd);
+                client.Host = _configuration["EmailConfig:SmtpServer"];
+                client.Port = int.Parse(_configuration["EmailConfig:Port"]);
+                client.EnableSsl = true;
+                try
+                {
+                    client.Send(mailMessage);
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, "Errore durante l'invio della mail per il recupero della password.");
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Errore durante il processo di invio della mail per il recupero della password.");
+            }
+
             return false;
         }
 

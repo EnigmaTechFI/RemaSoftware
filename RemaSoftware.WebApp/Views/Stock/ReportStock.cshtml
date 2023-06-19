@@ -1,0 +1,131 @@
+﻿@model RemaSoftware.WebApp.Models.StockViewModel.ReportStockViewModel
+
+@{
+    ViewData["Title"] = "Report";
+}
+<link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
+
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
+        <h3 class="m-0 font-weight-bold text-primary">Report magazzino</h3>
+    </div>
+    <div class="form-group form-inline" style="margin-top: 20px; margin-left: 20px;">
+      <label class="mr-3" for="month-filter">Filtro per mese:</label>
+      <select class="form-control mr-3" id="month-filter">
+        <option value="">Tutti</option>
+        <option value="01">Gennaio</option>
+        <option value="02">Febbraio</option>
+        <option value="03">Marzo</option>
+        <option value="04">Aprile</option>
+        <option value="05">Maggio</option>
+        <option value="06">Giugno</option>
+        <option value="07">Luglio</option>
+        <option value="08">Agosto</option>
+        <option value="09">Settembre</option>
+        <option value="10">Ottobre</option>
+        <option value="11">Novembre</option>
+        <option value="12">Dicembre</option>
+      </select>
+    
+      <label class="mr-3" for="year-filter">Filtro per anno:</label>
+      <select class="form-control" id="year-filter">
+        <option value="">Tutti</option>
+        <option value="2023">2023</option>
+        <option value="2024">2024</option>
+        <option value="2025">2025</option>
+      </select>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="table-stock" width="100%" cellspacing="0">
+                <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Ingresso/Uscita</th>
+                    <th>Numero Pezzi</th>
+                    <th>Codice</th>
+                    <th>Nome</th>
+                    <th>Codice Fornitore</th>
+                    <th>Fornitore</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var article in Model.StockHistories)
+                {
+                    <tr id="item-@article.Warehouse_StockID" form="form-@article.Warehouse_StockID">
+                        <td class="data-@article.Warehouse_StockID">@article.Date</td>
+                            @if(article.Entry){
+                                <td><i class="fas fa-circle fa-lg" style="color: green;"></i> Ingresso</td>
+                            }
+                            else
+                            {
+                                <td><i class="fas fa-circle fa-lg" style="color: red;"></i> Uscita</td>
+                            }
+                            <td class="npieces-@article.Warehouse_StockID">@article.Number_Piece</td>
+                        <td class="code-@article.Warehouse_StockID">@article.Warehouse_StockID</td>
+                        <td class="name-@article.Warehouse_StockID">@article.Warehouse_Stock.Name</td>
+                        <td class="productcode-@article.Warehouse_StockID">@article.Warehouse_Stock.Product_Code</td>
+                        <td class="supplier-@article.Warehouse_StockID">@article.Warehouse_Stock.Supplier.Name</td>
+
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts
+{
+    <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="~/js/dymo.connect.framework.js" type="text/javascript" charset="UTF-8"> </script>
+
+    <script>
+    var table;
+    $(document).ready( function () {
+        table = $('#table-stock').DataTable({
+            "language": {
+                "lengthMenu": "Mostra _MENU_ risultati per pagina",
+                "zeroRecords": "Nessun risultato trovato",
+                "info": "Pagina _PAGE_ di _PAGES_",
+                "infoEmpty": "Nessun risultato disponibile",
+                "infoFiltered": "(filtrato da _MAX_ risultati totali)",
+                "search": "Ricerca:",
+                "paginate": {
+                    "first": "Inizio",
+                    "previous": "Precedente",
+                    "next": "Successivo",
+                    "last": "Fine"
+                }
+            },
+            "columnDefs": [
+                { "searchable": true, "orderable": true, "targets": 0 },
+                { "searchable": true, "orderable": true, "targets": 1 },
+                { "searchable": true, "orderable": true, "targets": 2 },
+                { "searchable": true, "orderable": true, "targets": 3 },
+                { "searchable": true, "orderable": true, "targets": 4 },
+                { "searchable": true, "orderable": true, "targets": 5 },
+                { "searchable": true, "orderable": true, "targets": 6 },
+               
+              ]
+        });
+        
+        $('#month-filter').on('change', function () {
+            var month = $(this).val();
+            table.column(0).search("/"+month+"/", true, false).draw();
+        });
+        
+        $('#year-filter').on('change', function () {
+            var year = $(this).val();
+            table.column(0).search("/"+year, true, false).draw();
+        });
+        
+    });
+    </script>>
+}
+
+
+    

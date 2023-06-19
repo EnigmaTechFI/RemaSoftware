@@ -77,5 +77,9 @@ namespace RemaSoftware.Domain.Services.Impl
             }
         }
 
+        public List<Stock_History> GetReportStocks()
+        {
+            return _dbContext.Stock_Histories.Include(i => i.Warehouse_Stock).ThenInclude(t => t.Supplier).OrderBy(h => h.Date).ToList();
+        }
     }
 }

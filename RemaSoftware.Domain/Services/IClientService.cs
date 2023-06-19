@@ -11,5 +11,7 @@ namespace RemaSoftware.Domain.Services
         void UpdateClient(Client client);
         int GetClientIdByUserId(string id);
         List<Ddt_Template> GetDdts_Templates();
+        List<Ddt_In> ClientAccountingInfo(int Id);
+
     }
 }

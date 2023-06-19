@@ -19,6 +19,7 @@
                 <thead>
                 <tr>
                     <th>Cliente</th>
+                    <th>Codice</th>
                     <th>Data</th>
                     <th>DDT associate</th>
                     <th>N° Pezzi</th>
@@ -30,6 +31,7 @@
                 {
                     <tr id="ddt-@item.Id" style="cursor: pointer;">
                         <td>@item.Client</td>
+                        <td>@item.Code</td>
                         <td>@item.Date.ToString("dd/MM/yyyy")</td>
                         <td onclick="showDDT(@item.Id)">Visualizza DDT associate</td>
                         <td>@item.NumberPieces</td>
@@ -37,9 +39,12 @@
                             <a href="@item.Url" target="_blank" style="text-decoration: none">
                                 <i class="fas fa-print fa-lg pl-2" title="Stampa ddt" style="cursor: pointer; color: #6d767e"></i>
                             </a>
-                            <a style="text-decoration: none" onclick="setDDTToDeleteID(@item.Id)">
-                                <i class="fas fa-trash fa-lg pl-2" style="cursor: pointer; color: #6d767e;" title="Elimina DDT"></i>
-                            </a>
+                            @if (item.Id != 0)
+                            {
+                                <a style="text-decoration: none" onclick="setDDTToDeleteID(@item.Id)">
+                                    <i class="fas fa-trash fa-lg pl-2" style="cursor: pointer; color: #6d767e;" title="Elimina DDT"></i>
+                                </a>
+                            }
                         </td>
                     </tr>
                 }
@@ -93,10 +98,14 @@
 
 @section Scripts
 {
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/js/select2.min.js" integrity="sha512-9p/L4acAjbjIaaGXmZf0Q2bV42HetlCLbv8EP0z3rLbQED2TAFUlDvAezy7kumYqg5T8jHtDdlm1fgIsr5QzKg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdn.datatables.net/plug-ins/1.10.11/sorting/date-eu.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
     <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
 
-    <script>
+     <script>
     const ddts = @Json.Serialize(Model.DdtOuts)
     function showDDT(ddt_Out_ID) {
         var ddt = ddts.filter(obj => {
@@ -157,13 +166,22 @@
             "product": [[0, 'asc']],
             "columnDefs": [
                 { "searchable": true, "orderable": true, "targets": 0 },
-                { "searchable": false, "orderable": true, "targets": 1 },
-                { "searchable": false, "orderable": false, "targets": 2 },
-                { "searchable": false, "orderable": true, "targets": 3 },
-                { "searchable": false, "orderable": false, "targets": 4 },
+                { "searchable": true, "orderable": true, "targets": 1 },
+                { "searchable": false, "orderable": true, "targets": 2, "type": "date-eu" },
+                { "searchable": false, "orderable": false, "targets": 3 },
+                { "searchable": false, "orderable": true, "targets": 4 },
+                { "searchable": false, "orderable": false, "targets": 5 },
               ]
         });
     });
+    
+    function formatDate(timestamp){
+        var x=new Date(timestamp);
+        var dd = x.getDate();
+        var mm = x.getMonth()+1;
+        var yy = x.getFullYear();
+        return dd +"/" + mm+"/" + yy;
+     }
 
     </script>
 }

@@ -9,5 +9,6 @@ namespace RemaSoftware.WebApp.Models.StockViewModel
         public List<Supplier> Suppliers { get; set; }
         
         public List<Stock_History> Stock_Histories { get; set; }
+        public List<string> UnitMeasure { get; set; }
     }
 }

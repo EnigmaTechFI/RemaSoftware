@@ -40,6 +40,9 @@ namespace RemaSoftware.Domain.Models
         public string Description { get; set; }
         public SubBatch SubBatch { get; set; }
         public bool IsPrompted { get; set; }
+        
+        [MaxLength(500)]
+        public string Client_Note { get; set; }
         public decimal TotalPriority => (DateTime.Now.DayOfYear - this.DataOut.DayOfYear) * this.Priority;
         public bool PriceIsPending { get; set; }
         public decimal PendingPrice { get; set; }

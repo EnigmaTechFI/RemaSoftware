@@ -145,6 +145,8 @@ namespace RemaSoftware.WebApp
             services.AddTransient<StockValidation>();
             services.AddTransient<EmployeeValidation>();
 
+            
+            services.AddScoped<RemaSoftware.UtilityServices.Implementation.EmailService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationDbContext context, UserManager<MyUser> userManager, RoleManager<IdentityRole> roleManager)

@@ -1,0 +1,153 @@
+@model RemaSoftware.WebApp.Models.AccountingViewModel.ClientAccountingViewModel
+
+<!DOCTYPE html>
+
+<head>
+    @{
+        ViewData["Title"] = "Contabilità cliente";
+    }
+</head>
+<link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css" />
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Contabilità @Model.Ddts_In.First().Product.Client.Name</h1>
+</div>
+
+<div class="card shadow mb-4" id="order-summ-content">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Resoconto contabilità attuale</h6>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12 h5">
+                Totale pezzi in azienda: <b>@Model.Ddts_In.Sum(t => t.Number_Piece_Now)</b>
+            </div>
+        </div>
+        <br />
+
+        <div class="row">
+            <div class="col-12 h5">
+                Totale fatturato in azienda: <b>
+                    @{
+                        decimal multiplicationResult1 = 0;
+                        @foreach (var cost in Model.Ddts_In)
+                        {
+                            multiplicationResult1 += cost.Number_Piece_Now * cost.Price_Uni;
+                        }
+                    }
+                    @multiplicationResult1&#8364;
+                </b>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow mb-4" id="order-summ-content">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Resoconto contabilità filtrata</h6>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="month-select">Seleziona il mese:</label>
+                    <select id="month-select" class="form-control">
+                        <option value="00">Nessuno</option>
+                        <option value="01">Gennaio</option>
+                        <option value="02">Febbraio</option>
+                        <option value="03">Marzo</option>
+                        <option value="04">Aprile</option>
+                        <option value="05">Maggio</option>
+                        <option value="06">Giugno</option>
+                        <option value="07">Luglio</option>
+                        <option value="08">Agosto</option>
+                        <option value="09">Settembre</option>
+                        <option value="10">Ottobre</option>
+                        <option value="11">Novembre</option>
+                        <option value="12">Dicembre</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="year-select">Seleziona l'anno:</label>
+                    <select id="year-select" class="form-control">
+                        <option value="2023">2023</option>
+                        <option value="2024">2024</option>
+                        <option value="2025">2025</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 h5">
+                Totale pezzi: <b><span id="total-pieces">@Model.Ddts_In.Where(u => u.DataIn.Year == DateTime.Today.Year).Sum(t => t.Number_Piece)</span></b>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-12 h5">
+                Totale fatturato: <b><span id="total-revenue">
+                     @{
+                         decimal multiplicationResult2 = 0;
+                         @foreach (var cost in Model.Ddts_In)
+                         {
+                             if (cost.DataIn.Year == DateTime.Today.Year)
+                             {
+                                 multiplicationResult2 += cost.Number_Piece_Now * cost.Price_Uni;
+                             } 
+                         }
+                     }
+                     @multiplicationResult2&#8364;
+                 </span></b>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateValues() {
+         var selectedMonth = document.getElementById("month-select").value;
+         var selectedYear = document.getElementById("year-select").value;
+
+        $.ajax({
+            url: "/Accounting/GetPiecesForPeriod",
+            type: "GET",
+            data: {
+                selectedMonth: selectedMonth,
+                selectedYear: selectedYear,
+                id: @Model.Ddts_In.First().Product.ClientID
+            },
+            success: function (response) {
+                var totalPieces = response;
+                document.getElementById("total-pieces").textContent = totalPieces;
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+            }
+        });
+        
+        $.ajax({
+            url: "/Accounting/GetPriceForPeriod",
+            type: "GET",
+            data: {
+                selectedMonth: selectedMonth,
+                selectedYear: selectedYear,
+                id: @Model.Ddts_In.First().Product.ClientID
+            },
+            success: function (response) {
+                var totalPrice = response;
+                document.getElementById("total-revenue").textContent = totalPrice.toFixed(2) + "€";
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+            }
+        });
+    }
+
+    window.onload = (event) => {
+        // Aggiungi event listener per l'evento change alle dropdown
+        document.getElementById("month-select").addEventListener("change", updateValues);
+        document.getElementById("year-select").addEventListener("change", updateValues);
+    };
+</script>

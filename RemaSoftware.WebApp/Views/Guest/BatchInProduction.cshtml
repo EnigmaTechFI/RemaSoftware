@@ -10,9 +10,6 @@
 <div class="card shadow mb-4" id="order-summ-content">
     <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
         <h3 class="m-0 font-weight-bold text-primary">Lotti in produzione</h3>
-        @*<div>
-            <button class="btn btn-primary" type="button" onclick="location.href='@Url.Action("NewProduct", "Product")'">Nuovo prodotto</button>
-        </div>*@
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -31,13 +28,13 @@
                 @foreach (var batch in Model.SubBatches)
                 {
                     <tr style="cursor: pointer;">
-                        <td>@batch.SubBatchID</td>
-                        <td>@batch.Ddts_In[0].Product.SKU</td>
-                        <td onclick="showDDT(@batch.SubBatchID)">Visualizza DDT associate</td>
-                        <td>@batch.Ddts_In.Sum(s=> s.Number_Piece)</td>
-                        <td>@batch.Ddts_In.Sum(s=> s.Number_Piece_Now + s.Number_Piece_ToSupplier)</td>
+                        <td>@batch.Id</td>
+                        <td>@batch.Product</td>
+                        <td onclick="showDDT(@batch.Id)">Visualizza DDT associate</td>
+                        <td>@batch.NumberPieces</td>
+                        <td>@batch.NumberPiecesNow</td>
                         <td class="text-center">
-                            <a style="text-decoration: none" asp-controller="Guest" asp-action="SubBatchMonitoring" asp-route-id="@batch.SubBatchID">
+                            <a style="text-decoration: none" asp-controller="Guest" asp-action="SubBatchMonitoring" asp-route-id="@batch.Id">
                                 <i class="fas fa-eye fa-lg pl-2" title="Visualizza avanzamento" style="cursor: pointer; color: #6d767e"></i>
                             </a>
                         </td>
@@ -49,14 +46,7 @@
         
         <div class="row">
             <div class="col-12 h5">
-                @{
-                    var tot = 0;
-                    foreach (var item in @Model.SubBatches)
-                    {
-                        tot += item.Ddts_In.Sum(s => s.Number_Piece_Now);
-                    }
-                }
-                Totale pezzi in produzione: <b>@tot</b>
+                Totale pezzi in produzione: <b>@Model.SubBatches.Sum(s => s.NumberPiecesNow)</b>
             </div>
         </div>
     </div>
@@ -90,12 +80,11 @@
     const batches = @Json.Serialize(Model.SubBatches)
     function showDDT(subbatchId) {
         var batch = batches.filter(obj => {
-          return obj.subBatchID === subbatchId
+          return obj.id === subbatchId
         })
         var ddt_list = ""
-        batch[0].ddts_In.forEach(function(ddt) {
-            var date = new Date(ddt.dataOut)
-            ddt_list = ddt_list +"<strong>Codice: </strong>"+ ddt.code + " - <strong>Arrivo: </strong>" + date.getDate() +"/" + (parseInt(date.getMonth()) + 1) + "/" + date.getFullYear() + "<strong> - Pezzi: </strong>" + ddt.number_Piece_Now + "<br/>"
+        batch[0].ddt_In.forEach(function(ddt) {
+            ddt_list = ddt_list +"<strong>Codice: </strong>"+ ddt.code + " - <strong>Arrivo: </strong>" + ddt.date + "<strong> - Pezzi: </strong>" + ddt.nowPieces + "<br/>"
         })
         $("#ddt_associate").modal('show');
         document.getElementById("batch_ddt").innerHTML = ddt_list

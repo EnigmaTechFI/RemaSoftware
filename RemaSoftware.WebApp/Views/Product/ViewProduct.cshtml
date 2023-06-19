@@ -1,0 +1,106 @@
+@model RemaSoftware.WebApp.Models.ProductViewModel.ProductViewModel
+
+@{
+    ViewData["Title"] = "Prodotto";
+}
+
+<link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
+
+<h4 class="m-0 font-weight-bold text-primary mb-3">Informazioni prodotto</h4>
+<div class="row">
+    <div class="col-md-6 col-xl-6 mb-4">
+        <div class="row mb-5" style="height: 150px;">
+            <div class="col-xl-6 col-md-6 mb-6">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Nome</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Product.Name</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-info fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6 col-md-6 mb-6">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Codice prodotto</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Product.SKU</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-barcode fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="height: 150px;">
+            <div class="col-xl-6 col-md-6 mb-6">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Pezzi in azienda</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Product.Ddts_In.Sum(s=> s.Number_Piece_Now)</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-hashtag fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6 col-md-6 mb-6">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Cliente</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Product.Client.Name</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-info fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+     <div class="col-md-6 col-xl-6 mb-6">
+            <div class="row">
+                <div class="col-xl-12 col-md-12 mb-6">
+                    <div class="card border-left-primary shadow h-100" style="padding: 12px;">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Immagine Prodotto</div>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="panel-body">
+                                        <div id="order-img-div"><img src="@Model.BasePathImages@Model.Product.FileName" width="376" height="282" style="border-radius: 20px; "/></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+    
+</div>
+
+
+

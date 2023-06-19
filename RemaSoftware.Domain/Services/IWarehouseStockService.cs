@@ -10,5 +10,7 @@ namespace RemaSoftware.Domain.Services
         Warehouse_Stock GetStockArticleById(int stockArticleId);
         bool UpdateStockArticle(Warehouse_Stock stockArticle);
         bool UpdateStockQuantity(Warehouse_Stock stockArticle, int quantity, int addOrRemove);
+        List<Stock_History> GetReportStocks();
     }
+    
 }

@@ -34,8 +34,8 @@ namespace RemaSoftware.WebApp.Models.ClientViewModel
         public string SDI { get; set; }
         [MaxLength(50)]
         public string Pec { get; set; }
-        public int Ddt_TemplateID { get; set; }
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]
+        public int Ddt_TemplateID { get; set; }
         public List<Ddt_Template> Ddt_Templates { get; set; }
     }
 }

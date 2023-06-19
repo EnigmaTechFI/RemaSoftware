@@ -117,12 +117,16 @@ public class GuestController : Controller
     }
     
     [HttpGet]
-    public async Task<JsonResult> PromptDdt(int id)
+    public async Task<JsonResult> PromptDdt(int id, string note)
     {
         try
         {
+            if (note.Length > 500)
+            {
+                return new JsonResult(new {Result = true, Error = "Errore, nota troppo lunga. Si prega di riprovare."});
+            }
             var users = await _userManager.GetUsersInRoleAsync(Roles.Admin);
-            _guestHelper.SendPrompt(id, users, (await _userManager.GetUserAsync(this.User)).Id);
+            _guestHelper.SendPrompt(id, users, (await _userManager.GetUserAsync(this.User)).Id, note);
             return new JsonResult(new {Result = true, Error = "DDT sollecitata correttamente."});
         }
         catch (Exception e)

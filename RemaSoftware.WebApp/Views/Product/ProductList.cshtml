@@ -41,6 +41,9 @@
                             <a style="text-decoration: none" asp-action="UpdateProduct" asp-controller="Product" asp-route-productId="@product.ProductID">
                                 <i class="fas fa-pen fa-lg pl-2" title="Modifica prodotto" style="cursor: pointer; color:  #6d767e;"></i>
                             </a>
+                            <a style="text-decoration: none" asp-action="ViewProduct" asp-controller="Product" asp-route-id="@product.ProductID">
+                                <i class="fas fa-eye fa-lg pl-2" title="Visualizza prodotto" style="cursor: pointer; color:  #6d767e;"></i>
+                            </a>
                         </td>
                     </tr>
                 }

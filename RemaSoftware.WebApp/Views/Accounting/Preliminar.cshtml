@@ -21,6 +21,7 @@
                     <th>Lotto</th>
                     <th>Cliente</th>
                     <th>Codice prodotto</th>
+                    <th>Numero sotto lotti</th>
                     <th>Azioni</th>
                 </tr>
                 </thead>
@@ -31,6 +32,7 @@
                         <td>@batch.BatchId</td>
                         <td>@batch.SubBatches[0].Ddts_In[0].Product.Client.Name</td>
                         <td>@batch.SubBatches[0].Ddts_In[0].Product.SKU</td>
+                        <td>@batch.SubBatches.Count()</td>
                         <td class="text-center">
                             
                             <a asp-action="BatchAnalysis" asp-controller="Accounting" asp-route-id="@batch.BatchId">
@@ -43,9 +45,6 @@
             </table>
         </div>
     </div>
-</div>
-<div class="text-center m-2">
-    <a class="btn btn-primary text-white" asp-action="StockSummary" asp-controller="Order" type="button">Prelievi da magazzino</a>
 </div>
 
 <div class="modal fade" id="ddt_associate" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -119,7 +118,8 @@
                 { "searchable": true, "orderable": true, "targets": 0 },
                 { "searchable": true, "orderable": true, "targets": 1 },
                 { "searchable": true, "orderable": true, "targets": 2 },
-                { "searchable": false, "orderable": false, "targets": 3 },
+                { "searchable": false, "orderable": true, "targets": 3 },
+                { "searchable": false, "orderable": false, "targets": 4 },
               ]
         });
         

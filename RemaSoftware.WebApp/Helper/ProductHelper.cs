@@ -16,18 +16,14 @@ namespace RemaSoftware.WebApp.Helper
         private readonly IProductService _productService;
         private readonly IImageService _imageService;
         private readonly IConfiguration _configuration;
-        private readonly ClientHelper _clientHelper;
         private readonly ProductValidation _productValidation;
-        private readonly SubBatchHelper _subBatchHelper;
 
-        public ProductHelper(IProductService productService, IImageService imageService, IConfiguration configuration, ClientHelper clientHelper, ProductValidation productValidation, SubBatchHelper subBatchHelper)
+        public ProductHelper(IProductService productService, IImageService imageService, IConfiguration configuration, ProductValidation productValidation)
         {
             _productService = productService;
             _imageService = imageService;
             _configuration = configuration;
-            _clientHelper = clientHelper;
             _productValidation = productValidation;
-            _subBatchHelper = subBatchHelper;
         }
 
         public Product GetProductById(int productId)

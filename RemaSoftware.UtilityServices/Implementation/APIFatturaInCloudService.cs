@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using It.FattureInCloud.Sdk.Api;
 using It.FattureInCloud.Sdk.Client;
 using It.FattureInCloud.Sdk.Model;
@@ -129,7 +130,7 @@ namespace RemaSoftware.UtilityServices.Implementation
             }
         }
 
-        public (string, int) CreateDdtInCloud(Ddt_Out ddtOut)
+        public async Task<(string, int, string)> CreateDdtInCloud(Ddt_Out ddtOut)
         {
             Logger.Info("Inizio invio a ApiFattureInCloud");
             Configuration config = new Configuration();
@@ -209,13 +210,15 @@ namespace RemaSoftware.UtilityServices.Implementation
             };
             try
             {
-                CreateIssuedDocumentResponse result = apiInstance.CreateIssuedDocument(Int32.Parse(companyId), createIssuedDocumentRequest);
-                return (result.Data.DnUrl, result.Data.Id.Value);
+                CreateIssuedDocumentResponse result = await apiInstance.CreateIssuedDocumentAsync(Int32.Parse(companyId), createIssuedDocumentRequest);
+                if (result.Data.Id.HasValue)
+                    return (result.Data.DnUrl, result.Data.Id.Value, $"{result.Data.Number}/{DateTime.Now.Year}");
+                return (result.Data.DnUrl, 0, $"{result.Data.Number}/{DateTime.Now.Year}");
             }
             catch (ApiException  e)
             {
                 Logger.Error("Exception when calling IssuedDocumentsApi.CreateIssuedDocument: " + e.Message);
-                throw e;
+                throw new Exception("Errore durante la creazione della ddt. Si prega di riprovare.");
             }
         }
 

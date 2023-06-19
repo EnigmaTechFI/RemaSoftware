@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using RemaSoftware.Domain.Models;
 
 namespace RemaSoftware.UtilityServices.Interface
@@ -10,7 +11,7 @@ namespace RemaSoftware.UtilityServices.Interface
         public string DeleteOrder(string productId);
         public int AddClientCloud(Client client);
         public void UpdateClientCloud(Client client);
-        public (string, int) CreateDdtInCloud(Ddt_Out ddtOut);
+        public Task<(string, int, string)> CreateDdtInCloud(Ddt_Out ddtOut);
         public void DeleteDdtInCloudById(int id);
         public List<Supplier> GetListSuppliers();
         (string,string, int) CreateDdtSupplierCloud(Ddt_Supplier ddtSupplier, Supplier supplier);

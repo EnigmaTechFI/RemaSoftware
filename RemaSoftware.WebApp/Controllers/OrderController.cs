@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -236,11 +237,11 @@ namespace RemaSoftware.WebApp.Controllers
         }
         [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpGet]
-        public IActionResult EmitDDT(int id)
+        public async Task<IActionResult> EmitDDT(int id)
         {
             try
             {
-                return RedirectToAction("BatchInDelivery", new {pdfUrl = _orderHelper.EmitDDT(id)}); 
+                return RedirectToAction("BatchInDelivery", new {pdfUrl = await _orderHelper.EmitDDT(id)}); 
             }
             catch (Exception e)
             {
@@ -320,11 +321,11 @@ namespace RemaSoftware.WebApp.Controllers
         
         [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpPost]
-        public IActionResult PartialDDT(PartialDDTViewModel model)
+        public async Task<IActionResult> PartialDDT(PartialDDTViewModel model)
         {
             try
             {
-                return RedirectToAction("BatchInDelivery", new {pdfUrl = _orderHelper.EmitPartialDdtIn(model)});
+                return RedirectToAction("BatchInDelivery", new {pdfUrl = await _orderHelper.EmitPartialDdtIn(model)});
             }
             catch (Exception e)
             {

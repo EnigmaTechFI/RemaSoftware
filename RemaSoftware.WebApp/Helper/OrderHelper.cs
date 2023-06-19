@@ -5,6 +5,8 @@ using RemaSoftware.Domain.Data;
 using RemaSoftware.WebApp.Models.OrderViewModel;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using NLog;
 using QRCoder;
 using RemaSoftware.Domain.Constants;
@@ -28,10 +30,11 @@ namespace RemaSoftware.WebApp.Helper
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly ISupplierService _supplierService;
         private IClientService _clientService;
+        private readonly IConfiguration _configuration;
 
         public OrderHelper(IOrderService orderService, IAPIFatturaInCloudService apiFatturaInCloudService,
             ApplicationDbContext dbContext, IProductService productService, ISubBatchService subBatchService,
-            IOperationService operationService, IEmailService emailService, ProductionHub productionHub, IAPIFatturaInCloudService apiFatturaInCloud, ISupplierService supplierService, IClientService clientService)
+            IOperationService operationService, IEmailService emailService, ProductionHub productionHub, IAPIFatturaInCloudService apiFatturaInCloud, ISupplierService supplierService, IClientService clientService, IConfiguration configuration)
         {
             _orderService = orderService;
             _apiFatturaInCloudService = apiFatturaInCloudService;
@@ -44,6 +47,7 @@ namespace RemaSoftware.WebApp.Helper
             _apiFatturaInCloud = apiFatturaInCloud;
             _supplierService = supplierService;
             _clientService = clientService;
+            _configuration = configuration;
         }
 
         public Ddt_In GetDdtInById(int id)
@@ -57,7 +61,8 @@ namespace RemaSoftware.WebApp.Helper
             return new SubBatchMonitoringViewModel()
             {
                 DdtSupplierUrl = url,
-                SubBatch = _subBatchService.GetSubBatchById(id)
+                SubBatch = _subBatchService.GetSubBatchById(id),
+                BasePathImages = $"{_configuration["ApplicationUrl"]}{_configuration["ImagesEndpoint"]}order/"
             };
         }
 
@@ -283,14 +288,17 @@ namespace RemaSoftware.WebApp.Helper
             }
             catch (Exception e)
             {
-                throw new Exception("Errore nel recuper del lotto.");
+                throw new Exception("Errore nel recupero del lotto.");
             }
 
             if (subBatch.OperationTimelines != null && subBatch.OperationTimelines.Where(s => s.MachineId != null).ToList().Any(s =>
                     s.MachineId == 99 && s.Status == OrderStatusConstants.STATUS_ARRIVED))
                 throw new Exception("Lotto già registrato al controllo qualità.");
-            if (subBatch.Status == OrderStatusConstants.STATUS_COMPLETED)
+            if (subBatch.Status == OrderStatusConstants.STATUS_COMPLETED ||
+                subBatch.Status == OrderStatusConstants.STATUS_COMPLETED)
                 throw new Exception("Lotto già completato.");
+            if (subBatch.Ddts_In.Sum(s => s.Number_Piece_Now) <= 0)
+                throw new Exception("Nessun pezzo attualmente in azienda.");
 
             if (subBatch != null)
             {
@@ -373,18 +381,20 @@ namespace RemaSoftware.WebApp.Helper
                         ddt_out_id = ddts_out[0].Ddt_Out_ID;
                     }
 
+                        
                     foreach (var item in subBatch.Ddts_In.OrderBy(s => s.DataIn).ToList())
                     {
                         item.Ddt_Associations ??= new List<Ddt_Association>();
-
-                        if (item.NumberMissingPiece > 0 && item.Ddt_Associations.Count == 0)
+                        var missingPiecesEmitted = item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.MANCANTI)
+                            .Sum(s => s.NumberPieces);
+                        if (item.NumberMissingPiece > 0 && missingPiecesEmitted < item.NumberMissingPiece)
                         {
                             item.Ddt_Associations.Add(new Ddt_Association()
                             {
                                 Date = now,
                                 Ddt_In_ID = item.Ddt_In_ID,
                                 Ddt_Out_ID = ddt_out_id,
-                                NumberPieces = item.NumberMissingPiece,
+                                NumberPieces = item.NumberMissingPiece - missingPiecesEmitted,
                                 TypePieces = PiecesType.MANCANTI
                             });
                         }
@@ -532,7 +542,7 @@ namespace RemaSoftware.WebApp.Helper
             return _orderService.GetDdtOutsByStatus(DDTOutStatus.STATUS_PENDING);
         }
 
-        public string EmitDDT(int id)
+        public async Task<string> EmitDDT(int id)
         {
 
             var ddtOut = _orderService.GetDdtOutById(id);
@@ -557,10 +567,12 @@ namespace RemaSoftware.WebApp.Helper
                 throw new Exception($"Attenzione contattare l&#39;amministrazione! Le seguenti DDT hanno il prezzo da confermare: {ddts}");
             }
 
-            var result = _apiFatturaInCloudService.CreateDdtInCloud(ddtOut);
+            var result = await _apiFatturaInCloudService.CreateDdtInCloud(ddtOut);
             ddtOut.Status = DDTOutStatus.STATUS_EMITTED;
             ddtOut.FC_Ddt_Out_ID = result.Item2;
             ddtOut.Url = result.Item1;
+            ddtOut.Code = result.Item3;
+
             try
             {
                 _orderService.UpdateDdtOut(ddtOut);
@@ -588,7 +600,8 @@ namespace RemaSoftware.WebApp.Helper
                     NumberPieces = item.Ddt_Associations.Sum(s => s.NumberPieces),
                     DdtWithPieces = new List<(string, int)>(),
                     Client = item.Ddt_Associations[0].Ddt_In.Product.Client.Name,
-                    Date = item.Date
+                    Date = item.Date,
+                    Code = item.Code
                 };
                 foreach (var entity in item.Ddt_Associations)
                 {
@@ -676,14 +689,14 @@ namespace RemaSoftware.WebApp.Helper
             };
         }
 
-        public string EmitPartialDdtIn(PartialDDTViewModel model)
+        public async Task<string> EmitPartialDdtIn(PartialDDTViewModel model)
         {
             using (var transaction = _dbContext.Database.BeginTransaction())
             {
                 try
                 {
                     if (model.PartialDdtDtos.All(s => s.ToEmit))
-                        return EmitDDT(model.DdtId);
+                        return await EmitDDT(model.DdtId);
                     if (model.PartialDdtDtos.Any(s => s.ToEmit))
                     {
                         var ddtOut = _orderService.CreateDDTOut(new Ddt_Out()
@@ -698,11 +711,11 @@ namespace RemaSoftware.WebApp.Helper
                         {
                             _orderService.UpdateDdtAssociationByIdWithNewDdtOut(item.DdtAssociation.ID, ddtOut.Ddt_Out_ID);
                         }
-                        var result = EmitDDT(ddtOut.Ddt_Out_ID);
+                        var result = await EmitDDT(ddtOut.Ddt_Out_ID);
                         transaction.Commit();
                         return result;
                     }
-
+                    transaction.Commit();
                     return "";
                 }
                 catch (Exception e)
@@ -968,6 +981,7 @@ namespace RemaSoftware.WebApp.Helper
             {
                 try
                 {
+                    
                     var ddtSupplier = _orderService.GetDdtSupplierById(model.DDTSupplierId);
                     if (model.LostPieces + model.WastePieces + model.OkPieces > ddtSupplier.Number_Piece)
                         throw new Exception("Il totale dei pezzi inserito è maggiore dei pezzi attualmente in azienda.");
@@ -978,6 +992,7 @@ namespace RemaSoftware.WebApp.Helper
                     ddtSupplier.NumberWastePiece += model.WastePieces;
                     ddtSupplier.Number_Piece -= (model.OkPieces + model.LostPieces + model.WastePieces);
                     var ddts = new List<Ddt_In>();
+                    
                     foreach (var item in ddtSupplier.DdtSupplierAssociations)
                     {
                         if (item.Ddt_In.Number_Piece_ToSupplier > 0)
@@ -985,6 +1000,7 @@ namespace RemaSoftware.WebApp.Helper
                             ddts.Add(item.Ddt_In);
                         }
                     }
+                    
                     ddts = ddts.OrderBy(s => s.DataIn).ToList();
                     var now = DateTime.Now;
                     var ddt_out_id = 0;

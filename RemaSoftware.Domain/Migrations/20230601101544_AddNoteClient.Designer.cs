@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RemaSoftware.Domain.Data;
 
@@ -11,9 +12,10 @@ using RemaSoftware.Domain.Data;
 namespace RemaSoftware.Domain.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230601101544_AddNoteClient")]
+    partial class AddNoteClient
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -224,33 +226,6 @@ namespace RemaSoftware.Domain.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("RemaSoftware.Domain.Models.Attendance", b =>
-                {
-                    b.Property<int>("AttendanceID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AttendanceID"), 1L, 1);
-
-                    b.Property<DateTime>("DateIn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DateOut")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("EmployeeID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("AttendanceID");
-
-                    b.HasIndex("EmployeeID");
-
-                    b.ToTable("Attendances");
                 });
 
             modelBuilder.Entity("RemaSoftware.Domain.Models.Batch", b =>
@@ -647,79 +622,6 @@ namespace RemaSoftware.Domain.Migrations
                     b.ToTable("Ddt_Templates");
                 });
 
-            modelBuilder.Entity("RemaSoftware.Domain.Models.Employee", b =>
-                {
-                    b.Property<int>("EmployeeID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmployeeID"), 1L, 1);
-
-                    b.Property<DateTime>("BirthDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("BirthPlace")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime>("EndRelationship")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FluidaId")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<int>("Level")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<int>("NumberHour")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("StartRelationship")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Surname")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Task")
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
-
-                    b.Property<string>("TaxID")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("TypePosition")
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
-
-                    b.Property<string>("TypeRelationship")
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
-
-                    b.Property<string>("number")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.HasKey("EmployeeID");
-
-                    b.ToTable("Employees");
-                });
-
             modelBuilder.Entity("RemaSoftware.Domain.Models.Label", b =>
                 {
                     b.Property<int>("Id")
@@ -1096,17 +998,6 @@ namespace RemaSoftware.Domain.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("RemaSoftware.Domain.Models.Attendance", b =>
-                {
-                    b.HasOne("RemaSoftware.Domain.Models.Employee", "Employee")
-                        .WithMany("Attendances")
-                        .HasForeignKey("EmployeeID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Employee");
-                });
-
             modelBuilder.Entity("RemaSoftware.Domain.Models.BatchOperation", b =>
                 {
                     b.HasOne("RemaSoftware.Domain.Models.Batch", "Batch")
@@ -1338,11 +1229,6 @@ namespace RemaSoftware.Domain.Migrations
             modelBuilder.Entity("RemaSoftware.Domain.Models.Ddt_Supplier", b =>
                 {
                     b.Navigation("DdtSupplierAssociations");
-                });
-
-            modelBuilder.Entity("RemaSoftware.Domain.Models.Employee", b =>
-                {
-                    b.Navigation("Attendances");
                 });
 
             modelBuilder.Entity("RemaSoftware.Domain.Models.Operation", b =>
