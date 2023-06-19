@@ -1,4 +1,5 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers
+@using RemaSoftware.Domain.Models
 @model RemaSoftware.WebApp.Models.OrderViewModel.NewOrderViewModel
 
 @{
@@ -45,12 +46,21 @@
             <div class="form-group">
                 <label for="formGroupExampleInput">Seleziona priorità</label>
                 <select asp-for="Ddt_In.Priority" class="form-control">
-                  <option value="0">Minore</option>
-                  <option selected="selected" value="1">Normale</option>
-                  <option value="2">Maggiore</option>
-                  <option value="3">Critica</option>
-                  <option value="4">Bloccante</option>
+                    <option value="0">Minore</option>
+                    <option selected="selected" value="1">Normale</option>
+                    <option value="2">Maggiore</option>
+                    <option value="3">Critica</option>
+                    <option value="4">Bloccante</option>
                 </select>
+            </div>
+            <div class="form-group">
+                <label for="desc">Data di consegna</label>
+                <div class='input-group date'>
+                    <input placeholder="Seleziona data di consegna" type='text' class="form-control bg-white" id='datetimepicker1' asp-for="Ddt_In.DataOut" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
             </div>
             <div class="form-group">
                 <label for="desc">Descrizione</label>
