@@ -636,6 +636,7 @@ namespace RemaSoftware.WebApp.Helper
                     ddt.Code = model.Ddt_In.Code;
                     ddt.Number_Piece_Now = model.Ddt_In.Number_Piece_Now;
                     ddt.Number_Piece = model.Ddt_In.Number_Piece;
+                    ddt.DataOut = model.Ddt_In.DataOut;
                     if (model.Ddt_In.NumberMissingPiece > 0 &&
                         ddt.NumberMissingPiece != model.Ddt_In.NumberMissingPiece)
                     {

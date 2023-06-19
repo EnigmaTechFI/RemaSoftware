@@ -424,17 +424,20 @@
         function AllEmployeeAttendanceId(elementName){
             $(elementName).data("employeeId", null);
         }
-                
-        function DeleteAttendance(){
+        
+        function DeleteAttendance() {
             var attendanceId = $("#confirm-del-modal").data("attendanceId");
             $.ajax({
-                url: '@Url.Action("DeleteAttendance", "Attendance")?' + $.param({"attendanceId": attendanceId}),
-                type: 'GET',
+                url: '/Attendance/DeleteAttendance',
+                type: 'POST',
+                data: { attendanceId: attendanceId },
                 success: function (data) {
                     $("#confirm-del-modal").modal('toggle');
+                    console.log('Eliminazione completata');
                 },
-                error: function (data){
+                error: function (xhr, status, error) {
                     $("#confirm-del-modal").modal('toggle');
+                    console.log('Errore durante l\'eliminazione della presenza:');
                 }
             });
         }

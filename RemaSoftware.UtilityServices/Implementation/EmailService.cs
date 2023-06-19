@@ -362,7 +362,7 @@ namespace RemaSoftware.UtilityServices.Implementation
                 string tmpName = null;
                 foreach(var item in employees)
                 {
-                    tmpName = tmpName + item.Name + " " + item.Surname + "</br>";
+                    tmpName = tmpName + item.Name + " " + item.Surname + " </br> ";
                 }
                 MailText = MailText.Replace("[Impiegati]", tmpName);  
 

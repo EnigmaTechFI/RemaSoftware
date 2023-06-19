@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using It.FattureInCloud.Sdk.Api;
 using It.FattureInCloud.Sdk.Client;
 using It.FattureInCloud.Sdk.Model;
+using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using NLog;
