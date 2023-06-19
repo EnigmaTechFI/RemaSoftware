@@ -164,6 +164,14 @@ namespace RemaSoftware.Domain.Services.Impl;
                             DateTime.TryParseExact(userClockList[i], dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateIn);
                             if (dateIn.TimeOfDay >= TimeSpan.FromHours(5) && dateIn.TimeOfDay <= TimeSpan.FromHours(7.5))
                             {
+                                Attendance oldAttendance = new Attendance
+                                {
+                                    DateIn = dateIn,
+                                    DateOut = dateIn,
+                                    EmployeeID = employee.EmployeeID,
+                                    Type = "Eliminato"
+                                };
+                                _dbContext.Attendances.Add(oldAttendance);
                                 dateIn = dateIn.Date.AddHours(7).AddMinutes(30);
                             }
                             Attendance newAttendance = new Attendance
