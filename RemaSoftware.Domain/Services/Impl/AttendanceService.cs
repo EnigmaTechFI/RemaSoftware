@@ -34,6 +34,10 @@ namespace RemaSoftware.Domain.Services.Impl;
                     newAttendance.DateOut = attendance.DateIn.Date + newOutDateTime.TimeOfDay;
                 newAttendance.EmployeeID = attendance.EmployeeID;
                 newAttendance.Type = attendance.Type;
+                if (attendance.DateOut == null)
+                {
+                    attendance.DateOut = attendance.DateIn;
+                }
                 attendance.Type = "Eliminato";
 
                 _dbContext.Update(attendance);
@@ -54,7 +58,7 @@ namespace RemaSoftware.Domain.Services.Impl;
             attendance.Type = type;
 
             bool isDateInAlreadyPresent = _dbContext.Attendances
-                .Where(u => u.EmployeeID == EmployeeId)
+                .Where(u => u.EmployeeID == EmployeeId && u.Type != "Eliminato")
                 .Any(a => (attendance.DateIn >= a.DateIn && attendance.DateIn < a.DateOut) ||
                           (attendance.DateOut > a.DateIn && attendance.DateOut <= a.DateOut) ||
                           (attendance.DateIn <= a.DateIn && attendance.DateOut >= a.DateOut));
@@ -155,34 +159,60 @@ namespace RemaSoftware.Domain.Services.Impl;
                     }
                     else
                     {
-                        // Se non esiste un elemento, crea una nuova riga in Attendance
-                        var employee = _dbContext.Employees.FirstOrDefault(e => e.FluidaId == userIdList[i]);
-                        if (employee != null)
+                        //Guardare se c'è un elemento notturno agire di conseguenza
+                        var previousDay = userClockDate1.Date.AddDays(-1);
+
+                        var existingAttendanceNight = _dbContext.Attendances
+                            .FirstOrDefault(a => a.DateIn != null &&
+                                                 a.DateOut == null &&
+                                                 a.Employee.FluidaId == userIdList[i] &&
+                                                 a.DateIn.Date == previousDay);
+
+                        if (existingAttendanceNight != null && existingAttendanceNight.DateOut == null &&  userClockDate1.TimeOfDay >= TimeSpan.FromHours(5) &&  userClockDate1.TimeOfDay <= TimeSpan.FromHours(7.5) &&  existingAttendanceNight.DateIn.TimeOfDay >= TimeSpan.FromHours(21))
                         {
-                            string dateFormat = "MM/dd/yyyy HH:mm:ss";
-                            DateTime dateIn;
-                            DateTime.TryParseExact(userClockList[i], dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateIn);
-                            if (dateIn.TimeOfDay >= TimeSpan.FromHours(5) && dateIn.TimeOfDay <= TimeSpan.FromHours(7.5))
+                            existingAttendanceNight.DateOut = userClockDate1.Date;
+                            
+                            Attendance oldAttendance = new Attendance
                             {
-                                Attendance oldAttendance = new Attendance
+                                DateIn = userClockDate1.Date,
+                                DateOut = userClockDate1.Date,
+                                EmployeeID = existingAttendanceNight.EmployeeID,
+                                Type = "Eliminato"
+                            };
+                            _dbContext.Attendances.Add(oldAttendance);
+                            
+                        }
+                        else
+                        {
+                            // Se non esiste un elemento, crea una nuova riga in Attendance
+                            var employee = _dbContext.Employees.FirstOrDefault(e => e.FluidaId == userIdList[i]);
+                            if (employee != null)
+                            {
+                                string dateFormat = "MM/dd/yyyy HH:mm:ss";
+                                DateTime dateIn;
+                                DateTime.TryParseExact(userClockList[i], dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateIn);
+                                if (dateIn.TimeOfDay >= TimeSpan.FromHours(5) && dateIn.TimeOfDay <= TimeSpan.FromHours(7.5))
+                                {
+                                    Attendance oldAttendance = new Attendance
+                                    {
+                                        DateIn = dateIn,
+                                        DateOut = dateIn,
+                                        EmployeeID = employee.EmployeeID,
+                                        Type = "Eliminato"
+                                    };
+                                    _dbContext.Attendances.Add(oldAttendance);
+                                    dateIn = dateIn.Date.AddHours(7).AddMinutes(30);
+                                }
+                                Attendance newAttendance = new Attendance
                                 {
                                     DateIn = dateIn,
-                                    DateOut = dateIn,
+                                    DateOut = null,
                                     EmployeeID = employee.EmployeeID,
-                                    Type = "Eliminato"
+                                    Type = "Presenza"
                                 };
-                                _dbContext.Attendances.Add(oldAttendance);
-                                dateIn = dateIn.Date.AddHours(7).AddMinutes(30);
-                            }
-                            Attendance newAttendance = new Attendance
-                            {
-                                DateIn = dateIn,
-                                DateOut = null,
-                                EmployeeID = employee.EmployeeID,
-                                Type = "Presenza"
-                            };
 
-                            _dbContext.Attendances.Add(newAttendance);
+                                _dbContext.Attendances.Add(newAttendance);
+                            }
                         }
                     }
 
