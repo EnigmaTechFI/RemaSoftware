@@ -34,6 +34,10 @@ namespace RemaSoftware.Domain.Services.Impl;
                     newAttendance.DateOut = attendance.DateIn.Date + newOutDateTime.TimeOfDay;
                 newAttendance.EmployeeID = attendance.EmployeeID;
                 newAttendance.Type = attendance.Type;
+                if (attendance.DateOut == null)
+                {
+                    attendance.DateOut = attendance.DateIn;
+                }
                 attendance.Type = "Eliminato";
 
                 _dbContext.Update(attendance);
@@ -54,7 +58,7 @@ namespace RemaSoftware.Domain.Services.Impl;
             attendance.Type = type;
 
             bool isDateInAlreadyPresent = _dbContext.Attendances
-                .Where(u => u.EmployeeID == EmployeeId)
+                .Where(u => u.EmployeeID == EmployeeId && u.Type != "Eliminato")
                 .Any(a => (attendance.DateIn >= a.DateIn && attendance.DateIn < a.DateOut) ||
                           (attendance.DateOut > a.DateIn && attendance.DateOut <= a.DateOut) ||
                           (attendance.DateIn <= a.DateIn && attendance.DateOut >= a.DateOut));

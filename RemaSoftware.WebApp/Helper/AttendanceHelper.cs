@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
@@ -112,11 +113,18 @@ public class AttendanceHelper
 
     public void SendAttendance(int month, int year, string mail)
     {
-        string filePath = CreateTxtAttendance();
-        
+        // Calcola le date di inizio e fine in base al mese e all'anno forniti
+        DateTime startDate = new DateTime(year, month, 1);
+        DateTime endDate = startDate.AddMonths(1).AddDays(-1);
+
+        // Formatta le date nel formato desiderato
+        string formattedDates = startDate.ToString("dd/MM/yyyy") + " - " + endDate.ToString("dd/MM/yyyy");
+
+        string filePath = CreateTxtAttendance(month, year);
+
         if (!string.IsNullOrEmpty(filePath))
         {
-            _emailService.SendEmailAttendance("14/07/2023 - 15/07/2023", "alessio.corsi.lv@gmail.com", filePath);
+            _emailService.SendEmailAttendance(formattedDates, mail, filePath);
             Task.Delay(1000).ContinueWith(_ =>
             {
                 try
@@ -131,14 +139,32 @@ public class AttendanceHelper
         }
     }
 
-    static string CreateTxtAttendance()
+    public string CreateTxtAttendance(int month, int year)
     {
-        string fileText = "00000000000000101010101010000000000000000000000000000000000000010101010000";
+        List<string> stringFile = new List<string>();
+        List<Employee> Employees = _employeeService.GetAllEmployees();
+
+        foreach (var employee in Employees)
+        {
+            List<Attendance> attendance = _attendanceService.getAttendanceById(employee.EmployeeID, month, year);
+            
+            var sb = "00000000000000101010101010000000000000000000000000000000000000010101010000";
+            stringFile.Add(sb.ToString());
+            
+            //qui va creata una riga di FileText dietro l'altra 
+        }
+
         string filePath = Path.GetTempFileName() + ".txt";
 
         try
         {
-            File.WriteAllText(filePath, fileText);
+            StringBuilder sb = new StringBuilder();
+            foreach (string str in stringFile)
+            {
+                sb.AppendLine(str);
+            }
+
+            File.WriteAllText(filePath, sb.ToString());
             return filePath;
         }
         catch (Exception ex)

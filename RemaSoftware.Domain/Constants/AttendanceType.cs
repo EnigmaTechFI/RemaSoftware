@@ -8,5 +8,6 @@ namespace RemaSoftware.Domain.Constants
         public const string Malattia = "Malattia";
         public const string Eliminato = "Eliminato";
         public const string Ferie = "Ferie";
+        public const string Permesso = "Permesso";
     }
 }
