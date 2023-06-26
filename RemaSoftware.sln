@@ -9,12 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemaSoftware.UtilityService
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemaSoftware.Domain", "RemaSoftware.Domain\RemaSoftware.Domain.csproj", "{9E2A26BA-2B5B-4D5A-877D-EFDE9FA3AAD7}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{138F0FD7-EFB0-4F30-BAAA-EA841C19A513}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemaSoftware.Helper.Test", "RemaSoftware.Helper.Test\RemaSoftware.Helper.Test.csproj", "{C1EA8328-9BFC-4BB1-B6DB-FE5261F06702}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemaSoftware.Domain.Test", "RemaSoftware.Domain.Test\RemaSoftware.Domain.Test.csproj", "{BD253F0A-67FE-4CAD-A003-48E9D8762A05}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,14 +27,6 @@ Global
 		{9E2A26BA-2B5B-4D5A-877D-EFDE9FA3AAD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E2A26BA-2B5B-4D5A-877D-EFDE9FA3AAD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E2A26BA-2B5B-4D5A-877D-EFDE9FA3AAD7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C1EA8328-9BFC-4BB1-B6DB-FE5261F06702}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C1EA8328-9BFC-4BB1-B6DB-FE5261F06702}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C1EA8328-9BFC-4BB1-B6DB-FE5261F06702}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C1EA8328-9BFC-4BB1-B6DB-FE5261F06702}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BD253F0A-67FE-4CAD-A003-48E9D8762A05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BD253F0A-67FE-4CAD-A003-48E9D8762A05}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BD253F0A-67FE-4CAD-A003-48E9D8762A05}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BD253F0A-67FE-4CAD-A003-48E9D8762A05}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -49,7 +35,5 @@ Global
 		SolutionGuid = {A87724F9-78AF-41E7-B91A-06F15B15DB31}
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{C1EA8328-9BFC-4BB1-B6DB-FE5261F06702} = {138F0FD7-EFB0-4F30-BAAA-EA841C19A513}
-		{BD253F0A-67FE-4CAD-A003-48E9D8762A05} = {138F0FD7-EFB0-4F30-BAAA-EA841C19A513}
 	EndGlobalSection
 EndGlobal
