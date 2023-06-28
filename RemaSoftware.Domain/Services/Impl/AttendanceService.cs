@@ -232,7 +232,11 @@ namespace RemaSoftware.Domain.Services.Impl;
                     _dbContext.SaveChanges();
                 }
             }
-            
+
+        }
+
+        public async Task UpdateAttendancePermit()
+        {
             DateTime toDate = DateTime.Today;
             DateTime fromDate = toDate.AddDays(-7);
             
@@ -276,7 +280,6 @@ namespace RemaSoftware.Domain.Services.Impl;
                     }
                 }
             }
-
         }
         
         public List<Attendance> getAllAttendanceForDay()

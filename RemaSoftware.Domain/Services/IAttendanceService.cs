@@ -12,5 +12,7 @@ namespace RemaSoftware.Domain.Services;
         public Task UpdateAttendanceListWithPresence(List<string> userIdList, List<string> userClockList);
         public Attendance getOneAttendanceById(int attendanceid);
         public List<Attendance> getAllAttendanceForDay();
+        public Task UpdateAttendancePermit();
+
     }
 

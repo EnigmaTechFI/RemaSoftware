@@ -15,8 +15,16 @@
     <projectFile pubXmlPath="RemaSoftware/Properties/PublishProfiles/FolderProfile1.pubxml">RemaSoftware/RemaSoftware.csproj</projectFile>
     <projectFile pubXmlPath="UtilityServices/Properties/PublishProfiles/FolderProfile.pubxml">UtilityServices/UtilityServices.csproj</projectFile>
   </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="de137d0d-f34b-4c49-826c-e625e08faa2f" name="Changes" comment="" />
+    <list default="true" id="de137d0d-f34b-4c49-826c-e625e08faa2f" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.RemaSoftware/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RemaSoftware/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.Domain/Services/IAttendanceService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Services/IAttendanceService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.Domain/Services/Impl/AttendanceService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Services/Impl/AttendanceService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AttendanceHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AttendanceHelper.cs" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -91,29 +99,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;ToolWindowCommit.ShowToolbar&quot;: &quot;false&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.23992322&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;HotReloadSettingsPage&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "ToolWindowCommit.ShowToolbar": "false",
+    "WebServerToolWindowFactoryState": "false",
+    "XThreadsFramesViewSplitterKey": "0.5173554",
+    "git-widget-placeholder": "Timekeeper",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "HotReloadSettingsPage",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;sqlserver.localdb&quot;,
-      &quot;sqlserver&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "sqlserver.localdb",
+      "sqlserver"
     ],
-    &quot;rider.external.source.directories&quot;: [
-      &quot;C:\\Users\\lore9\\AppData\\Roaming\\JetBrains\\Rider2022.3\\resharper-host\\DecompilerCache&quot;,
-      &quot;C:\\Users\\lore9\\AppData\\Roaming\\JetBrains\\Rider2022.3\\resharper-host\\SourcesCache&quot;,
-      &quot;C:\\Users\\lore9\\AppData\\Local\\Symbols\\src&quot;
+    "rider.external.source.directories": [
+      "C:\\Users\\lore9\\AppData\\Roaming\\JetBrains\\Rider2022.3\\resharper-host\\DecompilerCache",
+      "C:\\Users\\lore9\\AppData\\Roaming\\JetBrains\\Rider2022.3\\resharper-host\\SourcesCache",
+      "C:\\Users\\lore9\\AppData\\Local\\Symbols\\src"
     ]
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET Launch Settings Profile.RemaSoftware.WebApp: IIS Express">
     <configuration name="RemaSoftware: FTPProfile" type="DotNetMsBuildPublish" factoryName="Publish to IIS">
       <riderPublish configuration="Release" platform="Any CPU" publish_profile="FTPProfile.pubxml" pubxml_path="$PROJECT_DIR$/RemaSoftware/Properties/PublishProfiles/FTPProfile.pubxml" user_name="u106306586" uuid_high="52394423432659973" uuid_low="-6912510412447034786" />
@@ -255,6 +265,21 @@
         <option name="Build" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue=".NET Launch Settings Profile.RemaSoftware" />
+      <item itemvalue=".NET Launch Settings Profile.RemaSoftware.WebApp: IIS Express" />
+      <item itemvalue=".NET Launch Settings Profile.RemaSoftware.WebApp: IIS Express-Prod" />
+      <item itemvalue=".NET Launch Settings Profile.RemaSoftware.WebApp: IIS Express-Test" />
+      <item itemvalue=".NET Launch Settings Profile.RemaSoftware.WebApp: RemaSoftware" />
+      <item itemvalue=".NET Launch Settings Profile.RemaSoftware: IIS Express" />
+      <item itemvalue=".NET Launch Settings Profile.RemaSoftware: IIS Express-Prod" />
+      <item itemvalue=".NET Launch Settings Profile.RemaSoftware: IIS Express-Test" />
+      <item itemvalue="Publish to IIS.RemaSoftware: FolderProfile1" />
+      <item itemvalue="Publish to IIS.UtilityServices: FolderProfile" />
+      <item itemvalue="Publish to IIS.RemaSoftware: FolderProfile" />
+      <item itemvalue="Publish to IIS.RemaSoftware: FTPProfile" />
+      <item itemvalue="Publish to IIS.RemaSoftware: FTPProfileTest" />
+    </list>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -666,6 +691,21 @@
   <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
   <component name="Vcs.Log.Tabs.Properties">
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="origin/master_V2.0" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
     <option name="TAB_STATES">
       <map>
         <entry key="MAIN">
@@ -683,21 +723,6 @@
                 </map>
               </option>
             </State>
-          </value>
-        </entry>
-      </map>
-    </option>
-    <option name="RECENT_FILTERS">
-      <map>
-        <entry key="Branch">
-          <value>
-            <list>
-              <RecentGroup>
-                <option name="FILTER_VALUES">
-                  <option value="origin/master_V2.0" />
-                </option>
-              </RecentGroup>
-            </list>
           </value>
         </entry>
       </map>
@@ -731,5 +756,17 @@
     <MESSAGE value="Db initializer;" />
     <MESSAGE value="wip" />
     <option name="LAST_COMMIT_MESSAGE" value="wip" />
+  </component>
+  <component name="XDebuggerManager">
+    <pin-to-top-manager>
+      <pinned-members>
+        <PinnedItemInfo parentTag="Type#RemaSoftware.Domain.Models.SubBatch" memberName="BatchID" />
+        <PinnedItemInfo parentTag="Type#RemaSoftware.Domain.Models.SubBatch" memberName="OperationTimelines" />
+        <PinnedItemInfo parentTag="Type#RemaSoftware.Domain.Models.Attendance" memberName="Employee" />
+        <PinnedItemInfo parentTag="Type#RemaSoftware.Domain.Models.Batch" memberName="SubBatches" />
+        <PinnedItemInfo parentTag="Type#RemaSoftware.WebApp.DTOs.ModifyAttendanceDTO" memberName="OutId" />
+        <PinnedItemInfo parentTag="Type#Newtonsoft.Json.Linq.JContainer" memberName="Count" />
+      </pinned-members>
+    </pin-to-top-manager>
   </component>
 </project>

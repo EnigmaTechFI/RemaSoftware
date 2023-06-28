@@ -113,6 +113,11 @@ public class AttendanceHelper
 
                 await _attendanceService.UpdateAttendanceListWithPresence(userIdList, userClockList);
 
+                if (month == 0)
+                {
+                    await _attendanceService.UpdateAttendancePermit();
+                }
+
             }
         }
         await ControlFirstAttendance();
