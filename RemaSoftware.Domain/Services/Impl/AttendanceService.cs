@@ -2,6 +2,7 @@ using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Data;
+using System.Text.Json;
 
 namespace RemaSoftware.Domain.Services.Impl;
 
@@ -22,26 +23,34 @@ namespace RemaSoftware.Domain.Services.Impl;
             return true;
         }
 
-        public void ModifyAttendance(int attendanceId, DateTime newInDateTime, DateTime newOutDateTime)
+        public void ModifyAttendance(int attendanceId, DateTime newInDateTime, DateTime newOutDateTime, string type)
         {
             var attendance = _dbContext.Attendances.Find(attendanceId);
             if (attendance != null)
             {
-                Attendance newAttendance = new Attendance();
-                if (DateTime.Compare(newInDateTime, new DateTime(0001, 01, 01, 00, 00, 00)) != 0)
-                    newAttendance.DateIn = attendance.DateIn.Date + newInDateTime.TimeOfDay;
-                if (DateTime.Compare(newOutDateTime, new DateTime(0001, 01, 01, 00, 00, 00)) != 0)
-                    newAttendance.DateOut = attendance.DateIn.Date + newOutDateTime.TimeOfDay;
-                newAttendance.EmployeeID = attendance.EmployeeID;
-                newAttendance.Type = attendance.Type;
-                if (attendance.DateOut == null)
+                if (DateTime.Compare(newInDateTime, new DateTime(0001, 01, 01, 00, 00, 00)) == 0 &&
+                    DateTime.Compare(newOutDateTime, new DateTime(0001, 01, 01, 00, 00, 00)) == 0)
                 {
-                    attendance.DateOut = attendance.DateIn;
+                    attendance.Type = type;
+                    _dbContext.Update(attendance);
                 }
-                attendance.Type = "Eliminato";
-
-                _dbContext.Update(attendance);
-                _dbContext.Attendances.Add(newAttendance);
+                else
+                {
+                    Attendance newAttendance = new Attendance();
+                    if (DateTime.Compare(newInDateTime, new DateTime(0001, 01, 01, 00, 00, 00)) != 0)
+                        newAttendance.DateIn = attendance.DateIn.Date + newInDateTime.TimeOfDay;
+                    if (DateTime.Compare(newOutDateTime, new DateTime(0001, 01, 01, 00, 00, 00)) != 0)
+                        newAttendance.DateOut = attendance.DateIn.Date + newOutDateTime.TimeOfDay;
+                    newAttendance.EmployeeID = attendance.EmployeeID;
+                    newAttendance.Type = type;
+                    if (attendance.DateOut == null)
+                    {
+                        attendance.DateOut = attendance.DateIn;
+                    }
+                    attendance.Type = "Eliminato";
+                    _dbContext.Update(attendance);
+                    _dbContext.Attendances.Add(newAttendance);
+                }
                 _dbContext.SaveChanges();
             }
         }
@@ -159,7 +168,7 @@ namespace RemaSoftware.Domain.Services.Impl;
                     }
                     else
                     {
-                        //Guardare se c'è un elemento notturno agire di conseguenza
+                        //Sezione straordinario notturno
                         var previousDay = userClockDate1.Date.AddDays(-1);
 
                         var existingAttendanceNight = _dbContext.Attendances
@@ -211,14 +220,63 @@ namespace RemaSoftware.Domain.Services.Impl;
                                     Type = "Presenza"
                                 };
 
+                                if (newAttendance.DateIn.DayOfWeek == DayOfWeek.Saturday || newAttendance.DateIn.TimeOfDay > TimeSpan.Parse("20:00"))
+                                {
+                                    newAttendance.Type = "Straordinario";
+                                }
+
                                 _dbContext.Attendances.Add(newAttendance);
                             }
                         }
                     }
-
                     _dbContext.SaveChanges();
                 }
             }
+            
+            DateTime toDate = DateTime.Today;
+            DateTime fromDate = toDate.AddDays(-7);
+            
+            var attendances = _dbContext.Attendances
+                .Where(a => a.DateIn >= fromDate && a.DateIn <= toDate && a.Type != "Eliminato")
+                .OrderBy(a => a.DateIn)
+                .ToList() // Esegui la query e ottieni l'elenco di tutte le Attendance corrispondenti ai criteri di filtro
+                .GroupBy(a => a.EmployeeID)
+                .ToList();
+
+            var employees = _dbContext.Employees.ToList();
+
+            foreach (var employee in employees)
+            {
+                for (DateTime date = fromDate; date < toDate; date = date.AddDays(1))
+                {
+                    var attendanceGroup = attendances.FirstOrDefault(g => g.Key == employee.EmployeeID).Any(a => a.DateIn.Date == date.Date);
+                    if (!attendanceGroup && (date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday))
+                    {
+                        DateTime dateIn = date.Date.AddHours(7).AddMinutes(30); // Imposta DateIn a 7:30 del mattino
+                        DateTime dateOut = date.Date.AddHours(16).AddMinutes(30); // Imposta DateOut a 16:30
+
+                        Attendance newAttendance = new Attendance
+                        {
+                            DateIn = dateIn,
+                            DateOut = dateOut,
+                            EmployeeID = employee.EmployeeID,
+                        };
+
+                        if (await IsItalianHoliday(date))
+                        {
+                            newAttendance.Type = "Festivo";
+                        }
+                        else
+                        {
+                            newAttendance.Type = "Permesso";
+                        }
+            
+                        _dbContext.Attendances.Add(newAttendance);
+                        _dbContext.SaveChanges();
+                    }
+                }
+            }
+
         }
         
         public List<Attendance> getAllAttendanceForDay()
@@ -230,5 +288,31 @@ namespace RemaSoftware.Domain.Services.Impl;
                 .ThenBy(i => i.DateIn)
                 .ToList();
         }
+        
+        private static async Task<bool> IsItalianHoliday(DateTime date)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                string apiUrl = $"https://date.nager.at/Api/v2/PublicHolidays/{date.Year}/IT";
+                var response = await httpClient.GetAsync(apiUrl);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var holidays = JsonSerializer.Deserialize<PublicHoliday[]>(json);
+
+                    return holidays?.Any(h => h.Date.Date == date.Date) ?? false;
+                }
+            }
+
+            return false;
+        }
+
+        public class PublicHoliday
+        {
+            public DateTime Date { get; set; }
+            public string Name { get; set; }
+        }
     }
+
 

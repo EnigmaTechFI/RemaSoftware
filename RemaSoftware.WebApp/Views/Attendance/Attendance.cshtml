@@ -57,11 +57,11 @@
         </div>
         <div class="row mb-2">
             <div class="ml-5" style="width: 20px; height: 20px; background-color: green; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;"> Presenza</div>
-            <div class="ml-5" style="width: 20px; height: 20px; background-color: red; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;"> Assenza</div>
+            <div class="ml-5" style="width: 20px; height: 20px; background-color: #9A83BC; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;"> Straodinario</div>
+            <div class="ml-5" style="width: 20px; height: 20px; background-color: red; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;"> Permesso</div>
             <div class="ml-5" style="width: 20px; height: 20px; background-color: #ff7f26; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;"> Malattia</div>
             <div class="ml-5" style="width: 20px; height: 20px; background-color: #36b9cc; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;"> Festivo</div>
             <div class="ml-5" style="width: 20px; height: 20px; background-color: #f6c23e; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;"> Ferie</div>
-            <div class="ml-5" style="width: 20px; height: 20px; background-color: #9A83BC; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;"> Permesso</div>
         </div>
     </form>
     <div class="card-body">
@@ -113,9 +113,15 @@
                                                     <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
                                                 </div>
                                             }
-                                            @if (presence.Type == "Assenza")
+                                            @if (presence.Type == "Straordinario")
                                             {
-                                                <div style="color: white; background-color: red; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Assenza">
+                                                <div style="color: white; background-color: #9A83BC; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Straordinario">
+                                                    <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                                </div>
+                                            }
+                                            @if (presence.Type == "Permesso")
+                                            {
+                                                <div style="color: white; background-color: red; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Permesso">
                                                     <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
                                                 </div>
                                             }
@@ -134,12 +140,6 @@
                                             @if (presence.Type == "Ferie")
                                             {
                                                 <div style="color: white; background-color: #f6c23e; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ferie">
-                                                    <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
-                                                </div>
-                                            }
-                                            @if (presence.Type == "Permesso")
-                                            {
-                                                <div style="color: white; background-color: #9A83BC; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Permesso">
                                                     <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
                                                 </div>
                                             }
@@ -159,9 +159,15 @@
                                                     <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
                                                 </div>
                                             }
-                                            @if (presence.Type == "Assenza")
+                                            @if (presence.Type == "Straordinario")
                                             {
-                                                <div style="color: white; background-color: red; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Assenza">
+                                                <div style="color: white; background-color: #9A83BC; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Straordinario">
+                                                    <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                                </div>
+                                            }
+                                            @if (presence.Type == "Permesso")
+                                            {
+                                                <div style="color: white; background-color: red; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Permesso">
                                                     <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
                                                 </div>
                                             }
@@ -183,12 +189,7 @@
                                                     <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
                                                 </div>
                                             }
-                                            @if (presence.Type == "Permesso")
-                                            {
-                                                <div style="color: white; background-color: #9A83BC; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Permesso">
-                                                    <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
-                                                </div>
-                                            }
+                                            
                                         </a>
                                     }
                                 </td>
@@ -197,11 +198,11 @@
                         
                         @{
                             TimeSpan? totalTimePresence = TimeSpan.Zero;
-                            TimeSpan? totalTimeAbsence = TimeSpan.Zero;
+                            TimeSpan? totalTimePermit = TimeSpan.Zero;
                             TimeSpan? totalTimeIllness = TimeSpan.Zero;
                             TimeSpan? totalTimeHoliday = TimeSpan.Zero;
                             TimeSpan? totalTimeVacation = TimeSpan.Zero;
-                            TimeSpan? totalTimePermit = TimeSpan.Zero;
+                            TimeSpan? totalTimeStraord = TimeSpan.Zero;
 
                             foreach (var item in presenza)
                             {
@@ -215,14 +216,22 @@
                                     totalTimePresence = totalTimePresence?.Add((TimeSpan)timeDiff);
                                 }
 
-
-                                 if (item.Type == "Assenza" && item.DateOut != null){
+                                if (item.Type == "Straordinario" && item.DateOut != null){
                                     TimeSpan? timeDiff = item.DateOut - item.DateIn;
                                     if (item.DateIn.TimeOfDay == TimeSpan.FromHours(7.5) && item.DateOut?.TimeOfDay == TimeSpan.FromHours(16.5))
                                     {
                                         timeDiff = timeDiff?.Subtract(TimeSpan.FromHours(1));
                                     }
-                                    totalTimeAbsence = totalTimeAbsence?.Add((TimeSpan)timeDiff);
+                                    totalTimeStraord = totalTimeStraord?.Add((TimeSpan)timeDiff);
+                                }
+                                
+                                if (item.Type == "Permesso" && item.DateOut != null){
+                                    TimeSpan? timeDiff = item.DateOut - item.DateIn;
+                                    if (item.DateIn.TimeOfDay == TimeSpan.FromHours(7.5) && item.DateOut?.TimeOfDay == TimeSpan.FromHours(16.5))
+                                    {
+                                        timeDiff = timeDiff?.Subtract(TimeSpan.FromHours(1));
+                                    }
+                                     totalTimePermit = totalTimePermit?.Add((TimeSpan)timeDiff);
 
                                 }
                                 
@@ -252,15 +261,6 @@
                                     }
                                     totalTimeVacation = totalTimeVacation?.Add((TimeSpan)timeDiff);
                                 }
-                                
-                                if (item.Type == "Permesso" && item.DateOut != null){
-                                    TimeSpan? timeDiff = item.DateOut - item.DateIn;
-                                    if (item.DateIn.TimeOfDay == TimeSpan.FromHours(7.5) && item.DateOut?.TimeOfDay == TimeSpan.FromHours(16.5))
-                                    {
-                                        timeDiff = timeDiff?.Subtract(TimeSpan.FromHours(1));
-                                    }
-                                    totalTimePermit = totalTimePermit?.Add((TimeSpan)timeDiff);
-                                }
                             }
                         }
 
@@ -271,10 +271,18 @@
                                     <b style="white-space: nowrap;">@($"{(int)totalTimePresence?.TotalHours}h {totalTimePresence?.Minutes}m")</b>
                                 </div>
                             }
-                            @if (totalTimeAbsence != TimeSpan.Zero)
+                            
+                            @if (totalTimeStraord != TimeSpan.Zero)
                             {
-                                <div class="text-center" style="color: white; background-color: red; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Totale ore assenza">
-                                    <b style="white-space: nowrap;">@($"{(int)totalTimeAbsence?.TotalHours}h {totalTimeAbsence?.Minutes}m")</b>
+                                <div class="text-center" style="color: white; background-color: #9A83BC; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Totale ore straordinario">
+                                    <b style="white-space: nowrap;">@($"{(int)totalTimeStraord?.TotalHours}h {totalTimeStraord?.Minutes}m")</b>
+                                </div>
+                            }
+                            
+                            @if (totalTimePermit != TimeSpan.Zero)
+                            {
+                                <div class="text-center" style="color: white; background-color: red; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Totale ore Permesso">
+                                    <b style="white-space: nowrap;">@($"{(int)totalTimePermit?.TotalHours}h {totalTimePermit?.Minutes}m")</b>
                                 </div>
                             }
                             @if (totalTimeIllness != TimeSpan.Zero)
@@ -293,13 +301,6 @@
                             {
                                 <div class="text-center" style="color: white; background-color: #f6c23e; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Totale ore ferie">
                                     <b style="white-space: nowrap;">@($"{(int)totalTimeVacation?.TotalHours}h {totalTimeVacation?.Minutes}m")</b>
-                                </div>
-                            }
-                            
-                            @if (totalTimePermit != TimeSpan.Zero)
-                            {
-                                <div class="text-center" style="color: white; background-color: #9A83BC; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Totale ore ferie">
-                                    <b style="white-space: nowrap;">@($"{(int)totalTimePermit?.TotalHours}h {totalTimePermit?.Minutes}m")</b>
                                 </div>
                             }
 
@@ -370,7 +371,20 @@
                 </button>
             </div>
             <div class="modal-body">
-                <p class="pb-2 font-italic h6">Inserire la modifica degli orari di ingresso/uscita:</p>
+                <p class="pb-2 font-italic h6">Modifica ingresso/uscita:</p>
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <label class="form-check-label"><b>Tipo di registrazione</b></label>
+                        <select id="ModifyType" class="form-control">
+                            <option selected="selected" value="Presenza">Presenza</option>
+                            <option value="Permesso">Permesso</option>
+                            <option value="Festivo">Festivo</option>
+                            <option value="Malattia">Malattia</option>
+                            <option value="Ferie">Ferie</option>
+                            <option value="Straordinario">Straordinario</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col-6">
                         <label class="form-check-label"><b>Orario Ingresso</b></label>
@@ -414,11 +428,11 @@
                         <label class="form-check-label"><b>Tipo di registrazione</b></label>
                         <select id="Type" class="form-control">
                             <option selected="selected" value="Presenza">Presenza</option>
-                            <option value="Assenza">Assenza</option>
+                            <option value="Permesso">Permesso</option>
                             <option value="Festivo">Festivo</option>
                             <option value="Malattia">Malattia</option>
                             <option value="Ferie">Ferie</option>
-                            <option value="Permesso">Permesso</option>
+                            <option value="Straordinario">Straordinario</option>
                         </select>
                     </div>
                 </div>
@@ -512,7 +526,8 @@
             var model = {
                 attendanceId: attendanceId,
                 InId: $('#ModifyIn').val(),
-                OutId: $('#ModifyOut').val()
+                OutId: $('#ModifyOut').val(),
+                type: $('#ModifyType').val()
             }
         
             $.post('@Url.Action("ModifyAttendance", "Attendance")', model, function (data){
