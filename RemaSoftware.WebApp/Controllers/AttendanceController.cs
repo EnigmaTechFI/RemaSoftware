@@ -120,6 +120,5 @@ namespace RemaSoftware.WebApp.Controllers
                 Logger.Error("Errore durante l'aggiunta della presenza.");
             }
         }
-        
     }
 }

@@ -39,7 +39,7 @@ public class AttendanceHelper
 
     public void ModifyAttendance(ModifyAttendanceDTO model)
     {
-        _attendanceService.ModifyAttendance(model.AttendanceId, model.InId, model.OutId);
+        _attendanceService.ModifyAttendance(model.AttendanceId, model.InId, model.OutId, model.Type);
     }
     
     public void NewAttendance(ModifyAttendanceDTO model)
@@ -53,23 +53,30 @@ public class AttendanceHelper
         foreach(var employee in allEmployees)
             _attendanceService.NewAttendance(employee.EmployeeID, model.InId, model.OutId, model.Type);
     }
-
+    
     public async Task UpdateAttendance(int month, int year)
     {
         const string companyId = "29c78fb8-8e97-4a2b-9df2-302ace7481ce";
         const string apiKey = "0575b429-d35a-4e83-bee6-f02149997cf2";
-        
-        if (month == 0)
-            month = DateTime.Today.Month;
+        DateTime toDate;
+        DateTime fromDate;
+        string toDateAPI;
+        string fromDateAPI;
+        if (month == 0 && year == 0)
+        {
+            toDate = DateTime.Today;
+            fromDate = toDate.AddDays(-7);
+        }else
+        {
+            fromDate = new DateTime(year, month, 1);
+            DateTime lastDayOfMonth = new DateTime(year, month, DateTime.DaysInMonth(year, month));
+            toDate = lastDayOfMonth;    
+        }
 
-        if (year == 0)
-            year = DateTime.Today.Year;
+        toDateAPI = toDate.ToString("yyyy-MM-dd");
+        fromDateAPI = fromDate.ToString("yyyy-MM-dd");
         
-        
-        string fromDate = new DateTime(year, month, 1).ToString("yyyy-MM-dd");
-        DateTime lastDayOfMonth = new DateTime(year, month, DateTime.DaysInMonth(year, month));
-        string toDate = lastDayOfMonth.ToString("yyyy-MM-dd");        
-        string url = $"https://api.fluida.io/api/v1/stampings/{companyId}/daily_clock_records?from_date={fromDate}&to_date={toDate}";
+        string url = $"https://api.fluida.io/api/v1/stampings/{companyId}/daily_clock_records?from_date={fromDateAPI}&to_date={toDateAPI}";
 
         HttpClient httpClient = new HttpClient();
         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -106,6 +113,11 @@ public class AttendanceHelper
 
                 await _attendanceService.UpdateAttendanceListWithPresence(userIdList, userClockList);
 
+                if (month == 0)
+                {
+                    await _attendanceService.UpdateAttendancePermit();
+                }
+
             }
         }
         await ControlFirstAttendance();
@@ -141,18 +153,31 @@ public class AttendanceHelper
 
     public string CreateTxtAttendance(int month, int year)
     {
+        var mese = month.ToString("D2"); 
+        var anno = (year % 100).ToString("D2");
         List<string> stringFile = new List<string>();
         List<Employee> Employees = _employeeService.GetAllEmployees();
 
-        foreach (var employee in Employees)
+        for (int i = 0; i < Employees.Count; i++)
         {
+            var employee = Employees[i];
             List<Attendance> attendance = _attendanceService.getAttendanceById(employee.EmployeeID, month, year);
-            
-            var sb = "00000000000000101010101010000000000000000000000000000000000000010101010000";
-            stringFile.Add(sb.ToString());
-            
-            //qui va creata una riga di FileText dietro l'altra 
+            var uniqueTypes = attendance.Select(a => a.Type).Distinct();
+
+            for (int j = 0; j < uniqueTypes.Count(); j++)
+            {
+                var type = uniqueTypes.ElementAt(j);
+                var sp = "U5176" + mese + anno + employee.number;
+                var typeAttendance = attendance.Where(a => a.Type == type).ToList();
+
+                int numberOfDaysInMonth = DateTime.DaysInMonth(year, month);
+                string zeros = new string('0', numberOfDaysInMonth);
+                sp += zeros;
+
+                stringFile.Add(sp);
+            }
         }
+
 
         string filePath = Path.GetTempFileName() + ".txt";
 
