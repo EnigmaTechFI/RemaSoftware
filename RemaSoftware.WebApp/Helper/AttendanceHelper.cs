@@ -162,19 +162,53 @@ public class AttendanceHelper
         {
             var employee = Employees[i];
             List<Attendance> attendance = _attendanceService.getAttendanceById(employee.EmployeeID, month, year);
-            var uniqueTypes = attendance.Select(a => a.Type).Distinct();
-
+            List<string> uniqueTypes = attendance.Select(a => a.Type).Distinct().ToList();
+            
             for (int j = 0; j < uniqueTypes.Count(); j++)
             {
                 var type = uniqueTypes.ElementAt(j);
-                var sp = "U5176" + mese + anno + employee.number;
-                var typeAttendance = attendance.Where(a => a.Type == type).ToList();
-
+                var sp = "U5176" + mese + anno + employee.number + "0";
                 int numberOfDaysInMonth = DateTime.DaysInMonth(year, month);
-                string zeros = new string('0', numberOfDaysInMonth);
-                sp += zeros;
 
+                if (uniqueTypes[j] == "Presenza")
+                    sp += "300";
+
+                if (uniqueTypes[j] == "Malattia")
+                    sp += "909";
+
+                if (uniqueTypes[j] == "Festivo")
+                    sp += "301";
+
+                if (uniqueTypes[j] == "Ferie")
+                    sp += "302";
+                
+                for (int u = 0; u < numberOfDaysInMonth; u++)
+                {
+
+                    List<Attendance> attendanceForDay = attendance
+                        .Where(a => a.DateIn.Day == u && a.Type != "Eliminato")
+                        .ToList();
+
+                    TimeSpan totalDuration = TimeSpan.Zero;
+                    foreach (var attendance_tmp in attendanceForDay)
+                    {
+                        if (attendance_tmp.DateIn != null && attendance_tmp.DateOut != null)
+                        {
+                            totalDuration += attendance_tmp.DateOut.Value - attendance_tmp.DateIn.Date;
+                        }
+                    }
+                    
+                    if (totalDuration > TimeSpan.FromHours(7))
+                    {
+                        sp += "800";
+                    }
+                    else
+                    {
+                        sp += "000";
+                    }
+                }
                 stringFile.Add(sp);
+                sp.Remove(2);
             }
         }
 

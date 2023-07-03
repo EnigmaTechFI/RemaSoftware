@@ -4,6 +4,7 @@ namespace RemaSoftware.Domain.Constants
 {
     public static class WarehouseStockMeasure
     {
+        public const string Pezzo = "Pezzo";
         public const string Metro = "Metro";
         public const string Scatola = "Scatola";
         public const string Litro = "Litro";

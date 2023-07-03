@@ -253,30 +253,34 @@ namespace RemaSoftware.Domain.Services.Impl;
             {
                 for (DateTime date = fromDate; date < toDate; date = date.AddDays(1))
                 {
-                    var attendanceGroup = attendances.FirstOrDefault(g => g.Key == employee.EmployeeID).Any(a => a.DateIn.Date == date.Date);
-                    if (!attendanceGroup && (date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday))
+                    var attendanceGroup = attendances.FirstOrDefault(g => g.Key == employee.EmployeeID);
+
+                    if (attendanceGroup == null || !attendanceGroup.Any(a => a.DateIn.Date == date.Date))
                     {
-                        DateTime dateIn = date.Date.AddHours(7).AddMinutes(30); // Imposta DateIn a 7:30 del mattino
-                        DateTime dateOut = date.Date.AddHours(16).AddMinutes(30); // Imposta DateOut a 16:30
+                        if (date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday)
+                        {
+                            DateTime dateIn = date.Date.AddHours(7).AddMinutes(30); // Imposta DateIn a 7:30 del mattino
+                            DateTime dateOut = date.Date.AddHours(16).AddMinutes(30); // Imposta DateOut a 16:30
 
-                        Attendance newAttendance = new Attendance
-                        {
-                            DateIn = dateIn,
-                            DateOut = dateOut,
-                            EmployeeID = employee.EmployeeID,
-                        };
+                            Attendance newAttendance = new Attendance
+                            {
+                                DateIn = dateIn,
+                                DateOut = dateOut,
+                                EmployeeID = employee.EmployeeID,
+                            };
 
-                        if (await IsItalianHoliday(date))
-                        {
-                            newAttendance.Type = "Festivo";
+                            if (await IsItalianHoliday(date))
+                            {
+                                newAttendance.Type = "Festivo";
+                            }
+                            else
+                            {
+                                newAttendance.Type = "Permesso";
+                            }
+
+                            _dbContext.Attendances.Add(newAttendance);
+                            _dbContext.SaveChanges();
                         }
-                        else
-                        {
-                            newAttendance.Type = "Permesso";
-                        }
-            
-                        _dbContext.Attendances.Add(newAttendance);
-                        _dbContext.SaveChanges();
                     }
                 }
             }

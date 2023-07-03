@@ -115,15 +115,19 @@
     
     function printQRCode(id, name, supplier, sku){
         var printers = dymo.label.framework.getPrinters();
-        if (printers.length == 0 || !printers[2].isConnected){
+        if (printers.length == 0){
           alert("Nessuna stampante trovata.");
           return
         }
         var label = dymo.label.framework.openLabelFile("RemaStock.dymo")  
-        var etichetta = "PRODOTTO: " + id + "\nNOME: " + name + "\nSUPPLIER: " + supplier  + "\nSKU: "+ sku 
+        var etichetta = "PRODOTTO: " + id + "\nSKU: "+ sku 
         label.setObjectText("TextObject",  etichetta);
         label.setObjectText("QRCodeObject", id, "QRCode");
-        label.print(printers[2].name);
+        for (var i=0; i<printers.length; i++){
+            if (printers[i].getPrinters()){
+                label.print(printers[i].name);
+            }
+        }
         if (newVar == false){
            location.reload();
         }
