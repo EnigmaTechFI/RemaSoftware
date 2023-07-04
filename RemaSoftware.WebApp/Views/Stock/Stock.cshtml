@@ -124,7 +124,7 @@
         label.setObjectText("TextObject",  etichetta);
         label.setObjectText("QRCodeObject", id, "QRCode");
         for (var i=0; i<printers.length; i++){
-            if (printers[i].getPrinters()){
+            if (printers[i] != null){
                 label.print(printers[i].name);
             }
         }
