@@ -70,6 +70,7 @@ namespace RemaSoftware.WebApp.Controllers
                 {
                     _notyfService.Error(validationResult);
                     model.Suppliers = _supplierHelper.GetAllSuppliers();
+                    model.UnitMeasure = WarehouseStockMeasure.GetUnitMeasure();
                 } else
                 {
                     _stockHelper.AddStockProduct(model);
