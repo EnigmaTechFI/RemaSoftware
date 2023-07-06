@@ -113,6 +113,10 @@ namespace RemaSoftware.Domain.Services.Impl;
         {
             for(int i=0; i<userIdList.Count; i++)
             {
+                if (userIdList[i] == "ae3cdeac-75c0-4734-9d53-5cebde5eb08a")
+                {
+                    var o = 0;
+                }
                 DateTime userClockDate1 = DateTime.ParseExact(userClockList[i], "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
 
                 // Controlla se esiste un elemento in Attendance con timestart o timeend uguale a userClock.Time
@@ -121,7 +125,7 @@ namespace RemaSoftware.Domain.Services.Impl;
 
                 bool exists = _dbContext.Attendances
                     .Any(a => 
-                        (a.DateIn.Date == userClockDateTime.Date && a.DateIn.TimeOfDay == userClockDateTime.TimeOfDay || 
+                        ((a.DateIn.Date == userClockDateTime.Date && a.DateIn.TimeOfDay == userClockDateTime.TimeOfDay) || 
                          (a.DateOut.HasValue && a.DateOut.Value.Date == userClockDateTime.Date && a.DateOut.Value.TimeOfDay >= userClockDateTime.TimeOfDay)) && 
                         a.Employee.FluidaId == userIdList[i]);
 
@@ -137,33 +141,41 @@ namespace RemaSoftware.Domain.Services.Impl;
                         DateTime dateIn;
                         DateTime.TryParseExact(userClockList[i], dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateIn);
 
-                        // Calculate the total duration of attendances for the specified day
-                        TimeSpan totalDuration = TimeSpan.Zero;
-                        var controlend = false;
-                        foreach (var attendance in getAttendanceByFluidaId(userIdList[i], existingAttendance.DateIn.Month, existingAttendance.DateIn.Year))
+                        //rigistrazione normale timbro 
+                        existingAttendance.DateOut = dateIn;
+                        
+                        //se il timbro va dopo le 5 30 un ora di straordinario
+                        if (dateIn.TimeOfDay >= new TimeSpan(17, 30, 0) && dateIn.TimeOfDay < new TimeSpan(18, 30, 0))
                         {
-                            if (attendance.DateIn.Date != null && attendance.DateOut?.Date != null && attendance.DateIn.Date == dateIn.Date && attendance.Type == "Presenza")
+                            existingAttendance.DateOut = dateIn.Date.AddHours(16).AddMinutes(30);
+                            Attendance oldAttendance = new Attendance
                             {
-                                totalDuration += (attendance.DateOut - attendance.DateIn) ?? TimeSpan.Zero;
-                                if (totalDuration == TimeSpan.FromHours(8))
-                                    controlend = true;
-                            }
-                        }
-                        totalDuration += dateIn - existingAttendance.DateIn;
-                        if (totalDuration <= TimeSpan.FromHours(8) || controlend){
-                            existingAttendance.DateOut = dateIn;
-                        }
-                        else
-                        {
-                            Attendance newAttendance = new Attendance
-                            {
-                                DateIn = dateIn,
+                                DateIn = dateIn.Date.AddHours(16).AddMinutes(30),
                                 DateOut = dateIn,
                                 EmployeeID = existingAttendance.EmployeeID,
-                                Type = "Eliminato"
+                                Type = "Straordinario"
                             };
-                            existingAttendance.DateOut = dateIn.AddHours(-totalDuration.TotalHours + 8);
-                            _dbContext.Attendances.Add(newAttendance);
+                            _dbContext.Attendances.Add(oldAttendance);
+                        }else if(dateIn.TimeOfDay >= new TimeSpan(18, 30, 0) && dateIn.TimeOfDay < new TimeSpan(19, 00, 0))
+                        {
+                            //se il timbro va dopo le 6 30 sono due ore di straordinario
+                            existingAttendance.DateOut = dateIn.Date.AddHours(17).AddMinutes(30);
+                            Attendance oldAttendance = new Attendance
+                            {
+                                DateIn = dateIn.Date.AddHours(16).AddMinutes(30),
+                                DateOut = dateIn.Date.AddHours(17).AddMinutes(30),
+                                EmployeeID = existingAttendance.EmployeeID,
+                                Type = "Straordinario"
+                            };
+                            _dbContext.Attendances.Add(oldAttendance);
+                            Attendance oldAttendance1 = new Attendance
+                            {
+                                DateIn = dateIn.Date.AddHours(17).AddMinutes(30),
+                                DateOut = dateIn,
+                                EmployeeID = existingAttendance.EmployeeID,
+                                Type = "Straordinario"
+                            };
+                            _dbContext.Attendances.Add(oldAttendance1);
                         }
                     }
                     else
@@ -200,7 +212,8 @@ namespace RemaSoftware.Domain.Services.Impl;
                                 string dateFormat = "MM/dd/yyyy HH:mm:ss";
                                 DateTime dateIn;
                                 DateTime.TryParseExact(userClockList[i], dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateIn);
-                                if (dateIn.TimeOfDay >= TimeSpan.FromHours(5) && dateIn.TimeOfDay <= TimeSpan.FromHours(7.5))
+                                TimeSpan time = TimeSpan.FromHours(6) + TimeSpan.FromMinutes(35);
+                                if (dateIn.TimeOfDay > time && dateIn.TimeOfDay <= TimeSpan.FromHours(7.5))
                                 {
                                     Attendance oldAttendance = new Attendance
                                     {
@@ -212,6 +225,19 @@ namespace RemaSoftware.Domain.Services.Impl;
                                     _dbContext.Attendances.Add(oldAttendance);
                                     dateIn = dateIn.Date.AddHours(7).AddMinutes(30);
                                 }
+                                else if (dateIn.TimeOfDay >= TimeSpan.FromHours(5.5) && dateIn.TimeOfDay <= time)
+                                {
+                                    Attendance oldAttendance = new Attendance
+                                    {
+                                        DateIn = dateIn,
+                                        DateOut = dateIn.Date.AddHours(7).AddMinutes(30),
+                                        EmployeeID = employee.EmployeeID,
+                                        Type = "Straordinario"
+                                    };
+                                    _dbContext.Attendances.Add(oldAttendance);
+                                    dateIn = dateIn.Date.AddHours(7).AddMinutes(30);
+                                }
+                                
                                 Attendance newAttendance = new Attendance
                                 {
                                     DateIn = dateIn,
