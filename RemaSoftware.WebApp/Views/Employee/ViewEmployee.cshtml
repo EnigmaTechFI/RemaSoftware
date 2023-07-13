@@ -36,7 +36,7 @@
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                             Matricola</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Employee.number</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Employee.Number</div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-hashtag fa-2x text-gray-300"></i>
@@ -170,8 +170,18 @@
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Numero ore di lavoro</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Employee.NumberHour</div>
+                                Straordinari</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                @if (@Model.Employee.Extraordinary)
+                                {
+                                    <p>Permessi</p>
+                                }
+                                else
+                                {
+                                    <p>Negati</p>
+                                }
+                            </div>
+                            <small>Numero ore di lavoro: @Model.Employee.NumberHour</small>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-info fa-2x text-gray-300"></i>

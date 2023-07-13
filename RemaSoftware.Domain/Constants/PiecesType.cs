@@ -6,4 +6,5 @@ public class PiecesType
     public const string PERSI = "Persi";
     public const string SCARTI = "Scarti lavorati";
     public const string MANCANTI = "Mancanti";
+    public const string ZAMA = "Zama";
 }

@@ -78,6 +78,7 @@
                 <th scope="col">Pezzi buoni</th>
                 <th scope="col">Scarti</th>
                 <th scope="col">Persi</th>
+                <th scope="col">Zama scoperto</th>
                 <th scope="col">Stampa</th>
             </tr>
             </thead>
@@ -91,8 +92,9 @@
                     <td>@item.OkPieces</td>
                     <td>@item.WastePieces</td>
                     <td>@item.LostPieces</td>
+                    <td>@item.ZamaPieces</td>
                     <td>
-                        <a onclick="printOldLabel('@item.SubBatchCode', '@item.OkPieces', '@item.LostPieces', '@item.WastePieces', '@item.Client', '@item.SKU')" style="text-decoration: none">
+                        <a onclick="printOldLabel('@item.SubBatchCode', '@item.OkPieces', '@item.LostPieces', '@item.WastePieces', '@item.ZamaPieces', '@item.Client', '@item.SKU')" style="text-decoration: none">
                             <i class="fas fa-print fa-lg pl-2" title="Stampa etichetta" style="cursor: pointer; color: #6d767e"></i>
                         </a>
                     </td>
@@ -150,6 +152,10 @@
                     <label for="waste_pieces">N° scarti lavorati:</label>
                     <input min="0" value="0" type="number" class="form-control" id="waste_pieces" placeholder="N° scarti lavorati:">
                 </div>
+                <div class="form-group">
+                    <label for="zama_pieces">N° zama scoperto:</label>
+                    <input min="0" value="0" type="number" class="form-control" id="zama_pieces" placeholder="N° zama scoperto:">
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
@@ -172,7 +178,7 @@
     <script src="~/js/dymo.connect.framework.js" type="text/javascript" charset="UTF-8"> </script>
 
     <script>
-    function printQRCode(id, ok, persi, scarti){
+    function printQRCode(id, ok, persi, scarti, zama){
       var printers = dymo.label.framework.getPrinters();
       if (printers.length == 0 || !printers[0].isConnected){
         alert("Nessuna stampante trovata.");
@@ -186,6 +192,8 @@
           etichetta += "\nMANCANTI: " + persi
       if (parseInt(scarti))
           etichetta += "\nSCARTI: " + scarti
+      if (parseInt(zama))
+          etichetta += "\nZAMA: " + zama
       label.setObjectText("TextObject",  etichetta);
       label.print(printers[0].name); 
       location.reload()
@@ -206,6 +214,8 @@
           etichetta += "\nMANCANTI: " + persi
       if (parseInt(scarti))
           etichetta += "\nSCARTI: " + scarti
+      if (parseInt(zama))
+          etichetta += "\nZAMA: " + zama
       label.setObjectText("TextObject",  etichetta);
       label.print(printers[0].name); 
       location.reload()
@@ -219,6 +229,7 @@
     let piecesBuoni;
     let piecesScarti;
     let piecesPersi;
+    let piecesZama;
     let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
     scanner.addListener('scan', function (content) {
     document.getElementById("subBatchId").value = content.slice(4)
@@ -258,6 +269,7 @@
           okPieces: document.getElementById("ok_pieces").value,
           lostPieces : document.getElementById("lost_pieces").value,
           wastePieces: document.getElementById("waste_pieces").value,
+          zamaPieces: document.getElementById("zama_pieces").value,
           operationTimeLineId : operationTimeLineId
       }
     
@@ -271,7 +283,7 @@
               if (response.result) {
                   toastNotifySuccess(response.toastMessage);
                   $('#end-subbatch').modal('hide');
-                  printQRCode(subBatchToEndId, document.getElementById("ok_pieces").value, document.getElementById("lost_pieces").value, document.getElementById("waste_pieces").value);
+                  printQRCode(subBatchToEndId, document.getElementById("ok_pieces").value, document.getElementById("lost_pieces").value, document.getElementById("waste_pieces").value, document.getElementById("zama_pieces").value);
                   $(".loader-cont").hide()
                   location.reload()
                   return

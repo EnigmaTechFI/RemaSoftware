@@ -20,10 +20,37 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="de137d0d-f34b-4c49-826c-e625e08faa2f" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Migrations/20230713060551_Update-Timekeeper.Designer.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Migrations/20230713060551_Update-Timekeeper.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Migrations/20230713093944_ZamaUpgrade.Designer.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Migrations/20230713093944_ZamaUpgrade.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Migrations/20230713095235_ZamaUpgrade1.Designer.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Migrations/20230713095235_ZamaUpgrade1.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RemaSoftware/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RemaSoftware/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/config/applicationhost.config" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/config/applicationhost.config" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.Domain/Constants/PiecesType.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Constants/PiecesType.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.Domain/Migrations/ApplicationDbContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Migrations/ApplicationDbContextModelSnapshot.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.Domain/Models/Ddt_In.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Models/Ddt_In.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.Domain/Models/Ddt_Supplier.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Models/Ddt_Supplier.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.Domain/Models/Employee.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Models/Employee.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.Domain/Models/Label.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Models/Label.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RemaSoftware.Domain/Services/IAttendanceService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Services/IAttendanceService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RemaSoftware.Domain/Services/Impl/AttendanceService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Services/Impl/AttendanceService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/DTOs/SubBatchToEndDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/DTOs/SubBatchToEndDto.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AttendanceHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AttendanceHelper.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/OrderHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/OrderHelper.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Models/OrderViewModel/ReloadSubBatchFromSupplierViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Models/OrderViewModel/ReloadSubBatchFromSupplierViewModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Validation/EmployeeValidation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Validation/EmployeeValidation.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Attendance/Attendance.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Attendance/Attendance.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/EmployeeList.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/EmployeeList.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/ModifyEmployee.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/ModifyEmployee.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/NewEmployee.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/NewEmployee.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/ViewEmployee.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/ViewEmployee.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Order/BatchInDelivery.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Order/BatchInDelivery.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Order/PartialDDT.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Order/PartialDDT.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Order/QualityControl.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Order/QualityControl.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Shared/_Layout.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Shared/_Layout.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Stock/Stock.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Stock/Stock.cshtml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,9 +60,10 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="ProductionMonitoring" />
+        <entry key="$PROJECT_DIR$" value="develop" />
       </map>
     </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -51,43 +79,15 @@
     </option>
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/24c5a5aa7f0a47e8ae2dac6b91fa467cfa600/3f/aa278d1c/CreateIssuedDocumentRequest.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/24c5a5aa7f0a47e8ae2dac6b91fa467cfa600/9d/ebc87e1e/IssuedDocument.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/24c5a5aa7f0a47e8ae2dac6b91fa467cfa600/a3/6998d000/IssuedDocumentItemsListItem.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/24c5a5aa7f0a47e8ae2dac6b91fa467cfa600/f6/fed3c6f2/VatType.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/17a25bf4cd58852e31b6bc798fef1d6289441360eea1912bf89a9b4fd337a3/SingleQueryingEnumerable.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/198a6261cebc324728dcc4c178edc5f2894123f711722c80e8557cbfd27651/ThrowHelper.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/1af51483c9bf18871cce649b9f966dd7be686536f998c33bba3c5fc4adea4a0/Task.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/3ea95343b9387b73062a9b61b7538f826c54ce3529632b4472ba4494044d23/AsyncTaskMethodBuilderT.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/4b95b9936aceaca7b7986abdecd044bd5135c35a492a08b2c3bb2f907882/HostBuilder.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/4c6f6e4bd53ba6e81522ed4ce7204b9ee6d564f963321c837634387e6178620/ClientProxyExtensions.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/4ea681aa1df24442c1a5e1e18582b1a2d29ac5bfd41390c94a5d2cc958b5ff/UserManager.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/582dd7a97d198e03b26f5fedf1d498f46cac48393f14aa82cb965bfc62a/LogManager.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/5be2cff525124c1133cfcc6cb4e2780544dbce621566e52f256ebeb2e1b996/RelationalCommand.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/62b577c2da149653e84ac421985166c29d9edaa27529e65234d1659526fd7/BlobClient.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/669c26ee3efc22f7b45229dedf7eafecffe98e541117496628d40b346633e4/Decimal.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/6b6a76f3e1e1fe75a6fa9113ed5d746f8474b721b4ceadc24885043dc693c/StartupLoader.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/7d9a41d47547e1fe7fe548b21ab4de12cc2671170a023bc8c629017837eb5f4/ActionMethodExecutor.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/933f374d88a082deeb91a8715cb947ccef921a3d1aa957af5ca5624f813a2b8/DateTime.Windows.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/974fa14c57bab8fe29f1bddd39b1a6548b9cc8cf9e0ef5e670c2407a56d9/String.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/998b55faa3b64d2986764fa8fec4ba82c22ce546fae9de40854d5357cfa58e24/WebHostBuilderExtensions.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/a2ee656fbddc12a868b756d2326603c5d064be64ac4463aae6c3defcdb47c/GenericWebHostBuilder.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/a9cbda3784706aeeed61f1a08a18046925b69f777943eca27fbbcca09dff60/DateTime.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/acdcb2d5e5a875937e43fc8f8bc4e366d563e824c567ec716bb37f7966ce43/SqlServerExecutionStrategy.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c1da7b6c7c71a954fe3eb2531c6476711b3e6d93a8d76795386d326bb9dbc/ExecutionContext.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c6354d55b4c1fdbe22621ea48185af62cdeadcf4f28d9ed0890dfdf36c6/ControllerBase.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/cf91eb35ab781c324ad4fa382dce85631ec37cf3813529f7c92208d866c851/TaskContinuation.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d1f68ef86315497c7b39ddb155d5cf3ace964abca69857f9943cd58479799/ServiceProvider.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d9d9faea5e6ed6438a777ef8c6eed41261f81d8e86488ed923ad92564f54e/ThrowHelper.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/de1dc94e26de2eb8cdb9b19e9451c6a0738025b875978dc863de7ba87ee78c4/ServiceCollectionServiceExtensions.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/dec8fde5d3f40bd92a3ab671391e9848d622e4766a86b8267c4e6766872c/SqlServerMigrationsSqlGenerator.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/f22469a94c0f7b86a3308ff2b7d9a5f84e38bda01c295bb18987ecea68fb5/SqlServerDatabaseCreator.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/f4708639776589f5ac2739f6fcbfc67343b1f9dac51cc1dbfdb003eef77cc1c/Monitor.CoreCLR.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/lore9/Desktop/ENIGMA/SourceCode/Rema Srls/RemaSoftware/RemaSoftware/RemaSoftware.Domain/Data/DbInitializer.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/lore9/Desktop/ENIGMA/SourceCode/Rema Srls/RemaSoftware/RemaSoftware/RemaSoftware.Domain/Data/DbInitializer.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/lore9/Desktop/ENIGMA/SourceCode/Rema Srls/RemaSoftware/RemaSoftware/RemaSoftware.Domain/Data/DbInitializer.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/lore9/Desktop/ENIGMA/SourceCode/Rema Srls/RemaSoftware/RemaSoftware/RemaSoftware.WebApp/Helper/OrderHelper.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/RemaSoftware/Controllers/OrderController.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.WebApp/Views/Shared/_Layout.cshtml" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.WebApp/Views/Shared/_Layout.cshtml" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -99,31 +99,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "ToolWindowCommit.ShowToolbar": "false",
-    "WebServerToolWindowFactoryState": "false",
-    "XThreadsFramesViewSplitterKey": "0.5173554",
-    "git-widget-placeholder": "Timekeeper",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "HotReloadSettingsPage",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;ToolWindowCommit.ShowToolbar&quot;: &quot;false&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.5173554&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;SolutionBuilderGeneralOptionsPage&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "sqlserver.localdb",
-      "sqlserver"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;sqlserver.localdb&quot;,
+      &quot;sqlserver&quot;
     ],
-    "rider.external.source.directories": [
-      "C:\\Users\\lore9\\AppData\\Roaming\\JetBrains\\Rider2022.3\\resharper-host\\DecompilerCache",
-      "C:\\Users\\lore9\\AppData\\Roaming\\JetBrains\\Rider2022.3\\resharper-host\\SourcesCache",
-      "C:\\Users\\lore9\\AppData\\Local\\Symbols\\src"
+    &quot;rider.external.source.directories&quot;: [
+      &quot;C:\\Users\\aless\\AppData\\Roaming\\JetBrains\\Rider2023.1\\resharper-host\\DecompilerCache&quot;,
+      &quot;C:\\Users\\aless\\AppData\\Roaming\\JetBrains\\Rider2023.1\\resharper-host\\SourcesCache&quot;,
+      &quot;C:\\Users\\aless\\AppData\\Local\\Symbols\\src&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected=".NET Launch Settings Profile.RemaSoftware.WebApp: IIS Express">
     <configuration name="RemaSoftware: FTPProfile" type="DotNetMsBuildPublish" factoryName="Publish to IIS">
       <riderPublish configuration="Release" platform="Any CPU" publish_profile="FTPProfile.pubxml" pubxml_path="$PROJECT_DIR$/RemaSoftware/Properties/PublishProfiles/FTPProfile.pubxml" user_name="u106306586" uuid_high="52394423432659973" uuid_low="-6912510412447034786" />
@@ -338,6 +340,12 @@
       <workItem from="1680093831759" duration="5286000" />
       <workItem from="1680099518389" duration="387000" />
       <workItem from="1680100050908" duration="3116000" />
+      <workItem from="1688672237354" duration="267000" />
+      <workItem from="1688672552596" duration="1028000" />
+      <workItem from="1688969306411" duration="13099000" />
+      <workItem from="1689141534856" duration="8682000" />
+      <workItem from="1689227629258" duration="16660000" />
+      <workItem from="1689244847778" duration="2417000" />
     </task>
     <task id="LOCAL-00052" summary="Wip;">
       <created>1679349933411</created>
@@ -758,11 +766,27 @@
     <option name="LAST_COMMIT_MESSAGE" value="wip" />
   </component>
   <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/RemaSoftware.WebApp/Helper/OrderHelper.cs</url>
+          <line>726</line>
+          <properties documentPath="C:\Users\aless\RiderProjects\Rema_Software\RemaSoftware.WebApp\Helper\OrderHelper.cs" initialLine="726" containingFunctionPresentation="Method 'EmitPartialDdtIn'">
+            <startOffsets>
+              <option value="33444" />
+            </startOffsets>
+            <endOffsets>
+              <option value="33508" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
     <pin-to-top-manager>
       <pinned-members>
         <PinnedItemInfo parentTag="Type#RemaSoftware.Domain.Models.SubBatch" memberName="BatchID" />
         <PinnedItemInfo parentTag="Type#RemaSoftware.Domain.Models.SubBatch" memberName="OperationTimelines" />
-        <PinnedItemInfo parentTag="Type#RemaSoftware.Domain.Models.Attendance" memberName="Employee" />
         <PinnedItemInfo parentTag="Type#RemaSoftware.Domain.Models.Batch" memberName="SubBatches" />
         <PinnedItemInfo parentTag="Type#RemaSoftware.WebApp.DTOs.ModifyAttendanceDTO" memberName="OutId" />
         <PinnedItemInfo parentTag="Type#Newtonsoft.Json.Linq.JContainer" memberName="Count" />

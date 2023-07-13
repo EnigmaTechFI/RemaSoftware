@@ -28,10 +28,11 @@ namespace RemaSoftware.Domain.Models
         public int Number_Piece { get; set; }
         public int Number_Piece_Now { get; set; }
         public int Number_Piece_ToSupplier { get; set; }
-        
         public int NumberMissingPiece { get; set; }
         public int NumberWastePiece { get; set; }
         public int NumberLostPiece { get; set; }
+        
+        public int NumberZama { get; set; }
         public int Priority { get; set;}
         [MaxLength(1)]
         public string Status { get; set; }

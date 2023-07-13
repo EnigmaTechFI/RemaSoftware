@@ -113,7 +113,7 @@
                                                     <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
                                                 </div>
                                             }
-                                            @if (presence.Type == "Straordinario")
+                                            @if (presence.Type == "StraordinarioSabato" || presence.Type == "StraordinarioOrdinario" || presence.Type == "StraordinarioNotturno")
                                             {
                                                 <div style="color: white; background-color: #9A83BC; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Straordinario">
                                                     <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
@@ -159,7 +159,7 @@
                                                     <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
                                                 </div>
                                             }
-                                            @if (presence.Type == "Straordinario")
+                                            @if (presence.Type == "StraordinarioSabato" || presence.Type == "StraordinarioOrdinario" || presence.Type == "StraordinarioNotturno")
                                             {
                                                 <div style="color: white; background-color: #9A83BC; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Straordinario">
                                                     <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
@@ -216,7 +216,7 @@
                                     totalTimePresence = totalTimePresence?.Add((TimeSpan)timeDiff);
                                 }
 
-                                if (item.Type == "Straordinario" && item.DateOut != null){
+                                if ((item.Type == "StraordinarioSabato" || item.Type == "StraordinarioOrdinario" || item.Type == "StraordinarioNotturno") && item.DateOut != null){
                                     TimeSpan? timeDiff = item.DateOut - item.DateIn;
                                     if (item.DateIn.TimeOfDay == TimeSpan.FromHours(7.5) && item.DateOut?.TimeOfDay == TimeSpan.FromHours(16.5))
                                     {
@@ -381,7 +381,9 @@
                             <option value="Festivo">Festivo</option>
                             <option value="Malattia">Malattia</option>
                             <option value="Ferie">Ferie</option>
-                            <option value="Straordinario">Straordinario</option>
+                            <option value="StraordinarioOrdinario">Straordinario Ordinario</option>
+                            <option value="StraordinarioSabato">Straordinario Week End</option>
+                            <option value="StraordinarioNotturno">Straordinario Notturno</option>
                         </select>
                     </div>
                 </div>
@@ -432,7 +434,9 @@
                             <option value="Festivo">Festivo</option>
                             <option value="Malattia">Malattia</option>
                             <option value="Ferie">Ferie</option>
-                            <option value="Straordinario">Straordinario</option>
+                            <option value="StraordinarioOrdinario">Straordinario Ordinario</option>
+                            <option value="StraordinarioSabato">Straordinario Week End</option>
+                            <option value="StraordinarioNotturno">Straordinario Notturno</option>
                         </select>
                     </div>
                 </div>

@@ -143,40 +143,41 @@ namespace RemaSoftware.Domain.Services.Impl;
 
                         //rigistrazione normale timbro 
                         existingAttendance.DateOut = dateIn;
+
+                        DateTime? dateOut = existingAttendance.DateOut?.Date;
+
+                        var dayAttendances = _dbContext.Attendances
+                            .Where(a => dateOut.HasValue && a.DateIn.Date == dateOut.Value && a.EmployeeID == existingAttendance.EmployeeID && a.Type == existingAttendance.Type)
+                            .ToList();
                         
-                        //se il timbro va dopo le 5 30 un ora di straordinario
-                        if (dateIn.TimeOfDay >= new TimeSpan(17, 30, 0) && dateIn.TimeOfDay < new TimeSpan(18, 30, 0))
+                        var employee = _dbContext.Employees
+                            .SingleOrDefault(e => e.EmployeeID == existingAttendance.EmployeeID);
+                        
+                        TimeSpan totalDuration = TimeSpan.Zero;
+
+                        foreach (var attendance in dayAttendances)
                         {
-                            existingAttendance.DateOut = dateIn.Date.AddHours(16).AddMinutes(30);
-                            Attendance oldAttendance = new Attendance
+                            if (attendance.DateOut.HasValue)
                             {
-                                DateIn = dateIn.Date.AddHours(16).AddMinutes(30),
-                                DateOut = dateIn,
-                                EmployeeID = existingAttendance.EmployeeID,
-                                Type = "Straordinario"
-                            };
-                            _dbContext.Attendances.Add(oldAttendance);
-                        }else if(dateIn.TimeOfDay >= new TimeSpan(18, 30, 0) && dateIn.TimeOfDay < new TimeSpan(19, 00, 0))
-                        {
-                            //se il timbro va dopo le 6 30 sono due ore di straordinario
-                            existingAttendance.DateOut = dateIn.Date.AddHours(17).AddMinutes(30);
-                            Attendance oldAttendance = new Attendance
-                            {
-                                DateIn = dateIn.Date.AddHours(16).AddMinutes(30),
-                                DateOut = dateIn.Date.AddHours(17).AddMinutes(30),
-                                EmployeeID = existingAttendance.EmployeeID,
-                                Type = "Straordinario"
-                            };
-                            _dbContext.Attendances.Add(oldAttendance);
-                            Attendance oldAttendance1 = new Attendance
-                            {
-                                DateIn = dateIn.Date.AddHours(17).AddMinutes(30),
-                                DateOut = dateIn,
-                                EmployeeID = existingAttendance.EmployeeID,
-                                Type = "Straordinario"
-                            };
-                            _dbContext.Attendances.Add(oldAttendance1);
+                                TimeSpan duration = attendance.DateOut.Value - attendance.DateIn;
+                                totalDuration += duration;
+                            }
                         }
+                        TimeSpan threshold = new TimeSpan(9, 20, 0);
+
+                        if (totalDuration > threshold && employee.Extraordinary)
+                        {
+                            existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-1);
+                            Attendance strAttendance = new Attendance
+                            {
+                                DateIn = existingAttendance.DateOut.Value,
+                                DateOut = dateIn,
+                                EmployeeID = existingAttendance.EmployeeID,
+                                Type = "StraordinarioOrdinario"
+                            };
+                            _dbContext.Attendances.Add(strAttendance);
+                        }
+                        
                     }
                     else
                     {
@@ -191,7 +192,7 @@ namespace RemaSoftware.Domain.Services.Impl;
 
                         if (existingAttendanceNight != null && existingAttendanceNight.DateOut == null &&  userClockDate1.TimeOfDay >= TimeSpan.FromHours(5) &&  userClockDate1.TimeOfDay <= TimeSpan.FromHours(7.5) &&  existingAttendanceNight.DateIn.TimeOfDay >= TimeSpan.FromHours(21))
                         {
-                            existingAttendanceNight.DateOut = userClockDate1.Date;
+                            existingAttendanceNight.DateOut = userClockDate1;
                             
                             Attendance oldAttendance = new Attendance
                             {
@@ -212,32 +213,7 @@ namespace RemaSoftware.Domain.Services.Impl;
                                 string dateFormat = "MM/dd/yyyy HH:mm:ss";
                                 DateTime dateIn;
                                 DateTime.TryParseExact(userClockList[i], dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateIn);
-                                TimeSpan time = TimeSpan.FromHours(6) + TimeSpan.FromMinutes(35);
-                                if (dateIn.TimeOfDay > time && dateIn.TimeOfDay <= TimeSpan.FromHours(7.5))
-                                {
-                                    Attendance oldAttendance = new Attendance
-                                    {
-                                        DateIn = dateIn,
-                                        DateOut = dateIn,
-                                        EmployeeID = employee.EmployeeID,
-                                        Type = "Eliminato"
-                                    };
-                                    _dbContext.Attendances.Add(oldAttendance);
-                                    dateIn = dateIn.Date.AddHours(7).AddMinutes(30);
-                                }
-                                else if (dateIn.TimeOfDay >= TimeSpan.FromHours(5.5) && dateIn.TimeOfDay <= time)
-                                {
-                                    Attendance oldAttendance = new Attendance
-                                    {
-                                        DateIn = dateIn,
-                                        DateOut = dateIn.Date.AddHours(7).AddMinutes(30),
-                                        EmployeeID = employee.EmployeeID,
-                                        Type = "Straordinario"
-                                    };
-                                    _dbContext.Attendances.Add(oldAttendance);
-                                    dateIn = dateIn.Date.AddHours(7).AddMinutes(30);
-                                }
-                                
+
                                 Attendance newAttendance = new Attendance
                                 {
                                     DateIn = dateIn,
@@ -246,9 +222,13 @@ namespace RemaSoftware.Domain.Services.Impl;
                                     Type = "Presenza"
                                 };
 
-                                if (newAttendance.DateIn.DayOfWeek == DayOfWeek.Saturday || newAttendance.DateIn.TimeOfDay > TimeSpan.Parse("20:00"))
+                                if (newAttendance.DateIn.DayOfWeek == DayOfWeek.Saturday)
                                 {
-                                    newAttendance.Type = "Straordinario";
+                                    newAttendance.Type = "StraordinarioSabato";
+                                }
+                                else if (newAttendance.DateIn.TimeOfDay > TimeSpan.Parse("20:00"))
+                                {
+                                    newAttendance.Type = "StraordinarioNotturno";
                                 }
 
                                 _dbContext.Attendances.Add(newAttendance);
@@ -346,6 +326,11 @@ namespace RemaSoftware.Domain.Services.Impl;
             public DateTime Date { get; set; }
             public string Name { get; set; }
         }
+
+        public Attendance GetLastAttendance()
+        {
+            return _dbContext.Attendances.OrderByDescending(a => a.DateIn).FirstOrDefault();
+        } 
     }
 
 

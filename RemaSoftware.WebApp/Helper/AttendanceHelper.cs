@@ -56,6 +56,15 @@ public class AttendanceHelper
     
     public async Task UpdateAttendance(int month, int year)
     {
+
+        bool AttendanceOk = true;
+        var LastAttendance = _attendanceService.GetLastAttendance();
+
+        if (LastAttendance != null && LastAttendance.DateIn.Date == DateTime.Today)
+        {
+            AttendanceOk = false;
+        }
+        
         const string companyId = "29c78fb8-8e97-4a2b-9df2-302ace7481ce";
         const string apiKey = "0575b429-d35a-4e83-bee6-f02149997cf2";
         DateTime toDate;
@@ -120,7 +129,11 @@ public class AttendanceHelper
 
             }
         }
-        await ControlFirstAttendance();
+
+        if (AttendanceOk)
+        {
+            await ControlFirstAttendance();
+        }
     }
 
     public void SendAttendance(int month, int year, string mail)
@@ -162,25 +175,36 @@ public class AttendanceHelper
         {
             var employee = Employees[i];
             List<Attendance> attendance = _attendanceService.getAttendanceById(employee.EmployeeID, month, year);
-            List<string> uniqueTypes = attendance.Select(a => a.Type).Distinct().ToList();
+            List<Attendance> filteredAttendance = attendance.Where(a => a.Type != "Eliminato").ToList();
+            List<string> uniqueTypes = filteredAttendance.Select(a => a.Type).Distinct().ToList();
             
             for (int j = 0; j < uniqueTypes.Count(); j++)
             {
-                var type = uniqueTypes.ElementAt(j);
-                var sp = "U5176" + mese + anno + employee.number + "0";
+                var sp = "U5176" + mese + anno + employee.Number + "0";
                 int numberOfDaysInMonth = DateTime.DaysInMonth(year, month);
 
                 if (uniqueTypes[j] == "Presenza")
-                    sp += "300";
+                    sp += "3000000000";
 
                 if (uniqueTypes[j] == "Malattia")
-                    sp += "909";
+                    sp += "9090000000";
 
                 if (uniqueTypes[j] == "Festivo")
-                    sp += "301";
+                    sp += "3010000000";
 
                 if (uniqueTypes[j] == "Ferie")
-                    sp += "302";
+                    sp += "3020000000";
+
+                if (uniqueTypes[j] == "StraordinarioNotturno")
+                    sp += "3549020000";
+                
+                if (uniqueTypes[j] == "StraordinarioOrdinario")
+                    sp += "3549050000";
+                
+                if (uniqueTypes[j] == "StraordinarioSabato")
+                    sp += "3539010000";
+                
+                //Il problema è che scrive le ore in sequenza e non in base ai giorni, riguardare questo.
                 
                 for (int u = 0; u < numberOfDaysInMonth; u++)
                 {
@@ -200,11 +224,11 @@ public class AttendanceHelper
                     
                     if (totalDuration > TimeSpan.FromHours(7))
                     {
-                        sp += "800";
+                        sp += "80000";
                     }
                     else
                     {
-                        sp += "000";
+                        sp += "00000";
                     }
                 }
                 stringFile.Add(sp);
@@ -212,8 +236,8 @@ public class AttendanceHelper
             }
         }
 
-
-        string filePath = Path.GetTempFileName() + ".txt";
+        string filePath = Path.GetTempFileName();
+        string newFilePath = Path.ChangeExtension(filePath, ".txt");
 
         try
         {
@@ -223,8 +247,8 @@ public class AttendanceHelper
                 sb.AppendLine(str);
             }
 
-            File.WriteAllText(filePath, sb.ToString());
-            return filePath;
+            File.WriteAllText(newFilePath, sb.ToString());
+            return newFilePath;
         }
         catch (Exception ex)
         {

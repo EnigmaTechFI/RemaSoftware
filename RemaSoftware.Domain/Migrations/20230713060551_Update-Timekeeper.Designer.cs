@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RemaSoftware.Domain.Data;
 
@@ -11,9 +12,10 @@ using RemaSoftware.Domain.Data;
 namespace RemaSoftware.Domain.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230713060551_Update-Timekeeper")]
+    partial class UpdateTimekeeper
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -466,9 +468,6 @@ namespace RemaSoftware.Domain.Migrations
                     b.Property<int>("NumberWastePiece")
                         .HasColumnType("int");
 
-                    b.Property<int>("NumberZama")
-                        .HasColumnType("int");
-
                     b.Property<int>("Number_Piece")
                         .HasColumnType("int");
 
@@ -577,9 +576,6 @@ namespace RemaSoftware.Domain.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("NumberWastePiece")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NumberZamaPiece")
                         .HasColumnType("int");
 
                     b.Property<int>("Number_Piece")
@@ -756,9 +752,6 @@ namespace RemaSoftware.Domain.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("WastePieces")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ZamaPieces")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

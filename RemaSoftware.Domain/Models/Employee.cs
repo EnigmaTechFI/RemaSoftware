@@ -17,7 +17,7 @@ namespace RemaSoftware.Domain.Models
         
         [MaxLength(20)]
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]
-        public string number { get; set; }
+        public string Number { get; set; }
         
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]
         public DateTime BirthDate { get; set; }
@@ -54,6 +54,8 @@ namespace RemaSoftware.Domain.Models
         
         [MaxLength(50)]
         public string FluidaId { get; set; }
+        
+        public bool Extraordinary { get; set; }
 
         public virtual List<Attendance> Attendances { get; set; }
 

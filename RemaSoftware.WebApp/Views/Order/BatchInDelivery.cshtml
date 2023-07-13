@@ -25,6 +25,7 @@
                     <th>N° Scarti lavorati</th>
                     <th>N° Persi</th>
                     <th>N° Mancanti</th>
+                    <th>N° Zama scoperto</th>
                     <th class="text-center">Azioni</th>
                 </tr>
                 </thead>
@@ -38,6 +39,7 @@
                         <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.SCARTI).Sum(s=> s.NumberPieces)</td>
                         <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.PERSI).Sum(s=> s.NumberPieces)</td>
                         <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.MANCANTI).Sum(s=> s.NumberPieces)</td>
+                        <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.ZAMA).Sum(s=> s.NumberPieces)</td>
                         <td class="text-center">
                             <a style="text-decoration: none" asp-action="EmitDDT" asp-controller="Order" asp-route-id="@item.Ddt_Out_ID">
                                 <i class="fas fa-truck fa-lg pl-2" style="cursor: pointer; color: #6d767e;" title="Emetti DDT"></i>
@@ -126,6 +128,7 @@
                 { "searchable": false, "orderable": true, "targets": 2 },
                 { "searchable": false, "orderable": true, "targets": 3 },
                 { "searchable": false, "orderable": true, "targets": 4 },
+                { "searchable": false, "orderable": true, "targets": 5 },
                 { "searchable": false, "orderable": true, "targets": 5 },
                 { "searchable": false, "orderable": false, "targets": 6 },
               ]

@@ -40,8 +40,8 @@
                         <td class="supplier-@article.Warehouse_StockID">@article.Supplier.Name</td>
                         <td class="npieces-@article.Warehouse_StockID">@article.Number_Piece</td>
                         <td class="limit-@article.Warehouse_StockID">@article.Reorder_Limit</td>
-                        <td class="priceuni-@article.Warehouse_StockID">€@article.Price_Uni</td>
-                        <td class="pricetot-@article.Warehouse_StockID">€@article.Price_Tot</td>
+                        <td class="priceuni-@article.Warehouse_StockID.ToString("0.00")">€@article.Price_Uni.ToString("0.00")</td>
+                        <td class="pricetot-@article.Warehouse_StockID.ToString("0.00")">€@article.Price_Tot.ToString("0.00")</td>
                         
                         <td class="pricetot-@article.Warehouse_StockID text-center">
                             @if(@article.Number_Piece>@article.Reorder_Limit){

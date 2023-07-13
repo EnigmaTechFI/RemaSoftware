@@ -13,6 +13,7 @@ namespace RemaSoftware.Domain.Services;
         public Attendance getOneAttendanceById(int attendanceid);
         public List<Attendance> getAllAttendanceForDay();
         public Task UpdateAttendancePermit();
+        public Attendance GetLastAttendance();
 
     }
 

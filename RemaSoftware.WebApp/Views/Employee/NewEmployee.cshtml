@@ -28,8 +28,8 @@
                 </div>
                 <div class="col-md-4 mb-4">
                     <label>Matricola</label>
-                    <input asp-for="Employee.number" type="text" class="form-control" placeholder="Matricola" required>
-                    <span asp-validation-for="Employee.number" class="text-danger"></span>
+                    <input asp-for="Employee.Number" type="text" class="form-control" placeholder="Matricola" required>
+                    <span asp-validation-for="Employee.Number" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-row">
@@ -105,7 +105,7 @@
                 </div>
             </div>
             <div class="form-row">
-                <div class="col-md-4 mb-4">
+                <div class="col-md-3 mb-4">
                     <label>Seleziona data di inizio rapporto</label>
                     <div class='input-group date'>
                         <input placeholder="Seleziona data di inizio rapporto" type='text' class="form-control bg-white" id='datetimepicker2' asp-for="Employee.StartRelationship" />
@@ -115,7 +115,7 @@
                     </div>
                 </div>
                 
-                <div class="col-md-4 mb-4">
+                <div class="col-md-3 mb-4">
                     <label>Seleziona data di fine rapporto (Facoltativo)</label>
                     <div class='input-group date'>
                         <input placeholder="Seleziona data di fine rapporto" type='text' class="form-control bg-white" id='datetimepicker3' asp-for="Employee.EndRelationship" />
@@ -124,11 +124,20 @@
                         </span>
                     </div>
                 </div>
-                <div class="col-md-4 mb-4">
+                <div class="col-md-3 mb-4">
                     <label>Numero di ore lavorative</label>
                     <input asp-for="Employee.NumberHour" type="number" class="form-control" placeholder="Numero di ore" required>
                     <span asp-validation-for="Employee.NumberHour" class="text-danger"></span>
                 </div>
+                <div class="col-md-3 mb-4">
+                    <div class="form-check" style="margin-left: 40px; margin-top:  35px;">
+                        <input asp-for="Employee.Extraordinary" style="cursor: pointer; width: 22px; height: 22px;" class="form-check-input" type="checkbox" id="flexCheckChecked">
+                        <label class="form-check-label" style="cursor: pointer; font-size: 20px; margin-left:  10px;" for="flexCheckChecked">
+                            Straordinari
+                        </label>
+                    </div>
+                </div>
+
             </div>
             
             <button class="btn btn-primary" type="submit" onclick="clickEvent()">Aggiungi</button>

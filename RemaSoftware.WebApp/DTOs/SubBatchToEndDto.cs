@@ -6,5 +6,7 @@ public class SubBatchToEndDto
     public int OkPieces { get; set; }
     public int LostPieces { get; set; }
     public int WastePieces { get; set; }
+    
+    public int ZamaPieces { get; set; }
     public int OperationTimeLineId { get; set; }
 }

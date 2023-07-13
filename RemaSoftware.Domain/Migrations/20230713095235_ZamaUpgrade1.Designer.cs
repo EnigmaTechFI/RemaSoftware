@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RemaSoftware.Domain.Data;
 
@@ -11,9 +12,10 @@ using RemaSoftware.Domain.Data;
 namespace RemaSoftware.Domain.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230713095235_ZamaUpgrade1")]
+    partial class ZamaUpgrade1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -577,9 +579,6 @@ namespace RemaSoftware.Domain.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("NumberWastePiece")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NumberZamaPiece")
                         .HasColumnType("int");
 
                     b.Property<int>("Number_Piece")
