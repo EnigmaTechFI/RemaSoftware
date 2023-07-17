@@ -175,7 +175,7 @@ public class AttendanceHelper
         {
             var employee = Employees[i];
             List<Attendance> attendance = _attendanceService.getAttendanceById(employee.EmployeeID, month, year);
-            List<Attendance> filteredAttendance = attendance.Where(a => a.Type != "Eliminato").ToList();
+            List<Attendance> filteredAttendance = attendance.Where(a => a.Type != "Eliminato" && a.Type != "Permesso").ToList();
             List<string> uniqueTypes = filteredAttendance.Select(a => a.Type).Distinct().ToList();
             
             for (int j = 0; j < uniqueTypes.Count(); j++)
@@ -204,13 +204,11 @@ public class AttendanceHelper
                 if (uniqueTypes[j] == "StraordinarioSabato")
                     sp += "3539010000";
                 
-                //Il problema è che scrive le ore in sequenza e non in base ai giorni, riguardare questo.
-                
-                for (int u = 0; u < numberOfDaysInMonth; u++)
+                for (int u = 1; u <= numberOfDaysInMonth; u++)
                 {
 
                     List<Attendance> attendanceForDay = attendance
-                        .Where(a => a.DateIn.Day == u && a.Type != "Eliminato")
+                        .Where(a => a.DateIn.Day == u && a.Type == uniqueTypes[j] && a.EmployeeID == employee.EmployeeID )
                         .ToList();
 
                     TimeSpan totalDuration = TimeSpan.Zero;
@@ -218,21 +216,44 @@ public class AttendanceHelper
                     {
                         if (attendance_tmp.DateIn != null && attendance_tmp.DateOut != null)
                         {
-                            totalDuration += attendance_tmp.DateOut.Value - attendance_tmp.DateIn.Date;
+                            totalDuration += attendance_tmp.DateOut.Value - attendance_tmp.DateIn;
                         }
                     }
-                    
-                    if (totalDuration > TimeSpan.FromHours(7))
+
+                    switch (totalDuration)
                     {
-                        sp += "80000";
-                    }
-                    else
-                    {
-                        sp += "00000";
+                        case TimeSpan td when td > TimeSpan.FromHours(7) + TimeSpan.FromMinutes(45):
+                            sp += "80000";
+                            break;
+                        case TimeSpan td when td > TimeSpan.FromHours(6) + TimeSpan.FromMinutes(45):
+                            sp += "70000";
+                            break;
+                        case TimeSpan td when td > TimeSpan.FromHours(5) + TimeSpan.FromMinutes(45):
+                            sp += "60000";
+                            break;
+                        case TimeSpan td when td > TimeSpan.FromHours(4) + TimeSpan.FromMinutes(45):
+                            sp += "50000";
+                            break;
+                        case TimeSpan td when td > TimeSpan.FromHours(3) + TimeSpan.FromMinutes(45):
+                            sp += "40000";
+                            break;
+                        case TimeSpan td when td > TimeSpan.FromHours(2) + TimeSpan.FromMinutes(45):
+                            sp += "30000";
+                            break;
+                        case TimeSpan td when td > TimeSpan.FromHours(1) + TimeSpan.FromMinutes(45):
+                            sp += "20000";
+                            break;
+                        case TimeSpan td when td > TimeSpan.FromHours(0) + TimeSpan.FromMinutes(45):
+                            sp += "10000";
+                            break;
+                        // Aggiungi altri casi se necessario
+                        default:
+                            sp += "00000";
+                            break;
                     }
                 }
+                sp = sp.Remove(sp.Length - 2);
                 stringFile.Add(sp);
-                sp.Remove(2);
             }
         }
 
