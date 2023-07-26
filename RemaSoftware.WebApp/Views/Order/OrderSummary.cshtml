@@ -20,9 +20,10 @@
             <table class="table table-bordered" id="table-ddt" width="100%" cellspacing="0">
                 <thead>
                 <tr>
+                    <th>N° Lotto</th>
                     <th>Cliente</th>
                     <th>DDT</th>
-                    <th>SKU</th>
+                    <th>SKU Prodotto</th>
                     <th>Nome Prodotto</th>
                     <th>N° pezzi</th>
                     <th>N° pezzi attuali</th>
@@ -38,6 +39,7 @@
                 @foreach (var ddt in Model.Ddt_In)
                 {
                     <tr id="ddt-@ddt.Ddt_In_ID">
+                        <td>@ddt.SubBatchID</td>
                         <td>@ddt.Product.Client.Name</td>
                         <td>@ddt.Code</td>
                         <td>@ddt.Product.SKU</td>
@@ -247,14 +249,15 @@
                 { "searchable": true, "orderable": true, "targets": 1 },
                 { "searchable": true, "orderable": true, "targets": 2 },
                 { "searchable": true, "orderable": true, "targets": 3 },
-                { "searchable": false, "orderable": false, "targets": 4 },
+                { "searchable": true, "orderable": true, "targets": 4 },
                 { "searchable": false, "orderable": false, "targets": 5 },
                 { "searchable": false, "orderable": false, "targets": 6 },
                 { "searchable": false, "orderable": false, "targets": 7 },
-                { "searchable": false, "orderable": true, "targets": 8, "type": "date-eu" },
+                { "searchable": false, "orderable": false, "targets": 8 },
                 { "searchable": false, "orderable": true, "targets": 9, "type": "date-eu" },
-                { "searchable": false, "orderable": false, "targets": 10 },
+                { "searchable": false, "orderable": true, "targets": 10, "type": "date-eu" },
                 { "searchable": false, "orderable": false, "targets": 11 },
+                { "searchable": false, "orderable": false, "targets": 12 },
               ]
         });
 

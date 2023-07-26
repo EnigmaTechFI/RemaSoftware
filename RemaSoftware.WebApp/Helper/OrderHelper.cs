@@ -609,7 +609,6 @@ namespace RemaSoftware.WebApp.Helper
             try
             {
                 _orderService.UpdateDdtOut(ddtOut);
-
             }
             catch (Exception e)
             {
@@ -724,38 +723,32 @@ namespace RemaSoftware.WebApp.Helper
 
         public async Task<string> EmitPartialDdtIn(PartialDDTViewModel model)
         {
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            try
             {
-                try
+                if (model.PartialDdtDtos.All(s => s.ToEmit))
+                    return await EmitDDT(model.DdtId);
+                if (model.PartialDdtDtos.Any(s => s.ToEmit))
                 {
-                    if (model.PartialDdtDtos.All(s => s.ToEmit))
-                        return await EmitDDT(model.DdtId);
-                    if (model.PartialDdtDtos.Any(s => s.ToEmit))
+                    var ddtOut = _orderService.CreateDDTOut(new Ddt_Out()
                     {
-                        var ddtOut = _orderService.CreateDDTOut(new Ddt_Out()
-                        {
-                            ClientID = model.ClientId,
-                            Date = DateTime.Now,
-                            Url = "",
-                            Status = DDTOutStatus.STATUS_PENDING
-                        });
-                        var partial = model.PartialDdtDtos.Where(s => s.ToEmit).ToList();
-                        foreach (var item in partial)
-                        {
-                            _orderService.UpdateDdtAssociationByIdWithNewDdtOut(item.DdtAssociation.ID, ddtOut.Ddt_Out_ID);
-                        }
-                        var result = await EmitDDT(ddtOut.Ddt_Out_ID);
-                        transaction.Commit();
-                        return result;
+                        ClientID = model.ClientId,
+                        Date = DateTime.Now,
+                        Url = "",
+                        Status = DDTOutStatus.STATUS_PENDING
+                    });
+                    var partial = model.PartialDdtDtos.Where(s => s.ToEmit).ToList();
+                    foreach (var item in partial)
+                    {
+                        _orderService.UpdateDdtAssociationByIdWithNewDdtOut(item.DdtAssociation.ID, ddtOut.Ddt_Out_ID);
                     }
-                    transaction.Commit();
-                    return "";
+                    var result = await EmitDDT(ddtOut.Ddt_Out_ID);
+                    return result;
                 }
-                catch (Exception e)
-                {
-                    transaction.Rollback();
-                    throw e;
-                }
+                return "";
+            }
+            catch (Exception e)
+            {
+                throw e;
             }
         }
 

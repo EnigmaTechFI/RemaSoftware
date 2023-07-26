@@ -177,6 +177,17 @@ public class AttendanceHelper
             List<Attendance> attendance = _attendanceService.getAttendanceById(employee.EmployeeID, month, year);
             List<Attendance> filteredAttendance = attendance.Where(a => a.Type != "Eliminato" && a.Type != "Permesso").ToList();
             List<string> uniqueTypes = filteredAttendance.Select(a => a.Type).Distinct().ToList();
+
+            var permiss = "U5176" + mese + anno + employee.Number + "0";
+
+            if (employee.TypePosition == "Maternità anticipata")
+            {
+                permiss += "3110000000";
+            }
+            else
+            {
+                permiss += "3040000000";
+            }
             
             for (int j = 0; j < uniqueTypes.Count(); j++)
             {
@@ -210,6 +221,9 @@ public class AttendanceHelper
                     List<Attendance> attendanceForDay = attendance
                         .Where(a => a.DateIn.Day == u && a.Type == uniqueTypes[j] && a.EmployeeID == employee.EmployeeID )
                         .ToList();
+                    
+                    List<Attendance> allAttendanceForDay = attendance.Where(a => a.DateIn.Day == u && a.EmployeeID == employee.EmployeeID)
+                        .ToList();
 
                     TimeSpan totalDuration = TimeSpan.Zero;
                     foreach (var attendance_tmp in attendanceForDay)
@@ -224,36 +238,96 @@ public class AttendanceHelper
                     {
                         case TimeSpan td when td > TimeSpan.FromHours(7) + TimeSpan.FromMinutes(45):
                             sp += "80000";
+                            if (uniqueTypes[j] == "Presenza" && employee.TypePosition == "In servizio" && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Sunday && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Saturday)
+                                permiss += "00000";
                             break;
                         case TimeSpan td when td > TimeSpan.FromHours(6) + TimeSpan.FromMinutes(45):
                             sp += "70000";
+                            if (uniqueTypes[j] == "Presenza" && employee.TypePosition == "In servizio" && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Sunday && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Saturday)
+                                permiss += "10000";
                             break;
                         case TimeSpan td when td > TimeSpan.FromHours(5) + TimeSpan.FromMinutes(45):
                             sp += "60000";
+                            if (uniqueTypes[j] == "Presenza" && employee.TypePosition == "In servizio" && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Sunday && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Saturday)
+                                permiss += "20000";
+                            if(uniqueTypes[j] == "Presenza" && employee.TypePosition == "Maternità anticipata" && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Sunday && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Saturday)
+                                permiss += "00000";
                             break;
                         case TimeSpan td when td > TimeSpan.FromHours(4) + TimeSpan.FromMinutes(45):
                             sp += "50000";
+                            if (uniqueTypes[j] == "Presenza" && employee.TypePosition == "In servizio" && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Sunday && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Saturday)
+                                permiss += "30000";
+                            if(uniqueTypes[j] == "Presenza" && employee.TypePosition == "Maternità anticipata" && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Sunday && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Saturday)
+                                permiss += "00000";
                             break;
                         case TimeSpan td when td > TimeSpan.FromHours(3) + TimeSpan.FromMinutes(45):
                             sp += "40000";
+                            if (uniqueTypes[j] == "Presenza" && employee.TypePosition == "In servizio" && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Sunday && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Saturday)
+                                permiss += "40000";
                             break;
                         case TimeSpan td when td > TimeSpan.FromHours(2) + TimeSpan.FromMinutes(45):
                             sp += "30000";
+                            if (uniqueTypes[j] == "Presenza" && employee.TypePosition == "In servizio" && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Sunday && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Saturday)
+                                permiss += "50000";
                             break;
                         case TimeSpan td when td > TimeSpan.FromHours(1) + TimeSpan.FromMinutes(45):
                             sp += "20000";
+                            if (uniqueTypes[j] == "Presenza" && employee.TypePosition == "In servizio" && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Sunday && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Saturday)
+                                permiss += "60000";
                             break;
                         case TimeSpan td when td > TimeSpan.FromHours(0) + TimeSpan.FromMinutes(45):
                             sp += "10000";
+                            if (uniqueTypes[j] == "Presenza" && employee.TypePosition == "In servizio" && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Sunday && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Saturday)
+                                permiss += "70000";
                             break;
-                        // Aggiungi altri casi se necessario
                         default:
                             sp += "00000";
+                            DateTime myDate = new DateTime(year, month, u);
+
+                            var NotPresenceInDay = false;
+
+                            foreach (var allattendanceForDay in allAttendanceForDay)
+                            {
+                                if (allattendanceForDay.Type == "Ferie" || allattendanceForDay.Type == "Festivo" ||
+                                    allattendanceForDay.Type == "Malattia")
+                                {
+                                    NotPresenceInDay = true;
+                                }
+                            }
+
+                            if (NotPresenceInDay)
+                            {
+                                permiss += "00000";
+                            }
+                            else
+                            {
+                                if (uniqueTypes[j] == "Presenza" && employee.TypePosition == "In servizio" &&
+                                    myDate.DayOfWeek != DayOfWeek.Sunday && myDate.DayOfWeek != DayOfWeek.Saturday)
+                                {
+                                    permiss += "80000";
+                                }
+                                else if (uniqueTypes[j] == "Presenza" && employee.TypePosition == "Maternità anticipata" &&
+                                         myDate.DayOfWeek != DayOfWeek.Sunday && myDate.DayOfWeek != DayOfWeek.Saturday)
+                                {
+                                    permiss += "50000";
+                                }
+                                else if (uniqueTypes[j] == "Presenza")
+                                {
+                                    permiss += "00000";
+                                }
+                            }
                             break;
                     }
                 }
+
                 sp = sp.Remove(sp.Length - 2);
                 stringFile.Add(sp);
+
+                if (uniqueTypes[j] == "Presenza")
+                {
+                    permiss = permiss.Remove(permiss.Length - 2);
+                    stringFile.Add(permiss);
+                }
             }
         }
 

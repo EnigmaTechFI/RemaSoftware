@@ -51,8 +51,8 @@
             <div class="col-2 mt-5">
                 <input data-toggle="modal" data-target="#new-modal" type="button" value="Aggiungi a tutti" class="btn btn-primary text-white" id="exportBtn" onclick="AllEmployeeAttendanceId('#modify-modal')"/>
             </div>
-            <div class="col-2 mt-5">
-                <input type="button" data-toggle="modal" data-target="#modaltxt" value="Invia documento di testo" class="btn btn-primary text-white" id="sendTXT"/>
+            <div class="col-2 mt-5 ml-4">
+                <input type="button" data-toggle="modal" data-target="#modaltxt" value="Invia per mail" class="btn btn-primary text-white" id="sendTXT"/>
             </div>
         </div>
         <div class="row mb-2">
@@ -706,7 +706,7 @@
                 <div class="row mb-4">
                     <div class="col-12">
                         <label class="form-check-label"><b>Mail</b></label>
-                        <input class="form-control" type="email" id="mailsend" value="alessio.corsi.lv@gmail.com" />
+                        <input class="form-control" type="email" id="mailsend" value="" />
                     </div>
                 </div>
             </div>
@@ -717,6 +717,28 @@
         </div>
     </div>
 </div>
+
+<style>
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+
+th:first-child,
+td:first-child {
+  position: sticky;
+  left: -0.5px;
+  z-index: 1; 
+  background-color: white;
+}
+
+</style>
 
 @section Scripts
 {

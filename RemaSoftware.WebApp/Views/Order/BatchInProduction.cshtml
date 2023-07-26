@@ -36,7 +36,23 @@
                         <td>@batch.Ddts_In[0].Product.Client.Name</td>
                         <td>@batch.Ddts_In[0].Product.SKU</td>
                         <td>@batch.Ddts_In[0].Product.Name</td>
-                        <td onclick="showDDT(@batch.SubBatchID)">Visualizza DDT associate</td>
+                        @if (@batch.Ddts_In.Count > 3)
+                        {
+                            <td onclick="showDDT(@batch.SubBatchID)">
+                                Visualizza DDT associate
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                            @foreach (var ddt in batch.Ddts_In)
+                            {
+                                <div>
+                                    ddt <br>
+                                </div>
+                            }
+                            </td>
+                        }
                         <td>@batch.Ddts_In.Sum(s=> s.Number_Piece)</td>
                         <td>@batch.Ddts_In.Sum(s=> s.Number_Piece_Now)</td>
                         <td>@batch.Ddts_In.OrderBy(s=> s.DataOut).FirstOrDefault().DataOut.ToString("dd/MM/yy")</td>
