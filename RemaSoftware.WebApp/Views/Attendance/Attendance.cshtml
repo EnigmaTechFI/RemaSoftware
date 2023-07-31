@@ -1,5 +1,4 @@
-﻿@using RemaSoftware.Domain.Models
-@model RemaSoftware.WebApp.Models.EmployeeViewModel.AttendanceViewModel
+﻿@model RemaSoftware.WebApp.Models.EmployeeViewModel.AttendanceViewModel
 
 @{
     ViewData["Title"] = "Gestione Presenze";
@@ -7,8 +6,9 @@
 
 <link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <!-- DataTales Example -->
@@ -34,8 +34,6 @@
                     <option value="11" selected="@(Model.Month == 11)">Novembre</option>
                     <option value="12" selected="@(Model.Month == 12)">Dicembre</option>
                 </select>
-
-
             </div>
             <div class="col-2 mt-3">
                 <label for="anno">Anno:</label>
@@ -55,7 +53,9 @@
                 <input type="button" data-toggle="modal" data-target="#modaltxt" value="Invia per mail" class="btn btn-primary text-white" id="sendTXT"/>
             </div>
         </div>
-        <div class="row mb-2">
+    </form>
+    <div class="card-body" id="contentToPdf">
+        <div class="row " style="margin-left: -1.5%; margin-bottom: 1.1% !important;">
             <div class="ml-5" style="width: 20px; height: 20px; background-color: green; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;"> Presenza</div>
             <div class="ml-5" style="width: 20px; height: 20px; background-color: #9A83BC; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;"> Straodinario</div>
             <div class="ml-5" style="width: 20px; height: 20px; background-color: red; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;"> Permesso</div>
@@ -63,8 +63,6 @@
             <div class="ml-5" style="width: 20px; height: 20px; background-color: #36b9cc; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;"> Festivo</div>
             <div class="ml-5" style="width: 20px; height: 20px; background-color: #f6c23e; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;"> Ferie</div>
         </div>
-    </form>
-    <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered" id="table-stock" width="100%" cellspacing="0">
                 <tr>
@@ -823,30 +821,52 @@ td:first-child {
                 });
             }
         }
-            
-        function SendAttendance() {
-           var month = $('#mese').val();
-           var year = $('#anno').val();
-           var mail = $('#mailsend').val();
-       
-           var model = {
-               month: month,
-               year: year,
-               mail: mail
-           }
-       
-           $.ajax({
-               url: '@Url.Action("SendAttendance", "Attendance")',
-               type: 'POST',
-               data: model,
-               success: function () {
-                   $("#modaltxt").modal('toggle');
-               },
-               error: function () {
-                   // Gestione dell'errore (se necessario)
-               }
-           });
+        
+         function SendAttendance() {
+            var month = $('#mese').val();
+            var year = $('#anno').val();
+            var mail = $('#mailsend').val();
+    
+            var model = {
+                month: month,
+                year: year,
+                mail: mail
+            };
+    
+            // Creazione del PDF utilizzando html2pdf.js
+            var element = document.getElementById('contentToPdf');
+            var opt = {
+                margin: 2,
+                filename: 'output.pdf',
+                image: { type: 'jpeg', quality: 0.9 },
+                html2canvas: { scale: 1.5, logging: true }, // Usa una scala di 1 (nessuna riduzione) e abilita il logging per debug
+                jsPDF: { unit: 'mm', format: 'a1', orientation: 'landscape' } // Prova un formato di pagina più grande (a3)
+            };
+    
+            html2pdf().from(element).set(opt).outputPdf().then(function (pdfData) {
+                // Converti il PDF in una stringa Base64
+                var pdfBase64 = btoa(pdfData);
+    
+                // Invia i dati al controller tramite AJAX
+                $.ajax({
+                    url: '@Url.Action("SendAttendance", "Attendance")',
+                    type: 'POST',
+                    data: {
+                        month: model.month,
+                        year: model.year,
+                        mail: model.mail,
+                        pdfData: pdfBase64
+                    },
+                    success: function () {
+                        $("#modaltxt").modal('toggle');
+                    },
+                    error: function () {
+                        $("#modaltxt").modal('toggle');
+                    }
+                });
+            });
         }
+
         
         function togglePresenze(id) {
             var presenzeDiv = document.getElementById(id);

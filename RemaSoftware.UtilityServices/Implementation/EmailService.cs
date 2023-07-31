@@ -244,7 +244,7 @@ namespace RemaSoftware.UtilityServices.Implementation
             }
         }
         
-        public bool SendEmailAttendance(string period, string email, string attendance)
+        public bool SendEmailAttendance(string period, string email, string attendance, byte[] pdfBytes)
         {
             try
             {
@@ -262,6 +262,10 @@ namespace RemaSoftware.UtilityServices.Implementation
                 
                 Attachment attachment = new Attachment(attendance);
                 mailMessage.Attachments.Add(attachment);
+                
+                Attachment attachment1 = new Attachment(new MemoryStream(pdfBytes), "Presenze_" +period+".pdf", "application/pdf");
+                mailMessage.Attachments.Add(attachment1);
+
                 
                 MailText = MailText.Replace("[period]", period);
 
@@ -290,7 +294,7 @@ namespace RemaSoftware.UtilityServices.Implementation
             }
             return false;
         }
-
+        
         public bool SendEmailStock(int id, string name, string sku, string supplierName, string mail)
         {
             try

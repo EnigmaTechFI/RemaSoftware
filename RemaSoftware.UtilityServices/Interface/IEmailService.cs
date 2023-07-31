@@ -14,7 +14,7 @@ namespace RemaSoftware.UtilityServices.Interface
         public void SendEmailPriceVariation(string price, string mail, string message, string ddtCode, string cliente);
         public bool SendEmailStock(int id, string name, string sku, string supplierName, string email);
 
-        public bool SendEmailAttendance(string period, string email, string attendance);
+        public bool SendEmailAttendance(string period, string email, string attendance, byte[] pdfBytes);
         public void SendEmployeeAttendance(List<Employee> employees, List<string> email);
     }
 }

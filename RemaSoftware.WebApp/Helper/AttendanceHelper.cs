@@ -136,7 +136,7 @@ public class AttendanceHelper
         }
     }
 
-    public void SendAttendance(int month, int year, string mail)
+    public void SendAttendance(int month, int year, string mail, byte[] pdfBytes)
     {
         // Calcola le date di inizio e fine in base al mese e all'anno forniti
         DateTime startDate = new DateTime(year, month, 1);
@@ -149,7 +149,7 @@ public class AttendanceHelper
 
         if (!string.IsNullOrEmpty(filePath))
         {
-            _emailService.SendEmailAttendance(formattedDates, mail, filePath);
+            _emailService.SendEmailAttendance(formattedDates, mail, filePath, pdfBytes);
             Task.Delay(1000).ContinueWith(_ =>
             {
                 try
@@ -302,12 +302,12 @@ public class AttendanceHelper
                             else
                             {
                                 if (uniqueTypes[j] == "Presenza" && employee.TypePosition == "In servizio" &&
-                                    myDate.DayOfWeek != DayOfWeek.Sunday && myDate.DayOfWeek != DayOfWeek.Saturday)
+                                    myDate.DayOfWeek != DayOfWeek.Sunday && myDate.DayOfWeek != DayOfWeek.Saturday && myDate < DateTime.Today)
                                 {
                                     permiss += "80000";
                                 }
                                 else if (uniqueTypes[j] == "Presenza" && employee.TypePosition == "Maternità anticipata" &&
-                                         myDate.DayOfWeek != DayOfWeek.Sunday && myDate.DayOfWeek != DayOfWeek.Saturday)
+                                         myDate.DayOfWeek != DayOfWeek.Sunday && myDate.DayOfWeek != DayOfWeek.Saturday && myDate < DateTime.Today)
                                 {
                                     permiss += "50000";
                                 }
