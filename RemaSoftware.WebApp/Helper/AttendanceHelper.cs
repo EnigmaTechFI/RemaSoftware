@@ -283,40 +283,59 @@ public class AttendanceHelper
                         default:
                             sp += "00000";
                             DateTime myDate = new DateTime(year, month, u);
+                            
+                            if(uniqueTypes[j] == "Presenza"){
+                                var PresenceInDay = false;
 
-                            var NotPresenceInDay = false;
+                                foreach (var allattendanceForDay in allAttendanceForDay)
+                                {
+                                    if (allattendanceForDay.Type == "Ferie" || allattendanceForDay.Type == "Festivo" || allattendanceForDay.Type == "Malattia")  //Qui problema uno può essere mezza girnata in malattia
+                                    {
+                                        PresenceInDay = true;
+                                    }
+                                }
 
-                            foreach (var allattendanceForDay in allAttendanceForDay)
-                            {
-                                if (allattendanceForDay.Type == "Ferie" || allattendanceForDay.Type == "Festivo" ||
-                                    allattendanceForDay.Type == "Malattia")
-                                {
-                                    NotPresenceInDay = true;
-                                }
-                            }
-
-                            if (NotPresenceInDay)
-                            {
-                                permiss += "00000";
-                            }
-                            else
-                            {
-                                if (uniqueTypes[j] == "Presenza" && employee.TypePosition == "In servizio" &&
-                                    myDate.DayOfWeek != DayOfWeek.Sunday && myDate.DayOfWeek != DayOfWeek.Saturday && myDate < DateTime.Today)
-                                {
-                                    permiss += "80000";
-                                }
-                                else if (uniqueTypes[j] == "Presenza" && employee.TypePosition == "Maternità anticipata" &&
-                                         myDate.DayOfWeek != DayOfWeek.Sunday && myDate.DayOfWeek != DayOfWeek.Saturday && myDate < DateTime.Today)
-                                {
-                                    permiss += "50000";
-                                }
-                                else if (uniqueTypes[j] == "Presenza")
+                                if (PresenceInDay)
                                 {
                                     permiss += "00000";
                                 }
+                                else
+                                {
+                                    if (employee.TypePosition == "In servizio" &&
+                                        myDate.DayOfWeek != DayOfWeek.Sunday && myDate.DayOfWeek != DayOfWeek.Saturday && myDate < DateTime.Today)
+                                    {
+                                        permiss += "80000";
+                                    }
+                                    else if (employee.TypePosition == "Maternità anticipata" &&
+                                             myDate.DayOfWeek != DayOfWeek.Sunday && myDate.DayOfWeek != DayOfWeek.Saturday && myDate < DateTime.Today)
+                                    {
+                                        permiss += "50000";
+                                    }
+                                    else
+                                    {
+                                        permiss += "00000";
+                                    }
+                                }
                             }
-                            break;
+                        break;
+                    }
+
+                    if (uniqueTypes[j] == "Presenza" && totalDuration.TotalHours > 0)
+                    {
+                        var OneTime = false;
+                        foreach (var allattendanceForDay in allAttendanceForDay)
+                        {
+                            if (allattendanceForDay.Type == "Malattia")
+                            {
+                                OneTime = true;
+                            }
+                        }
+
+                        if (OneTime)
+                        {
+                            permiss = permiss.Remove(permiss.Length - 5);
+                            permiss += "00000"; 
+                        }
                     }
                 }
 
