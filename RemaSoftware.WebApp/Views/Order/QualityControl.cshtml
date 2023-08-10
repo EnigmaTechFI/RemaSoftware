@@ -47,11 +47,11 @@
                             <div>
                                 <span><i>- Cliente: </i>@item.SubBatch.Ddts_In[0].Product.Client.Name</span><br/>
                                 <span><i>- Pezzi rimanenti: </i>@item.SubBatch.Ddts_In.Sum(s => s.Number_Piece_Now)</span><br/>
-                                @{ var time = (int)(DateTime.Now - item.StartDate).TotalSeconds; }
+                                <!--<script>@{ var time = (int)(DateTime.Now - item.StartDate).TotalSeconds; }
                                 <span id="time-@item.OperationTimelineID"></span><br/>
-                                <script>
+                                
                                 getTime('@time', '@item.OperationTimelineID')
-                              </script>
+                              </script>-->
                             </div>
                             <hr/>
                             <div class="text-center align-items-center">

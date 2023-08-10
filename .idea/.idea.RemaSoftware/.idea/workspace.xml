@@ -20,13 +20,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="de137d0d-f34b-4c49-826c-e625e08faa2f" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Implementation/MachineService.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Interface/IMachineService.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Controllers/MachineController.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/MachineHelper.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Models/MachineViewModel/MachineViewModel.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Machine/AutomaticMachine.cshtml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RemaSoftware/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RemaSoftware/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Implementation/EmailService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Implementation/EmailService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Interface/IEmailService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Interface/IEmailService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Controllers/AttendanceController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Controllers/AttendanceController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AttendanceHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AttendanceHelper.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Attendance/Attendance.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Attendance/Attendance.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/NewEmployee.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/NewEmployee.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.UtilityServices/RemaSoftware.UtilityServices.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.UtilityServices/RemaSoftware.UtilityServices.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AccountingHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AccountingHelper.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Models/AccountingViewModel/ProductionAnalysisLiveViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Models/AccountingViewModel/ProductionAnalysisLiveViewModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Startup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Startup.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Accounting/ProductionAnalysisLive.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Accounting/ProductionAnalysisLive.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Order/BatchInProduction.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Order/BatchInProduction.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Order/QualityControl.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Order/QualityControl.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Shared/_Layout.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Shared/_Layout.cshtml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,15 +66,16 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/17a25bf4cd58852e31b6bc798fef1d6289441360eea1912bf89a9b4fd337a3/SingleQueryingEnumerable.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/1af51483c9bf18871cce649b9f966dd7be686536f998c33bba3c5fc4adea4a0/Task.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/3ea95343b9387b73062a9b61b7538f826c54ce3529632b4472ba4494044d23/AsyncTaskMethodBuilderT.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/575c31ecc35a636b6f962cb71d53992552941a18982aae1c8e6c16305cc3761b/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/73f99b2224ed48b9259d785821221369b2e14b362cd79ca87512bb5b76dc/Where.SpeedOpt.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/7d9a41d47547e1fe7fe548b21ab4de12cc2671170a023bc8c629017837eb5f4/ActionMethodExecutor.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/acdcb2d5e5a875937e43fc8f8bc4e366d563e824c567ec716bb37f7966ce43/SqlServerExecutionStrategy.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c1da7b6c7c71a954fe3eb2531c6476711b3e6d93a8d76795386d326bb9dbc/ExecutionContext.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c9ca552eea9bb8fababbf1cd3f981cf68849ccc365dcca5627376f98e505c74/ControllerActionInvoker.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/cf91eb35ab781c324ad4fa382dce85631ec37cf3813529f7c92208d866c851/TaskContinuation.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.UtilityServices/Implementation/EmailService.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.WebApp/Controllers/AttendanceController.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.WebApp/Helper/AttendanceHelper.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.WebApp/Views/Attendance/Attendance.cshtml" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.WebApp/Helper/AccountingHelper.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.WebApp/Views/Order/BatchInProduction.cshtml" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.WebApp/Views/Shared/_Layout.cshtml" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -84,7 +93,7 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;ToolWindowCommit.ShowToolbar&quot;: &quot;false&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.4102228&quot;,
+    &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.5173554&quot;,
     &quot;git-widget-placeholder&quot;: &quot;Timekeeper&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -334,21 +343,14 @@
       <workItem from="1690351879933" duration="36135000" />
       <workItem from="1690538711268" duration="1153000" />
       <workItem from="1690783079548" duration="710000" />
-      <workItem from="1690785872329" duration="8509000" />
-    </task>
-    <task id="LOCAL-00056" summary="Eliminazione ordine;">
-      <created>1679410150539</created>
-      <option name="number" value="00056" />
-      <option name="presentableId" value="LOCAL-00056" />
-      <option name="project" value="LOCAL" />
-      <updated>1679410150539</updated>
-    </task>
-    <task id="LOCAL-00057" summary="Lista operazioni su etichetta di commessa;">
-      <created>1679412101873</created>
-      <option name="number" value="00057" />
-      <option name="presentableId" value="LOCAL-00057" />
-      <option name="project" value="LOCAL" />
-      <updated>1679412101873</updated>
+      <workItem from="1690785872329" duration="10646000" />
+      <workItem from="1690811914753" duration="1759000" />
+      <workItem from="1690957831831" duration="7082000" />
+      <workItem from="1691048555564" duration="11971000" />
+      <workItem from="1691387683505" duration="9163000" />
+      <workItem from="1691413296131" duration="5199000" />
+      <workItem from="1691419685754" duration="234000" />
+      <workItem from="1691561116487" duration="20410000" />
     </task>
     <task id="LOCAL-00058" summary="Remove unused DLL in solution;">
       <created>1679412164196</created>
@@ -679,7 +681,21 @@
       <option name="project" value="LOCAL" />
       <updated>1690381926826</updated>
     </task>
-    <option name="localTasksCounter" value="105" />
+    <task id="LOCAL-00105" summary="Update presence with pdf">
+      <created>1690797617499</created>
+      <option name="number" value="00105" />
+      <option name="presentableId" value="LOCAL-00105" />
+      <option name="project" value="LOCAL" />
+      <updated>1690797617499</updated>
+    </task>
+    <task id="LOCAL-00106" summary="Fix bugs">
+      <created>1691075671102</created>
+      <option name="number" value="00106" />
+      <option name="presentableId" value="LOCAL-00106" />
+      <option name="project" value="LOCAL" />
+      <updated>1691075671103</updated>
+    </task>
+    <option name="localTasksCounter" value="107" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -727,8 +743,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Some fixes; WIP ANALISI LOTTO;" />
-    <MESSAGE value="Other fixes;" />
     <MESSAGE value="Last fixes;" />
     <MESSAGE value="FIx price;" />
     <MESSAGE value="Password cliente accesso;" />
@@ -752,14 +766,15 @@
     <MESSAGE value="Fix Quality Control" />
     <MESSAGE value="Update Timekeeper" />
     <MESSAGE value="Update Timekeeper and bugs" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update Timekeeper and bugs" />
+    <MESSAGE value="Update presence with pdf" />
+    <MESSAGE value="Fix bugs" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix bugs" />
   </component>
   <component name="XDebuggerManager">
     <pin-to-top-manager>
       <pinned-members>
         <PinnedItemInfo parentTag="Type#RemaSoftware.Domain.Models.SubBatch" memberName="BatchID" />
         <PinnedItemInfo parentTag="Type#RemaSoftware.Domain.Models.SubBatch" memberName="OperationTimelines" />
-        <PinnedItemInfo parentTag="Type#RemaSoftware.Domain.Models.Attendance" memberName="Employee" />
         <PinnedItemInfo parentTag="Type#RemaSoftware.Domain.Models.Batch" memberName="SubBatches" />
         <PinnedItemInfo parentTag="Type#RemaSoftware.WebApp.DTOs.ModifyAttendanceDTO" memberName="OutId" />
         <PinnedItemInfo parentTag="Type#Newtonsoft.Json.Linq.JContainer" memberName="Count" />

@@ -20,8 +20,9 @@ namespace RemaSoftware.WebApp.Helper
         private readonly IAPIFatturaInCloudService _apiFatturaInCloudService;
         private readonly ApplicationDbContext _dbContext;
         private readonly IClientService _clientService;
+        private readonly IMachineService _machineService;
 
-        public AccountingHelper(IOrderService orderService, ISubBatchService subBatchService, IEmailService emailService, ApplicationDbContext dbContext, IAPIFatturaInCloudService apiFatturaInCloudService, IClientService clientService)
+        public AccountingHelper(IOrderService orderService, ISubBatchService subBatchService, IEmailService emailService, ApplicationDbContext dbContext, IAPIFatturaInCloudService apiFatturaInCloudService, IClientService clientService, IMachineService machineService)
         {
             _orderService = orderService;
             _subBatchService = subBatchService;
@@ -29,6 +30,7 @@ namespace RemaSoftware.WebApp.Helper
             _dbContext = dbContext;
             _apiFatturaInCloudService = apiFatturaInCloudService;
             _clientService = clientService;
+            _machineService = machineService;
         }
 
         public ProductionAnalysisLiveViewModel GetProductionAnalysisLiveViewModel()
@@ -36,6 +38,7 @@ namespace RemaSoftware.WebApp.Helper
             var op = _subBatchService.GetOperationTimelinesByStatus(OperationTimelineConstant.STATUS_WORKING);
             var productionLiveDtos = new List<ProductionLiveDto>();
             var now = DateTime.Now;
+            bool automaticMachine = _machineService.ConnectMachine();
             foreach (var item in op.Where(s => s.MachineId.HasValue).ToList())
             {
                 productionLiveDtos.Add(new ProductionLiveDto()
@@ -50,7 +53,8 @@ namespace RemaSoftware.WebApp.Helper
             }
             return new ProductionAnalysisLiveViewModel()
             {
-                 ProductionLiveDtos = productionLiveDtos
+                 ProductionLiveDtos = productionLiveDtos,
+                 AutomaticMachine = automaticMachine
             };
         }
         public AccountingViewModel GetAccountingViewModel()

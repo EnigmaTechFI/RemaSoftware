@@ -7,6 +7,7 @@ namespace RemaSoftware.WebApp.Models.AccountingViewModel
     public class ProductionAnalysisLiveViewModel
     {
         public List<ProductionLiveDto> ProductionLiveDtos { get; set; }
+        public bool AutomaticMachine { get; set; }
     }
 }
 

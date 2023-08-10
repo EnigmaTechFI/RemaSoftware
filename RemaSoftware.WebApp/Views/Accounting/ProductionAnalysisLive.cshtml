@@ -48,8 +48,31 @@ function getTime(seconds, id){
           <div class="card-body">
             <div class="row no-gutters align-items-center">
               <div id="name-machine-@i" class="col mr-2">
-                <h5 id="title-machine-@i" class="text-center font-weight-bold text-@css text-uppercase mb-1">
-                  Macchina @i</h5>
+                @if (@i != 16)
+                {
+                  <h5 id="title-machine-@i" class="text-center font-weight-bold text-@css text-uppercase mb-1">
+                    Macchina @i
+                  </h5>
+                }
+                else if(Model.AutomaticMachine)
+                {
+                  <a class="nav-link" asp-action="AutomaticMachine" asp-controller="Machine">
+                    <h5 id="title-machine-@i" class="text-center font-weight-bold text-@css text-uppercase mb-1" style="cursor: pointer;" title="Macchina in funzione">
+                      Macchina @i (automatica) <div class="green-led"></div>
+                    </h5>
+                  </a>
+
+                }
+                else
+                {
+                  <a class="nav-link" asp-action="AutomaticMachine" asp-controller="Machine">
+                    <h5 id="title-machine-@i" class="text-center font-weight-bold text-@css text-uppercase mb-1" style="cursor: pointer;" title="Macchina spenta">
+                      Macchina @i (automatica) <div class="red-led"></div>
+                    </h5>
+                  </a>
+                }
+
+                
                 <hr/>
                 @if (op.Count != 0)
                 {
@@ -96,8 +119,35 @@ function getTime(seconds, id){
     
 </div>
 
+<style>
+   .green-led {
+      width: 20px;
+      height: 20px;
+      margin-left: 10px;
+      border-radius: 50%;
+      background-color: #00FF00;
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
+      display: inline-block;
+      position: absolute;
+      margin-top: 1px;
+   }
+    
+   .red-led {
+      width: 20px;
+      height: 20px;
+      margin-left: 10px;
+      border-radius: 50%;
+      background-color: #FF0000;
+      box-shadow: 0 0 10px rgba(255, 0, 0, 0.8); /* Effetto luminosità */
+      display: inline-block;
+      position: absolute;
+      margin-top: 1px;
+   }
+</style>
+
 @section Scripts{
   <script>
+  
   document.addEventListener('DOMContentLoaded', function () {
       // connessione all'hub signalr.
       var connection = new signalR.HubConnectionBuilder()
@@ -243,6 +293,8 @@ function getTime(seconds, id){
           console.error(error.message);
       });
   });
+  
+  
   </script>
   <script src="https://app.smplrspace.com/lib/smplr.js"></script>
   <script>

@@ -288,8 +288,25 @@
                 </a>
             </li>
         }
+    
+        @if (User.IsInRole("Admin"))
+            {
+                <!-- Divider -->
+                <hr class="sidebar-divider">
+                <!-- Heading -->
+                <div class="sidebar-heading">
+                    Macchinari
+                </div>
+            
+                <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Machine" ? "active" : "")">
+                    <a class="nav-link" asp-action="AutomaticMachine" asp-controller="Machine">
+                        <i class="fas fa-fw fa-calculator"></i>
+                        <span>Macchina 4.0</span>
+                    </a>
+                </li>
+            }
 
-        <!-- Divider -->
+    <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">
 
         <!-- Sidebar Toggler (Sidebar) -->
