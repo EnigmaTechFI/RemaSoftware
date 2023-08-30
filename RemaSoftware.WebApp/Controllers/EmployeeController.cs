@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
 using RemaSoftware.Domain.Constants;
+using RemaSoftware.Domain.Models;
 using RemaSoftware.WebApp.Helper;
 using RemaSoftware.WebApp.Models.EmployeeViewModel;
 using RemaSoftware.WebApp.Validation;
+
 
 namespace RemaSoftware.WebApp.Controllers
 {
@@ -15,15 +17,17 @@ namespace RemaSoftware.WebApp.Controllers
     public class EmployeeController : Controller
     {
         private readonly INotyfService _notyfService;
+        private readonly AccountHelper _accountHelper;
         private readonly EmployeeHelper _employeeHelper;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly EmployeeValidation _employeeValidation;
 
-        public EmployeeController(INotyfService notyfService, EmployeeHelper employeeHelper, EmployeeValidation employeeValidation)
+        public EmployeeController(INotyfService notyfService, EmployeeHelper employeeHelper, EmployeeValidation employeeValidation, AccountHelper accountHelper)
         {
             _employeeHelper = employeeHelper;
             _notyfService = notyfService;
             _employeeValidation = employeeValidation;
+            _accountHelper = accountHelper;
         }
 
         [Authorize(Roles = Roles.Admin)]
@@ -44,7 +48,7 @@ namespace RemaSoftware.WebApp.Controllers
         
         [Authorize(Roles = Roles.Admin)]
         [HttpPost]
-        public IActionResult NewEmployee(EmployeeViewModel model)
+        public async Task<IActionResult> NewEmployee(EmployeeViewModel model)
         {
             try 
             {
@@ -54,7 +58,9 @@ namespace RemaSoftware.WebApp.Controllers
                     _notyfService.Error(validationResult);
                 } else
                 {
-                    _employeeHelper.NewEmployee(model.Employee);
+                    MyUser myUser= await _accountHelper.AddEmployeeAccount(model);
+                    model.Employee.AccountId = myUser.Id;
+                    await _employeeHelper.NewEmployee(model.Employee);
                     _notyfService.Success("Impiegato aggiunto correttamente.");
                     return RedirectToAction("EmployeeList");
                 }
@@ -88,14 +94,15 @@ namespace RemaSoftware.WebApp.Controllers
             try
             {
                 _employeeHelper.DeleteEmployee(employeeId);
-                return new JsonResult(new { Result = true, ToastMessage="Impiegato eliminato correttamente."});
+                return new JsonResult(new { Result = true, ToastMessage = "Impiegato eliminato correttamente." });
             }
             catch (Exception e)
             {
-                Logger.Error(e, $"Error deleting stockArticle: {employeeId}");
-                return new JsonResult(new {Error = e, ToastMessage = $"Errore durante l'eliminazione dell'impiegato."});
+                Logger.Error(e, $"Error deleting employee: {employeeId}");
+                return new JsonResult(new { Error = e, ToastMessage = "Errore durante l'eliminazione dell'impiegato." });
             }
         }
+
         
         [Authorize(Roles = Roles.Admin)]
         [HttpGet]
@@ -141,7 +148,7 @@ namespace RemaSoftware.WebApp.Controllers
                 }
                 else
                 {
-                    await _employeeHelper.EditEmployee(model);
+                    _employeeHelper.EditEmployee(model);
                     _notyfService.Success("Impiegato aggiornato correttamente");
                     return RedirectToAction("EmployeeList");
                 }

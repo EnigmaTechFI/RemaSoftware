@@ -20,21 +20,42 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="de137d0d-f34b-4c49-826c-e625e08faa2f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Implementation/MachineService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Interface/IMachineService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Controllers/MachineController.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/MachineHelper.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Models/MachineViewModel/MachineViewModel.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Machine/AutomaticMachine.cshtml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Migrations/20230810083829_UpdateEmployee.Designer.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Migrations/20230810083829_UpdateEmployee.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Migrations/20230810103542_UpdateEmployeeAccount.Designer.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Migrations/20230810103542_UpdateEmployeeAccount.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Migrations/20230810125327_Update_Employee.Designer.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Migrations/20230810125327_Update_Employee.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Models/EmployeeViewModel/AttendanceEmployeeViewModel.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Attendance/AttendanceEmployee.cshtml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/wwwroot/MailTemplate/mail-no-attendance.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.RemaSoftware/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RemaSoftware/.idea/dataSources.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RemaSoftware/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RemaSoftware/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.UtilityServices/RemaSoftware.UtilityServices.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.UtilityServices/RemaSoftware.UtilityServices.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AccountingHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AccountingHelper.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Models/AccountingViewModel/ProductionAnalysisLiveViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Models/AccountingViewModel/ProductionAnalysisLiveViewModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Startup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Startup.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Accounting/ProductionAnalysisLive.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Accounting/ProductionAnalysisLive.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Order/BatchInProduction.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Order/BatchInProduction.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Order/QualityControl.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Order/QualityControl.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.Domain/Constants/Roles.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Constants/Roles.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.Domain/Data/DbInitializer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Data/DbInitializer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.Domain/Migrations/ApplicationDbContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Migrations/ApplicationDbContextModelSnapshot.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.Domain/Models/Employee.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Models/Employee.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.Domain/Services/IAttendanceService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Services/IAttendanceService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.Domain/Services/IEmployeeService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Services/IEmployeeService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.Domain/Services/Impl/AttendanceService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Services/Impl/AttendanceService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.Domain/Services/Impl/EmployeeService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Services/Impl/EmployeeService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Implementation/EmailService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Implementation/EmailService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Implementation/MachineService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Implementation/MachineService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Interface/IEmailService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Interface/IEmailService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Controllers/AccountController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Controllers/AccountController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Controllers/AttendanceController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Controllers/AttendanceController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Controllers/EmployeeController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Controllers/EmployeeController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AccountHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AccountHelper.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AttendanceHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AttendanceHelper.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/EmployeeHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/EmployeeHelper.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/README.txt" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/README.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/RemaSoftware.WebApp.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/RemaSoftware.WebApp.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Validation/EmployeeValidation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Validation/EmployeeValidation.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/ModifyEmployee.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/ModifyEmployee.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/NewEmployee.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/NewEmployee.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/ViewEmployee.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/ViewEmployee.cshtml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Shared/_Layout.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Shared/_Layout.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/wwwroot/MailTemplate/mail-attendance.html" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/wwwroot/MailTemplate/mail-attendance.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,57 +84,50 @@
     </option>
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/17a25bf4cd58852e31b6bc798fef1d6289441360eea1912bf89a9b4fd337a3/SingleQueryingEnumerable.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/1af51483c9bf18871cce649b9f966dd7be686536f998c33bba3c5fc4adea4a0/Task.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/3ea95343b9387b73062a9b61b7538f826c54ce3529632b4472ba4494044d23/AsyncTaskMethodBuilderT.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/575c31ecc35a636b6f962cb71d53992552941a18982aae1c8e6c16305cc3761b/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/73f99b2224ed48b9259d785821221369b2e14b362cd79ca87512bb5b76dc/Where.SpeedOpt.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/7d9a41d47547e1fe7fe548b21ab4de12cc2671170a023bc8c629017837eb5f4/ActionMethodExecutor.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/acdcb2d5e5a875937e43fc8f8bc4e366d563e824c567ec716bb37f7966ce43/SqlServerExecutionStrategy.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c1da7b6c7c71a954fe3eb2531c6476711b3e6d93a8d76795386d326bb9dbc/ExecutionContext.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c9ca552eea9bb8fababbf1cd3f981cf68849ccc365dcca5627376f98e505c74/ControllerActionInvoker.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/cf91eb35ab781c324ad4fa382dce85631ec37cf3813529f7c92208d866c851/TaskContinuation.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.WebApp/Helper/AccountingHelper.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.WebApp/Views/Order/BatchInProduction.cshtml" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.WebApp/Views/Shared/_Layout.cshtml" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/RemaSoftware.WebApp/wwwroot/lib/bootstrap/dist/css/bootstrap.css.map" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 6
+}</component>
   <component name="ProjectId" id="2Llh6F9WpmOcCkhrevMLAzEgpUj" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;ToolWindowCommit.ShowToolbar&quot;: &quot;false&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.5173554&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Timekeeper&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;SolutionBuilderGeneralOptionsPage&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "ToolWindowCommit.ShowToolbar": "false",
+    "WebServerToolWindowFactoryState": "false",
+    "XThreadsFramesViewSplitterKey": "0.8422222",
+    "git-widget-placeholder": "Timekeeper",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "HotReloadSettingsPage",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;sqlserver.localdb&quot;,
-      &quot;sqlserver&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "sqlserver.localdb",
+      "sqlserver"
     ],
-    &quot;rider.external.source.directories&quot;: [
-      &quot;C:\\Users\\aless\\AppData\\Roaming\\JetBrains\\Rider2023.1\\resharper-host\\DecompilerCache&quot;,
-      &quot;C:\\Users\\aless\\AppData\\Roaming\\JetBrains\\Rider2023.1\\resharper-host\\SourcesCache&quot;,
-      &quot;C:\\Users\\aless\\AppData\\Local\\Symbols\\src&quot;
+    "rider.external.source.directories": [
+      "C:\\Users\\aless\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\DecompilerCache",
+      "C:\\Users\\aless\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\SourcesCache",
+      "C:\\Users\\aless\\AppData\\Local\\Symbols\\src"
     ]
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET Launch Settings Profile.RemaSoftware.WebApp: IIS Express">
     <configuration name="RemaSoftware: FTPProfile" type="DotNetMsBuildPublish" factoryName="Publish to IIS">
       <riderPublish configuration="Release" platform="Any CPU" publish_profile="FTPProfile.pubxml" pubxml_path="$PROJECT_DIR$/RemaSoftware/Properties/PublishProfiles/FTPProfile.pubxml" user_name="u106306586" uuid_high="52394423432659973" uuid_low="-6912510412447034786" />
@@ -350,14 +364,12 @@
       <workItem from="1691387683505" duration="9163000" />
       <workItem from="1691413296131" duration="5199000" />
       <workItem from="1691419685754" duration="234000" />
-      <workItem from="1691561116487" duration="20410000" />
-    </task>
-    <task id="LOCAL-00058" summary="Remove unused DLL in solution;">
-      <created>1679412164196</created>
-      <option name="number" value="00058" />
-      <option name="presentableId" value="LOCAL-00058" />
-      <option name="project" value="LOCAL" />
-      <updated>1679412164196</updated>
+      <workItem from="1691561116487" duration="27949000" />
+      <workItem from="1691656660254" duration="9561000" />
+      <workItem from="1691669717198" duration="9750000" />
+      <workItem from="1693288526564" duration="12394000" />
+      <workItem from="1693301755631" duration="7497000" />
+      <workItem from="1693312566275" duration="24691000" />
     </task>
     <task id="LOCAL-00059" summary="[Migration] Remove Order Table Version 1.0">
       <created>1679413111341</created>
@@ -695,7 +707,14 @@
       <option name="project" value="LOCAL" />
       <updated>1691075671103</updated>
     </task>
-    <option name="localTasksCounter" value="107" />
+    <task id="LOCAL-00107" summary="Fix bug and update 4.0">
+      <created>1691656194972</created>
+      <option name="number" value="00107" />
+      <option name="presentableId" value="LOCAL-00107" />
+      <option name="project" value="LOCAL" />
+      <updated>1691656194972</updated>
+    </task>
+    <option name="localTasksCounter" value="108" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -743,7 +762,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Last fixes;" />
     <MESSAGE value="FIx price;" />
     <MESSAGE value="Password cliente accesso;" />
     <MESSAGE value="SignalR Connection Timeout;" />
@@ -768,9 +786,27 @@
     <MESSAGE value="Update Timekeeper and bugs" />
     <MESSAGE value="Update presence with pdf" />
     <MESSAGE value="Fix bugs" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix bugs" />
+    <MESSAGE value="Fix bug and update 4.0" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix bug and update 4.0" />
   </component>
   <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/RemaSoftware.WebApp/Helper/EmployeeHelper.cs</url>
+          <line>137</line>
+          <properties documentPath="C:\Users\aless\RiderProjects\Rema_Software\RemaSoftware.WebApp\Helper\EmployeeHelper.cs" initialLine="137" containingFunctionPresentation="Method 'EditEmployee'">
+            <startOffsets>
+              <option value="3917" />
+            </startOffsets>
+            <endOffsets>
+              <option value="3997" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="58" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
     <pin-to-top-manager>
       <pinned-members>
         <PinnedItemInfo parentTag="Type#RemaSoftware.Domain.Models.SubBatch" memberName="BatchID" />

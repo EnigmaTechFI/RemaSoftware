@@ -13,6 +13,8 @@ namespace RemaSoftware.WebApp.Validation
                 return "Inserire nome.";
             if (string.IsNullOrEmpty(employee.Employee.Surname))
                 return "Inserire cognome.";
+            if (string.IsNullOrEmpty(employee.Employee.Mail))
+                return "Inserire mail.";
             if (string.IsNullOrEmpty(employee.Employee.Number))
                 return "Inserire matricola.";
             if (string.IsNullOrEmpty(employee.Employee.Gender))

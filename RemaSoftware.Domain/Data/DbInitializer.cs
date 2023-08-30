@@ -28,7 +28,7 @@ namespace RemaSoftware.Domain.Data
                 });
             }
             _context.SaveChanges();
-            string[] roleNames = { Roles.Admin, Roles.Dipendente, Roles.Cliente, Roles.Machine, Roles.COQ, Roles.Magazzino, Roles.MagazzinoMaterie};
+            string[] roleNames = { Roles.Admin, Roles.Dipendente, Roles.Cliente, Roles.Machine, Roles.COQ, Roles.Magazzino, Roles.MagazzinoMaterie, Roles.Impiegato};
             IdentityResult roleResult;
 
             foreach (var roleName in roleNames)
@@ -121,6 +121,7 @@ namespace RemaSoftware.Domain.Data
                 
                 var addedRole = userManager.AddToRolesAsync(dip4,new [] { Roles.MagazzinoMaterie }).Result;
             }
+            
             
         }
     }

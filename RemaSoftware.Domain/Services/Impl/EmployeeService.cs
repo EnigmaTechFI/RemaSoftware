@@ -24,14 +24,19 @@ namespace RemaSoftware.Domain.Services.Impl
             _dbContext.SaveChanges();
             return employee;
         }
-        
-        public bool DeleteEmployeeById(int employeeId)
+
+        public void DeleteEmployeeById(Employee employee)
         {
-            _dbContext.Employees.Remove(new Employee {EmployeeID = employeeId});
-            _dbContext.SaveChanges();
-            return true;
+            var existingEmployee = _dbContext.Employees.Find(employee.EmployeeID);
+            var employeeUser = _dbContext.Users.SingleOrDefault(i => i.Id == existingEmployee.AccountId);
+            if (existingEmployee != null)
+            {
+                _dbContext.Employees.Remove(existingEmployee);
+                _dbContext.Users.Remove(employeeUser);
+                _dbContext.SaveChanges();
+            }
         }
-        
+
         public Employee GetEmployeeById(int employeeId)
         {
             return _dbContext.Employees.SingleOrDefault(sd => sd.EmployeeID == employeeId);
@@ -54,12 +59,12 @@ namespace RemaSoftware.Domain.Services.Impl
                 .ToList();
         }
         
+        
         public bool UpdateEmployee(Employee employee)
         {
-            _dbContext.Employees.Update(employee);
+            _dbContext.Entry(employee).State = EntityState.Modified;
             _dbContext.SaveChanges();
             return true;
         }
-        
     }
 }

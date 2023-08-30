@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using NLog;
 using RemaSoftware.Domain.Constants;
@@ -7,6 +8,7 @@ using RemaSoftware.Domain.Data;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.UtilityServices.Interface;
 using RemaSoftware.WebApp.Models.AccountingViewModel;
+using RemaSoftware.WebApp.Models.EmployeeViewModel;
 
 namespace RemaSoftware.WebApp.Helper
 {
@@ -47,7 +49,52 @@ namespace RemaSoftware.WebApp.Helper
 
                         try
                         {
-                            _emailService.SendEmailNewClientAccount(newUser.Email, password);
+                            _emailService.SendEmailNewAccount(newUser.Email, password);
+                        }
+                        catch (Exception e)
+                        {
+                            Logger.Error(e.Message, e);
+                        }
+
+                        transaction.Commit();
+                    }
+                    else
+                    {
+                        throw new Exception("Errore, la mail è già presente");
+                    }
+
+                    return newUser;
+
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw ex;
+                }
+            }
+        }
+        
+        public async Task<MyUser> AddEmployeeAccount(EmployeeViewModel model)
+        {
+            using (var transaction = _dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    MyUser newUser = new MyUser();
+                    newUser.UserName = model.Employee.Mail;
+                    newUser.Email = model.Employee.Mail;
+
+                    var password = PasswordGenerator();
+
+                    IdentityResult result = _userManager.CreateAsync(newUser, password).Result;
+
+                    if (result.Succeeded)
+                    { 
+                        _userManager.AddToRolesAsync(newUser, new[] { Roles.Impiegato });
+
+                        try
+                        {
+                            _emailService.SendEmailNewAccount(newUser.Email, password);
                         }
                         catch (Exception e)
                         {
@@ -112,7 +159,6 @@ namespace RemaSoftware.WebApp.Helper
             {
                 return false;
             }
-            
         }
     }
 }

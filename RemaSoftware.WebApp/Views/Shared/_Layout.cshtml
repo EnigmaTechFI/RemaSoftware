@@ -256,13 +256,14 @@
             <div class="sidebar-heading">
                 Amministrazione
             </div>
-        
+
             <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Attendance" ? "active" : "")">
                 <a class="nav-link" asp-action="Attendance" asp-controller="Attendance">
                     <i class="fas fa-fw fa-calculator"></i>
                     <span>Presenze</span>
                 </a>
             </li>
+
             <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Accounting" ? "active" : "")">
                 <a class="nav-link" asp-action="Accounting" asp-controller="Accounting">
                     <i class="fas fa-fw fa-calculator"></i>
@@ -288,6 +289,16 @@
                 </a>
             </li>
         }
+        
+        @if (User.IsInRole("Impiegato"))
+        {
+            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Attendance" ? "active" : "")">
+                <a class="nav-link" asp-action="AttendanceEmployee" asp-controller="Attendance">
+                    <i class="fas fa-fw fa-calculator"></i>
+                    <span>Presenze</span>
+                </a>
+            </li>
+        }
     
         @if (User.IsInRole("Admin"))
             {
@@ -298,9 +309,9 @@
                     Macchinari
                 </div>
             
-                <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Machine" ? "active" : "")">
+                <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "AutomaticMachine" ? "active" : "")">
                     <a class="nav-link" asp-action="AutomaticMachine" asp-controller="Machine">
-                        <i class="fas fa-fw fa-calculator"></i>
+                        <i class="fas fa-fw fa-industry"></i>
                         <span>Macchina 4.0</span>
                     </a>
                 </li>

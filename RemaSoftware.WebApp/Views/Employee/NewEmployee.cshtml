@@ -16,17 +16,22 @@
     <div class="card-body">
         <form method="post">
             <div class="form-row">
-                <div class="col-md-4 mb-4">
+                <div class="col-md-3 mb-4">
                     <label>Nome</label>
                     <input asp-for="Employee.Name" type="text" class="form-control" placeholder="Nome" required>
                     <span asp-validation-for="Employee.Name" class="text-danger"></span>
                 </div>
-                <div class="col-md-4 mb-4">
+                <div class="col-md-3 mb-4">
                     <label>Cognome</label>
                     <input asp-for="Employee.Surname" type="text" class="form-control" placeholder="Cognome" required>
                     <span asp-validation-for="Employee.Surname" class="text-danger"></span>
                 </div>
-                <div class="col-md-4 mb-4">
+                <div class="col-md-3 mb-4">
+                    <label>Mail</label>
+                    <input asp-for="Employee.Mail" type="text" class="form-control" placeholder="Mail" required>
+                    <span asp-validation-for="Employee.Mail" class="text-danger"></span>
+                </div>
+                <div class="col-md-3 mb-4">
                     <label>Matricola</label>
                     <input asp-for="Employee.Number" type="text" class="form-control" placeholder="Matricola" required>
                     <span asp-validation-for="Employee.Number" class="text-danger"></span>

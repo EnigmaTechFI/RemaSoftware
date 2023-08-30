@@ -19,7 +19,7 @@ MODELLO:
 3. Creazione modello storico prodotto: Dentro il prodotto ci dovrà essere una lista virtuale relativa allo storico;
 
 
-Per Migration - DA TERMINAL: 
+Per Migration - DA TERMINAL:
 1. cd .\RemaSoftware.Domain\
 2. dotnet ef migrations add <nome-migration> --startup-project ../RemaSoftware.WebApp/RemaSoftware.WebApp.csproj
 3. Controllare nella cartella del progetto cosa ha generato la migration

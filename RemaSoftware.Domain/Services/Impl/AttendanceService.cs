@@ -240,6 +240,140 @@ namespace RemaSoftware.Domain.Services.Impl;
             }
 
         }
+        
+        public async Task UpdateAttendanceListWithPresenceEmployee(List<string> userIdList, List<string> userClockList, string FluidaId)
+        {
+            for(int i=0; i<userIdList.Count; i++)
+            {
+                if(userIdList[i] == FluidaId){
+                    if (userIdList[i] == "ae3cdeac-75c0-4734-9d53-5cebde5eb08a")
+                    {
+                        var o = 0;
+                    }
+                    DateTime userClockDate1 = DateTime.ParseExact(userClockList[i], "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+
+                    // Controlla se esiste un elemento in Attendance con timestart o timeend uguale a userClock.Time
+
+                    DateTime userClockDateTime = DateTime.ParseExact(userClockList[i], "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+
+                    bool exists = _dbContext.Attendances
+                        .Any(a => 
+                            ((a.DateIn.Date == userClockDateTime.Date && a.DateIn.TimeOfDay == userClockDateTime.TimeOfDay) || 
+                             (a.DateOut.HasValue && a.DateOut.Value.Date == userClockDateTime.Date && a.DateOut.Value.TimeOfDay >= userClockDateTime.TimeOfDay)) && 
+                            a.Employee.FluidaId == userIdList[i]);
+
+                    if (!exists)
+                    {
+                        // Cerca se esiste un elemento in Attendance con timestart non nullo e timeend nullo
+                        var existingAttendance = _dbContext.Attendances
+                            .FirstOrDefault(a => a.DateIn != null && a.DateOut == null && a.Employee.FluidaId == userIdList[i] && a.DateIn.Date == userClockDate1.Date);
+
+                        if (existingAttendance != null)
+                        {
+                            string dateFormat = "MM/dd/yyyy HH:mm:ss";
+                            DateTime dateIn;
+                            DateTime.TryParseExact(userClockList[i], dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateIn);
+
+                            //rigistrazione normale timbro 
+                            existingAttendance.DateOut = dateIn;
+
+                            DateTime? dateOut = existingAttendance.DateOut?.Date;
+
+                            var dayAttendances = _dbContext.Attendances
+                                .Where(a => dateOut.HasValue && a.DateIn.Date == dateOut.Value && a.EmployeeID == existingAttendance.EmployeeID && a.Type == existingAttendance.Type)
+                                .ToList();
+                            
+                            var employee = _dbContext.Employees
+                                .SingleOrDefault(e => e.EmployeeID == existingAttendance.EmployeeID);
+                            
+                            TimeSpan totalDuration = TimeSpan.Zero;
+
+                            foreach (var attendance in dayAttendances)
+                            {
+                                if (attendance.DateOut.HasValue)
+                                {
+                                    TimeSpan duration = attendance.DateOut.Value - attendance.DateIn;
+                                    totalDuration += duration;
+                                }
+                            }
+                            TimeSpan threshold = new TimeSpan(9, 20, 0);
+
+                            if (totalDuration > threshold && employee.Extraordinary)
+                            {
+                                existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-1);
+                                Attendance strAttendance = new Attendance
+                                {
+                                    DateIn = existingAttendance.DateOut.Value,
+                                    DateOut = dateIn,
+                                    EmployeeID = existingAttendance.EmployeeID,
+                                    Type = "StraordinarioOrdinario"
+                                };
+                                _dbContext.Attendances.Add(strAttendance);
+                            }
+                            
+                        }
+                        else
+                        {
+                            //Sezione straordinario notturno
+                            var previousDay = userClockDate1.Date.AddDays(-1);
+
+                            var existingAttendanceNight = _dbContext.Attendances
+                                .FirstOrDefault(a => a.DateIn != null &&
+                                                     a.DateOut == null &&
+                                                     a.Employee.FluidaId == userIdList[i] &&
+                                                     a.DateIn.Date == previousDay);
+
+                            if (existingAttendanceNight != null && existingAttendanceNight.DateOut == null &&  userClockDate1.TimeOfDay >= TimeSpan.FromHours(5) &&  userClockDate1.TimeOfDay <= TimeSpan.FromHours(7.5) &&  existingAttendanceNight.DateIn.TimeOfDay >= TimeSpan.FromHours(21))
+                            {
+                                existingAttendanceNight.DateOut = userClockDate1;
+                                
+                                Attendance oldAttendance = new Attendance
+                                {
+                                    DateIn = userClockDate1.Date,
+                                    DateOut = userClockDate1.Date,
+                                    EmployeeID = existingAttendanceNight.EmployeeID,
+                                    Type = "Eliminato"
+                                };
+                                _dbContext.Attendances.Add(oldAttendance);
+                                
+                            }
+                            else
+                            {
+                                // Se non esiste un elemento, crea una nuova riga in Attendance
+                                var employee = _dbContext.Employees.FirstOrDefault(e => e.FluidaId == userIdList[i]);
+                                if (employee != null)
+                                {
+                                    string dateFormat = "MM/dd/yyyy HH:mm:ss";
+                                    DateTime dateIn;
+                                    DateTime.TryParseExact(userClockList[i], dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateIn);
+
+                                    Attendance newAttendance = new Attendance
+                                    {
+                                        DateIn = dateIn,
+                                        DateOut = null,
+                                        EmployeeID = employee.EmployeeID,
+                                        Type = "Presenza"
+                                    };
+
+                                    if (newAttendance.DateIn.DayOfWeek == DayOfWeek.Saturday)
+                                    {
+                                        newAttendance.Type = "StraordinarioSabato";
+                                    }
+                                    else if (newAttendance.DateIn.TimeOfDay > TimeSpan.Parse("20:00"))
+                                    {
+                                        newAttendance.Type = "StraordinarioNotturno";
+                                    }
+
+                                    _dbContext.Attendances.Add(newAttendance);
+                                }
+                            }
+                        }
+                        _dbContext.SaveChanges();
+                    }
+                }
+            }
+
+        }
 
         public async Task UpdateAttendancePermit()
         {

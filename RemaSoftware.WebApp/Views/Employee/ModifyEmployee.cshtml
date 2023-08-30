@@ -25,17 +25,22 @@
             @Html.HiddenFor(model => model.Employee.BirthDate)
 
             <div class="form-row">
-                <div class="col-md-4 mb-4">
+                <div class="col-md-3 mb-4">
+                    <label>Mail</label>
+                    <input asp-for="Employee.Mail" type="text" class="form-control" value="@Model.Employee.Mail">
+                    <span asp-validation-for="Employee.Mail" class="text-danger"></span>
+                </div>
+                <div class="col-md-3 mb-4">
                     <label>Mansione</label>
                     <input asp-for="Employee.Task" type="text" class="form-control" value="@Model.Employee.Task">
                     <span asp-validation-for="Employee.Task" class="text-danger"></span>
                 </div>
-                <div class="col-md-4 mb-4">
+                <div class="col-md-3 mb-4">
                     <label>Livello</label>
                     <input asp-for="Employee.Level" type="text" class="form-control" value="@Model.Employee.Level">
                     <span asp-validation-for="Employee.Level" class="text-danger"></span>
                 </div>
-                <div class="col-md-4 mb-4">
+                <div class="col-md-3 mb-4">
                     <label>Numero ore di lavoro</label>
                     <input asp-for="Employee.NumberHour" type="text" class="form-control" value="@Model.Employee.NumberHour" required>
                     <span asp-validation-for="Employee.NumberHour" class="text-danger"></span>

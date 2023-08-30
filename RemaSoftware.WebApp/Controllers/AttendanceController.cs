@@ -2,9 +2,11 @@
 using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
 using RemaSoftware.Domain.Constants;
+using RemaSoftware.Domain.Models;
 using RemaSoftware.WebApp.DTOs;
 using RemaSoftware.WebApp.Helper;
 
@@ -16,12 +18,15 @@ namespace RemaSoftware.WebApp.Controllers
         private readonly EmployeeHelper _employeeHelper;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly AttendanceHelper _attendanceHelper;
+        private readonly UserManager<MyUser> _userManager;
 
-        public AttendanceController(INotyfService notyfService, EmployeeHelper employeeHelper, AttendanceHelper attendanceHelper)
+
+        public AttendanceController(INotyfService notyfService, UserManager<MyUser> userManager, EmployeeHelper employeeHelper, AttendanceHelper attendanceHelper)
         {
             _employeeHelper = employeeHelper;
             _notyfService = notyfService;
             _attendanceHelper = attendanceHelper;
+            _userManager = userManager;
         }
         
         [Authorize(Roles = Roles.Admin)]
@@ -29,9 +34,29 @@ namespace RemaSoftware.WebApp.Controllers
         public async Task<IActionResult> Attendance(int month, int year)
         {
             try
-            {
+            {                 
                 await _attendanceHelper.UpdateAttendance(month, year);
                 return View(_employeeHelper.GetAttendanceViewModel(month, year));
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                _notyfService.Error("Errore, impossibile procedere.");
+                return View();
+            }
+        }
+        
+        [Authorize(Roles = Roles.Impiegato)]
+        [HttpGet]
+        public async Task<IActionResult> AttendanceEmployee(int month, int year)
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                int EmployeeId = _employeeHelper.GetEmployeeId(user.Id);
+
+                await _attendanceHelper.UpdateAttendanceEmployee(month, year, EmployeeId);
+                return View(_employeeHelper.GetAttendanceEmployeeViewModel(month, year, EmployeeId));
             }
             catch (Exception e)
             {
@@ -123,6 +148,22 @@ namespace RemaSoftware.WebApp.Controllers
             {
                 _notyfService.Error("Errore durante l'invio delle presenze.");
                 Logger.Error("Errore durante l'aggiunta della presenza.");
+            }
+        }
+        
+        [Authorize(Roles = Roles.Impiegato)]
+        [HttpPost]
+        public void SendNoAttendance(int EmployeeId, string note)
+        {
+            try
+            {
+                _attendanceHelper.SendNoAttendance(EmployeeId, note);
+                _notyfService.Success("Invio completato.");
+            }
+            catch (Exception e)
+            {
+                _notyfService.Error("Errore durante l'invio.");
+                Logger.Error("Errore durante l'invio.");
             }
         }
     }

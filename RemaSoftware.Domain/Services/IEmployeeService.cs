@@ -7,7 +7,7 @@ namespace RemaSoftware.Domain.Services
     {
         List<Employee> GetAllEmployees();
         Employee NewEmployee(Employee employee);
-        bool DeleteEmployeeById(int employeeId);
+        void DeleteEmployeeById(Employee employee);
         Employee GetEmployeeById(int employeeId);
         List<Models.Attendance> GetAllAttendance(int mouth, int year);
         bool UpdateEmployee(Employee employee);

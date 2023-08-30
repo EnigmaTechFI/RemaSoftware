@@ -163,6 +163,14 @@ public class AttendanceHelper
             });
         }
     }
+    
+    public async Task SendNoAttendance(int employee, string note)
+    {
+        Employee Employee = _employeeService.GetEmployeeById(employee);
+        var users = _userManager.GetUsersInRoleAsync(Roles.Admin).Result;
+        var adminEmails = users.Select(user => user.Email).ToList();
+        _emailService.SendEmailNoAttendance(Employee, note, adminEmails);
+    }
 
     public string CreateTxtAttendance(int month, int year)
     {
@@ -390,7 +398,7 @@ public class AttendanceHelper
                 }
             }
 
-            if (!hasAttendance && DateTime.Now.TimeOfDay > new TimeSpan(7, 30, 0) && DateTime.Now.TimeOfDay < new TimeSpan(9, 30, 0))
+            if (!hasAttendance && DateTime.Now.TimeOfDay > new TimeSpan(7, 30, 0) && DateTime.Now.TimeOfDay < new TimeSpan(13, 0, 0))
             {
                 employeesAttendance.Add(employee);
             }
@@ -400,6 +408,72 @@ public class AttendanceHelper
         {
             var users = await _userManager.GetUsersInRoleAsync(Roles.Admin);
             _emailService.SendEmployeeAttendance(employeesAttendance, users.Select(s => s.Email).ToList());   
+        }
+    }
+    
+    public async Task UpdateAttendanceEmployee(int month, int year, int EmployeeId)
+    {
+        
+        const string companyId = "29c78fb8-8e97-4a2b-9df2-302ace7481ce";
+        const string apiKey = "0575b429-d35a-4e83-bee6-f02149997cf2";
+        DateTime toDate;
+        DateTime fromDate;
+        string toDateAPI;
+        string fromDateAPI;
+        if (month == 0 && year == 0)
+        {
+            toDate = DateTime.Today;
+            fromDate = toDate.AddDays(-7);
+        }else
+        {
+            fromDate = new DateTime(year, month, 1);
+            DateTime lastDayOfMonth = new DateTime(year, month, DateTime.DaysInMonth(year, month));
+            toDate = lastDayOfMonth;    
+        }
+
+        toDateAPI = toDate.ToString("yyyy-MM-dd");
+        fromDateAPI = fromDate.ToString("yyyy-MM-dd");
+        
+        string url = $"https://api.fluida.io/api/v1/stampings/{companyId}/daily_clock_records?from_date={fromDateAPI}&to_date={toDateAPI}";
+
+        HttpClient httpClient = new HttpClient();
+        httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        httpClient.DefaultRequestHeaders.Add("x-fluida-app-uuid", apiKey);
+
+        HttpResponseMessage response = await httpClient.GetAsync(url);
+        if (response.IsSuccessStatusCode)
+        {
+            string responseContent = await response.Content.ReadAsStringAsync();
+            dynamic data = JsonConvert.DeserializeObject(responseContent);
+
+            if (data != null && data.data != null)
+            {
+                List<dynamic> records = data.data.ToObject<List<dynamic>>();
+                List<string> userIdList = new List<string>();
+                List<string> userClockList = new List<string>();
+
+                foreach (dynamic record in records)
+                {
+                    string userId = record.contract_id;
+                    List<dynamic> days = record.days.ToObject<List<dynamic>>();
+
+                    foreach (dynamic day in days)
+                    {
+                        List<dynamic> clockRecords = day.clock_records.ToObject<List<dynamic>>();
+                        foreach (dynamic clockRecord in clockRecords)
+                        {
+                            string clockAt = clockRecord.clock_at;
+                            userIdList.Add($"{userId}");
+                            userClockList.Add($"{clockAt}");
+                        }
+                    }
+                }
+
+                string FluidaId = _employeeService.GetEmployeeById(EmployeeId).FluidaId;
+                
+                await _attendanceService.UpdateAttendanceListWithPresenceEmployee(userIdList, userClockList, FluidaId);
+
+            }
         }
     }
 }

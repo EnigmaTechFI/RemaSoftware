@@ -1,0 +1,1034 @@
+﻿@model RemaSoftware.WebApp.Models.EmployeeViewModel.AttendanceEmployeeViewModel
+
+@{
+    ViewData["Title"] = "Gestione Presenze Impiegato";
+}
+
+<link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
+        <h4 class="m-0 font-weight-bold text-primary">Presenze @Model.Employee.Name @Model.Employee.Surname</h4>
+    </div>
+    <form method="get" action="/Attendance/AttendanceEmployee">
+        <div class="row mb-4">
+            <div class="col-4 mt-3 ml-2">
+                <label for="mese">Mese:</label>
+                <select id="mese" name="month" class="form-control">
+                    <option value="01" selected="@(Model.Month == 01)">Gennaio</option>
+                    <option value="02" selected="@(Model.Month == 02)">Febbraio</option>
+                    <option value="03" selected="@(Model.Month == 03)">Marzo</option>
+                    <option value="04" selected="@(Model.Month == 04)">Aprile</option>
+                    <option value="05" selected="@(Model.Month == 05)">Maggio</option>
+                    <option value="06" selected="@(Model.Month == 06)">Giugno</option>
+                    <option value="07" selected="@(Model.Month == 07)">Luglio</option>
+                    <option value="08" selected="@(Model.Month == 08)">Agosto</option>
+                    <option value="09" selected="@(Model.Month == 09)">Settembre</option>
+                    <option value="10" selected="@(Model.Month == 10)">Ottobre</option>
+                    <option value="11" selected="@(Model.Month == 11)">Novembre</option>
+                    <option value="12" selected="@(Model.Month == 12)">Dicembre</option>
+                </select>
+            </div>
+            <div class="col-4 mt-3">
+                <label for="anno">Anno:</label>
+                <select id="anno" name="year" class="form-control">
+                    <option value="2023" selected="@(Model.Year == 2023)">2023</option>
+                    <option value="2024" selected="@(Model.Year == 2024)">2024</option>
+                    <option value="2025" selected="@(Model.Year == 2025)">2025</option>
+                </select>
+            </div>
+            <div class="col-3 mt-5">
+                <input type="submit" value="Visualizza" class="btn btn-primary text-white"/>
+            </div>
+            <div class="col-12 mt-5 ml-5 mr-5">
+                <a class="btn btn-primary ml-2 w-25" id="mobile-v" style="color: white;" data-toggle="modal" data-target="#confirm-no-modal">Mancata timbratura</a>
+                <a class="btn btn-primary" id="mobile-v1" style="color: white; display: none;" data-toggle="modal" data-target="#confirm-no-modal">Mancata timbratura</a>
+            </div>
+        </div>
+    </form>
+    <div class="card-body" id="contentToPdf">
+        <div class="row mb-3" id="mobile-v2" style=" margin-bottom: 1.1% !important;">
+            <div class="col-4" style="display: flex;">
+                <div style="width: 20px; height: 20px; background-color: green; border-radius: 5px;"></div>
+                <div class="ml-1" style="color: black;"> Presenza</div>
+            </div>
+            <div class="col-4" style="display: flex;">
+                <div style="width: 20px; height: 20px; background-color: #9A83BC; border-radius: 5px;"></div>
+                <div class="ml-1" style="color: black;"> Straodinari</div>
+            </div>
+            <div class="col-4" style="display: flex;">
+                <div style="width: 20px; height: 20px; background-color: red; border-radius: 5px;"></div>
+                <div class="ml-1" style="color: black;"> Permesso</div>
+            </div>
+        </div>
+        
+        <div class="row mb-3" id="mobile-v3" style="margin-bottom: 1.1% !important;">
+            <div class="col-4" style="display: flex;">
+                <div style="width: 20px; height: 20px; background-color: #ff7f26; border-radius: 5px;"></div>
+                <div class="ml-1" style="color: black;"> Malattia</div>
+            </div>
+            <div class="col-4" style="display: flex;">
+                <div style="width: 20px; height: 20px; background-color: #36b9cc; border-radius: 5px;"></div>
+                <div class="ml-1" style="color: black;"> Festivo</div>
+            </div>
+            <div class="col-4" style="display: flex;">
+                <div style="width: 20px; height: 20px; background-color: #f6c23e; border-radius: 5px;"></div>
+                <div class="ml-1" style="color: black;"> Ferie</div>
+            </div>
+        </div>
+    
+        <div class="table-responsive mt-5" id="mobile-v4">
+            <table>
+            <tr>
+                @for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, Model.Month); giorno++)
+                {
+                    DateTime dataCorrente = new DateTime(Model.Year, Model.Month, giorno);
+                    if (dataCorrente.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
+                    {
+                        <th class="text-center" style="background-color: #d3d3d3;">@giorno</th>
+                    }
+                    else
+                    {
+                        <th class="text-center">@giorno</th>
+                    }
+                }
+                <td><b>Totale ore</b></td>
+            </tr>
+                
+            @foreach (var presenza in Model.Attendances.GroupBy(a => a.Employee))
+            {
+                <tr>
+                    @for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, Model.Month); giorno++)
+                    {
+                        DateTime dataCorrente = new DateTime(Model.Year, Model.Month, giorno);
+                        var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno);
+
+                        if (dataCorrente.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
+                        {
+                            <td style="background-color: #ededed;">
+                                    
+                                @{
+                                    TimeSpan? totalTime = TimeSpan.Zero;
+                                    var NotNull = false;
+                                    foreach (var presence in attendancesForDay.Where(c => c.Type == "StraordinarioSabato" || c.Type == "StraordinarioNotturno"))
+                                    {
+                                        if (presence.DateOut != null)
+                                        {
+                                            totalTime += presence.DateOut - presence.DateIn;
+                                        }
+                                        NotNull = true;
+                                    }
+                                }
+                                    
+                                @{
+                                    string presenzeDivID = "presenze-" + presenza.Key.EmployeeID + "-" + giorno +"-stra";
+                                }
+                                    
+                                @if (NotNull && totalTime == TimeSpan.Zero)
+                                {
+                                    <div style="color: white; background-color: green; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center; cursor: pointer;" title="Straordinario" onclick="togglePresenze('@presenzeDivID')">
+                                        <b style="white-space: nowrap; margin: 0 auto;">
+                                            In attività
+                                        </b>
+                                    </div>
+                                }else if (NotNull  && totalTime != TimeSpan.Zero)
+                                {
+                                    <div style="color: white; background-color: #9A83BC; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center; cursor: pointer;" title="Straordinario" onclick="togglePresenze('@presenzeDivID')">
+                                        <b style="white-space: nowrap; margin: 0 auto;">
+                                            @totalTime?.ToString(@"hh")h
+                                            @totalTime?.ToString(@"mm")m
+                                        </b>
+                                    </div>
+                                }
+                                    
+                                <div id="@presenzeDivID" style="display: none;">
+                                    @foreach (var presence in attendancesForDay.Where(c => c.Type == "StraordinarioSabato" || c.Type == "StraordinarioNotturno"))
+                                    {
+                                        <a style="cursor: pointer;">
+                                            <div style="color: white; background-color: #9A83BC; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Straordinario">
+                                                <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                            </div>
+                                        </a>
+                                    }
+                                </div>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+
+                                @{
+                                    TimeSpan? totalTime = TimeSpan.Zero;
+                                    var NotNull = false;
+
+                                    foreach (var presence in attendancesForDay.Where(c => c.Type == "Presenza"))
+                                    {
+                                        if (presence.DateOut != null)
+                                        {
+                                            totalTime += presence.DateOut - presence.DateIn;
+                                        }
+                                        NotNull = true;
+                                    }
+                                    if (totalTime > TimeSpan.FromHours(8))
+                                    {
+                                        totalTime = TimeSpan.FromHours(8);
+                                    }
+                                }
+
+                                @{
+                                    string presenzeDivID = "presenze-" + presenza.Key.EmployeeID + "-" + giorno +"-pre";
+                                }
+
+                                @if (NotNull && totalTime == TimeSpan.Zero)
+                                {
+                                    <div style="color: white; background-color: green; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center; cursor: pointer;" title="Presenza" onclick="togglePresenze('@presenzeDivID')">
+                                        <b style="white-space: nowrap; margin: 0 auto;">
+                                            In attività
+                                        </b>
+                                    </div>
+                                }
+                                else if (NotNull && totalTime != TimeSpan.Zero)
+                                {
+                                    <div style="color: white; background-color: green; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center; cursor: pointer;" title="Presenza" onclick="togglePresenze('@presenzeDivID')">
+                                        <b style="white-space: nowrap; margin: 0 auto;">
+                                            @totalTime?.ToString(@"hh")h
+                                            @totalTime?.ToString(@"mm")m
+                                        </b>
+                                    </div>
+                                }
+
+                                <div id="@presenzeDivID" style="display: none;">
+                                    @foreach (var presence in attendancesForDay.Where(c => c.Type == "Presenza"))
+                                    {
+                                        <a style="cursor: pointer;">
+                                            <div style="color: white; background-color: green; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Presenza">
+                                                <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                            </div>
+                                        </a>
+                                    }
+                                </div>
+
+                                @{
+                                    totalTime = TimeSpan.Zero;
+                                    NotNull = false;
+                                    foreach (var presence in attendancesForDay.Where(c => c.Type == "StraordinarioOrdinario" || c.Type == "StraordinarioNotturno"))
+                                    {
+                                        if (presence.DateOut != null)
+                                        {
+                                            totalTime += presence.DateOut - presence.DateIn;
+                                        }
+                                        NotNull = true;
+                                    }
+                                }
+
+                                @{
+                                    presenzeDivID = "presenze-" + presenza.Key.EmployeeID + "-" + giorno +"-stra";
+                                }
+
+                                @if (NotNull && totalTime == TimeSpan.Zero)
+                                {
+                                    <div style="color: white; background-color: green; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center; cursor: pointer;" title="Straordinario" onclick="togglePresenze('@presenzeDivID')">
+                                        <b style="white-space: nowrap; margin: 0 auto;">
+                                            In attività
+                                        </b>
+                                    </div>
+                                }
+                                else if (NotNull && totalTime != TimeSpan.Zero)
+                                {
+                                    <div style="color: white; background-color: #9A83BC; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center; cursor: pointer;" title="Straordinario" onclick="togglePresenze('@presenzeDivID')">
+                                        <b style="white-space: nowrap; margin: 0 auto;">
+                                            @totalTime?.ToString(@"hh")h
+                                            @totalTime?.ToString(@"mm")m
+                                        </b>
+                                    </div>
+                                }
+
+                                <div id="@presenzeDivID" style="display: none;">
+                                    @foreach (var presence in attendancesForDay.Where(c => c.Type == "StraordinarioOrdinario" || c.Type == "StraordinarioNotturno"))
+                                    {
+                                        <a style="cursor: pointer;">
+                                            <div style="color: white; background-color: #9A83BC; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Straordinario">
+                                                <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                            </div>
+                                        </a>
+                                    }
+                                </div>
+                                    
+                                @{
+                                    totalTime = TimeSpan.Zero;
+                                    NotNull = false;
+                                    foreach (var presence in attendancesForDay.Where(c => c.Type == "Permesso"))
+                                    {
+                                        if (presence.DateOut != null)
+                                        {
+                                            totalTime += presence.DateOut - presence.DateIn;
+                                            NotNull = true;
+                                        }
+                                    }
+                                    if (totalTime == TimeSpan.FromHours(9))
+                                    {
+                                        totalTime = TimeSpan.FromHours(8);
+                                    }
+                                }
+
+                                @{
+                                    presenzeDivID = "presenze-" + presenza.Key.EmployeeID + "-" + giorno +"-perm";
+                                }
+                                    
+                                @if(NotNull){
+                                    <div style="color: white; background-color: red; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center; cursor: pointer;" title="Permesso" onclick="togglePresenze('@presenzeDivID')">
+                                        <b style="white-space: nowrap; margin: 0 auto;">
+                                            @totalTime?.ToString(@"hh")h
+                                            @totalTime?.ToString(@"mm")m
+                                        </b>
+                                    </div>
+                                }
+                                    
+                                <div id="@presenzeDivID" style="display: none;">
+                                    @foreach (var presence in attendancesForDay.Where(c => c.Type == "Permesso"))
+                                    {
+                                        <a style="cursor: pointer;">
+                                            <div style="color: white; background-color: red; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Permesso">
+                                                <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                            </div>
+                                        </a>
+                                    }
+                                </div>
+                                    
+                                @{
+                                    totalTime = TimeSpan.Zero;
+                                    NotNull = false;
+                                    foreach (var presence in attendancesForDay.Where(c => c.Type == "Malattia"))
+                                    {
+                                        if (presence.DateOut != null)
+                                        {
+                                            totalTime += presence.DateOut - presence.DateIn;
+                                            NotNull = true;
+                                        }
+                                    }
+                                    if (totalTime == TimeSpan.FromHours(9))
+                                    {
+                                        totalTime = TimeSpan.FromHours(8);
+                                    }
+                                }
+
+                                @{
+                                    presenzeDivID = "presenze-" + presenza.Key.EmployeeID + "-" + giorno +"-mal";
+                                }
+                                    
+                                @if(NotNull){
+                                    <div style="color: white; background-color: #FF7F26; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center; cursor: pointer;" title="Malattia" onclick="togglePresenze('@presenzeDivID')">
+                                        <b style="white-space: nowrap; margin: 0 auto;">
+                                            @totalTime?.ToString(@"hh")h
+                                            @totalTime?.ToString(@"mm")m
+                                        </b>
+                                    </div>
+                                }
+                                                                        
+                                <div id="@presenzeDivID" style="display: none;">
+                                    @foreach (var presence in attendancesForDay.Where(c => c.Type == "Malattia"))
+                                    {
+                                        <a style="cursor: pointer;">
+                                            <div style="color: white; background-color: #FF7F26; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Malattia">
+                                                <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                            </div>
+                                        </a>
+                                    }
+                                </div>
+                                    
+                                    
+                                @{
+                                    totalTime = TimeSpan.Zero;
+                                    NotNull = false;
+                                    foreach (var presence in attendancesForDay.Where(c => c.Type == "Festivo"))
+                                    {
+                                        if (presence.DateOut != null)
+                                        {
+                                            totalTime += presence.DateOut - presence.DateIn;
+                                            NotNull = true;
+                                        }
+                                    }
+                                    if (totalTime == TimeSpan.FromHours(9))
+                                    {
+                                        totalTime = TimeSpan.FromHours(8);
+                                    }
+                                }
+
+                                @{
+                                    presenzeDivID = "presenze-" + presenza.Key.EmployeeID + "-" + giorno +"-fest";
+                                }
+                                    
+                                @if(NotNull){
+                                    <div style="color: white; background-color: #36b9cc; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center; cursor: pointer;" title="Festivo" onclick="togglePresenze('@presenzeDivID')">
+                                        <b style="white-space: nowrap; margin: 0 auto;">
+                                            @totalTime?.ToString(@"hh")h
+                                            @totalTime?.ToString(@"mm")m
+                                        </b>
+                                    </div>
+                                }
+                                                                        
+                                <div id="@presenzeDivID" style="display: none;">
+                                    @foreach (var presence in attendancesForDay.Where(c => c.Type == "Festivo"))
+                                    {
+                                        <a style="cursor: pointer;">
+                                            <div style="color: white; background-color: #36b9cc; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Festivo">
+                                                <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                            </div>
+                                        </a>
+                                    }
+                                </div>
+                                    
+                                @{
+                                    totalTime = TimeSpan.Zero;
+                                    NotNull = false;
+                                    foreach (var presence in attendancesForDay.Where(c => c.Type == "Ferie"))
+                                    {
+                                        if (presence.DateOut != null)
+                                        {
+                                            totalTime += presence.DateOut - presence.DateIn;
+                                            NotNull = true;
+                                        }
+                                    }
+                                    if (totalTime == TimeSpan.FromHours(9))
+                                    {
+                                        totalTime = TimeSpan.FromHours(8);
+                                    }
+                                }
+
+                                @{
+                                    presenzeDivID = "presenze-" + presenza.Key.EmployeeID + "-" + giorno +"-ferie";
+                                }
+                                    
+                                @if(NotNull){
+                                    <div style="color: white; background-color: #f6c23e; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center; cursor: pointer;" title="Ferie" onclick="togglePresenze('@presenzeDivID')">
+                                        <b style="white-space: nowrap; margin: 0 auto;">
+                                            @totalTime?.ToString(@"hh")h
+                                            @totalTime?.ToString(@"mm")m
+                                        </b>
+                                    </div>
+                                }
+                                                                        
+                                <div id="@presenzeDivID" style="display: none;">
+                                    @foreach (var presence in attendancesForDay.Where(c => c.Type == "Ferie"))
+                                    {
+                                        <a style="cursor: pointer;">
+                                            <div style="color: white; background-color: #f6c23e; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ferie">
+                                                <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                            </div>
+                                        </a>
+                                    }
+                                </div>
+                            </td>
+                        }
+                    }
+                        
+                    @{
+                        TimeSpan? totalTimePresence = TimeSpan.Zero;
+                        TimeSpan? totalTimePermit = TimeSpan.Zero;
+                        TimeSpan? totalTimeIllness = TimeSpan.Zero;
+                        TimeSpan? totalTimeHoliday = TimeSpan.Zero;
+                        TimeSpan? totalTimeVacation = TimeSpan.Zero;
+                        TimeSpan? totalTimeStraord = TimeSpan.Zero;
+
+                        foreach (var item in presenza)
+                        {
+                            if (item.Type == "Presenza" && item.DateOut != null)
+                            {
+                                TimeSpan? timeDiff = item.DateOut - item.DateIn;
+                                if (item.DateIn.TimeOfDay == TimeSpan.FromHours(7.5) && item.DateOut?.TimeOfDay == TimeSpan.FromHours(16.5))
+                                {
+                                    timeDiff = timeDiff?.Subtract(TimeSpan.FromHours(1));
+                                }
+                                if (timeDiff > TimeSpan.FromHours(9))
+                                {
+                                        
+                                }
+                                totalTimePresence = totalTimePresence?.Add((TimeSpan)timeDiff);
+                            }
+
+                            if ((item.Type == "StraordinarioSabato" || item.Type == "StraordinarioOrdinario" || item.Type == "StraordinarioNotturno") && item.DateOut != null){
+                                TimeSpan? timeDiff = item.DateOut - item.DateIn;
+                                if (item.DateIn.TimeOfDay == TimeSpan.FromHours(7.5) && item.DateOut?.TimeOfDay == TimeSpan.FromHours(16.5))
+                                {
+                                    timeDiff = timeDiff?.Subtract(TimeSpan.FromHours(1));
+                                }
+                                totalTimeStraord = totalTimeStraord?.Add((TimeSpan)timeDiff);
+                            }
+                                
+                            if (item.Type == "Permesso" && item.DateOut != null){
+                                TimeSpan? timeDiff = item.DateOut - item.DateIn;
+                                if (item.DateIn.TimeOfDay == TimeSpan.FromHours(7.5) && item.DateOut?.TimeOfDay == TimeSpan.FromHours(16.5))
+                                {
+                                    timeDiff = timeDiff?.Subtract(TimeSpan.FromHours(1));
+                                }
+                                totalTimePermit = totalTimePermit?.Add((TimeSpan)timeDiff);
+
+                            }
+                                
+                            if (item.Type == "Malattia" && item.DateOut != null){
+                                TimeSpan? timeDiff = item.DateOut - item.DateIn;
+                                if (item.DateIn.TimeOfDay == TimeSpan.FromHours(7.5) && item.DateOut?.TimeOfDay == TimeSpan.FromHours(16.5))
+                                {
+                                    timeDiff = timeDiff?.Subtract(TimeSpan.FromHours(1));
+                                }
+                                totalTimeIllness = totalTimeIllness?.Add((TimeSpan)timeDiff);
+                            }
+                                
+                            if (item.Type == "Festivo" && item.DateOut != null){
+                                TimeSpan? timeDiff = item.DateOut - item.DateIn;
+                                if (item.DateIn.TimeOfDay == TimeSpan.FromHours(7.5) && item.DateOut?.TimeOfDay == TimeSpan.FromHours(16.5))
+                                {
+                                    timeDiff = timeDiff?.Subtract(TimeSpan.FromHours(1));
+                                }
+                                totalTimeHoliday = totalTimeHoliday?.Add((TimeSpan)timeDiff);
+                            }
+                                
+                            if (item.Type == "Ferie" && item.DateOut != null){
+                                TimeSpan? timeDiff = item.DateOut - item.DateIn;
+                                if (item.DateIn.TimeOfDay == TimeSpan.FromHours(7.5) && item.DateOut?.TimeOfDay == TimeSpan.FromHours(16.5))
+                                {
+                                    timeDiff = timeDiff?.Subtract(TimeSpan.FromHours(1));
+                                }
+                                totalTimeVacation = totalTimeVacation?.Add((TimeSpan)timeDiff);
+                            }
+                        }
+                    }
+
+                    <td>
+                        @if (totalTimePresence != TimeSpan.Zero)
+                        {
+                            <div class="text-center" style="color: white; background-color: green; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Totale ore presenza">
+                                <b style="white-space: nowrap;">@($"{(int)totalTimePresence?.TotalHours}h {totalTimePresence?.Minutes}m")</b>
+                            </div>
+                        }
+                            
+                        @if (totalTimeStraord != TimeSpan.Zero)
+                        {
+                            <div class="text-center" style="color: white; background-color: #9A83BC; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Totale ore straordinario">
+                                <b style="white-space: nowrap;">@($"{(int)totalTimeStraord?.TotalHours}h {totalTimeStraord?.Minutes}m")</b>
+                            </div>
+                        }
+                            
+                        @if (totalTimePermit != TimeSpan.Zero)
+                        {
+                            <div class="text-center" style="color: white; background-color: red; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Totale ore Permesso">
+                                <b style="white-space: nowrap;">@($"{(int)totalTimePermit?.TotalHours}h {totalTimePermit?.Minutes}m")</b>
+                            </div>
+                        }
+                        @if (totalTimeIllness != TimeSpan.Zero)
+                        {
+                            <div class="text-center" style="color: white; background-color: #FF7F26; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Totale ore malattia">
+                                <b style="white-space: nowrap;">@($"{(int)totalTimeIllness?.TotalHours}h {totalTimeIllness?.Minutes}m") </b>
+                            </div>
+                        }
+                        @if (totalTimeHoliday != TimeSpan.Zero)
+                        {
+                            <div class="text-center" style="color: white; background-color: #36b9cc; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Totale ore festivo">
+                                <b style="white-space: nowrap;">@($"{(int)totalTimeHoliday?.TotalHours}h {totalTimeHoliday?.Minutes}m")</b>
+                            </div>
+                        }
+                        @if (totalTimeVacation != TimeSpan.Zero)
+                        {
+                            <div class="text-center" style="color: white; background-color: #f6c23e; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Totale ore ferie">
+                                <b style="white-space: nowrap;">@($"{(int)totalTimeVacation?.TotalHours}h {totalTimeVacation?.Minutes}m")</b>
+                            </div>
+                        }
+
+                    </td>
+                </tr>
+            }
+        </table>
+        </div>
+    
+        <div class="table-responsive mt-5 d-none" id="mobile-v5" style="border-radius: 15px; border: 1px solid black;">
+            <div class="parallel-tables">
+                <div class="table-column">
+                    <table>
+                        <tr style="height: 40px;">
+                            <th class="text-center w-25" style="color: black;">Giorno</th>
+                            <th class="text-center w-75" style="color: black;">Presenza</th>
+                        </tr>
+                        @foreach (var presenza in Model.Attendances.GroupBy(a => a.Employee))
+                        {
+                            @for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, Model.Month); giorno++)
+                            {
+                                DateTime dataCorrente = new DateTime(Model.Year, Model.Month, giorno);
+                                var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno);
+
+                                if (dataCorrente.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
+                                {
+                                    <tr style="height: 40px;">
+                                        <td class="text-center" style="background-color: #d3d3d3;">@giorno</td>
+                                        <td style="background-color: #ededed;">
+
+                                            @{
+                                                TimeSpan? totalTime = TimeSpan.Zero;
+                                                var NotNull = false;
+                                                foreach (var presence in attendancesForDay.Where(c => c.Type == "StraordinarioSabato" || c.Type == "StraordinarioNotturno"))
+                                                {
+                                                    if (presence.DateOut != null)
+                                                    {
+                                                        totalTime += presence.DateOut - presence.DateIn;
+                                                    }
+                                                    NotNull = true;
+                                                }
+                                            }
+
+                                            @{
+                                                string presenzeDivID = "Vpresenze-" + presenza.Key.EmployeeID + "-" + giorno + "-stra";
+                                            }
+
+                                            @if (NotNull && totalTime == TimeSpan.Zero)
+                                            {
+                                                <div style="color: white; background-color: green; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center; cursor: pointer;" title="Straordinario" onclick="togglePresenzeV('@presenzeDivID')">
+                                                    <b style="white-space: nowrap; margin: 0 auto;">
+                                                        In attività
+                                                    </b>
+                                                </div>
+                                            }
+                                            else if (NotNull && totalTime != TimeSpan.Zero)
+                                            {
+                                                <div style="color: white; background-color: #9A83BC; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center; cursor: pointer;" title="Straordinario" onclick="togglePresenzeV('@presenzeDivID')">
+                                                    <b style="white-space: nowrap; margin: 0 auto;">
+                                                        @totalTime?.ToString(@"hh")h
+                                                        @totalTime?.ToString(@"mm")m
+                                                    </b>
+                                                </div>
+                                            }
+
+                                            <div id="@presenzeDivID" style="display: none;">
+                                                @foreach (var presence in attendancesForDay.Where(c => c.Type == "StraordinarioSabato" || c.Type == "StraordinarioNotturno"))
+                                                {
+                                                    <a style="cursor: pointer;">
+                                                        <div style="color: white; background-color: #9A83BC; border-radius: 10px; padding: 2px 3px 2px 3px; display: flex; justify-content: center; align-items: center; margin-bottom: 3px;" title="Straordinario">
+                                                            <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                                        </div>
+                                                    </a>
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <tr style="height: 40px;">
+                                        <td class="text-center w-25">@giorno</td>
+                                        <td class="text-center w-75">
+
+                                            @{
+                                                TimeSpan? totalTime = TimeSpan.Zero;
+                                                var NotNull = false;
+
+                                                foreach (var presence in attendancesForDay.Where(c => c.Type == "Presenza"))
+                                                {
+                                                    if (presence.DateOut != null)
+                                                    {
+                                                        totalTime += presence.DateOut - presence.DateIn;
+                                                    }
+                                                    NotNull = true;
+                                                }
+                                                if (totalTime > TimeSpan.FromHours(8))
+                                                {
+                                                    totalTime = TimeSpan.FromHours(8);
+                                                }
+                                            }
+
+                                            @{
+                                                string presenzeDivID = "Vpresenze-" + presenza.Key.EmployeeID + "-" + giorno + "-pre";
+                                            }
+
+                                            @if (NotNull && totalTime == TimeSpan.Zero)
+                                            {
+                                                <div style="color: white; background-color: green; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center; cursor: pointer;" title="Presenza" onclick="togglePresenzeV('@presenzeDivID')">
+                                                    <b style="white-space: nowrap; margin: 0 auto;">
+                                                        In attività
+                                                    </b>
+                                                </div>
+                                            }
+                                            else if (NotNull && totalTime != TimeSpan.Zero)
+                                            {
+                                                <div style="color: white; background-color: green; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center; cursor: pointer;" title="Presenza" onclick="togglePresenzeV('@presenzeDivID')">
+                                                    <b style="white-space: nowrap; margin: 0 auto;">
+                                                        @totalTime?.ToString(@"hh")h
+                                                        @totalTime?.ToString(@"mm")m
+                                                    </b>
+                                                </div>
+                                            }
+
+                                            <div id="@presenzeDivID" style="display: none;">
+                                                @foreach (var presence in attendancesForDay.Where(c => c.Type == "Presenza"))
+                                                {
+                                                    <a style="cursor: pointer;" >
+                                                        <div style="color: white; background-color: green; border-radius: 10px; padding: 2px 3px 2px 3px; display: flex; justify-content: center; align-items: center; margin-bottom: 3px;" title="Presenza">
+                                                            <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                                        </div>
+                                                    </a>
+                                                }
+                                            </div>
+
+                                            @{
+                                                totalTime = TimeSpan.Zero;
+                                                NotNull = false;
+                                                foreach (var presence in attendancesForDay.Where(c => c.Type == "StraordinarioOrdinario" || c.Type == "StraordinarioNotturno"))
+                                                {
+                                                    if (presence.DateOut != null)
+                                                    {
+                                                        totalTime += presence.DateOut - presence.DateIn;
+                                                    }
+                                                    NotNull = true;
+                                                }
+                                            }
+
+                                            @{
+                                                presenzeDivID = "Vpresenze-" + presenza.Key.EmployeeID + "-" + giorno + "-stra";
+                                            }
+
+                                            @if (NotNull && totalTime == TimeSpan.Zero)
+                                            {
+                                                <div style="color: white; background-color: green; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center; cursor: pointer;" title="Straordinario" onclick="togglePresenzeV('@presenzeDivID')">
+                                                    <b style="white-space: nowrap; margin: 0 auto;">
+                                                        In attività
+                                                    </b>
+                                                </div>
+                                            }
+                                            else if (NotNull && totalTime != TimeSpan.Zero)
+                                            {
+                                                <div style="color: white; background-color: #9A83BC; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center; cursor: pointer;" title="Straordinario" onclick="togglePresenzeV('@presenzeDivID')">
+                                                    <b style="white-space: nowrap; margin: 0 auto;">
+                                                        @totalTime?.ToString(@"hh")h
+                                                        @totalTime?.ToString(@"mm")m
+                                                    </b>
+                                                </div>
+                                            }
+
+                                            <div id="@presenzeDivID" style="display: none;">
+                                                @foreach (var presence in attendancesForDay.Where(c => c.Type == "StraordinarioOrdinario" || c.Type == "StraordinarioNotturno"))
+                                                {
+                                                    <a style="cursor: pointer;">
+                                                        <div style="color: white; background-color: #9A83BC; border-radius: 10px; padding: 2px 3px 2px 3px; display: flex; justify-content: center; align-items: center; margin-bottom: 3px;" title="Straordinario">
+                                                            <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                                        </div>
+                                                    </a>
+                                                }
+                                            </div>
+
+                                            @{
+                                                totalTime = TimeSpan.Zero;
+                                                NotNull = false;
+                                                foreach (var presence in attendancesForDay.Where(c => c.Type == "Permesso"))
+                                                {
+                                                    if (presence.DateOut != null)
+                                                    {
+                                                        totalTime += presence.DateOut - presence.DateIn;
+                                                        NotNull = true;
+                                                    }
+                                                }
+                                                if (totalTime == TimeSpan.FromHours(9))
+                                                {
+                                                    totalTime = TimeSpan.FromHours(8);
+                                                }
+                                            }
+
+                                            @{
+                                                presenzeDivID = "Vpresenze-" + presenza.Key.EmployeeID + "-" + giorno + "-perm";
+                                            }
+
+                                            @if (NotNull)
+                                            {
+                                                <div style="color: white; background-color: red; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center; cursor: pointer;" title="Permesso" onclick="togglePresenzeV('@presenzeDivID')">
+                                                    <b style="white-space: nowrap; margin: 0 auto;">
+                                                        @totalTime?.ToString(@"hh")h
+                                                        @totalTime?.ToString(@"mm")m
+                                                    </b>
+                                                </div>
+                                            }
+
+                                            <div id="@presenzeDivID" style="display: none;">
+                                                @foreach (var presence in attendancesForDay.Where(c => c.Type == "Permesso"))
+                                                {
+                                                    <a style="cursor: pointer;">
+                                                        <div style="color: white; background-color: red; border-radius: 10px; padding: 2px 3px 2px 3px; display: flex; justify-content: center; align-items: center; margin-bottom: 3px;" title="Permesso">
+                                                            <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                                        </div>
+                                                    </a>
+                                                }
+                                            </div>
+
+                                            @{
+                                                totalTime = TimeSpan.Zero;
+                                                NotNull = false;
+                                                foreach (var presence in attendancesForDay.Where(c => c.Type == "Malattia"))
+                                                {
+                                                    if (presence.DateOut != null)
+                                                    {
+                                                        totalTime += presence.DateOut - presence.DateIn;
+                                                        NotNull = true;
+                                                    }
+                                                }
+                                                if (totalTime == TimeSpan.FromHours(9))
+                                                {
+                                                    totalTime = TimeSpan.FromHours(8);
+                                                }
+                                            }
+
+                                            @{
+                                                presenzeDivID = "Vpresenze-" + presenza.Key.EmployeeID + "-" + giorno + "-mal";
+                                            }
+
+                                            @if (NotNull)
+                                            {
+                                                <div style="color: white; background-color: #FF7F26; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center; cursor: pointer;" title="Malattia" onclick="togglePresenzeV('@presenzeDivID')">
+                                                    <b style="white-space: nowrap; margin: 0 auto;">
+                                                        @totalTime?.ToString(@"hh")h
+                                                        @totalTime?.ToString(@"mm")m
+                                                    </b>
+                                                </div>
+                                            }
+
+                                            <div id="@presenzeDivID" style="display: none;">
+                                                @foreach (var presence in attendancesForDay.Where(c => c.Type == "Malattia"))
+                                                {
+                                                    <a style="cursor: pointer;">
+                                                        <div style="color: white; background-color: #FF7F26; border-radius: 10px; padding: 2px 3px 2px 3px; display: flex; justify-content: center; align-items: center; margin-bottom: 3px;" title="Malattia">
+                                                            <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                                        </div>
+                                                    </a>
+                                                }
+                                            </div>
+
+
+                                            @{
+                                                totalTime = TimeSpan.Zero;
+                                                NotNull = false;
+                                                foreach (var presence in attendancesForDay.Where(c => c.Type == "Festivo"))
+                                                {
+                                                    if (presence.DateOut != null)
+                                                    {
+                                                        totalTime += presence.DateOut - presence.DateIn;
+                                                        NotNull = true;
+                                                    }
+                                                }
+                                                if (totalTime == TimeSpan.FromHours(9))
+                                                {
+                                                    totalTime = TimeSpan.FromHours(8);
+                                                }
+                                            }
+
+                                            @{
+                                                presenzeDivID = "Vpresenze-" + presenza.Key.EmployeeID + "-" + giorno + "-fest";
+                                            }
+
+                                            @if (NotNull)
+                                            {
+                                                <div style="color: white; background-color: #36b9cc; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center; cursor: pointer;" title="Festivo" onclick="togglePresenzeV('@presenzeDivID')">
+                                                    <b style="white-space: nowrap; margin: 0 auto;">
+                                                        @totalTime?.ToString(@"hh")h
+                                                        @totalTime?.ToString(@"mm")m
+                                                    </b>
+                                                </div>
+                                            }
+
+                                            <div id="@presenzeDivID" style="display: none;">
+                                                @foreach (var presence in attendancesForDay.Where(c => c.Type == "Festivo"))
+                                                {
+                                                    <a style="cursor: pointer;">
+                                                        <div style="color: white; background-color: #36b9cc; border-radius: 10px; display: flex; align-items: center; justify-content: center; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Festivo">
+                                                            <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                                        </div>
+                                                    </a>
+                                                }
+                                            </div>
+
+                                            @{
+                                                totalTime = TimeSpan.Zero;
+                                                NotNull = false;
+                                                foreach (var presence in attendancesForDay.Where(c => c.Type == "Ferie"))
+                                                {
+                                                    if (presence.DateOut != null)
+                                                    {
+                                                        totalTime += presence.DateOut - presence.DateIn;
+                                                        NotNull = true;
+                                                    }
+                                                }
+                                                if (totalTime == TimeSpan.FromHours(9))
+                                                {
+                                                    totalTime = TimeSpan.FromHours(8);
+                                                }
+                                            }
+
+                                            @{
+                                                presenzeDivID = "Vpresenze-" + presenza.Key.EmployeeID + "-" + giorno + "-ferie";
+                                            }
+
+                                            @if (NotNull)
+                                            {
+                                                <div style="color: white; background-color: #f6c23e; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center; cursor: pointer;" title="Ferie" onclick="togglePresenzeV('@presenzeDivID')">
+                                                    <b style="white-space: nowrap; margin: 0 auto;">
+                                                        @totalTime?.ToString(@"hh")h
+                                                        @totalTime?.ToString(@"mm")m
+                                                    </b>
+                                                </div>
+                                            }
+
+                                            <div id="@presenzeDivID" style="display: none;">
+                                                @foreach (var presence in attendancesForDay.Where(c => c.Type == "Ferie"))
+                                                {
+                                                    <a style="cursor: pointer;">
+                                                        <div style="color: white; background-color: #f6c23e; border-radius: 10px; display: flex; align-items: center; justify-content: center; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ferie">
+                                                            <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                                        </div>
+                                                    </a>
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            
+                        }
+
+                    </table>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+<div class="modal fade" id="confirm-no-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Conferma mancata timbratura</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Sei sicuro di voler avvertire di una mancata timbratura?</p>
+                <div class="form-group">
+                    <label for="note">Aggiungi una nota:</label>
+                    <textarea class="form-control" id="note" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
+                <button class="btn btn-primary" onclick="SendNoAttendance()">Conferma</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius:  15px;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+
+@@media (max-width:800px)  {
+    #mobile-v1{
+        width: 75% !important;
+        display:  block !important;
+    }
+    
+    #mobile-v{
+        display:  none !important;
+    }
+}
+
+@@media (max-width:600px)  {
+    
+    #mobile-v2{
+        margin-left: -5%;
+    }
+    
+    #mobile-v3{
+        margin-left: -5%;
+    }
+    
+    #mobile-v4{
+        display: none;
+    }
+    
+    #mobile-v5{
+        display: block !important;
+    }
+    
+    .parallel-tables {
+        display: flex;
+      }
+      .table-column {
+        flex: 1;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      th, td {
+        border: 1px solid grey;
+        padding: 8px;
+      }
+    
+}
+
+</style>
+@section Scripts
+{
+
+    <script>
+        
+        function SendNoAttendance() {
+            var EmployeeId = @Model.Employee.EmployeeID;
+            var note = $("#note").val();
+            $.ajax({
+                url: '/Attendance/SendNoAttendance',
+                type: 'POST',
+                data: { EmployeeId: EmployeeId, note: note},
+                success: function (data) {
+                    $("#confirm-no-modal").modal('toggle');
+                    console.log('Completato');
+                },
+                error: function (xhr, status, error) {
+                    $("#confirm-no-modal").modal('toggle');
+                    console.log('Errore durante l\'invio:');
+                }
+            });
+        }
+                
+        function togglePresenze(id) {
+            var presenzeDiv = document.getElementById(id);
+            presenzeDiv.style.display = (presenzeDiv.style.display === "none") ? "block" : "none";
+        }
+        
+        function togglePresenzeV(id) {
+            var presenzeDiv = document.getElementById(id);
+            presenzeDiv.style.display = (presenzeDiv.style.display === "none") ? "block" : "none";
+        }
+         
+        window.addEventListener('DOMContentLoaded', function() {
+          document.getElementById('accordionSidebar').classList.add('toggled');
+          document.getElementById('sidebarToggleTop').style.display = ('none');
+           var navBar = document.querySelector('.navbar');
+            var companyName = document.createElement('span');
+            companyName.textContent = 'ReMa SRL';
+            companyName.classList.add('navbar-brand', 'font-weight-bold');
+            companyName.style.color = '#4E73DF'; // Colore blu
+            navBar.insertBefore(companyName, navBar.firstChild);
+            
+        });
+    </script>
+
+}
