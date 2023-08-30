@@ -398,7 +398,7 @@ public class AttendanceHelper
                 }
             }
 
-            if (!hasAttendance && DateTime.Now.TimeOfDay > new TimeSpan(7, 30, 0) && DateTime.Now.TimeOfDay < new TimeSpan(13, 0, 0))
+            if (!hasAttendance && DateTime.Now.TimeOfDay > new TimeSpan(7, 30, 0) && DateTime.Now.TimeOfDay < new TimeSpan(16, 0, 0))
             {
                 employeesAttendance.Add(employee);
             }
@@ -406,8 +406,13 @@ public class AttendanceHelper
 
         if (employeesAttendance.Count != 0)
         {
-            var users = await _userManager.GetUsersInRoleAsync(Roles.Admin);
-            _emailService.SendEmployeeAttendance(employeesAttendance, users.Select(s => s.Email).ToList());   
+            foreach (var employe in employeesAttendance)
+            {
+                if (employe.TypePosition == TypePosition.InServizio && employe.Mail != "")
+                {
+                    _emailService.SendEmailNoAttendanceEmployee(employe, employe.Mail);
+                }
+            }
         }
     }
     
