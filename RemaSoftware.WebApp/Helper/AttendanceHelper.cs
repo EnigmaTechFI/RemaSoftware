@@ -134,6 +134,7 @@ public class AttendanceHelper
         {
             await ControlFirstAttendance();
         }
+        
     }
 
     public void SendAttendance(int month, int year, string mail, byte[] pdfBytes)
@@ -398,7 +399,7 @@ public class AttendanceHelper
                 }
             }
 
-            if (!hasAttendance && DateTime.Now.TimeOfDay > new TimeSpan(7, 30, 0) && DateTime.Now.TimeOfDay < new TimeSpan(16, 0, 0))
+            if (!hasAttendance && DateTime.Now.TimeOfDay > new TimeSpan(7, 30, 0) && DateTime.Now.TimeOfDay < new TimeSpan(12, 0, 0))
             {
                 employeesAttendance.Add(employee);
             }
