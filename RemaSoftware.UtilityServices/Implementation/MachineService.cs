@@ -2,7 +2,6 @@ using Microsoft.Extensions.Configuration;
 using NLog;
 using RemaSoftware.UtilityServices.Interface;
 using System;
-using System;
 using Opc.UaFx;
 using Opc.UaFx.Client;
 

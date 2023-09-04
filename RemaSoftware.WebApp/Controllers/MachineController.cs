@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.WebApp.Helper;
-using RemaSoftware.WebApp.Models.EmployeeViewModel;
-using RemaSoftware.WebApp.Validation;
 
 namespace RemaSoftware.WebApp.Controllers
 {

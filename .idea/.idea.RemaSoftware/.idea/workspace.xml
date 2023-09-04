@@ -19,12 +19,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="de137d0d-f34b-4c49-826c-e625e08faa2f" name="Changes" comment="Add Employee Timekeeper section">
-      <change afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/wwwroot/MailTemplate/mail-no-attendance-employee.html" afterDir="false" />
+    <list default="true" id="de137d0d-f34b-4c49-826c-e625e08faa2f" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RemaSoftware/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RemaSoftware/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Implementation/EmailService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Implementation/EmailService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Interface/IEmailService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Interface/IEmailService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AttendanceHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AttendanceHelper.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Implementation/MachineService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Implementation/MachineService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Controllers/MachineController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Controllers/MachineController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Home/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Home/Index.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Machine/AutomaticMachine.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Machine/AutomaticMachine.cshtml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Shared/_Layout.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Shared/_Layout.cshtml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -78,7 +78,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "ToolWindowCommit.ShowToolbar": "false",
     "WebServerToolWindowFactoryState": "false",
-    "XThreadsFramesViewSplitterKey": "0.8933333",
+    "XThreadsFramesViewSplitterKey": "0.5311111",
     "git-widget-placeholder": "Timekeeper",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -340,7 +340,12 @@
       <workItem from="1691669717198" duration="9750000" />
       <workItem from="1693288526564" duration="12394000" />
       <workItem from="1693301755631" duration="7497000" />
-      <workItem from="1693312566275" duration="27187000" />
+      <workItem from="1693312566275" duration="32407000" />
+      <workItem from="1693461686902" duration="13724000" />
+      <workItem from="1693555292995" duration="5000" />
+      <workItem from="1693559311375" duration="191000" />
+      <workItem from="1693561682607" duration="30000" />
+      <workItem from="1693808202957" duration="5658000" />
     </task>
     <task id="LOCAL-00059" summary="[Migration] Remove Order Table Version 1.0">
       <created>1679413111341</created>
@@ -685,7 +690,7 @@
       <option name="project" value="LOCAL" />
       <updated>1691656194972</updated>
     </task>
-    <option name="localTasksCounter" value="109" />
+    <option name="localTasksCounter" value="113" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -733,10 +738,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Password cliente accesso;" />
-    <MESSAGE value="SignalR Connection Timeout;" />
-    <MESSAGE value="Fix order price pattern and replace;" />
-    <MESSAGE value="Sync planimetry;" />
     <MESSAGE value="Fix DDT associate; Add hour and astart date on ended order guest app;" />
     <MESSAGE value="QRCode creation;" />
     <MESSAGE value="Creazione foglio come v1 con aggiunta del QrCode;" />
@@ -758,7 +759,11 @@
     <MESSAGE value="Fix bugs" />
     <MESSAGE value="Fix bug and update 4.0" />
     <MESSAGE value="Add Employee Timekeeper section" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add Employee Timekeeper section" />
+    <MESSAGE value="New Version Employee Timekeeper" />
+    <MESSAGE value="Fix mail employee attendance" />
+    <MESSAGE value="Update text only Employee Attendance" />
+    <MESSAGE value="Fix text" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix text" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -775,19 +780,6 @@
             </endOffsets>
           </properties>
           <option name="timeStamp" value="70" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AttendanceHelper.cs</url>
-          <line>409</line>
-          <properties documentPath="C:\Users\aless\RiderProjects\Rema_Software\RemaSoftware.WebApp\Helper\AttendanceHelper.cs" initialLine="409" containingFunctionPresentation="Method 'ControlFirstAttendance'">
-            <startOffsets>
-              <option value="18231" />
-            </startOffsets>
-            <endOffsets>
-              <option value="18275" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="72" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
