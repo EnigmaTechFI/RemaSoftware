@@ -141,17 +141,15 @@ public class EmployeeHelper
         {
             _accountHelper.DeleteAccountByID(employee.AccountId);
             MyUser myUser = await _accountHelper.AddEmployeeAccount(model);
-            employee.AccountId = myUser.Id;
-            employee.Mail = model.Employee.Mail;
+            model.Employee.AccountId = myUser.Id;
         }
-        else if (employee.Mail == "")
+        else if (model.Employee.Mail != null && employee.Mail == "")
         {
             MyUser myUser = await _accountHelper.AddEmployeeAccount(model);
-            employee.AccountId = myUser.Id;
-            employee.Mail = model.Employee.Mail;
+            model.Employee.AccountId = myUser.Id;
         }
 
-        _employeeService.UpdateEmployee(employee);
+        _employeeService.UpdateEmployee(model.Employee);
         return "Success";
     }
 }

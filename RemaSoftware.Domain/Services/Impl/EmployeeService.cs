@@ -59,12 +59,24 @@ namespace RemaSoftware.Domain.Services.Impl
                 .ToList();
         }
         
-        
         public bool UpdateEmployee(Employee employee)
         {
-            _dbContext.Entry(employee).State = EntityState.Modified;
-            _dbContext.SaveChanges();
-            return true;
+            // Carica l'entità dal contesto
+            var existingEmployee = _dbContext.Employees.Find(employee.EmployeeID);
+            if (employee.Mail == null)
+            {
+                employee.Mail = "";
+            }
+            if (existingEmployee != null)
+            {
+                
+                // Copia i valori da employee a existingEmployee
+                _dbContext.Entry(existingEmployee).CurrentValues.SetValues(employee);
+                _dbContext.SaveChanges();
+                return true;
+            }
+
+            return false;
         }
     }
 }

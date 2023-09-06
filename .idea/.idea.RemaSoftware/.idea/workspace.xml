@@ -21,11 +21,9 @@
   <component name="ChangeListManager">
     <list default="true" id="de137d0d-f34b-4c49-826c-e625e08faa2f" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RemaSoftware/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RemaSoftware/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Implementation/MachineService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Implementation/MachineService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Controllers/MachineController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Controllers/MachineController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Home/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Home/Index.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Machine/AutomaticMachine.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Machine/AutomaticMachine.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Shared/_Layout.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Shared/_Layout.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.Domain/Services/Impl/EmployeeService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Services/Impl/EmployeeService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/EmployeeHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/EmployeeHelper.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Validation/EmployeeValidation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Validation/EmployeeValidation.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,7 +76,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "ToolWindowCommit.ShowToolbar": "false",
     "WebServerToolWindowFactoryState": "false",
-    "XThreadsFramesViewSplitterKey": "0.5311111",
+    "XThreadsFramesViewSplitterKey": "0.56222224",
     "git-widget-placeholder": "Timekeeper",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -345,7 +343,8 @@
       <workItem from="1693555292995" duration="5000" />
       <workItem from="1693559311375" duration="191000" />
       <workItem from="1693561682607" duration="30000" />
-      <workItem from="1693808202957" duration="5658000" />
+      <workItem from="1693808202957" duration="11133000" />
+      <workItem from="1693979727868" duration="4475000" />
     </task>
     <task id="LOCAL-00059" summary="[Migration] Remove Order Table Version 1.0">
       <created>1679413111341</created>
@@ -690,7 +689,7 @@
       <option name="project" value="LOCAL" />
       <updated>1691656194972</updated>
     </task>
-    <option name="localTasksCounter" value="113" />
+    <option name="localTasksCounter" value="114" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -738,7 +737,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Fix DDT associate; Add hour and astart date on ended order guest app;" />
     <MESSAGE value="QRCode creation;" />
     <MESSAGE value="Creazione foglio come v1 con aggiunta del QrCode;" />
     <MESSAGE value="Annullamento DDT out dopo controllo qualità;" />
@@ -763,7 +761,8 @@
     <MESSAGE value="Fix mail employee attendance" />
     <MESSAGE value="Update text only Employee Attendance" />
     <MESSAGE value="Fix text" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix text" />
+    <MESSAGE value="Privicy icon" />
+    <option name="LAST_COMMIT_MESSAGE" value="Privicy icon" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -780,6 +779,45 @@
             </endOffsets>
           </properties>
           <option name="timeStamp" value="70" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/RemaSoftware.WebApp/Validation/EmployeeValidation.cs</url>
+          <line>11</line>
+          <properties documentPath="C:\Users\aless\RiderProjects\Rema_Software\RemaSoftware.WebApp\Validation\EmployeeValidation.cs" initialLine="11" containingFunctionPresentation="Method 'ValidateEmployee'">
+            <startOffsets>
+              <option value="291" />
+            </startOffsets>
+            <endOffsets>
+              <option value="340" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="72" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/RemaSoftware.WebApp/Controllers/EmployeeController.cs</url>
+          <line>150</line>
+          <properties documentPath="C:\Users\aless\RiderProjects\Rema_Software\RemaSoftware.WebApp\Controllers\EmployeeController.cs" initialLine="150" containingFunctionPresentation="Method 'ModifyEmployee'">
+            <startOffsets>
+              <option value="5236" />
+            </startOffsets>
+            <endOffsets>
+              <option value="5272" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="73" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/RemaSoftware.WebApp/Helper/EmployeeHelper.cs</url>
+          <line>137</line>
+          <properties documentPath="C:\Users\aless\RiderProjects\Rema_Software\RemaSoftware.WebApp\Helper\EmployeeHelper.cs" initialLine="137" containingFunctionPresentation="Method 'EditEmployee'">
+            <startOffsets>
+              <option value="3917" />
+            </startOffsets>
+            <endOffsets>
+              <option value="3997" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="74" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
