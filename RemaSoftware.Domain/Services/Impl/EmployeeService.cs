@@ -32,7 +32,10 @@ namespace RemaSoftware.Domain.Services.Impl
             if (existingEmployee != null)
             {
                 _dbContext.Employees.Remove(existingEmployee);
-                _dbContext.Users.Remove(employeeUser);
+                if (employeeUser != null)
+                {
+                    _dbContext.Users.Remove(employeeUser);
+                }
                 _dbContext.SaveChanges();
             }
         }

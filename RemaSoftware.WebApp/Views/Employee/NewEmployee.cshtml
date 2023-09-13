@@ -86,10 +86,7 @@
                     <select asp-for="Employee.TypeRelationship" class="form-control">
                         <option selected="selected" value="Nessuna">Nessuno</option>
                         <option value="@TypeRelationship.LavoroDipendente">Lavoro dipendente</option>
-                        <option value="@TypeRelationship.Somministrato">Somministarto</option>
-                        <option value="@TypeRelationship.Distaccato">Distaccato</option>
-                        <option value="@TypeRelationship.ParasubCalendario">Parasub. con calendario</option>
-                        <option value="@TypeRelationship.ParasubSenzaCalendario">Parasub. senza calendario</option>
+                        <option value="@TypeRelationship.LavoroAutonomo">Lavoro autonomo (Nessuna timbratura)</option>
                     </select>
                 </div>
                 <div class="col-md-4 mb-4 form-group">
@@ -97,10 +94,7 @@
                     <select asp-for="Employee.TypePosition" class="form-control">
                         <option selected="selected" value="Nessuna">Nessuno</option>
                         <option value="@TypePosition.InServizio">In servizio</option>
-                        <option value="@TypePosition.MaternitàAnticipata">Maternità anticipata</option>
-                        <option value="@TypePosition.MaternitàObbligatoria">Maternità obbligatoria</option>
-                        <option value="@TypePosition.MaternitàFacoltativa">Maternità facoltativa</option>
-                        <option value="@TypePosition.SospensioneAspettativa">Sospensione o aspettativa</option>
+                        <option value="@TypePosition.Maternità">Maternità</option>
                     </select>
                 </div>
                  <div class="col-md-4 mb-4">

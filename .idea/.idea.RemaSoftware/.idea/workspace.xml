@@ -21,9 +21,15 @@
   <component name="ChangeListManager">
     <list default="true" id="de137d0d-f34b-4c49-826c-e625e08faa2f" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RemaSoftware/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RemaSoftware/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.Domain/Constants/TypePosition.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Constants/TypePosition.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.Domain/Constants/TypeRelationship.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Constants/TypeRelationship.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.Domain/Services/Impl/AttendanceService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Services/Impl/AttendanceService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RemaSoftware.Domain/Services/Impl/EmployeeService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Services/Impl/EmployeeService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/EmployeeHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/EmployeeHelper.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Validation/EmployeeValidation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Validation/EmployeeValidation.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Implementation/MachineService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Implementation/MachineService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AttendanceHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AttendanceHelper.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Attendance/Attendance.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Attendance/Attendance.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/ModifyEmployee.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/ModifyEmployee.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/NewEmployee.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/NewEmployee.cshtml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,8 +58,10 @@
     </option>
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/3839fc8fee5ae62538a4469ed86bbba1ccd15d4e0da63bba779abe1719da3/IConfiguration.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c9ca552eea9bb8fababbf1cd3f981cf68849ccc365dcca5627376f98e505c74/ControllerActionInvoker.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.WebApp/Views/Shared/_Layout.cshtml" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.WebApp/Views/Attendance/Attendance.cshtml" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.WebApp/Views/Attendance/Attendance.cshtml" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/RemaSoftware.WebApp/wwwroot/lib/bootstrap/dist/css/bootstrap.css.map" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -76,7 +84,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "ToolWindowCommit.ShowToolbar": "false",
     "WebServerToolWindowFactoryState": "false",
-    "XThreadsFramesViewSplitterKey": "0.56222224",
+    "XThreadsFramesViewSplitterKey": "0.66888887",
     "git-widget-placeholder": "Timekeeper",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -344,7 +352,10 @@
       <workItem from="1693559311375" duration="191000" />
       <workItem from="1693561682607" duration="30000" />
       <workItem from="1693808202957" duration="11133000" />
-      <workItem from="1693979727868" duration="4475000" />
+      <workItem from="1693979727868" duration="6375000" />
+      <workItem from="1693997127489" duration="12588000" />
+      <workItem from="1694412769305" duration="21854000" />
+      <workItem from="1694585550707" duration="8500000" />
     </task>
     <task id="LOCAL-00059" summary="[Migration] Remove Order Table Version 1.0">
       <created>1679413111341</created>
@@ -689,7 +700,7 @@
       <option name="project" value="LOCAL" />
       <updated>1691656194972</updated>
     </task>
-    <option name="localTasksCounter" value="114" />
+    <option name="localTasksCounter" value="116" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -737,8 +748,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="QRCode creation;" />
-    <MESSAGE value="Creazione foglio come v1 con aggiunta del QrCode;" />
     <MESSAGE value="Annullamento DDT out dopo controllo qualità;" />
     <MESSAGE value="Fix controllo qualità nessun pezzo inserito;" />
     <MESSAGE value="Fix socket;" />
@@ -762,62 +771,25 @@
     <MESSAGE value="Update text only Employee Attendance" />
     <MESSAGE value="Fix text" />
     <MESSAGE value="Privicy icon" />
-    <option name="LAST_COMMIT_MESSAGE" value="Privicy icon" />
+    <MESSAGE value="Fix Employee bug" />
+    <MESSAGE value="Fix attendance bug" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix attendance bug" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/RemaSoftware.WebApp/Helper/EmployeeHelper.cs</url>
-          <line>141</line>
-          <properties documentPath="C:\Users\aless\RiderProjects\Rema_Software\RemaSoftware.WebApp\Helper\EmployeeHelper.cs" initialLine="141" containingFunctionPresentation="Method 'EditEmployee'">
+          <url>file://$PROJECT_DIR$/RemaSoftware.WebApp/Controllers/OrderController.cs</url>
+          <line>211</line>
+          <properties documentPath="C:\Users\aless\RiderProjects\Rema_Software\RemaSoftware.WebApp\Controllers\OrderController.cs" initialLine="211" containingFunctionPresentation="Method 'NewOrder'">
             <startOffsets>
-              <option value="4094" />
+              <option value="7989" />
             </startOffsets>
             <endOffsets>
-              <option value="4147" />
+              <option value="8079" />
             </endOffsets>
           </properties>
-          <option name="timeStamp" value="70" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/RemaSoftware.WebApp/Validation/EmployeeValidation.cs</url>
-          <line>11</line>
-          <properties documentPath="C:\Users\aless\RiderProjects\Rema_Software\RemaSoftware.WebApp\Validation\EmployeeValidation.cs" initialLine="11" containingFunctionPresentation="Method 'ValidateEmployee'">
-            <startOffsets>
-              <option value="291" />
-            </startOffsets>
-            <endOffsets>
-              <option value="340" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="72" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/RemaSoftware.WebApp/Controllers/EmployeeController.cs</url>
-          <line>150</line>
-          <properties documentPath="C:\Users\aless\RiderProjects\Rema_Software\RemaSoftware.WebApp\Controllers\EmployeeController.cs" initialLine="150" containingFunctionPresentation="Method 'ModifyEmployee'">
-            <startOffsets>
-              <option value="5236" />
-            </startOffsets>
-            <endOffsets>
-              <option value="5272" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="73" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/RemaSoftware.WebApp/Helper/EmployeeHelper.cs</url>
-          <line>137</line>
-          <properties documentPath="C:\Users\aless\RiderProjects\Rema_Software\RemaSoftware.WebApp\Helper\EmployeeHelper.cs" initialLine="137" containingFunctionPresentation="Method 'EditEmployee'">
-            <startOffsets>
-              <option value="3917" />
-            </startOffsets>
-            <endOffsets>
-              <option value="3997" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="74" />
+          <option name="timeStamp" value="10" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

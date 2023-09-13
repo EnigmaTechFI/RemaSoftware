@@ -247,6 +247,7 @@ public class AttendanceHelper
                     {
                         case TimeSpan td when td > TimeSpan.FromHours(7) + TimeSpan.FromMinutes(45):
                             sp += "80000";
+                            //correggere per maternità
                             if (uniqueTypes[j] == "Presenza" && employee.TypePosition == "In servizio" && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Sunday && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Saturday)
                                 permiss += "00000";
                             break;

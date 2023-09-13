@@ -413,6 +413,10 @@ namespace RemaSoftware.Domain.Services.Impl;
                             {
                                 newAttendance.Type = "Festivo";
                             }
+                            else if(employee.TypeRelationship == Constants.TypeRelationship.LavoroAutonomo)
+                            {
+                                newAttendance.Type = "Presenza";
+                            }
                             else
                             {
                                 newAttendance.Type = "Permesso";

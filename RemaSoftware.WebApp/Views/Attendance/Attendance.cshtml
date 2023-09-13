@@ -1,4 +1,6 @@
-﻿@model RemaSoftware.WebApp.Models.EmployeeViewModel.AttendanceViewModel
+﻿@using Org.BouncyCastle.Asn1.Cms
+@using RemaSoftware.Domain.Models
+@model RemaSoftware.WebApp.Models.EmployeeViewModel.AttendanceViewModel
 
 @{
     ViewData["Title"] = "Gestione Presenze";
@@ -175,7 +177,7 @@
                                         string presenzeDivID = "presenze-" + presenza.Key.EmployeeID + "-" + giorno +"-pre";
                                     }
 
-                                    @if (NotNull && totalTime == TimeSpan.Zero)
+                                    @if(NotNull && totalTime == TimeSpan.Zero)
                                     {
                                         <div style="color: white; background-color: green; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center; cursor: pointer;" title="Presenza" onclick="togglePresenze('@presenzeDivID')">
                                             <b style="white-space: nowrap; margin: 0 auto;">
@@ -183,7 +185,7 @@
                                             </b>
                                         </div>
                                     }
-                                    else if (NotNull && totalTime != TimeSpan.Zero)
+                                    else if(NotNull && totalTime != TimeSpan.Zero)
                                     {
                                         <div style="color: white; background-color: green; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center; cursor: pointer;" title="Presenza" onclick="togglePresenze('@presenzeDivID')">
                                             <b style="white-space: nowrap; margin: 0 auto;">
@@ -203,6 +205,25 @@
                                             </a>
                                         }
                                     </div>
+                                    
+                                    @{
+                                        if (NotNull && totalTime != TimeSpan.Zero)
+                                        {
+                                            TimeSpan eightHours = new TimeSpan(8, 0, 0); // 8 ore
+                                            TimeSpan difference = eightHours - totalTime.Value;
+                                            difference = difference.Add(new TimeSpan(0, 1, 0));
+                                            
+                                            if (difference.TotalMinutes > 45)
+                                            {
+                                                <div style="color: white; background-color: red; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center;" title="Permesso">
+                                                    <b style="white-space: nowrap; margin: 0 auto;">
+                                                        @difference.ToString(@"hh")h
+                                                        @difference.ToString(@"mm")m
+                                                    </b>
+                                                </div>
+                                            }
+                                        }
+                                    }
 
                                     @* Straordinario *@
                                     @{
@@ -424,26 +445,37 @@
                         
                         @{
                             TimeSpan? totalTimePresence = TimeSpan.Zero;
+                            TimeSpan? partialTimePresence = TimeSpan.Zero;
+                            DateTime? lastDayPresence = null;
                             TimeSpan? totalTimePermit = TimeSpan.Zero;
                             TimeSpan? totalTimeIllness = TimeSpan.Zero;
                             TimeSpan? totalTimeHoliday = TimeSpan.Zero;
                             TimeSpan? totalTimeVacation = TimeSpan.Zero;
                             TimeSpan? totalTimeStraord = TimeSpan.Zero;
-
+                            
+                            
                             foreach (var item in presenza)
                             {
                                 if (item.Type == "Presenza" && item.DateOut != null)
                                 {
+                                    if (lastDayPresence != item.DateIn.Date)
+                                    {
+                                        lastDayPresence = item.DateIn.Date;
+                                        if (partialTimePresence > TimeSpan.FromHours(8))
+                                        {
+                                            partialTimePresence = TimeSpan.FromHours(8);
+                                        }
+                                        totalTimePresence = totalTimePresence?.Add((TimeSpan)partialTimePresence);
+                                        partialTimePresence = TimeSpan.Zero;
+                                    }
+                                    
                                     TimeSpan? timeDiff = item.DateOut - item.DateIn;
                                     if (item.DateIn.TimeOfDay == TimeSpan.FromHours(7.5) && item.DateOut?.TimeOfDay == TimeSpan.FromHours(16.5))
                                     {
                                         timeDiff = timeDiff?.Subtract(TimeSpan.FromHours(1));
                                     }
-                                    if (timeDiff > TimeSpan.FromHours(9))
-                                    {
-                                        
-                                    }
-                                    totalTimePresence = totalTimePresence?.Add((TimeSpan)timeDiff);
+                                    partialTimePresence = partialTimePresence?.Add((TimeSpan)timeDiff);
+                                    
                                 }
 
                                 if ((item.Type == "StraordinarioSabato" || item.Type == "StraordinarioOrdinario" || item.Type == "StraordinarioNotturno") && item.DateOut != null){
@@ -492,6 +524,12 @@
                                     totalTimeVacation = totalTimeVacation?.Add((TimeSpan)timeDiff);
                                 }
                             }
+
+                            if (partialTimePresence > TimeSpan.FromHours(8))
+                            {
+                                partialTimePresence = TimeSpan.FromHours(8);
+                            }
+                            totalTimePresence = totalTimePresence?.Add((TimeSpan)partialTimePresence);
                         }
 
                         <td>
