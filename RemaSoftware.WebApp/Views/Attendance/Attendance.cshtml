@@ -213,7 +213,8 @@
                                             TimeSpan difference = eightHours - totalTime.Value;
                                             difference = difference.Add(new TimeSpan(0, 1, 0));
                                             
-                                            if (difference.TotalMinutes > 45)
+                                            var firstAttendance = attendancesForDay.FirstOrDefault();
+                                            if (difference.TotalMinutes > 45 && firstAttendance.DateIn.Date != DateTime.Today)
                                             {
                                                 <div style="color: white; background-color: red; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center;" title="Permesso">
                                                     <b style="white-space: nowrap; margin: 0 auto;">
