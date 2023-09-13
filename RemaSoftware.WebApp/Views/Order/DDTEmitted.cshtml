@@ -166,7 +166,7 @@
             "product": [[0, 'asc']],
             "columnDefs": [
                 { "searchable": true, "orderable": true, "targets": 0 },
-                { "searchable": true, "orderable": true, "targets": 1 },
+                { "searchable": true, "orderable": true, "type": "code-sort", "targets": 1 }, 
                 { "searchable": false, "orderable": true, "targets": 2, "type": "date-eu" },
                 { "searchable": false, "orderable": false, "targets": 3 },
                 { "searchable": false, "orderable": true, "targets": 4 },
@@ -182,6 +182,19 @@
         var yy = x.getFullYear();
         return dd +"/" + mm+"/" + yy;
      }
+     
+     $.fn.dataTable.ext.type.order['code-sort-pre'] = function (data) {
+         if (data) {
+             let code = data.substring(0, data.length - 5);
+             // Aggiungi zeri iniziali per avere una lunghezza fissa di, ad esempio, 10 caratteri
+             while (code.length < 10) {
+                 code = '0' + code;
+             }
+             return code;
+         } else {
+             return '';
+         }
+     };
 
     </script>
 }
