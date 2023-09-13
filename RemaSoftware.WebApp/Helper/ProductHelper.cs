@@ -5,8 +5,8 @@ using RemaSoftware.WebApp.Models.ProductViewModel;
 using RemaSoftware.WebApp.Validation;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using NLog;
 using RemaSoftware.UtilityServices.Interface;
 
 namespace RemaSoftware.WebApp.Helper
@@ -95,12 +95,18 @@ namespace RemaSoftware.WebApp.Helper
         {
             try
             {
-                var product = _productService.GetProductById(productId);
-                return _productService.DeleteProduct(product);
+                var product = _productService.GetProductAndOrderById(productId);
+
+                if (product.Ddts_In.Count == 0)
+                {
+                    return _productService.DeleteProduct(product);
+                }
+
+                throw new Exception();
             }
             catch(Exception e)
             {
-                return e.Message;
+                throw new Exception("Errore nell'eliminazione del prodotto");
             }
         }
 

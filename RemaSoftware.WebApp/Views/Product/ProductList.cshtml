@@ -44,6 +44,10 @@
                             <a style="text-decoration: none" asp-action="ViewProduct" asp-controller="Product" asp-route-id="@product.ProductID">
                                 <i class="fas fa-eye fa-lg pl-2" title="Visualizza prodotto" style="cursor: pointer; color:  #6d767e;"></i>
                             </a>
+                            <i class="fas fa-trash fa-lg pl-2 del-product" style="cursor: pointer; color: #6d767e;" id="@product.ProductID" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDataProductId('#confirm-del-modal', @product.ProductID)">
+                                
+                            </i>
+
                         </td>
                     </tr>
                 }
@@ -77,8 +81,9 @@
     <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
     <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
     <script>
-        function SetDataArticleId(elementName, articleId){
-            $(elementName).data("articleId", articleId );
+        
+        function SetDataProductId(elementName, productId){
+            $(elementName).data("productId", productId );
         }
     
         $(document).ready( function () {
@@ -108,5 +113,29 @@
             });
      
         });
+        
+        function DeleteProduct(){
+            var productId = $("#confirm-del-modal").data("productId");
+            $.ajax({
+                url: '@Url.Action("DeleteProduct", "Product")?' + $.param({"ProductId": productId}),
+                type: 'GET',
+                success: function (data) {
+                    if (data.result == true){
+                        table.row($("tr#product-" + productId)).remove().draw();
+                        $("#confirm-del-modal").modal('toggle');
+                    }else{
+                        $("#confirm-del-modal").modal('toggle');
+                    }
+                },
+                error: function (data){
+                    toastNotifyError("Errore durante l'eliminazione del prodotto.");
+                }
+            });
+        }
+            
+        $(document).on("click", ".del-product", function () {
+                 var productId = $(this).attr('id');
+                 $(".modal-body #modal-addrem-productId").val( parseInt(productId) );
+            });
     </script>
 }

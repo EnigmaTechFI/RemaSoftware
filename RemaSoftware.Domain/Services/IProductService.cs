@@ -7,6 +7,7 @@ namespace RemaSoftware.Domain.Services
         List<Product> GetAllProducts();
         Product AddProduct(Product product);
         Product GetProductById(int productId);
+        Product GetProductAndOrderById(int productId);
         string DeleteProduct(Product product);
         Product UpdateProduct(Product product);
         public List<string> GetAllProductSKU();

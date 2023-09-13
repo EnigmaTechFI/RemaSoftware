@@ -48,7 +48,7 @@ namespace RemaSoftware.Domain.Services.Impl
             }
             catch (Exception e)
             {
-                Logger.Error(e, $"Errore durante l'eliminazione del prodotto: #{product.SKU}");
+                Logger.Error(e, $"Errore durante l'eliminazione del prodotto.");
                 return e.Message;
             }
         }
@@ -68,5 +68,11 @@ namespace RemaSoftware.Domain.Services.Impl
             }
             return null;
         }
+
+        public Product GetProductAndOrderById(int productId)
+        {
+            return _dbContext.Products.Include(s => s.Ddts_In).Where(t => t.ProductID == productId).SingleOrDefault();
+        }
+
     }
 }

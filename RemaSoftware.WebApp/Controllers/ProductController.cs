@@ -73,17 +73,17 @@ namespace RemaSoftware.WebApp.Controllers
         }
 
         [HttpGet]
-        public JsonResult DeleteProduct(int productId)
+        public void DeleteProduct(int productId)
         {
             try
             {
-                return new JsonResult(new { Result = _productHelper.DeleteProduct(productId), ToastMessage = "Prodotto eliminato correttamente." });
+                _productHelper.DeleteProduct(productId);
+                _notyfToastService.Success("Prodotto eliminato correttamente");
             }
-            catch(Exception e)
+            catch(Exception ex)
             {
-                return new JsonResult(new { Result = "Error", ToastMessage = e.Message });
+                _notyfToastService.Error(ex.Message);
             }
-            
         }
 
         [HttpGet]
