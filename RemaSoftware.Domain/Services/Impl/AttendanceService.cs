@@ -164,7 +164,7 @@ namespace RemaSoftware.Domain.Services.Impl;
                             }
                         }
                         TimeSpan threshold = new TimeSpan(9, 20, 0);
-
+                        
                         if (totalDuration > threshold && employee.Extraordinary)
                         {
                             existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-1);
@@ -401,7 +401,12 @@ namespace RemaSoftware.Domain.Services.Impl;
                         {
                             DateTime dateIn = date.Date.AddHours(7).AddMinutes(30); // Imposta DateIn a 7:30 del mattino
                             DateTime dateOut = date.Date.AddHours(16).AddMinutes(30); // Imposta DateOut a 16:30
+                            DateTime dateOutAlternative = date.Date.AddHours(12).AddMinutes(30);
 
+                            if (employee.NumberHour == 25)
+                            {
+                                dateOut = dateOutAlternative;
+                            }
                             Attendance newAttendance = new Attendance
                             {
                                 DateIn = dateIn,
