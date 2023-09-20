@@ -472,8 +472,12 @@ namespace RemaSoftware.Domain.Services.Impl;
 
         public Attendance GetLastAttendance()
         {
-            return _dbContext.Attendances.OrderByDescending(a => a.DateIn).FirstOrDefault();
-        } 
+            var oggi = DateTime.Today;
+            var domani = oggi.AddDays(1);
+            return _dbContext.Attendances
+                .Where(a => a.DateIn <= domani && a.Type != "Eliminato")
+                .OrderByDescending(a => a.DateIn)
+                .FirstOrDefault();} 
     }
 
 

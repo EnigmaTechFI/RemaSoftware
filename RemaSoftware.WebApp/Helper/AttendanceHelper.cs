@@ -188,8 +188,8 @@ public class AttendanceHelper
             List<string> uniqueTypes = filteredAttendance.Select(a => a.Type).Distinct().ToList();
 
             var permiss = "U5176" + mese + anno + employee.Number + "0";
-
-            if (employee.TypePosition == "Maternità anticipata")
+            
+            if (employee.TypePosition == "Maternità")
             {
                 permiss += "3110000000";
             }
@@ -299,7 +299,7 @@ public class AttendanceHelper
 
                                 foreach (var allattendanceForDay in allAttendanceForDay)
                                 {
-                                    if (allattendanceForDay.Type == "Ferie" || allattendanceForDay.Type == "Festivo" || allattendanceForDay.Type == "Malattia")  //Qui problema uno può essere mezza girnata in malattia
+                                    if (allattendanceForDay.Type == "Ferie" || allattendanceForDay.Type == "Festivo" || allattendanceForDay.Type == "Malattia") 
                                     {
                                         PresenceInDay = true;
                                     }
@@ -316,7 +316,7 @@ public class AttendanceHelper
                                     {
                                         permiss += "80000";
                                     }
-                                    else if (employee.TypePosition == "Maternità anticipata" &&
+                                    else if (employee.TypePosition == "Maternità" &&
                                              myDate.DayOfWeek != DayOfWeek.Sunday && myDate.DayOfWeek != DayOfWeek.Saturday && myDate < DateTime.Today)
                                     {
                                         permiss += "50000";
@@ -415,12 +415,13 @@ public class AttendanceHelper
                     _emailService.SendEmailNoAttendanceEmployee(employe, employe.Mail);
                 }
             }
+            var users = await _userManager.GetUsersInRoleAsync(Roles.Admin);
+            _emailService.SendEmployeeAttendance(employeesAttendance, users.Select(s => s.Email).ToList());
         }
     }
     
     public async Task UpdateAttendanceEmployee(int month, int year, int EmployeeId)
     {
-        
         const string companyId = "29c78fb8-8e97-4a2b-9df2-302ace7481ce";
         const string apiKey = "0575b429-d35a-4e83-bee6-f02149997cf2";
         DateTime toDate;

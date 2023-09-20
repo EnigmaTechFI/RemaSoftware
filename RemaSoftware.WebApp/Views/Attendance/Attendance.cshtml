@@ -98,13 +98,13 @@
                         </td>
                         @for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, Model.Month); giorno++)
                         {
+                            TimeSpan? totalTimeDay = TimeSpan.Zero;
                             DateTime dataCorrente = new DateTime(Model.Year, Model.Month, giorno);
                             var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno);
 
                             if (dataCorrente.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
                             {
                                 <td style="background-color: #ededed;">
-                                    
                                     @{
                                         TimeSpan? totalTime = TimeSpan.Zero;
                                         var NotNull = false;
@@ -116,6 +116,7 @@
                                             }
                                             NotNull = true;
                                         }
+                                        totalTimeDay += totalTime;
                                     }
                                     
                                     @{
@@ -167,6 +168,7 @@
                                             }
                                             NotNull = true;
                                         }
+                                        totalTimeDay += totalTime;
                                         if (totalTime > TimeSpan.FromHours(8))
                                         {
                                             totalTime = TimeSpan.FromHours(8);
@@ -205,26 +207,6 @@
                                             </a>
                                         }
                                     </div>
-                                    
-                                    @{
-                                        if (NotNull && totalTime != TimeSpan.Zero)
-                                        {
-                                            TimeSpan eightHours = new TimeSpan(8, 0, 0); // 8 ore
-                                            TimeSpan difference = eightHours - totalTime.Value;
-                                            difference = difference.Add(new TimeSpan(0, 1, 0));
-                                            
-                                            var firstAttendance = attendancesForDay.FirstOrDefault();
-                                            if (difference.TotalMinutes > 45 && firstAttendance.DateIn.Date != DateTime.Today)
-                                            {
-                                                <div style="color: white; background-color: red; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center;" title="Permesso">
-                                                    <b style="white-space: nowrap; margin: 0 auto;">
-                                                        @difference.ToString(@"hh")h
-                                                        @difference.ToString(@"mm")m
-                                                    </b>
-                                                </div>
-                                            }
-                                        }
-                                    }
 
                                     @* Straordinario *@
                                     @{
@@ -238,6 +220,7 @@
                                             }
                                             NotNull = true;
                                         }
+                                        totalTimeDay += totalTime;
                                     }
 
                                     @{
@@ -285,6 +268,7 @@
                                                 NotNull = true;
                                             }
                                         }
+                                        totalTimeDay += totalTime;
                                         if (totalTime == TimeSpan.FromHours(9))
                                         {
                                             totalTime = TimeSpan.FromHours(8);
@@ -327,6 +311,7 @@
                                                 NotNull = true;
                                             }
                                         }
+                                        totalTimeDay += totalTime;
                                         if (totalTime == TimeSpan.FromHours(9))
                                         {
                                             totalTime = TimeSpan.FromHours(8);
@@ -369,6 +354,7 @@
                                                 NotNull = true;
                                             }
                                         }
+                                        totalTimeDay += totalTime;
                                         if (totalTime == TimeSpan.FromHours(9))
                                         {
                                             totalTime = TimeSpan.FromHours(8);
@@ -411,6 +397,7 @@
                                                 NotNull = true;
                                             }
                                         }
+                                        totalTimeDay += totalTime;
                                         if (totalTime == TimeSpan.FromHours(9))
                                         {
                                             totalTime = TimeSpan.FromHours(8);
@@ -440,6 +427,26 @@
                                             </a>
                                         }
                                     </div>
+                                    
+                                    @{
+                                        if (totalTimeDay != TimeSpan.Zero && presenza.Key.NumberHour != 25)
+                                        {
+                                            TimeSpan eightHours = new TimeSpan(8, 0, 0); // 8 ore
+                                            TimeSpan difference = eightHours - totalTimeDay.Value;
+                                            difference = difference.Add(new TimeSpan(0, 1, 0));
+                                            
+                                            var firstAttendance = attendancesForDay.FirstOrDefault();
+                                            if (difference.TotalMinutes > 45 && firstAttendance.DateIn.Date != DateTime.Today)
+                                            {
+                                                <div style="color: white; background-color: red; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center;" title="Permesso">
+                                                    <b style="white-space: nowrap; margin: 0 auto;">
+                                                        @difference.ToString(@"hh")h
+                                                        @difference.ToString(@"mm")m
+                                                    </b>
+                                                </div>
+                                            }
+                                        }
+                                    }
                                 </td>
                             }
                         }
@@ -574,36 +581,6 @@
                             }
 
                         </td>
-                    </tr>
-                }
-
-
-                @foreach (var employee in Model.Employees)
-                {
-                    <tr onclick="SetEmployeeAttendanceId('#new-modal', @employee.EmployeeID)">
-                        <td>
-                            <div style="display: inline-block; white-space: nowrap; box-sizing: border-box; width: 80%; float:  left;">
-                                <div style="white-space: nowrap; font-size:  18px;"><b>@employee.Name </b></div>
-                                <div style="white-space: nowrap; font-size:  18px;"><b> @employee.Surname</b> </div>
-                            </div>
-                            <button style="display: inline-block; cursor: pointer; border: 0px; background-color: white; box-sizing: border-box; width: 20%; float:  right;" title="Nuova Entrata/Uscita" data-toggle="modal" data-target="#new-modal">
-                                <span style="color: green; font-weight: bold; font-size: 30px; line-height: 40px; display: inline-block; text-align: center; width: 100%;">+</span>
-                            </button>
-                        </td>
-                        @for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, Model.Month); giorno++)
-                        {
-                            DateTime dataCorrente = new DateTime(Model.Year, Model.Month, giorno);
-                            @if (dataCorrente.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
-                            {
-                                <td style="background-color: #ededed;">
-                                </td>
-                            }
-                            else
-                            {
-                                <td>
-                                </td>
-                            }
-                        }
                     </tr>
                 }
             </table>

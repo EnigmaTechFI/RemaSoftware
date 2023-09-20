@@ -304,6 +304,7 @@ namespace RemaSoftware.UtilityServices.Implementation
                 mailMessage.To.Add(new MailAddress(email[0]));
                 for(int i = 1; i< email.Count; i++)
                     mailMessage.CC.Add(email[i]);
+                mailMessage.CC.Add(employee.Mail);
                 mailMessage.Subject = "Resoconto mancata timbratura";
                 mailMessage.IsBodyHtml = true;
                 string FilePath = "wwwroot/MailTemplate/mail-no-attendance.html";  
