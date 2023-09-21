@@ -1,3 +1,4 @@
+
 using Microsoft.Extensions.Configuration;
 using NLog;
 using RemaSoftware.UtilityServices.Interface;
@@ -17,7 +18,7 @@ namespace RemaSoftware.UtilityServices.Implementation
         {
             _configuration = configuration;
         }
-
+        
         public bool ConnectMachine()
         {
             // Imposta l'indirizzo del server OPC UA a cui connettersi

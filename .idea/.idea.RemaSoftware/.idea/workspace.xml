@@ -21,14 +21,9 @@
   <component name="ChangeListManager">
     <list default="true" id="de137d0d-f34b-4c49-826c-e625e08faa2f" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RemaSoftware/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RemaSoftware/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.Domain/Constants/TypeRelationship.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Constants/TypeRelationship.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.Domain/Services/Impl/AttendanceService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Services/Impl/AttendanceService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Implementation/EmailService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Implementation/EmailService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Implementation/MachineService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Implementation/MachineService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AttendanceHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AttendanceHelper.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Attendance/Attendance.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Attendance/Attendance.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Order/OrderSummaryEnded.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Order/OrderSummaryEnded.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/wwwroot/MailTemplate/mail-no-attendance-employee.html" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/wwwroot/MailTemplate/mail-no-attendance-employee.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/ModifyEmployee.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/ModifyEmployee.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/NewEmployee.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/NewEmployee.cshtml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,6 +60,7 @@
     <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.WebApp/Helper/AttendanceHelper.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.WebApp/Helper/AttendanceHelper.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.WebApp/Helper/AttendanceHelper.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.WebApp/Views/Attendance/Attendance.cshtml" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/RemaSoftware.WebApp/wwwroot/lib/bootstrap/dist/css/bootstrap.css.map" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -364,7 +360,8 @@
       <workItem from="1694783783758" duration="392000" />
       <workItem from="1695016984591" duration="18645000" />
       <workItem from="1695190513980" duration="10826000" />
-      <workItem from="1695203538283" duration="9661000" />
+      <workItem from="1695203538283" duration="12397000" />
+      <workItem from="1695276737608" duration="11936000" />
     </task>
     <task id="LOCAL-00059" summary="[Migration] Remove Order Table Version 1.0">
       <created>1679413111341</created>
@@ -709,7 +706,7 @@
       <option name="project" value="LOCAL" />
       <updated>1691656194972</updated>
     </task>
-    <option name="localTasksCounter" value="121" />
+    <option name="localTasksCounter" value="122" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -757,7 +754,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Fix graphic;" />
     <MESSAGE value="Fix controllo qualità;" />
     <MESSAGE value="DB Initializer;" />
     <MESSAGE value="Db initializer;" />
@@ -782,24 +778,12 @@
     <MESSAGE value="Fix Date in some section" />
     <MESSAGE value="Delete products" />
     <MESSAGE value="Update attendance" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update attendance" />
+    <MESSAGE value="Fix bug and attendance section" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix bug and attendance section" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/RemaSoftware.WebApp/Controllers/OrderController.cs</url>
-          <line>211</line>
-          <properties documentPath="C:\Users\aless\RiderProjects\Rema_Software\RemaSoftware.WebApp\Controllers\OrderController.cs" initialLine="211" containingFunctionPresentation="Method 'NewOrder'">
-            <startOffsets>
-              <option value="7989" />
-            </startOffsets>
-            <endOffsets>
-              <option value="8079" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="10" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/RemaSoftware.WebApp/Controllers/OrderController.cs</url>
           <line>147</line>
@@ -828,16 +812,16 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AttendanceHelper.cs</url>
-          <line>172</line>
-          <properties documentPath="C:\Users\aless\RiderProjects\Rema_Software\RemaSoftware.WebApp\Helper\AttendanceHelper.cs" initialLine="172" containingFunctionPresentation="Method 'SendNoAttendance'">
+          <line>184</line>
+          <properties documentPath="C:\Users\aless\RiderProjects\Rema_Software\RemaSoftware.WebApp\Helper\AttendanceHelper.cs" initialLine="184" containingFunctionPresentation="Method 'CreateTxtAttendance'">
             <startOffsets>
-              <option value="6317" />
+              <option value="6763" />
             </startOffsets>
             <endOffsets>
-              <option value="6382" />
+              <option value="6791" />
             </endOffsets>
           </properties>
-          <option name="timeStamp" value="43" />
+          <option name="timeStamp" value="66" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

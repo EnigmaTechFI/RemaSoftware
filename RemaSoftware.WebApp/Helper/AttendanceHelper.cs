@@ -7,6 +7,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Models;
@@ -134,7 +135,6 @@ public class AttendanceHelper
         {
             await ControlFirstAttendance();
         }
-        
     }
 
     public void SendAttendance(int month, int year, string mail, byte[] pdfBytes)
@@ -383,7 +383,7 @@ public class AttendanceHelper
 
     public async Task ControlFirstAttendance()
     {
-        List<Attendance> attendances = _attendanceService.getAllAttendanceForDay();
+        List<Attendance> attendances = _attendanceService.getAllAttendanceForDay().Where(s => s.Type != "Eliminato").ToList();
         List<Employee> employees = _employeeService.GetAllEmployees();
 
         List<Employee> employeesAttendance = new List<Employee>();
@@ -400,7 +400,7 @@ public class AttendanceHelper
                 }
             }
 
-            if (!hasAttendance && DateTime.Now.TimeOfDay > new TimeSpan(7, 30, 0) && DateTime.Now.TimeOfDay < new TimeSpan(12, 0, 0))
+            if (!hasAttendance && DateTime.Now.TimeOfDay > new TimeSpan(7, 30, 0) && DateTime.Now.TimeOfDay < new TimeSpan(12, 0, 0) && employee.TypePosition == TypePosition.InServizio && employee.TypeRelationship == TypeRelationship.LavoroDipendente)
             {
                 employeesAttendance.Add(employee);
             }
