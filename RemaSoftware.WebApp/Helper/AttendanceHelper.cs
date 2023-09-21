@@ -349,6 +349,20 @@ public class AttendanceHelper
                     }
                 }
 
+                if ((sp.Length-31)/5 == 30)
+                {
+                    sp += "00000";
+                    permiss += "00000";
+                }
+                else if((sp.Length-31)/5 == 28)
+                {
+                    sp += "000000000000000";
+                    permiss += "000000000000000";
+                }else if ((sp.Length - 31) / 5 == 29)
+                {
+                    sp += "0000000000";
+                    permiss += "0000000000";
+                }
                 sp = sp.Remove(sp.Length - 2);
                 stringFile.Add(sp);
 

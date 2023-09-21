@@ -19,11 +19,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="de137d0d-f34b-4c49-826c-e625e08faa2f" name="Changes" comment="">
+    <list default="true" id="de137d0d-f34b-4c49-826c-e625e08faa2f" name="Changes" comment="Fix attendance and Machine 4.0">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RemaSoftware/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RemaSoftware/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AttendanceHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AttendanceHelper.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/ModifyEmployee.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/ModifyEmployee.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/NewEmployee.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/NewEmployee.cshtml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,12 +53,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/3839fc8fee5ae62538a4469ed86bbba1ccd15d4e0da63bba779abe1719da3/IConfiguration.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/598be7b76329747735b1e8e8b423ca7a2fff54b0a9474b23f1e0f920a889444d/RazorView.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c9ca552eea9bb8fababbf1cd3f981cf68849ccc365dcca5627376f98e505c74/ControllerActionInvoker.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.Domain/Services/Impl/AttendanceService.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.Domain/Services/Impl/AttendanceService.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.WebApp/Helper/AttendanceHelper.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.WebApp/Helper/AttendanceHelper.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.WebApp/Helper/AttendanceHelper.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.WebApp/Views/Attendance/Attendance.cshtml" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.UtilityServices/Implementation/MachineService.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/RemaSoftware.WebApp/wwwroot/lib/bootstrap/dist/css/bootstrap.css.map" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -361,7 +354,7 @@
       <workItem from="1695016984591" duration="18645000" />
       <workItem from="1695190513980" duration="10826000" />
       <workItem from="1695203538283" duration="12397000" />
-      <workItem from="1695276737608" duration="11936000" />
+      <workItem from="1695276737608" duration="15749000" />
     </task>
     <task id="LOCAL-00059" summary="[Migration] Remove Order Table Version 1.0">
       <created>1679413111341</created>
@@ -706,7 +699,7 @@
       <option name="project" value="LOCAL" />
       <updated>1691656194972</updated>
     </task>
-    <option name="localTasksCounter" value="122" />
+    <option name="localTasksCounter" value="123" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -754,7 +747,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Fix controllo qualità;" />
     <MESSAGE value="DB Initializer;" />
     <MESSAGE value="Db initializer;" />
     <MESSAGE value="wip" />
@@ -779,7 +771,8 @@
     <MESSAGE value="Delete products" />
     <MESSAGE value="Update attendance" />
     <MESSAGE value="Fix bug and attendance section" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix bug and attendance section" />
+    <MESSAGE value="Fix attendance and Machine 4.0" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix attendance and Machine 4.0" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -809,19 +802,6 @@
             </endOffsets>
           </properties>
           <option name="timeStamp" value="34" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AttendanceHelper.cs</url>
-          <line>184</line>
-          <properties documentPath="C:\Users\aless\RiderProjects\Rema_Software\RemaSoftware.WebApp\Helper\AttendanceHelper.cs" initialLine="184" containingFunctionPresentation="Method 'CreateTxtAttendance'">
-            <startOffsets>
-              <option value="6763" />
-            </startOffsets>
-            <endOffsets>
-              <option value="6791" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="66" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
