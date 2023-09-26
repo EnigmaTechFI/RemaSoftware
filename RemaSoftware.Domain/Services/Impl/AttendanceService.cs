@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Data;
 using System.Text.Json;
+using RemaSoftware.Domain.Constants;
 
 namespace RemaSoftware.Domain.Services.Impl;
 
@@ -418,7 +419,7 @@ namespace RemaSoftware.Domain.Services.Impl;
                             {
                                 newAttendance.Type = "Festivo";
                             }
-                            else if(employee.TypeRelationship == Constants.TypeRelationship.LavoroAutonomo)
+                            else if(employee.TypeRelationship == TypeRelationship.LavoroAutonomo && employee.TypePosition != TypePosition.Maternità)
                             {
                                 newAttendance.Type = "Presenza";
                             }
