@@ -27,7 +27,7 @@ namespace RemaSoftware.WebApp.Controllers
         {
             try
             {
-                return View(_machineHelper.AutomaticMachine());
+                return View(_machineHelper.GetMachineViewModelAsync());
             }
             catch (Exception e)
             {

@@ -23,12 +23,9 @@
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RemaSoftware/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RemaSoftware/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Implementation/MachineService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Implementation/MachineService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Interface/IMachineService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.UtilityServices/Interface/IMachineService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.UtilityServices/RemaSoftware.UtilityServices.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.UtilityServices/RemaSoftware.UtilityServices.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AccountingHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AccountingHelper.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AttendanceHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AttendanceHelper.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/MachineHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/MachineHelper.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Models/MachineViewModel/MachineViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Models/MachineViewModel/MachineViewModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/ModifyEmployee.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Employee/ModifyEmployee.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Machine/AutomaticMachine.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Machine/AutomaticMachine.cshtml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,6 +57,8 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/3839fc8fee5ae62538a4469ed86bbba1ccd15d4e0da63bba779abe1719da3/IConfiguration.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/598be7b76329747735b1e8e8b423ca7a2fff54b0a9474b23f1e0f920a889444d/RazorView.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c9ca552eea9bb8fababbf1cd3f981cf68849ccc365dcca5627376f98e505c74/ControllerActionInvoker.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.UtilityServices/Implementation/MachineService.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/RemaSoftware.UtilityServices/obj/Debug/net6.0/.NETCoreApp,Version=v6.0.AssemblyAttributes.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.WebApp/Helper/AccountingHelper.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/RemaSoftware.WebApp/wwwroot/lib/bootstrap/dist/css/bootstrap.css.map" root0="FORCE_HIGHLIGHTING" />
   </component>
@@ -364,6 +363,8 @@
       <workItem from="1695276737608" duration="17971000" />
       <workItem from="1695708367726" duration="23114000" />
       <workItem from="1695882022114" duration="9114000" />
+      <workItem from="1696339855833" duration="3386000" />
+      <workItem from="1696400592593" duration="5495000" />
     </task>
     <task id="LOCAL-00059" summary="[Migration] Remove Order Table Version 1.0">
       <created>1679413111341</created>
@@ -813,19 +814,6 @@
           <option name="timeStamp" value="34" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/RemaSoftware.UtilityServices/Implementation/MachineService.cs</url>
-          <line>50</line>
-          <properties documentPath="C:\Users\aless\RiderProjects\Rema_Software\RemaSoftware.UtilityServices\Implementation\MachineService.cs" initialLine="50" containingFunctionPresentation="Method 'ConnectMachine'">
-            <startOffsets>
-              <option value="2058" />
-            </startOffsets>
-            <endOffsets>
-              <option value="2149" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="39" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/RemaSoftware.Domain/Services/Impl/EmployeeService.cs</url>
           <line>22</line>
           <properties documentPath="C:\Users\aless\RiderProjects\Rema_Software\RemaSoftware.Domain\Services\Impl\EmployeeService.cs" initialLine="22" containingFunctionPresentation="Method 'NewEmployee'">
@@ -863,6 +851,19 @@
             </endOffsets>
           </properties>
           <option name="timeStamp" value="48" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/RemaSoftware.UtilityServices/Implementation/MachineService.cs</url>
+          <line>77</line>
+          <properties documentPath="C:\Users\aless\RiderProjects\Rema_Software\RemaSoftware.UtilityServices\Implementation\MachineService.cs" initialLine="77" containingFunctionPresentation="Method 'ConnectMachine'">
+            <startOffsets>
+              <option value="3249" />
+            </startOffsets>
+            <endOffsets>
+              <option value="3564" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="55" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

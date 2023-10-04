@@ -1,4 +1,4 @@
-@model RemaSoftware.WebApp.Models.MachineViewModel.MachineViewModel
+@model Task<RemaSoftware.WebApp.Models.MachineViewModel.MachineViewModel>
 
 @{
     ViewData["Title"] = "Automatic machine";
@@ -51,14 +51,14 @@
         <h4 class="m-0 font-weight-bold text-primary mb-3">Informazioni macchinario</h4>
         <div class="row mb-3">
             <div class="col-xl-6 col-md-6 mb-6">
-                @if(Model.MachineOn){
+                @if(Model.Result.MachineOn){
                 <div class="card border-bottom-success shadow h-100 py-2">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
                                 <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                     Attivazione</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">La macchina è in funzione</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">La macchina è in accesa</div>
                             </div>
                             <div class="col-auto">
                                 <i class="fas fa-solid fa-2xl fa-circle" style="color: #1DC789; font-size: 25px;"></i>
@@ -86,25 +86,60 @@
                 }
             </div>
             <div class="col-xl-6 col-md-6 mb-6">
-                <div class="card border-bottom-primary shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                    Stato macchina (Ultimo stato rilevato)</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">Stato della macchina ok</div>
-                            </div>
-                            <div class="col-auto">
-                                 <i class="fas fa-solid fa-2xl fa-check" style="color: #1DC789; font-size: 25px;"></i>
+                @if (Model.Result.MachineOn && (Model.Result.Brush1_On || Model.Result.Brush2_On || Model.Result.Brush3_On || Model.Result.Brush4_On || Model.Result.Brush5_On))
+                {
+                    <div class="card border-bottom-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Stato macchina</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">Macchina in attività</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-solid fa-2xl fa-play" style="color: #1DC789; font-size: 25px;"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                }
+                else if(Model.Result.MachineOn)
+                {
+                    <div class="card border-bottom-warning shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Stato macchina</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">Macchina in standby</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-solid fa-2xl fa-pause" style="color: #f0ad4e; font-size: 25px;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }else{
+                    <div class="card border-bottom-danger shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Stato macchina</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">Macchina spenta</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-solid fa-2xl fa-stop" style="color: red; font-size: 25px;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
         <div class="row">
             <div class="col-xl-4 col-md-4 mb-6">
-                @if (Model.Brush1_On)
+                @if (Model.Result.Brush1_On)
                 {
                     <div class="card border-bottom-success shadow mb-4">
                         <a href="#collapseCard1" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseCard1">
@@ -132,7 +167,7 @@
                 }
             </div>
             <div class="col-xl-4 col-md-4 mb-6">
-                @if (Model.Brush2_On)
+                @if (Model.Result.Brush2_On)
                 {
                     <div class="card border-bottom-success shadow mb-4">
                         <a href="#collapseCard2" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseCard2">
@@ -160,7 +195,7 @@
                 }
             </div>
             <div class="col-xl-4 col-md-4 mb-6">
-                @if (Model.Brush3_On)
+                @if (Model.Result.Brush3_On)
                 {
                     <div class="card border-bottom-success shadow mb-4">
                         <a href="#collapseCard3" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseCard3">
@@ -190,7 +225,7 @@
         </div>
         <div class="row">
             <div class="col-xl-6 col-md-6 mb-6">
-                @if (Model.Brush4_On)
+                @if (Model.Result.Brush4_On)
                 {
                     <div class="card border-bottom-success shadow mb-4">
                         <a href="#collapseCard4" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseCard4">
@@ -218,7 +253,7 @@
                 }
             </div>
             <div class="col-xl-6 col-md-6 mb-6">
-                @if (Model.Brush5_On)
+                @if (Model.Result.Brush5_On)
                 {
                     <div class="card border-bottom-success shadow mb-4">
                         <a href="#collapseCard5" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseCard5">

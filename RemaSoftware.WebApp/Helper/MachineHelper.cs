@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using NLog;
 using RemaSoftware.Domain.Models;
@@ -20,10 +21,11 @@ public class MachineHelper
         _machineService = machineService;
     }
 
-    public MachineViewModel AutomaticMachine()
+    public async Task<MachineViewModel> GetMachineViewModelAsync()
     {
-        var machine = _machineService.ConnectMachine();
-    
+        // Connessione OPC UA e lettura dei valori
+        var machine = await _machineService.ConnectMachine();
+
         // Crea una nuova istanza di MachineViewModel e assegna i valori appropriati
         var machineViewModel = new MachineViewModel
         {
