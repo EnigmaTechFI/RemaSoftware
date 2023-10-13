@@ -33,7 +33,23 @@
                         <td>@item.Client</td>
                         <td>@item.Code</td>
                         <td>@item.Date.ToString("dd/MM/yyyy")</td>
-                        <td onclick="showDDT(@item.Id)">Visualizza DDT associate</td>
+                        @if (@item.DdtWithPieces.Count() > 3)
+                        {
+                            <td onclick="showDDT(@item.Id)">
+                                Visualizza DDT associate
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                            @foreach (var ddt in item.DdtWithPieces)
+                            {
+                                <div>
+                                    @ddt.Item1<br>
+                                </div>
+                            }
+                            </td>
+                        }
                         <td>@item.NumberPieces</td>
                         <td class="text-center">
                             <a href="@item.Url" target="_blank" style="text-decoration: none">

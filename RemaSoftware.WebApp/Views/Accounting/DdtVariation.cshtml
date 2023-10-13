@@ -33,14 +33,14 @@
                         <tr id="ddt-@ddt.Ddt_In_ID">
                             <td>@ddt.Product.Client.Name</td>
                             <td>@ddt.Code</td>
-                            <td>&euro;@ddt.Price_Uni.ToString("0.00")</td>
+                            <td>&euro;@ddt.Price_Uni.ToString("0.000")</td>
                             <td>@{
                                     var pricePending = ddt.PriceIsPending ? "SI" : "NO";   
                                 }
                                 @pricePending
                             </td>
                             <td>@{
-                                    var newPrice = ddt.PendingPrice > 0 ? ddt.PendingPrice.ToString("0.00") : "-";   
+                                    var newPrice = ddt.PendingPrice > 0 ? ddt.PendingPrice.ToString("0.000") : "-";   
                                 }
                                 @newPrice
                             </td>

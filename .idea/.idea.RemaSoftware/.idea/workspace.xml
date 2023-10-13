@@ -21,8 +21,17 @@
   <component name="ChangeListManager">
     <list default="true" id="de137d0d-f34b-4c49-826c-e625e08faa2f" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RemaSoftware/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RemaSoftware/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.Domain/Services/Impl/AttendanceService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Services/Impl/AttendanceService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AttendanceHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Helper/AttendanceHelper.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/config/applicationhost.config" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/config/applicationhost.config" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.Domain/Data/ApplicationDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Data/ApplicationDbContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.Domain/Migrations/ApplicationDbContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Migrations/ApplicationDbContextModelSnapshot.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.Domain/Models/Ddt_In.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.Domain/Models/Ddt_In.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Accounting/Accounting.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Accounting/Accounting.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Order/BatchInDelivery.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Order/BatchInDelivery.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Order/BatchInStock.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Order/BatchInStock.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Order/DDTEmitted.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Order/DDTEmitted.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Order/NewOrder.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Order/NewOrder.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Order/OrderSummary.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Order/OrderSummary.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Order/OrderSummaryEnded.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/RemaSoftware.WebApp/Views/Order/OrderSummaryEnded.cshtml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,8 +63,12 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/3839fc8fee5ae62538a4469ed86bbba1ccd15d4e0da63bba779abe1719da3/IConfiguration.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/598be7b76329747735b1e8e8b423ca7a2fff54b0a9474b23f1e0f920a889444d/RazorView.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c9ca552eea9bb8fababbf1cd3f981cf68849ccc365dcca5627376f98e505c74/ControllerActionInvoker.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.WebApp/Helper/AttendanceHelper.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/aless/RiderProjects/Rema_Software/RemaSoftware.WebApp/Helper/AttendanceHelper.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/aless/RiderProjects/RemaSoftware/RemaSoftware.Domain/Data/ApplicationDbContext.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/aless/RiderProjects/RemaSoftware/RemaSoftware.Domain/Models/Ddt_In.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/aless/RiderProjects/RemaSoftware/RemaSoftware.WebApp/Views/Order/BatchInDelivery.cshtml" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/aless/RiderProjects/RemaSoftware/RemaSoftware.WebApp/Views/Order/BatchInDelivery.cshtml" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/aless/RiderProjects/RemaSoftware/RemaSoftware.WebApp/Views/Order/BatchInStock.cshtml" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/aless/RiderProjects/RemaSoftware/RemaSoftware.WebApp/Views/Order/DDTEmitted.cshtml" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/RemaSoftware.WebApp/wwwroot/lib/bootstrap/dist/css/bootstrap.css.map" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -79,7 +92,7 @@
     &quot;ToolWindowCommit.ShowToolbar&quot;: &quot;false&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.5514223&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Timekeeper&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
@@ -358,6 +371,9 @@
       <workItem from="1695203538283" duration="12397000" />
       <workItem from="1695276737608" duration="17971000" />
       <workItem from="1695708367726" duration="13368000" />
+      <workItem from="1697200580173" duration="773000" />
+      <workItem from="1697201398788" duration="876000" />
+      <workItem from="1697203698838" duration="2535000" />
     </task>
     <task id="LOCAL-00059" summary="[Migration] Remove Order Table Version 1.0">
       <created>1679413111341</created>
@@ -783,27 +799,13 @@
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/RemaSoftware.WebApp/Controllers/OrderController.cs</url>
           <line>147</line>
-          <properties documentPath="C:\Users\aless\RiderProjects\Rema_Software\RemaSoftware.WebApp\Controllers\OrderController.cs" initialLine="147" containingFunctionPresentation="Method 'EditOrder'">
-            <startOffsets>
-              <option value="5516" />
-            </startOffsets>
-            <endOffsets>
-              <option value="5607" />
-            </endOffsets>
-          </properties>
+          <properties documentPath="C:\Users\aless\RiderProjects\Rema_Software\RemaSoftware.WebApp\Controllers\OrderController.cs" initialLine="147" containingFunctionPresentation="Method 'EditOrder'" />
           <option name="timeStamp" value="33" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/RemaSoftware.WebApp/Helper/OrderHelper.cs</url>
           <line>666</line>
-          <properties documentPath="C:\Users\aless\RiderProjects\Rema_Software\RemaSoftware.WebApp\Helper\OrderHelper.cs" initialLine="666" containingFunctionPresentation="Method 'EditDdtIn'">
-            <startOffsets>
-              <option value="30976" />
-            </startOffsets>
-            <endOffsets>
-              <option value="31037" />
-            </endOffsets>
-          </properties>
+          <properties documentPath="C:\Users\aless\RiderProjects\Rema_Software\RemaSoftware.WebApp\Helper\OrderHelper.cs" initialLine="666" containingFunctionPresentation="Method 'EditDdtIn'" />
           <option name="timeStamp" value="34" />
         </line-breakpoint>
       </breakpoints>

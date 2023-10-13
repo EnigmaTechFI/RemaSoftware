@@ -34,7 +34,23 @@
                 {
                     <tr style="cursor: pointer;">
                         <td>@item.Ddt_Associations[0].Ddt_In.Product.Client.Name</td>
-                        <td onclick="showDDT(@item.Ddt_Out_ID)">Visualizza DDT associate</td>
+                        @if (@item.Ddt_Associations.Count() > 3)
+                        {
+                            <td onclick="showDDT(@item.Ddt_Out_ID)">
+                                Visualizza DDT associate
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                            @foreach (var ddt in item.Ddt_Associations)
+                            {
+                                <div>
+                                    @ddt.Ddt_In.Code<br>
+                                </div>
+                            }
+                            </td>
+                        }
                         <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.BUONI).Sum(s=> s.NumberPieces)</td>
                         <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.SCARTI).Sum(s=> s.NumberPieces)</td>
                         <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.PERSI).Sum(s=> s.NumberPieces)</td>

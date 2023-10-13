@@ -31,7 +31,6 @@ namespace RemaSoftware.Domain.Models
         public int NumberMissingPiece { get; set; }
         public int NumberWastePiece { get; set; }
         public int NumberLostPiece { get; set; }
-        
         public int NumberZama { get; set; }
         public int Priority { get; set;}
         [MaxLength(1)]
