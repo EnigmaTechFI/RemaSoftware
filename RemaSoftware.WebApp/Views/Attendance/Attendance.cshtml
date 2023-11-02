@@ -64,6 +64,7 @@
             <div class="ml-5" style="width: 20px; height: 20px; background-color: #ff7f26; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;"> Malattia</div>
             <div class="ml-5" style="width: 20px; height: 20px; background-color: #36b9cc; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;"> Festivo</div>
             <div class="ml-5" style="width: 20px; height: 20px; background-color: #f6c23e; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;"> Ferie</div>
+            <div class="ml-5" style="width: 20px; height: 20px; background-color: #003399; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Cassa integrazione</div>
         </div>
         <div class="table-responsive">
             <table class="table table-bordered" id="table-stock" width="100%" cellspacing="0">
@@ -428,6 +429,49 @@
                                         }
                                     </div>
                                     
+                                     @* Cassa Integrazione *@
+                                    @{
+                                        totalTime = TimeSpan.Zero;
+                                        NotNull = false;
+                                        foreach (var presence in attendancesForDay.Where(c => c.Type == "CassaIntegrazione"))
+                                        {
+                                            if (presence.DateOut != null)
+                                            {
+                                                totalTime += presence.DateOut - presence.DateIn;
+                                                NotNull = true;
+                                            }
+                                        }
+                                        totalTimeDay += totalTime;
+                                        if (totalTime == TimeSpan.FromHours(9))
+                                        {
+                                            totalTime = TimeSpan.FromHours(8);
+                                        }
+                                    }
+
+                                    @{
+                                        presenzeDivID = "presenze-" + presenza.Key.EmployeeID + "-" + giorno +"-cassa";
+                                    }
+                                    
+                                    @if(NotNull){
+                                        <div style="color: white; background-color: #003399; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center; cursor: pointer;" title="Cassa integrazione" onclick="togglePresenze('@presenzeDivID')">
+                                            <b style="white-space: nowrap; margin: 0 auto;">
+                                                @totalTime?.ToString(@"hh")h
+                                                @totalTime?.ToString(@"mm")m
+                                            </b>
+                                        </div>
+                                    }
+                                                                        
+                                    <div id="@presenzeDivID" style="display: none;">
+                                        @foreach (var presence in attendancesForDay.Where(c => c.Type == "CassaIntegrazione"))
+                                        {
+                                            <a style="cursor: pointer;" title="Modifica Entrata/Uscita" data-toggle="modal" data-target="#modify-modal" onclick="SetDataAttendanceId('#modify-modal', @presence.AttendanceID), SetDataAttendanceId('#confirm-del-modal', @presence.AttendanceID)">
+                                                <div style="color: white; background-color: #003399; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Cassa integrazione">
+                                                    <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                                </div>
+                                            </a>
+                                        }
+                                    </div>
+                                    
                                     @{
                                         if (totalTimeDay != TimeSpan.Zero && presenza.Key.NumberHour != 25)
                                         {
@@ -460,6 +504,7 @@
                             TimeSpan? totalTimeHoliday = TimeSpan.Zero;
                             TimeSpan? totalTimeVacation = TimeSpan.Zero;
                             TimeSpan? totalTimeStraord = TimeSpan.Zero;
+                            TimeSpan? totalTimeCassa = TimeSpan.Zero;
                             
                             
                             foreach (var item in presenza)
@@ -531,6 +576,15 @@
                                     }
                                     totalTimeVacation = totalTimeVacation?.Add((TimeSpan)timeDiff);
                                 }
+                                
+                                if (item.Type == "CassaIntegrazione" && item.DateOut != null){
+                                    TimeSpan? timeDiff = item.DateOut - item.DateIn;
+                                    if (item.DateIn.TimeOfDay == TimeSpan.FromHours(7.5) && item.DateOut?.TimeOfDay == TimeSpan.FromHours(16.5))
+                                    {
+                                        timeDiff = timeDiff?.Subtract(TimeSpan.FromHours(1));
+                                    }
+                                    totalTimeCassa = totalTimeCassa?.Add((TimeSpan)timeDiff);
+                                }
                             }
 
                             if (partialTimePresence > TimeSpan.FromHours(8))
@@ -577,6 +631,12 @@
                             {
                                 <div class="text-center" style="color: white; background-color: #f6c23e; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Totale ore ferie">
                                     <b style="white-space: nowrap;">@($"{(int)totalTimeVacation?.TotalHours}h {totalTimeVacation?.Minutes}m")</b>
+                                </div>
+                            }
+                            @if (totalTimeCassa != TimeSpan.Zero)
+                            {
+                                <div class="text-center" style="color: white; background-color: #003399; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Totale ore Cassa integrazione">
+                                    <b style="white-space: nowrap;">@($"{(int)totalTimeCassa?.TotalHours}h {totalTimeCassa?.Minutes}m")</b>
                                 </div>
                             }
 
@@ -630,6 +690,7 @@
                             <option value="StraordinarioOrdinario">Straordinario Ordinario</option>
                             <option value="StraordinarioSabato">Straordinario Week End</option>
                             <option value="StraordinarioNotturno">Straordinario Notturno</option>
+                            <option value="CassaIntegrazione">Cassa integrazione</option>
                         </select>
                     </div>
                 </div>
@@ -683,6 +744,7 @@
                             <option value="StraordinarioOrdinario">Straordinario Ordinario</option>
                             <option value="StraordinarioSabato">Straordinario Week End</option>
                             <option value="StraordinarioNotturno">Straordinario Notturno</option>
+                            <option value="CassaIntegrazione">Cassa integrazione</option>
                         </select>
                     </div>
                 </div>

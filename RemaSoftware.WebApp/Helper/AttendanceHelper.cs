@@ -222,6 +222,8 @@ public class AttendanceHelper
                     sp += "3549050000";
                 else if (uniqueTypes[j] == "StraordinarioSabato")
                     sp += "3539010000";
+                else if (uniqueTypes[j] == "CassaIntegrazione")
+                    sp += "6767000000";
                 else
                     sp += "0000000000";
                 
@@ -324,7 +326,7 @@ public class AttendanceHelper
 
                                     foreach (var allattendanceForDay in allAttendanceForDay)
                                     {
-                                        if (allattendanceForDay.Type == "Ferie" || allattendanceForDay.Type == "Festivo" || allattendanceForDay.Type == "Malattia") 
+                                        if (allattendanceForDay.Type == "Ferie" || allattendanceForDay.Type == "Festivo" || allattendanceForDay.Type == "Malattia" || allattendanceForDay.Type == "CassaIntegrazione") 
                                         {
                                             PresenceInDay = true;
                                         }
@@ -379,7 +381,7 @@ public class AttendanceHelper
                         var OneTime = false;
                         foreach (var allattendanceForDay in allAttendanceForDay)
                         {
-                            if (allattendanceForDay.Type == "Malattia" || allattendanceForDay.Type == "Ferie")
+                            if (allattendanceForDay.Type == "Malattia" || allattendanceForDay.Type == "Ferie" || allattendanceForDay.Type == "CassaIntegrazione")
                             {
                                 OneTime = true;
                             }
