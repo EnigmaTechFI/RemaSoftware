@@ -38,8 +38,8 @@ namespace RemaSoftware.WebApp.Helper
             var op = _subBatchService.GetOperationTimelinesByStatus(OperationTimelineConstant.STATUS_WORKING);
             var productionLiveDtos = new List<ProductionLiveDto>();
             var now = DateTime.Now;
-            bool automaticMachine = _machineService.ConnectMachine().Result.MachineOn;
-            _machineService.ConnectMachine();
+            //bool automaticMachine = _machineService.ConnectMachine().Result.MachineOn;
+            bool automaticMachine = false;
             foreach (var item in op.Where(s => s.MachineId.HasValue).ToList())
             {
                 productionLiveDtos.Add(new ProductionLiveDto()
