@@ -198,7 +198,16 @@ public class AttendanceHelper
                 permiss += "3040000000";
             }
 
-            if (uniqueTypes.Count() == 0)
+            var foundPresenza = false;
+            for (int h = 0; h < uniqueTypes.Count; h++)
+            {
+                if (uniqueTypes[h].Equals("Presenza", StringComparison.OrdinalIgnoreCase))
+                {
+                    foundPresenza = true;
+                }
+            }
+            
+            if (!foundPresenza)
             {
                 uniqueTypes.Add("Maternità");
             }
@@ -224,6 +233,8 @@ public class AttendanceHelper
                     sp += "3539010000";
                 else if (uniqueTypes[j] == "CassaIntegrazione")
                     sp += "6767000000";
+                else if (uniqueTypes[j] == "Maternità")
+                    sp += "3110000000";
                 else
                     sp += "0000000000";
                 
@@ -248,7 +259,7 @@ public class AttendanceHelper
                     }
 
                     if (employee.TypePosition == "In servizio" && uniqueTypes[j] == "Presenza" &&
-                        employee.NumberHour == 25 && totalDuration > TimeSpan.FromHours(5))
+                        employee.NumberHour == 25 && totalDuration > TimeSpan.FromHours(4) + TimeSpan.FromMinutes(45))
                     {
                         sp += "50000";
                         permiss += "00000";
@@ -259,7 +270,7 @@ public class AttendanceHelper
                         {
                             case TimeSpan td when td > TimeSpan.FromHours(7) + TimeSpan.FromMinutes(45):
                                 sp += "80000";
-                                if (uniqueTypes[j] == "Presenza" && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Sunday && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Saturday)
+                                if ((uniqueTypes[j] == "Presenza" || uniqueTypes[j] == "Maternità") && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Sunday && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Saturday)
                                     permiss += "00000";
                                 break;
                             case TimeSpan td when td > TimeSpan.FromHours(6) + TimeSpan.FromMinutes(45):
@@ -274,8 +285,13 @@ public class AttendanceHelper
                                 break;
                             case TimeSpan td when td > TimeSpan.FromHours(4) + TimeSpan.FromMinutes(45):
                                 sp += "50000";
-                                if (uniqueTypes[j] == "Presenza" && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Sunday && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Saturday)
+                                if (uniqueTypes[j] == "Presenza" && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Sunday && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Saturday && employee.NumberHour == 40)
                                     permiss += "30000";
+                                else if (uniqueTypes[j] == "Presenza" && (employee.TypePosition == "In servizio" || employee.TypePosition == "Maternità")  &&
+                                         employee.NumberHour == 25)
+                                {
+                                    permiss += "00000";
+                                }
                                 break;
                             case TimeSpan td when td > TimeSpan.FromHours(3) + TimeSpan.FromMinutes(45):
                                 sp += "40000";
