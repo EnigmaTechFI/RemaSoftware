@@ -136,10 +136,8 @@ namespace RemaSoftware.WebApp.Controllers
         {
             try
             {
-                // Decodifica il contenuto Base64 del PDF in byte[]
                 byte[] pdfBytes = Convert.FromBase64String(pdfData);
 
-                // Esegui l'elaborazione del PDF come desiderato (invio via email, ecc.)
                 _attendanceHelper.SendAttendance(month, year, mail, pdfBytes);
 
                 _notyfService.Success("Invio completato.");
