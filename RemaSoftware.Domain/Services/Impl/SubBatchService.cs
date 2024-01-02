@@ -202,7 +202,7 @@ public class SubBatchService : ISubBatchService
             .ThenInclude(s => s.Product)
             .ThenInclude(s => s.Client)
             .ToList();
-    }
+    } 
  
     public List<SubBatch> GetSubBatchesStatusForOrderSummary(string status)
     {
