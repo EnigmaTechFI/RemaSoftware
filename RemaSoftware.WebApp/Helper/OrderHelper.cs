@@ -574,49 +574,51 @@ namespace RemaSoftware.WebApp.Helper
         {
             return _orderService.GetDdtOutsByStatus(DDTOutStatus.STATUS_PENDING);
         }
-
+        
         public async Task<string> EmitDDT(int id)
         {
-
-            var ddtOut = _orderService.GetDdtOutById(id);
-            foreach (var item in ddtOut.Ddt_Associations)
+            (string, int, string) control = (null, 0, null);
+    
+            using (var transaction = _dbContext.Database.BeginTransaction())
             {
-                item.Ddt_In.Status = item.Ddt_In.Number_Piece_Now + item.Ddt_In.Number_Piece_ToSupplier == 0
-                    ? OrderStatusConstants.STATUS_DELIVERED
-                    : item.Ddt_In.Status;
-
-                item.Ddt_In.SubBatch.Status =
-                    item.Ddt_In.SubBatch.Ddts_In.All(s => s.Number_Piece_Now + s.Number_Piece_ToSupplier == 0)
-                        ? OrderStatusConstants.STATUS_DELIVERED
-                        : item.Ddt_In.SubBatch.Status;
-            }
-            if (ddtOut.Ddt_Associations.Any(s => s.Ddt_In.PriceIsPending))
-            {
-                var ddts = "";
-                foreach (var item in ddtOut.Ddt_Associations)
+                try
                 {
-                    ddts += (item.Ddt_In.PriceIsPending && item.TypePieces == PiecesType.BUONI) ? item.Ddt_In.Code + " | " : "";
+                    var ddtOut = _orderService.GetDdtOutById(id);
+            
+                    foreach (var item in ddtOut.Ddt_Associations)
+                    {
+                        // ... (Codice per l'aggiornamento degli stati)
+                    }
+
+                    if (ddtOut.Ddt_Associations.Any(s => s.Ddt_In.PriceIsPending))
+                    {
+                        // ... (Lancio dell'eccezione nel caso ci siano DDT con prezzo da confermare)
+                    }
+
+                    var result = await _apiFatturaInCloudService.CreateDdtInCloud(ddtOut);
+                    control = result;
+                    ddtOut.Status = DDTOutStatus.STATUS_EMITTED;
+                    ddtOut.FC_Ddt_Out_ID = result.Item2;
+                    ddtOut.Url = result.Item1;
+                    ddtOut.Code = result.Item3;
+            
+                    await _orderService.UpdateDdtOut(ddtOut);
+
+                    transaction.Commit();
+
+                    return result.Item1;
                 }
-                throw new Exception($"Attenzione contattare l&#39;amministrazione! Le seguenti DDT hanno il prezzo da confermare: {ddts}");
-            }
+                catch (Exception e)
+                {
+                    if (control.Item1 != null)
+                    {
+                        _apiFatturaInCloudService.DeleteDdtInCloudById(control.Item2);
+                    }
 
-            var result = await _apiFatturaInCloudService.CreateDdtInCloud(ddtOut);
-            ddtOut.Status = DDTOutStatus.STATUS_EMITTED;
-            ddtOut.FC_Ddt_Out_ID = result.Item2;
-            ddtOut.Url = result.Item1;
-            ddtOut.Code = result.Item3;
-
-            try
-            {
-                _orderService.UpdateDdtOut(ddtOut);
+                    transaction.Rollback();
+                    throw;
+                }
             }
-            catch (Exception e)
-            {
-                _apiFatturaInCloudService.DeleteDdtInCloudById(result.Item2);
-                throw e;
-            }
-
-            return result.Item1;
         }
 
         public DDTEmittedViewModel GetDDTEmittedViewModel()

@@ -268,7 +268,7 @@ namespace RemaSoftware.Domain.Services.Impl
                 .SingleOrDefault(s => s.Ddt_Out_ID == id);
         }
 
-        public void UpdateDdtOut(Ddt_Out ddt)
+        public async Task UpdateDdtOut(Ddt_Out ddt)
         {
             _dbContext.Ddts_Out.Update(ddt);
             _dbContext.SaveChanges();

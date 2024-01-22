@@ -146,19 +146,11 @@ namespace RemaSoftware.WebApp.Helper
             return new String(stringChars);
         }
         
-        public bool DeleteAccountByID(string AccountID)
+        public async Task DeleteAccountByID(string AccountID)
         {
-            try
-            {
-                var user = _dbContext.Users.SingleOrDefault(i => i.Id == AccountID);
-                _dbContext.Remove(user);
-                _dbContext.SaveChanges();
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            var user = _dbContext.Users.SingleOrDefault(i => i.Id == AccountID);
+            _dbContext.Remove(user);
+            _dbContext.SaveChanges();
         }
     }
 }

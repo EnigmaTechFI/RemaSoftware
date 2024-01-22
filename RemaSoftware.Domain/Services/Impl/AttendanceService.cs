@@ -324,7 +324,7 @@ namespace RemaSoftware.Domain.Services.Impl;
                                                      a.Employee.FluidaId == userIdList[i] &&
                                                      a.DateIn.Date == previousDay);
 
-                            if (existingAttendanceNight != null && existingAttendanceNight.DateOut == null &&  userClockDate1.TimeOfDay >= TimeSpan.FromHours(5) &&  userClockDate1.TimeOfDay <= TimeSpan.FromHours(7.5) &&  existingAttendanceNight.DateIn.TimeOfDay >= TimeSpan.FromHours(21))
+                            if (existingAttendanceNight != null && existingAttendanceNight.DateOut == null &&  userClockDate1.TimeOfDay >= TimeSpan.FromHours(4) &&  userClockDate1.TimeOfDay <= TimeSpan.FromHours(7.5) &&  existingAttendanceNight.DateIn.TimeOfDay >= TimeSpan.FromHours(20))
                             {
                                 existingAttendanceNight.DateOut = userClockDate1;
                                 
