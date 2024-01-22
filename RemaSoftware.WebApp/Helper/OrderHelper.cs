@@ -578,21 +578,30 @@ namespace RemaSoftware.WebApp.Helper
         public async Task<string> EmitDDT(int id)
         {
             (string, int, string) control = (null, 0, null);
-    
             using (var transaction = _dbContext.Database.BeginTransaction())
             {
                 try
                 {
                     var ddtOut = _orderService.GetDdtOutById(id);
-            
+                
                     foreach (var item in ddtOut.Ddt_Associations)
                     {
-                        // ... (Codice per l'aggiornamento degli stati)
+                        item.Ddt_In.Status = (item.Ddt_In.Number_Piece_Now + item.Ddt_In.Number_Piece_ToSupplier == 0)
+                            ? OrderStatusConstants.STATUS_DELIVERED
+                            : item.Ddt_In.Status;
+
+                        item.Ddt_In.SubBatch.Status = item.Ddt_In.SubBatch.Ddts_In.All(s => s.Number_Piece_Now + s.Number_Piece_ToSupplier == 0)
+                            ? OrderStatusConstants.STATUS_DELIVERED
+                            : item.Ddt_In.SubBatch.Status;
                     }
 
                     if (ddtOut.Ddt_Associations.Any(s => s.Ddt_In.PriceIsPending))
                     {
-                        // ... (Lancio dell'eccezione nel caso ci siano DDT con prezzo da confermare)
+                        var ddts = string.Join(" | ", ddtOut.Ddt_Associations
+                            .Where(item => item.Ddt_In.PriceIsPending && item.TypePieces == PiecesType.BUONI)
+                            .Select(item => item.Ddt_In.Code));
+
+                        throw new Exception($"Attenzione contattare l'amministrazione! Le seguenti DDT hanno il prezzo da confermare: {ddts}");
                     }
 
                     var result = await _apiFatturaInCloudService.CreateDdtInCloud(ddtOut);
@@ -601,7 +610,6 @@ namespace RemaSoftware.WebApp.Helper
                     ddtOut.FC_Ddt_Out_ID = result.Item2;
                     ddtOut.Url = result.Item1;
                     ddtOut.Code = result.Item3;
-            
                     await _orderService.UpdateDdtOut(ddtOut);
 
                     transaction.Commit();
