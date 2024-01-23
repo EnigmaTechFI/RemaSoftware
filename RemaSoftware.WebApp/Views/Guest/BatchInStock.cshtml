@@ -20,6 +20,7 @@
                 <tr>
                     <th>Lotto</th>
                     <th>Codice prodotto</th>
+                    <th>Nome prodotto</th>
                     <th>DDT associate</th>
                     <th>Pezzi nel lotto</th>
                     <th>Azioni</th>
@@ -31,6 +32,7 @@
                     <tr style="cursor: pointer;">
                         <td>@batch.Id</td>
                         <td>@batch.Product</td>
+                        <td>@batch.Ddt_In[0]..Name</td>
                         <td onclick="showDDT(@batch.Id)">Visualizza DDT associate</td>
                         <td>@batch.NumberPieces</td>
                         <td class="text-center">

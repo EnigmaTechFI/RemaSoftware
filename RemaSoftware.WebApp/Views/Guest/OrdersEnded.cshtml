@@ -15,6 +15,7 @@
             <table class="table table-bordered" id="table-ddt" width="100%" cellspacing="0">
                 <thead>
                     <tr>
+                        <th>N° Lotto</th>
                         <th>DDT</th>
                         <th>SKU</th>
                         <th>N° pezzi</th>
@@ -27,6 +28,7 @@
                 @foreach (var ddt in Model.Ddt_In)
                 {
                     <tr>
+                        <td>@ddt.SubBatchID</td>
                         <td>@ddt.Code</td>
                         <td>@ddt.Product.SKU</td>
                         <td>@ddt.Number_Piece</td>
