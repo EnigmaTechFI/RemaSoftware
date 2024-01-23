@@ -64,7 +64,6 @@ namespace RemaSoftware.Domain.Services.Impl
         
         public bool UpdateEmployee(Employee employee)
         {
-            // Carica l'entità dal contesto
             var existingEmployee = _dbContext.Employees.Find(employee.EmployeeID);
             if (employee.Mail == null)
             {
@@ -72,8 +71,6 @@ namespace RemaSoftware.Domain.Services.Impl
             }
             if (existingEmployee != null)
             {
-                
-                // Copia i valori da employee a existingEmployee
                 _dbContext.Entry(existingEmployee).CurrentValues.SetValues(employee);
                 _dbContext.SaveChanges();
                 return true;

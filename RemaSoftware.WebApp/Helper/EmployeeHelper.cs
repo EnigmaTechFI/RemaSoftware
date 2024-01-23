@@ -139,7 +139,7 @@ public class EmployeeHelper
 
         if (employee.Mail != model.Employee.Mail && employee.Mail != "")
         {
-            _accountHelper.DeleteAccountByID(employee.AccountId);
+            await _accountHelper.DeleteAccountByID(employee.AccountId);
             MyUser myUser = await _accountHelper.AddEmployeeAccount(model);
             model.Employee.AccountId = myUser.Id;
         }
