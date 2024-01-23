@@ -5,7 +5,7 @@ using RemaSoftware.Domain.Data;
 namespace RemaSoftware.Domain.Services.Impl
 {
     public class OperationService : IOperationService
-    {
+    { 
         private readonly ApplicationDbContext _dbContext;
 
         public OperationService(ApplicationDbContext dbContext)
