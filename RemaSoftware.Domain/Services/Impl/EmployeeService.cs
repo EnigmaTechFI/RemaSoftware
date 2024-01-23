@@ -28,14 +28,15 @@ namespace RemaSoftware.Domain.Services.Impl
         public void DeleteEmployeeById(Employee employee)
         {
             var existingEmployee = _dbContext.Employees.Find(employee.EmployeeID);
+            
             var employeeUser = _dbContext.Users.SingleOrDefault(i => i.Id == existingEmployee.AccountId);
             if (existingEmployee != null)
             {
-                _dbContext.Employees.Remove(existingEmployee);
                 if (employeeUser != null)
-                {
+                { 
                     _dbContext.Users.Remove(employeeUser);
                 }
+                _dbContext.Employees.Remove(existingEmployee);
                 _dbContext.SaveChanges();
             }
         }

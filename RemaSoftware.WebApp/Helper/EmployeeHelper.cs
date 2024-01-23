@@ -136,20 +136,23 @@ public class EmployeeHelper
     public async Task<string> EditEmployee(EmployeeViewModel model)
     {
         Employee employee = _employeeService.GetEmployeeById(model.Employee.EmployeeID);
-
-        if (employee.Mail != model.Employee.Mail && employee.Mail != "")
+        
+        if(employee.Mail != model.Employee.Mail && !(employee.AccountId == ""))
         {
             await _accountHelper.DeleteAccountByID(employee.AccountId);
             MyUser myUser = await _accountHelper.AddEmployeeAccount(model);
-            model.Employee.AccountId = myUser.Id;
+            employee.AccountId = myUser.Id;
+            employee.Mail = model.Employee.Mail;
         }
         else if (model.Employee.Mail != null && employee.Mail == "")
         {
             MyUser myUser = await _accountHelper.AddEmployeeAccount(model);
-            model.Employee.AccountId = myUser.Id;
+            employee.AccountId = myUser.Id;
+            employee.Mail = model.Employee.Mail;
         }
 
-        _employeeService.UpdateEmployee(model.Employee);
+        _employeeService.UpdateEmployee(employee);
         return "Success";
     }
+
 }
