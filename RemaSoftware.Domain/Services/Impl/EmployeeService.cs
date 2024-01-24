@@ -63,7 +63,7 @@ namespace RemaSoftware.Domain.Services.Impl
                 .ToList();
         }
         
-        public bool UpdateEmployee(Employee employee)
+        public async Task UpdateEmployee(Employee employee)
         {
             var existingEmployee = _dbContext.Employees.Find(employee.EmployeeID);
             if (employee.Mail == null)
@@ -73,11 +73,8 @@ namespace RemaSoftware.Domain.Services.Impl
             if (existingEmployee != null)
             {
                 _dbContext.Entry(existingEmployee).CurrentValues.SetValues(employee);
-                _dbContext.SaveChanges();
-                return true;
+                _dbContext.SaveChangesAsync();
             }
-
-            return false;
         }
     }
 }

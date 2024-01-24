@@ -10,7 +10,7 @@ namespace RemaSoftware.Domain.Services
         void DeleteEmployeeById(Employee employee);
         Employee GetEmployeeById(int employeeId);
         List<Models.Attendance> GetAllAttendance(int mouth, int year);
-        bool UpdateEmployee(Employee employee);
+        Task UpdateEmployee(Employee employee);
         public List<Employee> GetEmployeesWithoutAttendances(int mouth, int year);
 
     }

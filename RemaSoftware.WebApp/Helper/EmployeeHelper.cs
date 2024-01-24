@@ -137,21 +137,22 @@ public class EmployeeHelper
     {
         Employee employee = _employeeService.GetEmployeeById(model.Employee.EmployeeID);
         
-        if(employee.Mail != model.Employee.Mail && !(employee.AccountId == ""))
+        if(employee.Mail != model.Employee.Mail && employee.Mail.Length != 0)
         {
             await _accountHelper.DeleteAccountByID(employee.AccountId);
             MyUser myUser = await _accountHelper.AddEmployeeAccount(model);
             employee.AccountId = myUser.Id;
             employee.Mail = model.Employee.Mail;
         }
-        else if (model.Employee.Mail != null && employee.Mail == "")
+        else if (model.Employee.Mail != null && employee.Mail.Length == 0)
         {
             MyUser myUser = await _accountHelper.AddEmployeeAccount(model);
             employee.AccountId = myUser.Id;
             employee.Mail = model.Employee.Mail;
         }
 
-        _employeeService.UpdateEmployee(employee);
+        await _employeeService.UpdateEmployee(employee);
+        
         return "Success";
     }
 
