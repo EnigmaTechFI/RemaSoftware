@@ -137,14 +137,14 @@ public class EmployeeHelper
     {
         Employee employee = _employeeService.GetEmployeeById(model.Employee.EmployeeID);
         
-        if(employee.Mail != model.Employee.Mail && employee.Mail.Length != 0)
+        if(employee.Mail != model.Employee.Mail && !string.IsNullOrEmpty(employee.Mail))
         {
             await _accountHelper.DeleteAccountByID(employee.AccountId);
             MyUser myUser = await _accountHelper.AddEmployeeAccount(model);
             employee.AccountId = myUser.Id;
             employee.Mail = model.Employee.Mail;
         }
-        else if (model.Employee.Mail != null && employee.Mail.Length == 0)
+        else if (model.Employee.Mail != null && string.IsNullOrEmpty(employee.Mail))
         {
             MyUser myUser = await _accountHelper.AddEmployeeAccount(model);
             employee.AccountId = myUser.Id;
