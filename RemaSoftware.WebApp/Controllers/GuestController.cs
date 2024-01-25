@@ -118,7 +118,7 @@ public class GuestController : Controller
     
     [HttpGet]
     public async Task<JsonResult> PromptDdt(int id, string note)
-    {
+    { 
         try
         {
             if (string.IsNullOrWhiteSpace(note))
