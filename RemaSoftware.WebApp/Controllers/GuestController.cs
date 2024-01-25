@@ -121,17 +121,11 @@ public class GuestController : Controller
     {
         try
         {
-            if (note.Length > 500)
-            {
-                return new JsonResult(new {Result = true, Error = "Errore, nota troppo lunga. Si prega di riprovare."});
-            }
- 
-            if (note.Length == 0)
+            if (string.IsNullOrWhiteSpace(note))
             { 
                 note = "Nessuna nota";
             }
-            
-            var users = await _userManager.GetUsersInRoleAsync(Roles.Admin);
+            var users = await _userManager.GetUsersInRoleAsync(Roles.Dipendente);
             _guestHelper.SendPrompt(id, users, (await _userManager.GetUserAsync(this.User)).Id, note);
             return new JsonResult(new {Result = true, Error = "DDT sollecitata correttamente."});
         }
