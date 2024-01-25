@@ -175,6 +175,7 @@ namespace RemaSoftware.UtilityServices.Implementation
                 mailMessage.To.Add(new MailAddress(email[0]));
                 for(int i = 1; i< email.Count; i++)
                     mailMessage.CC.Add(email[i]);
+                
                 mailMessage.Subject = "Sollecito DDT N° " + ddtCode;
                 mailMessage.IsBodyHtml = true;
                 string FilePath = "wwwroot/MailTemplate/sollecito-ddt.html";  
@@ -186,6 +187,7 @@ namespace RemaSoftware.UtilityServices.Implementation
                 
                 MailText = MailText.Replace("[CodiceDDT]", ddtCode);  
                 MailText = MailText.Replace("[login]", login);
+                MailText = MailText.Replace("[note]", note);  
 
                 mailMessage.Body =  MailText;
                 SmtpClient client = new SmtpClient();
