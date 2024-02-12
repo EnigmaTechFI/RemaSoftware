@@ -29,6 +29,12 @@ namespace RemaSoftware.Domain.Services.Impl;
             var attendance = _dbContext.Attendances.Find(attendanceId);
             if (attendance != null)
             {
+                
+                if (newInDateTime.Date == newOutDateTime.Date && newOutDateTime.TimeOfDay < newInDateTime.TimeOfDay)
+                {
+                    newOutDateTime = newOutDateTime.AddDays(1);
+                }
+                
                 if (DateTime.Compare(newInDateTime, new DateTime(0001, 01, 01, 00, 00, 00)) == 0 &&
                     DateTime.Compare(newOutDateTime, new DateTime(0001, 01, 01, 00, 00, 00)) == 0)
                 {
@@ -58,6 +64,12 @@ namespace RemaSoftware.Domain.Services.Impl;
 
         public void NewAttendance(int EmployeeId, DateTime newInDateTime, DateTime? newOutDateTime, string type)
         {
+            
+            if (newInDateTime.Date == newOutDateTime?.Date && newOutDateTime?.TimeOfDay < newInDateTime.TimeOfDay)
+            {
+                newOutDateTime = newOutDateTime?.AddDays(1);
+            }
+            
             if (newInDateTime == default || newInDateTime.TimeOfDay == TimeSpan.Zero)
                 throw new Exception("Errore, impossibile salvare presenza.");
 

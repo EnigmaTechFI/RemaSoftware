@@ -117,7 +117,6 @@
                                             }
                                             NotNull = true;
                                         }
-                                        totalTimeDay += totalTime;
                                         
                                         if (totalTime.Value.Minutes < 45)
                                         {
@@ -127,6 +126,7 @@
                                         {
                                             totalTime = new TimeSpan(totalTime.Value.Hours + 1, 0, 0);
                                         }
+                                        totalTimeDay += totalTime;
                                     }
                                     
                                     @{
@@ -178,11 +178,12 @@
                                             }
                                             NotNull = true;
                                         }
-                                        totalTimeDay += totalTime;
+
                                         if (totalTime > TimeSpan.FromHours(8))
                                         {
                                             totalTime = TimeSpan.FromHours(8);
                                         }
+                                        
                                         if (totalTime.Value.Minutes < 45)
                                         {
                                             totalTime = new TimeSpan(totalTime.Value.Hours, 0, 0);
@@ -191,6 +192,7 @@
                                         {
                                             totalTime = new TimeSpan(totalTime.Value.Hours + 1, 0, 0);
                                         }
+                                        totalTimeDay += totalTime;
                                     }
 
                                     @{
@@ -238,7 +240,6 @@
                                             }
                                             NotNull = true;
                                         }
-                                        totalTimeDay += totalTime;
                                         if (totalTime.Value.Minutes < 45)
                                         {
                                             totalTime = new TimeSpan(totalTime.Value.Hours, 0, 0);
@@ -247,6 +248,7 @@
                                         {
                                             totalTime = new TimeSpan(totalTime.Value.Hours + 1, 0, 0);
                                         }
+                                        totalTimeDay += totalTime;
                                     }
 
                                     @{
@@ -294,7 +296,6 @@
                                                 NotNull = true;
                                             }
                                         }
-                                        totalTimeDay += totalTime;
                                         if (totalTime == TimeSpan.FromHours(9))
                                         {
                                             totalTime = TimeSpan.FromHours(8);
@@ -307,6 +308,7 @@
                                         {
                                             totalTime = new TimeSpan(totalTime.Value.Hours + 1, 0, 0);
                                         }
+                                        totalTimeDay += totalTime;
                                     }
 
                                     @{
@@ -345,7 +347,7 @@
                                                 NotNull = true;
                                             }
                                         }
-                                        totalTimeDay += totalTime;
+                                       
                                         if (totalTime == TimeSpan.FromHours(9))
                                         {
                                             totalTime = TimeSpan.FromHours(8);
@@ -358,6 +360,7 @@
                                         {
                                             totalTime = new TimeSpan(totalTime.Value.Hours + 1, 0, 0);
                                         }
+                                        totalTimeDay += totalTime;
                                     }
 
                                     @{
@@ -396,7 +399,7 @@
                                                 NotNull = true;
                                             }
                                         }
-                                        totalTimeDay += totalTime;
+                                        
                                         if (totalTime == TimeSpan.FromHours(9))
                                         {
                                             totalTime = TimeSpan.FromHours(8);
@@ -409,6 +412,7 @@
                                         {
                                             totalTime = new TimeSpan(totalTime.Value.Hours + 1, 0, 0);
                                         }
+                                        totalTimeDay += totalTime;
                                     }
 
                                     @{
@@ -447,7 +451,7 @@
                                                 NotNull = true;
                                             }
                                         }
-                                        totalTimeDay += totalTime;
+                                        
                                         if (totalTime == TimeSpan.FromHours(9))
                                         {
                                             totalTime = TimeSpan.FromHours(8);
@@ -460,6 +464,7 @@
                                         {
                                             totalTime = new TimeSpan(totalTime.Value.Hours + 1, 0, 0);
                                         }
+                                        totalTimeDay += totalTime;
                                     }
 
                                     @{
@@ -498,7 +503,7 @@
                                                 NotNull = true;
                                             }
                                         }
-                                        totalTimeDay += totalTime;
+                                       
                                         if (totalTime == TimeSpan.FromHours(9))
                                         {
                                             totalTime = TimeSpan.FromHours(8);
@@ -511,6 +516,7 @@
                                         {
                                             totalTime = new TimeSpan(totalTime.Value.Hours + 1, 0, 0);
                                         }
+                                        totalTimeDay += totalTime;
                                     }
 
                                     @{
@@ -573,6 +579,7 @@
                             TimeSpan? partialTimePresence = TimeSpan.Zero;
                             DateTime? lastDayPresence = null;
                             TimeSpan? totalTimePermit = TimeSpan.Zero;
+                            TimeSpan? remainTimePermit = TimeSpan.Zero;
                             TimeSpan? totalTimeIllness = TimeSpan.Zero;
                             TimeSpan? totalTimeHoliday = TimeSpan.Zero;
                             TimeSpan? totalTimeVacation = TimeSpan.Zero;
@@ -601,14 +608,7 @@
                                         timeDiff = timeDiff?.Subtract(TimeSpan.FromHours(1));
                                     }
                                     partialTimePresence = partialTimePresence?.Add((TimeSpan)timeDiff);
-                                    if (partialTimePresence.Value.Minutes < 45)
-                                    {
-                                        partialTimePresence = new TimeSpan(partialTimePresence.Value.Hours, 0, 0);
-                                    }
-                                    else
-                                    {
-                                        partialTimePresence = new TimeSpan(partialTimePresence.Value.Hours + 1, 0, 0);
-                                    }
+                                    
                                 }
 
                                 if ((item.Type == "StraordinarioSabato" || item.Type == "StraordinarioOrdinario" || item.Type == "StraordinarioNotturno") && item.DateOut != null){
@@ -617,15 +617,9 @@
                                     {
                                         timeDiff = timeDiff?.Subtract(TimeSpan.FromHours(1));
                                     }
+                                    timeDiff = new TimeSpan(timeDiff.Value.Hours, 0, 0);
                                     totalTimeStraord = totalTimeStraord?.Add((TimeSpan)timeDiff);
-                                    if (totalTimeStraord.Value.Minutes < 45)
-                                    {
-                                        totalTimeStraord = new TimeSpan(totalTimeStraord.Value.Hours, 0, 0);
-                                    }
-                                    else
-                                    {
-                                        totalTimeStraord = new TimeSpan(totalTimeStraord.Value.Hours + 1, 0, 0);
-                                    }
+                                    
                                 }
                                 
                                 if (item.Type == "Permesso" && item.DateOut != null){
@@ -634,16 +628,8 @@
                                     {
                                         timeDiff = timeDiff?.Subtract(TimeSpan.FromHours(1));
                                     }
-                                     totalTimePermit = totalTimePermit?.Add((TimeSpan)timeDiff);
-                                    if (totalTimePermit.Value.Minutes < 45)
-                                    {
-                                        totalTimePermit = new TimeSpan(totalTimePermit.Value.Hours, 0, 0);
-                                    }
-                                    else
-                                    {
-                                        totalTimePermit = new TimeSpan(totalTimePermit.Value.Hours + 1, 0, 0);
-                                    }
-
+                                    timeDiff = new TimeSpan(timeDiff.Value.Hours, 0, 0);
+                                    totalTimePermit = totalTimePermit?.Add((TimeSpan)timeDiff);
                                 }
                                 
                                 if (item.Type == "Malattia" && item.DateOut != null){
@@ -652,15 +638,9 @@
                                     {
                                         timeDiff = timeDiff?.Subtract(TimeSpan.FromHours(1));
                                     }
+                                    timeDiff = new TimeSpan(timeDiff.Value.Hours, 0, 0);
                                     totalTimeIllness = totalTimeIllness?.Add((TimeSpan)timeDiff);
-                                    if (totalTimeIllness.Value.Minutes < 45)
-                                    {
-                                        totalTimeIllness = new TimeSpan(totalTimeIllness.Value.Hours, 0, 0);
-                                    }
-                                    else
-                                    {
-                                        totalTimeIllness = new TimeSpan(totalTimeIllness.Value.Hours + 1, 0, 0);
-                                    }
+                                   
                                 }
                                 
                                 if (item.Type == "Festivo" && item.DateOut != null){
@@ -669,15 +649,9 @@
                                     {
                                         timeDiff = timeDiff?.Subtract(TimeSpan.FromHours(1));
                                     }
+                                    timeDiff = new TimeSpan(timeDiff.Value.Hours, 0, 0);
                                     totalTimeHoliday = totalTimeHoliday?.Add((TimeSpan)timeDiff);
-                                    if (totalTimeHoliday.Value.Minutes < 45)
-                                    {
-                                        totalTimeHoliday = new TimeSpan(totalTimeHoliday.Value.Hours, 0, 0);
-                                    }
-                                    else
-                                    {
-                                        totalTimeHoliday = new TimeSpan(totalTimeHoliday.Value.Hours + 1, 0, 0);
-                                    }
+                                    
                                 }
                                 
                                 if (item.Type == "Ferie" && item.DateOut != null){
@@ -686,15 +660,9 @@
                                     {
                                         timeDiff = timeDiff?.Subtract(TimeSpan.FromHours(1));
                                     }
+                                    timeDiff = new TimeSpan(timeDiff.Value.Hours, 0, 0);
                                     totalTimeVacation = totalTimeVacation?.Add((TimeSpan)timeDiff);
-                                    if (totalTimeVacation.Value.Minutes < 45)
-                                    {
-                                        totalTimeVacation = new TimeSpan(totalTimeVacation.Value.Hours, 0, 0);
-                                    }
-                                    else
-                                    {
-                                        totalTimeVacation = new TimeSpan(totalTimeVacation.Value.Hours + 1, 0, 0);
-                                    }
+                                    
                                 }
                                 
                                 if (item.Type == "CassaIntegrazione" && item.DateOut != null){
@@ -703,15 +671,9 @@
                                     {
                                         timeDiff = timeDiff?.Subtract(TimeSpan.FromHours(1));
                                     }
+                                    timeDiff = new TimeSpan(timeDiff.Value.Hours, 0, 0);
                                     totalTimeCassa = totalTimeCassa?.Add((TimeSpan)timeDiff);
-                                    if (totalTimeCassa.Value.Minutes < 45)
-                                    {
-                                        totalTimeCassa = new TimeSpan(totalTimeCassa.Value.Hours, 0, 0);
-                                    }
-                                    else
-                                    {
-                                        totalTimeCassa = new TimeSpan(totalTimeCassa.Value.Hours + 1, 0, 0);
-                                    }
+                                   
                                 }
                             }
 
@@ -719,7 +681,20 @@
                             {
                                 partialTimePresence = TimeSpan.FromHours(8);
                             }
+                            if (partialTimePresence.Value.Minutes < 45)
+                            {
+                                partialTimePresence = new TimeSpan(partialTimePresence.Value.Hours, 0, 0);
+                            }
+                            else
+                            {
+                                partialTimePresence = new TimeSpan(partialTimePresence.Value.Hours + 1, 0, 0);
+                            }
                             totalTimePresence = totalTimePresence?.Add((TimeSpan)partialTimePresence);
+                            if (partialTimePresence != TimeSpan.Zero)
+                            {
+                                remainTimePermit = TimeSpan.FromHours(8) - partialTimePresence;
+                            }
+                            totalTimePermit += remainTimePermit;
                         }
 
                         <td>
