@@ -31,86 +31,91 @@ function getTime(seconds, id){
   @{
     for (int i = 1; i < 18; i++)
     {
-      var op = Model.ProductionLiveDtos.Where(s => s.MachineId == i).ToList();
-      <div class="col-xl-4 col-md-6 mb-4">
-        @{
-          var css = "";
-          if (op.Count != 0)
-          {
-             css = "success";
+      if (i != 14)
+      {
+        var op = Model.ProductionLiveDtos.Where(s => s.MachineId == i).ToList();
+        <div class="col-xl-4 col-md-6 mb-4">
+          @{
+            var css = "";
+            if (op.Count != 0)
+            {
+              css = "success";
+            }
+            else
+            {
+              css = "danger";
+            }
           }
-          else
-          {
-            css = "danger";
-          }
-        }
           <div id="bordo-machine-@i" class="card border-left-@css shadow h-100 py-2">
-          <div class="card-body">
-            <div class="row no-gutters align-items-center">
-              <div id="name-machine-@i" class="col mr-2">
-                @if (@i != 16)
-                {
-                  <h5 id="title-machine-@i" class="text-center font-weight-bold text-@css text-uppercase mb-1">
-                    Macchina @i
-                  </h5>
-                }
-                else if(Model.AutomaticMachine)
-                {
-                  <a class="nav-link" asp-action="AutomaticMachine" asp-controller="Machine">
-                    <h5 id="title-machine-@i" class="text-center font-weight-bold text-@css text-uppercase mb-1" style="cursor: pointer;" title="Macchina in funzione">
-                      Macchina @i (automatica) <div class="green-led"></div>
-                    </h5>
-                  </a>
-
-                }
-                else
-                {
-                  <a class="nav-link" asp-action="AutomaticMachine" asp-controller="Machine">
-                    <h5 id="title-machine-@i" class="text-center font-weight-bold text-@css text-uppercase mb-1" style="cursor: pointer;" title="Macchina spenta">
-                      Macchina @i (automatica) <div class="red-led"></div>
-                    </h5>
-                  </a>
-                }
-
-                
-                <hr/>
-                @if (op.Count != 0)
-                {
-                  var index = 0;
-
-                  foreach (var item in op)
+            <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                <div id="name-machine-@i" class="col mr-2">
+                  @if (@i != 16)
                   {
-                    index++;
-                    <script>
+                    <h5 id="title-machine-@i" class="text-center font-weight-bold text-@css text-uppercase mb-1">
+                      Macchina @i
+                    </h5>
+                  }
+                  else if (Model.AutomaticMachine)
+                  {
+                    <a class="nav-link" asp-action="AutomaticMachine" asp-controller="Machine">
+                      <h5 id="title-machine-@i" class="text-center font-weight-bold text-@css text-uppercase mb-1" style="cursor: pointer;" title="Macchina in funzione">
+                        Macchina @i (automatica)
+                        <div class="green-led"></div>
+                      </h5>
+                    </a>
+
+                  }
+                  else
+                  {
+                    <a class="nav-link" asp-action="AutomaticMachine" asp-controller="Machine">
+                      <h5 id="title-machine-@i" class="text-center font-weight-bold text-@css text-uppercase mb-1" style="cursor: pointer;" title="Macchina spenta">
+                        Macchina @i (automatica)
+                        <div class="red-led"></div>
+                      </h5>
+                    </a>
+                  }
+
+
+                  <hr/>
+                  @if (op.Count != 0)
+                  {
+                    var index = 0;
+
+                    foreach (var item in op)
+                    {
+                      index++;
+                      <script>
                       countOperator[@i] = @index
                     </script>
-                    <div id="operation-timeline-@item.OperationTimelineId">
-                      <span id="macchina-@i-operatore-@index"><strong>OPERATORE @index:</strong></span><br/>
-                      <span><i>- Lotto: </i>@item.SubBatchId</span><br/>
-                      <span><i>- Cliente: </i>@item.Client</span><br/>
-                      <span><i>- Operazione: </i>@item.Operation</span><br/>
-                      @{ var time = item.Time; }
-                      <span id="time-@item.OperationTimelineId"></span><br/>
-                      <hr/>
-                      <script>
+                      <div id="operation-timeline-@item.OperationTimelineId">
+                        <span id="macchina-@i-operatore-@index"><strong>OPERATORE @index:</strong></span><br/>
+                        <span><i>- Lotto: </i>@item.SubBatchId</span><br/>
+                        <span><i>- Cliente: </i>@item.Client</span><br/>
+                        <span><i>- Operazione: </i>@item.Operation</span><br/>
+                        @{ var time = item.Time; }
+                        <span id="time-@item.OperationTimelineId"></span><br/>
+                        <hr/>
+                        <script>
                         getTime('@time', '@item.OperationTimelineId')
                       </script>
-                    </div>
+                      </div>
+                    }
                   }
-                }
-                else
-                {
-                  <div id="noop-machine-@i" class="h5 mb-0 font-weight-bold text-gray-800">Nessuna lavorazione in corso</div>
-                }
+                  else
+                  {
+                    <div id="noop-machine-@i" class="h5 mb-0 font-weight-bold text-gray-800">Nessuna lavorazione in corso</div>
+                  }
 
-              </div>
-              <div class="col-auto">
-                <i id="icon-machine-@i" class="fas fa-industry fa-2x text-@css"></i>
+                </div>
+                <div class="col-auto">
+                  <i id="icon-machine-@i" class="fas fa-industry fa-2x text-@css"></i>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      }
     }
   }
 </div>
@@ -748,7 +753,7 @@ function getTime(seconds, id){
             ]
           }
         ]
-    const macchina14 = [
+    /*const macchina14 = [
               {
                 id: '14',
                 number_operators: 0,
@@ -781,7 +786,7 @@ function getTime(seconds, id){
                   }
                 ]
               }
-            ]
+            ]*/
     const macchina15 = [
       {
         id: '15',
@@ -933,7 +938,7 @@ function getTime(seconds, id){
     allMachine.push(macchina11)
     allMachine.push(macchina12)
     allMachine.push(macchina13)
-    allMachine.push(macchina14)
+    //allMachine.push(macchina14)
     allMachine.push(macchina15)
     allMachine.push(macchina16)
     allMachine.push(macchina17)

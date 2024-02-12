@@ -87,8 +87,8 @@
 
                 @foreach (var presenza in Model.Attendances.GroupBy(a => a.Employee))
                 {
-                    <tr onclick="SetEmployeeAttendanceId('#new-modal', @presenza.Key.EmployeeID)">
-                        <td style="width: 150px;">
+                    <tr onclick="SetEmployeeAttendanceId('#new-modal', @presenza.Key.EmployeeID); highlightRow(this)">
+                        <td style="width: 150px; cursor: pointer;">
                             <div style="display: inline-block; white-space: nowrap; box-sizing: border-box; width: 80%; float:  left;">
                                 <div style="white-space: nowrap; font-size:  18px;"><b>@presenza.Key.Name </b></div>
                                 <div style="white-space: nowrap; font-size:  18px;"><b> @presenza.Key.Surname</b> </div>
@@ -942,6 +942,10 @@ td:first-child {
   background-color: white;
 }
 
+.highlighted {
+    background-color: #DCDCDC;
+}
+
 </style>
 
 @section Scripts
@@ -1079,6 +1083,20 @@ td:first-child {
             presenzeDiv.style.display = (presenzeDiv.style.display === "none") ? "block" : "none";
         }
          
+        function highlightRow(row) {
+                var isHighlighted = row.classList.contains('highlighted');
+                
+                // Rimuove la classe "highlighted" da tutte le righe
+                var rows = document.querySelectorAll('tr');
+                for (var i = 0; i < rows.length; i++) {
+                    rows[i].classList.remove('highlighted');
+                }
+                
+                // Aggiungi la classe "highlighted" alla riga cliccata se non è già evidenziata
+                if (!isHighlighted) {
+                    row.classList.add('highlighted');
+                }
+            }
     </script>
 
 }

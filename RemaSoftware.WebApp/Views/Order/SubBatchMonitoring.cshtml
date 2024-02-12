@@ -240,10 +240,15 @@
     </div>
     @{
         var index = 0;
-    }
+        var batchOperation = "A";
+        var t = Model.SubBatch.Batch.BatchOperations.ToList();
+        if(Model.SubBatch.Batch.BatchOperations.FindAll(o => o.Operations.Name == OtherConstants.COQ).FirstOrDefault()?.OperationTimelines.Where(s => s.SubBatchID == Model.SubBatch.SubBatchID).FirstOrDefault()?.Status == "C")
+        {
+            batchOperation = "C";
+        }
+    } 
     @foreach (var item in Model.SubBatch.Batch.BatchOperations)
     {
-        
         if (item.Operations.Name != OtherConstants.EXTRA || item.OperationTimelines.Count != 0)
         {
             index++;
@@ -254,12 +259,12 @@
                         var operationList = item.OperationTimelines.Where(s => s.BatchOperationID == item.BatchOperationID && s.SubBatchID == Model.SubBatch.SubBatchID).ToList();
                         var status = "";
                         var css = "";
-                        if (operationList.Count == 0)
+                        if (operationList.Count == 0 && batchOperation != "C")
                         {
                             status = "Da effettuare";
                             css = " badge-danger";
                         }
-                        else if (operationList.All(s => s.Status == "C"))
+                        else if (operationList.All(s => s.Status == "C") || batchOperation == "C")
                         {
                             status = "Conclusa";
                             css = " badge-success";
@@ -276,13 +281,12 @@
                 <div class="collapse" id="collapse-@item.OperationID" style="">
                     <div class="card-body">
                         @{
-                            if (operationList.Count == 0)
+                            if (operationList.Count == 0 && batchOperation != "C")
                             {
                                 <span><strong>Operazione non iniziata</strong></span>
                             }
-                            else
+                            else if(operationList.Count != 0)
                             {
-
                                 foreach (var op in operationList)
                                 {
                                     var end = op.Status == @OperationTimelineConstant.STATUS_WORKING ? "In corso" : op.EndDate.ToString("dd/MM/yy HH:mm");
@@ -302,6 +306,9 @@
                                     }
                                 </script>
                                 }
+                            }else
+                            {
+                                <span><strong>Operazione completata</strong></span>
                             }
                         }
                     </div>
@@ -319,10 +326,10 @@
 </div>
 @section Scripts
 {
-    
-     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/js/select2.min.js" integrity="sha512-9p/L4acAjbjIaaGXmZf0Q2bV42HetlCLbv8EP0z3rLbQED2TAFUlDvAezy7kumYqg5T8jHtDdlm1fgIsr5QzKg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-     <script src="https://cdn.datatables.net/plug-ins/1.10.11/sorting/date-eu.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/js/select2.min.js" integrity="sha512-9p/L4acAjbjIaaGXmZf0Q2bV42HetlCLbv8EP0z3rLbQED2TAFUlDvAezy7kumYqg5T8jHtDdlm1fgIsr5QzKg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.10.11/sorting/date-eu.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
     <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
@@ -338,7 +345,7 @@
     if (sb.operationTimelines != null){
         sb.operationTimelines.forEach(function (op){
             if (op.machineId != null)
-                opTimeline.push(op)
+               opTimeline.push(op)
         })
     }
     let allMachine = [];
@@ -784,7 +791,7 @@
             ]
           }
         ]
-    const macchina14 = [
+    /*const macchina14 = [
               {
                 id: '14',
                 number_operators: 0,
@@ -817,7 +824,7 @@
                   }
                 ]
               }
-            ]
+            ]*/
     const macchina15 = [
       {
         id: '15',
@@ -969,7 +976,7 @@
     allMachine.push(macchina11)
     allMachine.push(macchina12)
     allMachine.push(macchina13)
-    allMachine.push(macchina14)
+    //allMachine.push(macchina14)
     allMachine.push(macchina15)
     allMachine.push(macchina16)
     allMachine.push(macchina17)
@@ -1014,12 +1021,11 @@
             tooltip: d => tooltip,
             color: color
           })
-        })
-      
+        })      
     }
     
 </script>
-     <script>
+    <script>
      $(document).ready( function () {
             table = $('#table-ddts').DataTable({
                 "language": {

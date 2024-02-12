@@ -24,6 +24,7 @@
                     <th>Nome prodotto</th>
                     <th>DDT associate</th>
                     <th>Pezzi nel lotto</th>
+                    <th>Scadenza ordine</th>
                     <th>Azioni</th>
                 </tr>
                 </thead>
@@ -53,6 +54,7 @@
                             </td>
                         }
                         <td>@batch.Ddts_In.Sum(s=> s.Number_Piece)</td>
+                        <td>@batch.Ddts_In.OrderBy(s=> s.DataOut).FirstOrDefault().DataOut.ToString("dd/MM/yyyy")</td>
                         <td class="text-center">
                             <a onclick="printQRCode('@batch.SubBatchID')" style="text-decoration: none">
                                 <i class="fas fa-print fa-lg pl-2" title="Stampa ordine" style="cursor: pointer; color: #6d767e"></i>
@@ -200,7 +202,8 @@
                 { "searchable": true, "orderable": true, "targets": 3 },
                 { "searchable": false, "orderable": false, "targets": 4 },
                 { "searchable": false, "orderable": false, "targets": 5 },
-                { "searchable": false, "orderable": false, "targets": 6 },
+                { "searchable": false, "orderable": true, "targets": 6 },
+                { "searchable": false, "orderable": false, "targets": 7 },
               ]
         });        
         
