@@ -173,9 +173,12 @@ namespace RemaSoftware.UtilityServices.Implementation
                 var mailAddressSender = _configuration["EmailConfig:EmailAddress"];
                 mailMessage.From = new MailAddress(mailAddressSender);
                 mailMessage.To.Add(new MailAddress(email[0]));
-                for(int i = 1; i< email.Count; i++)
-                    mailMessage.CC.Add(email[i]);
-                
+                for(int i = 1; i< email.Count; i++){
+                    if (email[i] != "lorenzo.vettori11@gmail.com")
+                    {
+                        mailMessage.CC.Add(email[i]);
+                    }
+                }
                 mailMessage.Subject = "Sollecito DDT N° " + ddtCode;
                 mailMessage.IsBodyHtml = true;
                 string FilePath = "wwwroot/MailTemplate/sollecito-ddt.html";  
@@ -304,8 +307,11 @@ namespace RemaSoftware.UtilityServices.Implementation
                 var mailAddressSender = _configuration["EmailConfig:EmailAddress"];
                 mailMessage.From = new MailAddress(mailAddressSender);
                 mailMessage.To.Add(new MailAddress(email[0]));
-                for(int i = 1; i< email.Count; i++)
-                    mailMessage.CC.Add(email[i]);
+                for(int i = 1; i< email.Count; i++){
+                    if (email[i] != "lorenzo.vettori11@gmail.com"){
+                        mailMessage.CC.Add(email[i]);
+                    }
+                }
                 mailMessage.CC.Add(employee.Mail);
                 mailMessage.Subject = "Resoconto mancata timbratura";
                 mailMessage.IsBodyHtml = true;
@@ -448,8 +454,13 @@ namespace RemaSoftware.UtilityServices.Implementation
                 var mailAddressSender = _configuration["EmailConfig:EmailAddress"];
                 mailMessage.From = new MailAddress(mailAddressSender);
                 mailMessage.To.Add(new MailAddress(email[0]));
-                for(int i = 1; i< email.Count; i++)
-                    mailMessage.CC.Add(email[i]);
+                for (int i = 1; i < email.Count; i++)
+                {
+                    if (email[i] != "lorenzo.vettori11@gmail.com")
+                    {
+                        mailMessage.CC.Add(email[i]);
+                    }
+                }
                 mailMessage.Subject = "Resoconto mancate timbrature";
                 mailMessage.IsBodyHtml = true;
                 string FilePath = "wwwroot/MailTemplate/attendance-notify.html";  
