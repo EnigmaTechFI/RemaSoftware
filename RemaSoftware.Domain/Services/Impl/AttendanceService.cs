@@ -27,6 +27,13 @@ namespace RemaSoftware.Domain.Services.Impl;
         public void ModifyAttendance(int attendanceId, DateTime newInDateTime, DateTime newOutDateTime, string type)
         {
             var attendance = _dbContext.Attendances.Find(attendanceId);
+
+            newInDateTime = new DateTime(attendance.DateIn.Date.Year, attendance.DateIn.Date.Month, attendance.DateIn.Date.Day,
+                newInDateTime.Hour, newInDateTime.Minute, newInDateTime.Second);
+            
+            newOutDateTime = new DateTime(attendance.DateOut.Value.Year, attendance.DateOut.Value.Month, attendance.DateOut.Value.Day,
+                newOutDateTime.Hour, newOutDateTime.Minute, newOutDateTime.Second);
+                
             if (attendance != null)
             {
                 
@@ -44,10 +51,8 @@ namespace RemaSoftware.Domain.Services.Impl;
                 else
                 {
                     Attendance newAttendance = new Attendance();
-                    if (DateTime.Compare(newInDateTime, new DateTime(0001, 01, 01, 00, 00, 00)) != 0)
-                        newAttendance.DateIn = attendance.DateIn.Date + newInDateTime.TimeOfDay;
-                    if (DateTime.Compare(newOutDateTime, new DateTime(0001, 01, 01, 00, 00, 00)) != 0)
-                        newAttendance.DateOut = attendance.DateIn.Date + newOutDateTime.TimeOfDay;
+                    newAttendance.DateIn = newInDateTime;
+                    newAttendance.DateOut = newOutDateTime;
                     newAttendance.EmployeeID = attendance.EmployeeID;
                     newAttendance.Type = type;
                     if (attendance.DateOut == null)
@@ -176,21 +181,37 @@ namespace RemaSoftware.Domain.Services.Impl;
                                 totalDuration += duration;
                             }
                         }
-                        TimeSpan threshold = new TimeSpan(9, 20, 0);
-                        
-                        if (totalDuration > threshold && employee.Extraordinary)
+                        TimeSpan threshold = new TimeSpan(8, 44, 0);
+                        TimeSpan thresholdAlternative = new TimeSpan(5, 44, 0);
+                        if (employee.NumberHour == 25)
                         {
-                            existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-1);
-                            Attendance strAttendance = new Attendance
+                            if (totalDuration > thresholdAlternative && employee.Extraordinary)
                             {
-                                DateIn = existingAttendance.DateOut.Value,
-                                DateOut = dateIn,
-                                EmployeeID = existingAttendance.EmployeeID,
-                                Type = "StraordinarioOrdinario"
-                            };
-                            _dbContext.Attendances.Add(strAttendance);
+                                existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-1);
+                                Attendance strAttendance = new Attendance
+                                {
+                                    DateIn = existingAttendance.DateOut.Value,
+                                    DateOut = dateIn,
+                                    EmployeeID = existingAttendance.EmployeeID,
+                                    Type = "Supplementare"
+                                };
+                                _dbContext.Attendances.Add(strAttendance);
+                            }
+                        } else if (employee.NumberHour == 40)
+                        {
+                            if (totalDuration > threshold && employee.Extraordinary)
+                            {
+                                existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-1);
+                                Attendance strAttendance = new Attendance
+                                {
+                                    DateIn = existingAttendance.DateOut.Value,
+                                    DateOut = dateIn,
+                                    EmployeeID = existingAttendance.EmployeeID,
+                                    Type = "StraordinarioOrdinario"
+                                };
+                                _dbContext.Attendances.Add(strAttendance);
+                            }
                         }
-                        
                     }
                     else
                     {
@@ -203,7 +224,7 @@ namespace RemaSoftware.Domain.Services.Impl;
                                                  a.Employee.FluidaId == userIdList[i] &&
                                                  a.DateIn.Date == previousDay);
 
-                        if (existingAttendanceNight != null && existingAttendanceNight.DateOut == null &&  userClockDate1.TimeOfDay >= TimeSpan.FromHours(4) &&  userClockDate1.TimeOfDay <= TimeSpan.FromHours(7.5) &&  existingAttendanceNight.DateIn.TimeOfDay >= TimeSpan.FromHours(21))
+                        if (existingAttendanceNight != null && existingAttendanceNight.DateOut == null &&  userClockDate1.TimeOfDay >= TimeSpan.FromHours(4) &&  userClockDate1.TimeOfDay <= TimeSpan.FromHours(7.5) &&  existingAttendanceNight.DateIn.TimeOfDay >= TimeSpan.FromHours(20))
                         {
                             existingAttendanceNight.DateOut = userClockDate1;
                             
@@ -310,18 +331,35 @@ namespace RemaSoftware.Domain.Services.Impl;
                                 }
                             }
                             TimeSpan threshold = new TimeSpan(9, 20, 0);
-
-                            if (totalDuration > threshold && employee.Extraordinary)
+                            TimeSpan thresholdAlternative = new TimeSpan(5, 44, 0);
+                            if (employee.NumberHour == 25)
                             {
-                                existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-1);
-                                Attendance strAttendance = new Attendance
+                                if (totalDuration > thresholdAlternative && employee.Extraordinary)
                                 {
-                                    DateIn = existingAttendance.DateOut.Value,
-                                    DateOut = dateIn,
-                                    EmployeeID = existingAttendance.EmployeeID,
-                                    Type = "StraordinarioOrdinario"
-                                };
-                                _dbContext.Attendances.Add(strAttendance);
+                                    existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-1);
+                                    Attendance strAttendance = new Attendance
+                                    {
+                                        DateIn = existingAttendance.DateOut.Value,
+                                        DateOut = dateIn,
+                                        EmployeeID = existingAttendance.EmployeeID,
+                                        Type = "Supplementare"
+                                    };
+                                    _dbContext.Attendances.Add(strAttendance);
+                                }
+                            } else if (employee.NumberHour == 40)
+                            {
+                                if (totalDuration > threshold && employee.Extraordinary)
+                                {
+                                    existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-1);
+                                    Attendance strAttendance = new Attendance
+                                    {
+                                        DateIn = existingAttendance.DateOut.Value,
+                                        DateOut = dateIn,
+                                        EmployeeID = existingAttendance.EmployeeID,
+                                        Type = "StraordinarioOrdinario"
+                                    };
+                                    _dbContext.Attendances.Add(strAttendance);
+                                }
                             }
                             
                         }

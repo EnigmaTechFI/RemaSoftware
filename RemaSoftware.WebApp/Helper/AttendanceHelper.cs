@@ -235,6 +235,18 @@ public class AttendanceHelper
                     sp += "6767000000";
                 else if (uniqueTypes[j] == "Maternità")
                     sp += "3110000000";
+                else if (uniqueTypes[j] == "LavoroFestivo")
+                    sp += "3610000000";
+                else if (uniqueTypes[j] == "MaggiorazioneNotturno")
+                    sp += "3490000000";
+                else if (uniqueTypes[j] == "Permesso104")
+                    sp += "7360000000";
+                else if (uniqueTypes[j] == "InfortunioIniziale")
+                    sp += "3130000000";
+                else if (uniqueTypes[j] == "InfortunioProlungato")
+                    sp += "3100000000";
+                else if (uniqueTypes[j] == "CongedoMatrimoniale")
+                    sp += "3140000000";
                 else
                     sp += "0000000000";
                 
