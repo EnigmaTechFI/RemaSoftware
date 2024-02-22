@@ -237,6 +237,8 @@ public class AttendanceHelper
                     sp += "3110000000";
                 else if (uniqueTypes[j] == "LavoroFestivo")
                     sp += "3610000000";
+                else if (uniqueTypes[j] == "Supplementare")
+                    sp += "3620000000";
                 else if (uniqueTypes[j] == "MaggiorazioneNotturno")
                     sp += "3490000000";
                 else if (uniqueTypes[j] == "Permesso104")
@@ -262,11 +264,27 @@ public class AttendanceHelper
                         .ToList();
 
                     TimeSpan totalDuration = TimeSpan.Zero;
+                    TimeSpan otherDuration = TimeSpan.Zero;
                     foreach (var attendance_tmp in attendanceForDay)
                     {
                         if (attendance_tmp.DateIn != null && attendance_tmp.DateOut != null)
                         {
                             totalDuration += attendance_tmp.DateOut.Value - attendance_tmp.DateIn;
+                        }
+                    }
+                    foreach (var attendance_oth in allAttendanceForDay)
+                    {
+                        if (attendance_oth.DateIn != null && attendance_oth.DateOut != null  && attendance_oth.Type != "Permesso" && attendance_oth.Type != "Presenza" && attendance_oth.Type != "Eliminato" && attendance_oth.Type != "StraordinarioSabato")
+                        {
+                            otherDuration += attendance_oth.DateOut.Value - attendance_oth.DateIn;
+                            if (otherDuration.TotalHours > 8 && employee.NumberHour == 40)
+                            {
+                                otherDuration = new TimeSpan(8, 0, 0);
+                            }
+                            else if (otherDuration.TotalHours > 5 && employee.NumberHour == 25)
+                            {
+                                otherDuration = new TimeSpan(5, 0, 0);
+                            }
                         }
                     }
 
@@ -401,6 +419,39 @@ public class AttendanceHelper
                                     }
                                 }
                             break;
+                        }
+                        
+                        
+                        if (otherDuration.TotalMinutes != 0 && uniqueTypes[j] == "Presenza")
+                        {
+                            int reduction = 0;
+                            if (otherDuration.Minutes > 45)
+                            {
+                                reduction = (otherDuration.Hours + 1) * 10000;
+                            }
+                            else
+                            {
+                                reduction = otherDuration.Hours * 10000;
+                            }
+
+                            if (permiss.Substring(permiss.Length - 5) != "00000")
+                            {
+                                permiss = permiss.Substring(0, permiss.Length - 5) +
+                                          (int.Parse(permiss.Substring(permiss.Length - 5)) - reduction).ToString("D5");
+                            }
+                            else
+                            {
+                                if (employee.NumberHour == 40)
+                                {
+                                    permiss = permiss.Substring(0, permiss.Length - 5) +
+                                              (80000 - reduction).ToString("D5");
+                                }
+                                else
+                                {
+                                    permiss = permiss.Substring(0, permiss.Length - 5) +
+                                              (50000 - reduction).ToString("D5");
+                                }
+                            }
                         }
                     }
 
