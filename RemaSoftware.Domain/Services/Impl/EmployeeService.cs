@@ -73,7 +73,7 @@ namespace RemaSoftware.Domain.Services.Impl
             if (existingEmployee != null)
             {
                 _dbContext.Entry(existingEmployee).CurrentValues.SetValues(employee);
-                _dbContext.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync();
             }
         }
     }
