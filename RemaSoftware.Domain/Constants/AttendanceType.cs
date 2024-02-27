@@ -12,5 +12,12 @@ namespace RemaSoftware.Domain.Constants
         public const string Ferie = "Ferie";
         public const string Permesso = "Permesso";
         public const string CassaIntegrazione = "Cassa integrazione";
+        public const string LavoroFestivo = "Lavoro durante festivo";
+        public const string Supplementare = "Lavoro supplementare";
+        public const string MaggiorazioneNotturno = "Maggiorazione notturno";
+        public const string Permesso104 = "Permesso per 104";
+        public const string InfortunioIniziale = "Infortunio iniziale";
+        public const string InfortunioProlungato = "Infortunio prolungato";
+        public const string CongedoMatrimoniale = "Congedo matrimoniale";
     }
 }

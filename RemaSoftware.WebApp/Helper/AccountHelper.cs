@@ -90,7 +90,7 @@ namespace RemaSoftware.WebApp.Helper
 
                     if (result.Succeeded)
                     { 
-                        _userManager.AddToRolesAsync(newUser, new[] { Roles.Impiegato });
+                        await _userManager.AddToRolesAsync(newUser, new[] { Roles.Impiegato });
 
                         try
                         {

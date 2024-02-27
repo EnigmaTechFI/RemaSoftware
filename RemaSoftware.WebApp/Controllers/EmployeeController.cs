@@ -148,7 +148,7 @@ namespace RemaSoftware.WebApp.Controllers
                 }
                 else
                 {
-                    _employeeHelper.EditEmployee(model);
+                    await _employeeHelper.EditEmployee(model);
                     _notyfService.Success("Impiegato aggiornato correttamente");
                     return RedirectToAction("EmployeeList");
                 }
