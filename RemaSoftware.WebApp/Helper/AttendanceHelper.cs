@@ -369,12 +369,17 @@ public class AttendanceHelper
                                 
                                 if(uniqueTypes[j] == "Presenza" || uniqueTypes[j] == "Maternità"){
                                     var PresenceInDay = false;
-
+                                    var PermissInDay = false;
                                     foreach (var allattendanceForDay in allAttendanceForDay)
                                     {
                                         if (allattendanceForDay.Type == "Ferie" || allattendanceForDay.Type == "Festivo" || allattendanceForDay.Type == "Malattia" || allattendanceForDay.Type == "CassaIntegrazione") 
                                         {
                                             PresenceInDay = true;
+                                        }
+
+                                        if (allattendanceForDay.Type == "Permesso")
+                                        {
+                                            PermissInDay = true;
                                         }
                                     }
 
@@ -385,7 +390,7 @@ public class AttendanceHelper
                                     else
                                     {
                                         if (employee.TypePosition == "In servizio" && employee.NumberHour == 25 && myDate.DayOfWeek != DayOfWeek.Sunday &&
-                                            myDate.DayOfWeek != DayOfWeek.Saturday && myDate < DateTime.Today)
+                                            myDate.DayOfWeek != DayOfWeek.Saturday && myDate < DateTime.Today && PermissInDay)
                                         {
                                             permiss += "50000";
                                         }
@@ -393,21 +398,21 @@ public class AttendanceHelper
                                         {
                                             if (employee.TypePosition == "In servizio" &&
                                                 myDate.DayOfWeek != DayOfWeek.Sunday &&
-                                                myDate.DayOfWeek != DayOfWeek.Saturday && myDate < DateTime.Today)
+                                                myDate.DayOfWeek != DayOfWeek.Saturday && myDate < DateTime.Today && PermissInDay)
                                             {
                                                 permiss += "80000";
                                             }
                                             else if (employee.TypePosition == "Maternità" &&
                                                      employee.NumberHour == 25 &&
                                                      myDate.DayOfWeek != DayOfWeek.Sunday &&
-                                                     myDate.DayOfWeek != DayOfWeek.Saturday && myDate < DateTime.Today)
+                                                     myDate.DayOfWeek != DayOfWeek.Saturday && myDate < DateTime.Today && PermissInDay)
                                             {
                                                 permiss += "50000";
                                             }
                                             else if (employee.TypePosition == "Maternità" &&
                                                      employee.NumberHour == 40 &&
                                                      myDate.DayOfWeek != DayOfWeek.Sunday &&
-                                                     myDate.DayOfWeek != DayOfWeek.Saturday && myDate < DateTime.Today)
+                                                     myDate.DayOfWeek != DayOfWeek.Saturday && myDate < DateTime.Today && PermissInDay)
                                             {
                                                 permiss += "80000";
                                             }
