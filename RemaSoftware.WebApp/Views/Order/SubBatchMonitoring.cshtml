@@ -240,13 +240,16 @@
     </div>
     @{
         var index = 0;
-        var batchOperation = "A";
-        var t = Model.SubBatch.Batch.BatchOperations.ToList();
-        if(Model.SubBatch.Batch.BatchOperations.FindAll(o => o.Operations.Name == OtherConstants.COQ).FirstOrDefault()?.OperationTimelines.Where(s => s.SubBatchID == Model.SubBatch.SubBatchID).FirstOrDefault()?.Status == "C")
+        var batchOperation = "C";
+        var Batchs = Model.SubBatch.Batch.SubBatches.ToList();
+        foreach (var batch in Batchs)
         {
-            batchOperation = "C";
+            if (batch.Status != "F")
+            {
+                batchOperation = "A";
+            }
         }
-    } 
+    }
     @foreach (var item in Model.SubBatch.Batch.BatchOperations)
     {
         if (item.Operations.Name != OtherConstants.EXTRA || item.OperationTimelines.Count != 0)
