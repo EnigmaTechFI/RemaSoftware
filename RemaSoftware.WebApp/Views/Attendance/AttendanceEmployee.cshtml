@@ -218,11 +218,19 @@
                                         }
                                         NotNull = true;
                                     }
-                                    if (totalTime > TimeSpan.FromHours(8))
+                                    totalTime = (totalTime.Value.Minutes < 45) ? TimeSpan.FromHours(totalTime.Value.Hours) : TimeSpan.FromHours(totalTime.Value.Hours + 1);
+                                    if (totalTime >= TimeSpan.FromHours(9))
                                     {
                                         totalTime = TimeSpan.FromHours(8);
                                     }
-                                    totalTime = (totalTime.Value.Minutes < 45) ? TimeSpan.FromHours(totalTime.Value.Hours) : TimeSpan.FromHours(totalTime.Value.Hours + 1);
+                                    
+                                    if (presenza.Key.NumberHour == 25)
+                                    {
+                                        if (totalTime >= TimeSpan.FromHours(5))
+                                        {
+                                            totalTime = TimeSpan.FromHours(5);
+                                        }
+                                    }
                                 }
 
                                 @{
@@ -933,11 +941,11 @@
                                                     }
                                                     NotNull = true;
                                                 }
-                                                if (totalTime > TimeSpan.FromHours(8))
+                                                totalTime = (totalTime.Value.Minutes < 45) ? TimeSpan.FromHours(totalTime.Value.Hours) : TimeSpan.FromHours(totalTime.Value.Hours + 1);
+                                                if (totalTime >= TimeSpan.FromHours(9))
                                                 {
                                                     totalTime = TimeSpan.FromHours(8);
                                                 }
-                                                totalTime = (totalTime.Value.Minutes < 45) ? TimeSpan.FromHours(totalTime.Value.Hours) : TimeSpan.FromHours(totalTime.Value.Hours + 1);
                                             }
 
                                             @{

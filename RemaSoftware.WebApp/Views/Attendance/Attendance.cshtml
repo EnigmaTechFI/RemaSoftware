@@ -196,10 +196,7 @@
                                                 NotNull = true;
                                             }
                                             totalTime = (totalTime.Value.Minutes < 45) ? TimeSpan.FromHours(totalTime.Value.Hours) : TimeSpan.FromHours(totalTime.Value.Hours + 1);
-                                            if (totalTime >= TimeSpan.FromHours(9))
-                                            {
-                                                totalTime = TimeSpan.FromHours(8);
-                                            }
+                                            
                                             totalTimePresence += totalTime;
                                             totalTimeDay += totalTime;
                                         }
