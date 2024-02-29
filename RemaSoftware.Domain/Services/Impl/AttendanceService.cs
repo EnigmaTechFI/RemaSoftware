@@ -126,7 +126,7 @@ namespace RemaSoftware.Domain.Services.Impl;
         {
             return _dbContext.Attendances.SingleOrDefault(a => a.AttendanceID == attendanceid);
         }
-
+        
         public async Task UpdateAttendanceListWithPresence(List<string> userIdList, List<string> userClockList)
         {
             for(int i=0; i<userIdList.Count; i++)
