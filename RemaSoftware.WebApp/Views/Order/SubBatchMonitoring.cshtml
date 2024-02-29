@@ -241,10 +241,10 @@
     @{
         var index = 0;
         var batchOperation = "C";
-        var Batchs = Model.SubBatch.Batch.SubBatches.ToList();
-        foreach (var batch in Batchs)
+        var batchs = Model.SubBatch.Batch.SubBatches.FirstOrDefault();
+        foreach (var ddt in batchs.Ddts_In)
         {
-            if (batch.Status != "C" && batch.Status != "F")
+            if (ddt.Status != "C" && ddt.Status != "F")
             {
                 batchOperation = "A";
             }
