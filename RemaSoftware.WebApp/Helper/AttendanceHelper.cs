@@ -274,7 +274,7 @@ public class AttendanceHelper
                     }
                     foreach (var attendance_oth in allAttendanceForDay)
                     {
-                        if (attendance_oth.DateIn != null && attendance_oth.DateOut != null  && attendance_oth.Type != "Permesso" && attendance_oth.Type != "Presenza" && attendance_oth.Type != "Eliminato" && attendance_oth.Type != "StraordinarioSabato" && attendance_oth.Type != "StraordinarioOrdinario")
+                        if (attendance_oth.DateIn != null && attendance_oth.DateOut != null  && attendance_oth.Type != "Permesso" && attendance_oth.Type != "Presenza" && attendance_oth.Type != "Eliminato" && attendance_oth.Type != "StraordinarioSabato" && attendance_oth.Type != "StraordinarioOrdinario" && attendance_oth.Type != "MaggiorazioneNotturno")
                         {
                             otherDuration += attendance_oth.DateOut.Value - attendance_oth.DateIn;
                             if (otherDuration.TotalHours > 8 && employee.NumberHour == 40)

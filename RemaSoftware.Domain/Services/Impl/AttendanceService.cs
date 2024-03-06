@@ -189,8 +189,12 @@ namespace RemaSoftware.Domain.Services.Impl;
                             if (totalDuration > thresholdAlternative && employee.Extraordinary)
                             {
                                 TimeSpan exceedingDuration = totalDuration - thresholdAlternative;
-                                int extraHours = (int)Math.Floor(exceedingDuration.TotalHours);
-
+                                int extraHours = (int)exceedingDuration.TotalHours;
+                                if (exceedingDuration.TotalMinutes > 0)
+                                {
+                                    extraHours += 1;
+                                }
+                                
                                 if ((int)(exceedingDuration.TotalMinutes % 60) > 55)
                                 {
                                     extraHours += 1;
@@ -198,30 +202,30 @@ namespace RemaSoftware.Domain.Services.Impl;
 
                                 existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-extraHours);
 
-                                Attendance strAttendance = new Attendance
+                                if (extraHours >= 1)
                                 {
-                                    DateIn = existingAttendance.DateOut.Value,
-                                    DateOut = dateIn,
-                                    EmployeeID = existingAttendance.EmployeeID,
-                                    Type = "Supplementare"
-                                };
-                                _dbContext.Attendances.Add(strAttendance);
+                                    Attendance strAttendance = new Attendance
+                                    {
+                                        DateIn = existingAttendance.DateOut.Value,
+                                        DateOut = dateIn,
+                                        EmployeeID = existingAttendance.EmployeeID,
+                                        Type = "Supplementare"
+                                    };
+                                    
+                                    _dbContext.Attendances.Add(strAttendance);
+                                }
                             }
-
-                        } else if (employee.NumberHour == 40)//Controllare
+                        } else if (employee.NumberHour == 40)
                         {
                             if (totalDuration > threshold && employee.Extraordinary)
                             {
-                                TimeSpan timeBeforeSix = TimeSpan.FromHours(6) - existingAttendance.DateOut.Value.TimeOfDay;
+                                TimeSpan exceedingDuration = totalDuration - threshold;
                                 
-                                int extraHoursBeforeSix = (int)Math.Floor(timeBeforeSix.TotalHours);
-                                if (((int)(timeBeforeSix.TotalMinutes % 60)) > 55)
+                                int extraHours = (int)exceedingDuration.TotalHours;
+                                if (exceedingDuration.TotalMinutes > 0)
                                 {
-                                    extraHoursBeforeSix += 1;
+                                    extraHours += 1;
                                 }
-                                
-                                TimeSpan exceedingDuration = totalDuration - thresholdAlternative - timeBeforeSix;
-                                int extraHours = (int)Math.Floor(exceedingDuration.TotalHours);
                                 if (((int)(exceedingDuration.TotalMinutes % 60)) > 55)
                                 {
                                     extraHours += 1;
@@ -231,16 +235,16 @@ namespace RemaSoftware.Domain.Services.Impl;
                                 {
                                     EmployeeID = existingAttendance.EmployeeID,
                                 };
-
-                                if(extraHoursBeforeSix >= 1){
-                                    strAttendance.DateIn = existingAttendance.DateIn;
-                                    existingAttendance.DateIn = existingAttendance.DateIn.AddHours(extraHours);
-                                    strAttendance.DateOut = existingAttendance.DateIn;
-                                    strAttendance.Type = "MaggiorazioneNotturno";
-                                }
                                 
                                 if(extraHours >= 1){
-                                    existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-extraHours);
+                                    if (existingAttendance.DateOut?.AddHours(-extraHours) > existingAttendance.DateIn)
+                                    {
+                                        existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-extraHours);
+                                    }
+                                    else
+                                    {
+                                        existingAttendance.DateOut = existingAttendance.DateIn;
+                                    }
                                     strAttendance.DateIn = existingAttendance.DateOut.Value;
                                     strAttendance.DateOut = dateIn;
                                     strAttendance.Type = "StraordinarioOrdinario";
@@ -374,8 +378,13 @@ namespace RemaSoftware.Domain.Services.Impl;
                                 if (totalDuration > thresholdAlternative && employee.Extraordinary)
                                 {
                                     TimeSpan exceedingDuration = totalDuration - thresholdAlternative;
-                                    int extraHours = (int)Math.Floor(exceedingDuration.TotalHours);
+                                    int extraHours = (int)exceedingDuration.TotalHours;
 
+                                    if (exceedingDuration.TotalMinutes > 0)
+                                    {
+                                        extraHours += 1;
+                                    }
+                                    
                                     if ((int)(exceedingDuration.TotalMinutes % 60) > 55)
                                     {
                                         extraHours += 1;
@@ -383,30 +392,30 @@ namespace RemaSoftware.Domain.Services.Impl;
 
                                     existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-extraHours);
 
-                                    Attendance strAttendance = new Attendance
+                                    if (extraHours >= 1)
                                     {
-                                        DateIn = existingAttendance.DateOut.Value,
-                                        DateOut = dateIn,
-                                        EmployeeID = existingAttendance.EmployeeID,
-                                        Type = "Supplementare"
-                                    };
-                                    _dbContext.Attendances.Add(strAttendance);
+                                        Attendance strAttendance = new Attendance
+                                        {
+                                            DateIn = existingAttendance.DateOut.Value,
+                                            DateOut = dateIn,
+                                            EmployeeID = existingAttendance.EmployeeID,
+                                            Type = "Supplementare"
+                                        };
+                                        _dbContext.Attendances.Add(strAttendance);
+                                    }
                                 }
 
                             } else if (employee.NumberHour == 40)//Controllare
                             {
                                 if (totalDuration > threshold && employee.Extraordinary)
                                 {
-                                    TimeSpan timeBeforeSix = TimeSpan.FromHours(6) - existingAttendance.DateOut.Value.TimeOfDay;
+                                    TimeSpan exceedingDuration = totalDuration - threshold;
                                     
-                                    int extraHoursBeforeSix = (int)Math.Floor(timeBeforeSix.TotalHours);
-                                    if (((int)(timeBeforeSix.TotalMinutes % 60)) > 55)
+                                    int extraHours = (int)exceedingDuration.TotalHours;
+                                    if (exceedingDuration.TotalMinutes > 0)
                                     {
-                                        extraHoursBeforeSix += 1;
+                                        extraHours += 1;
                                     }
-                                    
-                                    TimeSpan exceedingDuration = totalDuration - thresholdAlternative - timeBeforeSix;
-                                    int extraHours = (int)Math.Floor(exceedingDuration.TotalHours);
                                     if (((int)(exceedingDuration.TotalMinutes % 60)) > 55)
                                     {
                                         extraHours += 1;
@@ -416,16 +425,16 @@ namespace RemaSoftware.Domain.Services.Impl;
                                     {
                                         EmployeeID = existingAttendance.EmployeeID,
                                     };
-
-                                    if(extraHoursBeforeSix >= 1){
-                                        strAttendance.DateIn = existingAttendance.DateIn;
-                                        existingAttendance.DateIn = existingAttendance.DateIn.AddHours(extraHours);
-                                        strAttendance.DateOut = existingAttendance.DateIn;
-                                        strAttendance.Type = "MaggiorazioneNotturno";
-                                    }
                                     
                                     if(extraHours >= 1){
-                                        existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-extraHours);
+                                        if (existingAttendance.DateOut?.AddHours(-extraHours) > existingAttendance.DateIn)
+                                        {
+                                            existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-extraHours);
+                                        }
+                                        else
+                                        {
+                                            existingAttendance.DateOut = existingAttendance.DateIn;
+                                        }
                                         strAttendance.DateIn = existingAttendance.DateOut.Value;
                                         strAttendance.DateOut = dateIn;
                                         strAttendance.Type = "StraordinarioOrdinario";
