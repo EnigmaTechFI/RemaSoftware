@@ -208,6 +208,14 @@
                                                     totalTime = TimeSpan.FromHours(5);
                                                 }
                                             }
+                                            
+                                            if (presenza.Key.NumberHour == 35)
+                                            {
+                                                if (totalTime >= TimeSpan.FromHours(7))
+                                                {
+                                                    totalTime = TimeSpan.FromHours(7);
+                                                }
+                                            }
                                             totalTimePresence += totalTime;
                                             totalTimeDay += totalTime;
                                         }
@@ -849,9 +857,25 @@
 
                                         @* Calcolo sul permesso rimanente *@
                                         @{
-                                            if (totalTimeDay != TimeSpan.Zero && presenza.Key.NumberHour != 25)
+                                            if (totalTimeDay != TimeSpan.Zero)
                                             {
-                                                TimeSpan eightHours = new TimeSpan(8, 0, 0); // 8 ore
+                                                TimeSpan eightHours = default;
+                                                
+                                                if (presenza.Key.NumberHour == 40)
+                                                {
+                                                    eightHours = new TimeSpan(8, 0, 0);
+                                                }
+                                                
+                                                if (presenza.Key.NumberHour == 35)
+                                                {
+                                                    eightHours = new TimeSpan(7, 0, 0);
+                                                }
+                                                
+                                                if (presenza.Key.NumberHour == 25)
+                                                {
+                                                    eightHours = new TimeSpan(5, 0, 0);
+                                                }
+                                                
                                                 TimeSpan difference = eightHours - totalTimeDay.Value;
                                                 
                                                 difference = (difference.Minutes < 5) ? TimeSpan.FromHours(difference.Hours) : TimeSpan.FromHours(difference.Hours + 1);

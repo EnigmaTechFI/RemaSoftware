@@ -23,6 +23,8 @@ namespace RemaSoftware.Domain.Models
         public int NumberWastePiece { get; set; }
         public int NumberLostPiece { get; set; }
         public int NumberZamaPiece { get; set; }
+        
+        public int NumberResoScarto { get; set; }
 
         [MaxLength(1)]
         public string Status { get; set; }

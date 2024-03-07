@@ -231,6 +231,14 @@
                                             totalTime = TimeSpan.FromHours(5);
                                         }
                                     }
+                                    
+                                    if (presenza.Key.NumberHour == 35)
+                                    {
+                                        if (totalTime >= TimeSpan.FromHours(7))
+                                        {
+                                            totalTime = TimeSpan.FromHours(7);
+                                        }
+                                    }
                                 }
 
                                 @{

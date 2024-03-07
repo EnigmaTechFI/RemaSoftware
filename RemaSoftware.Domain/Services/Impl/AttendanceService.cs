@@ -28,12 +28,10 @@ namespace RemaSoftware.Domain.Services.Impl;
         public void ModifyAttendance(int attendanceId, DateTime newInDateTime, DateTime newOutDateTime, string type)
         {
             var attendance = _dbContext.Attendances.Find(attendanceId);
-
-            newInDateTime = new DateTime(attendance.DateIn.Date.Year, attendance.DateIn.Date.Month, attendance.DateIn.Date.Day,
-                newInDateTime.Hour, newInDateTime.Minute, newInDateTime.Second);
             
-            newOutDateTime = new DateTime(attendance.DateIn.Year, attendance.DateIn.Month, attendance.DateIn.Day,
-                    newOutDateTime.Hour, newOutDateTime.Minute, newOutDateTime.Second);
+            newInDateTime = new DateTime(attendance.DateIn.Date.Year, attendance.DateIn.Date.Month, attendance.DateIn.Date.Day, newInDateTime.Hour == 0 ? attendance.DateIn.Hour : newInDateTime.Hour, newInDateTime.Minute == 0 ? attendance.DateIn.Minute : newInDateTime.Minute, newInDateTime.Second);
+            
+            newOutDateTime = new DateTime(attendance.DateIn.Year, attendance.DateIn.Month, attendance.DateIn.Day, (int)(newOutDateTime.Hour == 0 ? attendance.DateOut?.Hour : newOutDateTime.Hour), (int)(newOutDateTime.Minute == 0 ? attendance.DateOut?.Minute : newOutDateTime.Minute), newOutDateTime.Second);
                 
             if (attendance != null)
             {
@@ -182,73 +180,47 @@ namespace RemaSoftware.Domain.Services.Impl;
                                 totalDuration += duration;
                             }
                         }
-                        TimeSpan threshold = new TimeSpan(8, 55, 0);
-                        TimeSpan thresholdAlternative = new TimeSpan(5, 55, 0);
+                        
+                        TimeSpan threshold;
+
                         if (employee.NumberHour == 25)
+                            threshold = new TimeSpan(8, 55, 0);
+                        else if (employee.NumberHour == 35)
+                            threshold = new TimeSpan(7, 55, 0);
+                        else
+                            threshold = new TimeSpan(5, 55, 0);
+                        
+                        
+                        if (totalDuration > threshold && employee.Extraordinary)
                         {
-                            if (totalDuration > thresholdAlternative && employee.Extraordinary)
+                            TimeSpan exceedingDuration = totalDuration - threshold;
+                            int extraHours = (int)exceedingDuration.TotalHours;
+                            
+                            if (exceedingDuration.TotalMinutes > 0)
+                                extraHours += 1;
+                            
+                            if ((int)(exceedingDuration.TotalMinutes % 60) > 55)
+                                extraHours += 1;
+                            
+                            Attendance strAttendance = new Attendance
                             {
-                                TimeSpan exceedingDuration = totalDuration - thresholdAlternative;
-                                int extraHours = (int)exceedingDuration.TotalHours;
-                                if (exceedingDuration.TotalMinutes > 0)
-                                {
-                                    extraHours += 1;
-                                }
+                                EmployeeID = existingAttendance.EmployeeID,
+                            };
+                            
+                            if(extraHours >= 1){
                                 
-                                if ((int)(exceedingDuration.TotalMinutes % 60) > 55)
-                                {
-                                    extraHours += 1;
-                                }
-
-                                existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-extraHours);
-
-                                if (extraHours >= 1)
-                                {
-                                    Attendance strAttendance = new Attendance
-                                    {
-                                        DateIn = existingAttendance.DateOut.Value,
-                                        DateOut = dateIn,
-                                        EmployeeID = existingAttendance.EmployeeID,
-                                        Type = "Supplementare"
-                                    };
-                                    
-                                    _dbContext.Attendances.Add(strAttendance);
-                                }
-                            }
-                        } else if (employee.NumberHour == 40)
-                        {
-                            if (totalDuration > threshold && employee.Extraordinary)
-                            {
-                                TimeSpan exceedingDuration = totalDuration - threshold;
+                                if (existingAttendance.DateOut?.AddHours(-extraHours) > existingAttendance.DateIn)
+                                    existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-extraHours);
+                                else
+                                    existingAttendance.DateOut = existingAttendance.DateIn;
                                 
-                                int extraHours = (int)exceedingDuration.TotalHours;
-                                if (exceedingDuration.TotalMinutes > 0)
-                                {
-                                    extraHours += 1;
-                                }
-                                if (((int)(exceedingDuration.TotalMinutes % 60)) > 55)
-                                {
-                                    extraHours += 1;
-                                }
-
-                                Attendance strAttendance = new Attendance
-                                {
-                                    EmployeeID = existingAttendance.EmployeeID,
-                                };
+                                strAttendance.DateIn = existingAttendance.DateOut.Value;
+                                strAttendance.DateOut = dateIn;
                                 
-                                if(extraHours >= 1){
-                                    if (existingAttendance.DateOut?.AddHours(-extraHours) > existingAttendance.DateIn)
-                                    {
-                                        existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-extraHours);
-                                    }
-                                    else
-                                    {
-                                        existingAttendance.DateOut = existingAttendance.DateIn;
-                                    }
-                                    strAttendance.DateIn = existingAttendance.DateOut.Value;
-                                    strAttendance.DateOut = dateIn;
+                                if (employee.NumberHour == 40)
                                     strAttendance.Type = "StraordinarioOrdinario";
-                                }
+                                else
+                                    strAttendance.Type = "Supplementare";
                                 
                                 _dbContext.Attendances.Add(strAttendance);
                             }
@@ -371,74 +343,47 @@ namespace RemaSoftware.Domain.Services.Impl;
                                     totalDuration += duration;
                                 }
                             }
-                            TimeSpan threshold = new TimeSpan(8, 55, 0);
-                            TimeSpan thresholdAlternative = new TimeSpan(5, 55, 0);
+
+                            TimeSpan threshold;
+
                             if (employee.NumberHour == 25)
+                                threshold = new TimeSpan(8, 55, 0);
+                            else if (employee.NumberHour == 35)
+                                threshold = new TimeSpan(7, 55, 0);
+                            else
+                                threshold = new TimeSpan(5, 55, 0);
+                            
+                            
+                            if (totalDuration > threshold && employee.Extraordinary)
                             {
-                                if (totalDuration > thresholdAlternative && employee.Extraordinary)
+                                TimeSpan exceedingDuration = totalDuration - threshold;
+                                int extraHours = (int)exceedingDuration.TotalHours;
+                                
+                                if (exceedingDuration.TotalMinutes > 0)
+                                    extraHours += 1;
+                                
+                                if ((int)(exceedingDuration.TotalMinutes % 60) > 55)
+                                    extraHours += 1;
+                                
+                                Attendance strAttendance = new Attendance
                                 {
-                                    TimeSpan exceedingDuration = totalDuration - thresholdAlternative;
-                                    int extraHours = (int)exceedingDuration.TotalHours;
-
-                                    if (exceedingDuration.TotalMinutes > 0)
-                                    {
-                                        extraHours += 1;
-                                    }
+                                    EmployeeID = existingAttendance.EmployeeID,
+                                };
+                                
+                                if(extraHours >= 1){
                                     
-                                    if ((int)(exceedingDuration.TotalMinutes % 60) > 55)
-                                    {
-                                        extraHours += 1;
-                                    }
-
-                                    existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-extraHours);
-
-                                    if (extraHours >= 1)
-                                    {
-                                        Attendance strAttendance = new Attendance
-                                        {
-                                            DateIn = existingAttendance.DateOut.Value,
-                                            DateOut = dateIn,
-                                            EmployeeID = existingAttendance.EmployeeID,
-                                            Type = "Supplementare"
-                                        };
-                                        _dbContext.Attendances.Add(strAttendance);
-                                    }
-                                }
-
-                            } else if (employee.NumberHour == 40)//Controllare
-                            {
-                                if (totalDuration > threshold && employee.Extraordinary)
-                                {
-                                    TimeSpan exceedingDuration = totalDuration - threshold;
+                                    if (existingAttendance.DateOut?.AddHours(-extraHours) > existingAttendance.DateIn)
+                                        existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-extraHours);
+                                    else
+                                        existingAttendance.DateOut = existingAttendance.DateIn;
                                     
-                                    int extraHours = (int)exceedingDuration.TotalHours;
-                                    if (exceedingDuration.TotalMinutes > 0)
-                                    {
-                                        extraHours += 1;
-                                    }
-                                    if (((int)(exceedingDuration.TotalMinutes % 60)) > 55)
-                                    {
-                                        extraHours += 1;
-                                    }
-
-                                    Attendance strAttendance = new Attendance
-                                    {
-                                        EmployeeID = existingAttendance.EmployeeID,
-                                    };
+                                    strAttendance.DateIn = existingAttendance.DateOut.Value;
+                                    strAttendance.DateOut = dateIn;
                                     
-                                    if(extraHours >= 1){
-                                        if (existingAttendance.DateOut?.AddHours(-extraHours) > existingAttendance.DateIn)
-                                        {
-                                            existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-extraHours);
-                                        }
-                                        else
-                                        {
-                                            existingAttendance.DateOut = existingAttendance.DateIn;
-                                        }
-                                        strAttendance.DateIn = existingAttendance.DateOut.Value;
-                                        strAttendance.DateOut = dateIn;
+                                    if (employee.NumberHour == 40)
                                         strAttendance.Type = "StraordinarioOrdinario";
-                                    }
+                                    else
+                                        strAttendance.Type = "Supplementare";
                                     
                                     _dbContext.Attendances.Add(strAttendance);
                                 }
@@ -513,7 +458,7 @@ namespace RemaSoftware.Domain.Services.Impl;
             DateTime fromDate = toDate.AddDays(-7);
             
             var attendances = _dbContext.Attendances
-                .Where(a => a.DateIn >= fromDate && a.DateIn <= toDate && a.Type != "Eliminato")
+                .Where(a => a.DateIn >= fromDate && a.DateIn <= toDate)
                 .OrderBy(a => a.DateIn)
                 .ToList() // Esegui la query e ottieni l'elenco di tutte le Attendance corrispondenti ai criteri di filtro
                 .GroupBy(a => a.EmployeeID)
@@ -534,11 +479,13 @@ namespace RemaSoftware.Domain.Services.Impl;
                             DateTime dateIn = date.Date.AddHours(7).AddMinutes(30); // Imposta DateIn a 7:30 del mattino
                             DateTime dateOut = date.Date.AddHours(16).AddMinutes(30); // Imposta DateOut a 16:30
                             DateTime dateOutAlternative = date.Date.AddHours(12).AddMinutes(30);
+                            DateTime dateOutAlternative1 = date.Date.AddHours(14).AddMinutes(30);
 
                             if (employee.NumberHour == 25)
-                            {
                                 dateOut = dateOutAlternative;
-                            }
+                            else if (employee.NumberHour == 35)
+                                dateOut = dateOutAlternative1;
+                            
                             Attendance newAttendance = new Attendance
                             {
                                 DateIn = dateIn,
