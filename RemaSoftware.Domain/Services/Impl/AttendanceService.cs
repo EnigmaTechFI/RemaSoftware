@@ -184,11 +184,11 @@ namespace RemaSoftware.Domain.Services.Impl;
                         TimeSpan threshold;
 
                         if (employee.NumberHour == 25)
-                            threshold = new TimeSpan(5, 55, 0);
+                            threshold = new TimeSpan(5, 50, 0);
                         else if (employee.NumberHour == 35)
-                            threshold = new TimeSpan(7, 55, 0);
+                            threshold = new TimeSpan(7, 50, 0);
                         else
-                            threshold = new TimeSpan(8, 55, 0);
+                            threshold = new TimeSpan(8, 50, 0);
                         
                         
                         if (totalDuration > threshold && employee.Extraordinary)
@@ -199,7 +199,7 @@ namespace RemaSoftware.Domain.Services.Impl;
                             if (exceedingDuration.TotalMinutes > 0)
                                 extraHours += 1;
                             
-                            if ((int)(exceedingDuration.TotalMinutes % 60) > 55)
+                            if ((int)(exceedingDuration.TotalMinutes % 60) > 50)
                                 extraHours += 1;
                             
                             Attendance strAttendance = new Attendance
@@ -347,11 +347,11 @@ namespace RemaSoftware.Domain.Services.Impl;
                             TimeSpan threshold;
 
                             if (employee.NumberHour == 25)
-                                threshold = new TimeSpan(5, 55, 0);
+                                threshold = new TimeSpan(5, 50, 0);
                             else if (employee.NumberHour == 35)
-                                threshold = new TimeSpan(7, 55, 0);
+                                threshold = new TimeSpan(7, 50, 0);
                             else
-                                threshold = new TimeSpan(8, 55, 0);
+                                threshold = new TimeSpan(8, 50, 0);
                             
                             
                             if (totalDuration > threshold && employee.Extraordinary)
@@ -362,7 +362,7 @@ namespace RemaSoftware.Domain.Services.Impl;
                                 if (exceedingDuration.TotalMinutes > 0)
                                     extraHours += 1;
                                 
-                                if ((int)(exceedingDuration.TotalMinutes % 60) > 55)
+                                if ((int)(exceedingDuration.TotalMinutes % 60) > 50)
                                     extraHours += 1;
                                 
                                 Attendance strAttendance = new Attendance

@@ -14,5 +14,8 @@ namespace RemaSoftware.Domain.Models
         public string Description { get; set; }
 
         public virtual List<BatchOperation> BatchOperations { get; set; }
+        
+        public virtual List<Operation> Operations { get; set; }
+
     }
 }

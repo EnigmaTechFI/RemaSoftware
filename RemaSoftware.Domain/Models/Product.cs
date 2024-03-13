@@ -20,5 +20,6 @@ namespace RemaSoftware.Domain.Models
         public string FileName { get; set; }
         public virtual List<Ddt_In> Ddts_In { get; set; }
 
+        public virtual List<Price> Prices { get; set; }
     }
 }

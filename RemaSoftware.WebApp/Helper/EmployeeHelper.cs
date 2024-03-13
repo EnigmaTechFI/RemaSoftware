@@ -151,9 +151,24 @@ public class EmployeeHelper
             employee.Mail = model.Employee.Mail;
         }
 
+        MapEditedEmployee(model.Employee, ref employee);
+        
         await _employeeService.UpdateEmployee(employee);
         
         return "Success";
+    }
+    
+    private void MapEditedEmployee(Employee newEmployee, ref Employee oldEmployee)
+    {
+        oldEmployee.Task = newEmployee.Task;
+        oldEmployee.Extraordinary = newEmployee.Extraordinary;
+        oldEmployee.Level = newEmployee.Level;
+        oldEmployee.NumberHour = newEmployee.NumberHour;
+        oldEmployee.StartRelationship = newEmployee.StartRelationship;
+        oldEmployee.EndRelationship = newEmployee.EndRelationship;
+        oldEmployee.TypePosition = newEmployee.TypePosition;
+        oldEmployee.TypeRelationship = newEmployee.TypeRelationship;
+        oldEmployee.FluidaId = newEmployee.FluidaId;
     }
 
 }

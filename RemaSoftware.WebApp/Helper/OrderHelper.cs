@@ -4,6 +4,7 @@ using RemaSoftware.Domain.Services;
 using RemaSoftware.Domain.Data;
 using RemaSoftware.WebApp.Models.OrderViewModel;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
@@ -711,7 +712,7 @@ namespace RemaSoftware.WebApp.Helper
                     ddt.Code = model.Ddt_In.Code;
                     ddt.Number_Piece_Now = model.Ddt_In.Number_Piece_Now;
                     ddt.Number_Piece = model.Ddt_In.Number_Piece;
-                    ddt.DataOut = model.Ddt_In.DataOut;
+                    ddt.DataOut = DateTime.Parse(model.Date, new CultureInfo("it-IT"));
                     if (model.Ddt_In.NumberMissingPiece > 0 &&
                         ddt.NumberMissingPiece != model.Ddt_In.NumberMissingPiece)
                     {
