@@ -107,6 +107,5 @@ namespace RemaSoftware.WebApp.Controllers
                 return View(model);
             }
         }
-
     }
 }

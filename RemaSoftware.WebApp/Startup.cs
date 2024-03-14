@@ -124,6 +124,7 @@ namespace RemaSoftware.WebApp
             services.AddTransient<IEmployeeService, EmployeeService>();
             services.AddTransient<IAttendanceService, AttendanceService>();
             services.AddTransient<IMachineService, MachineService>();
+            services.AddTransient<IPriceService, PriceService>();
 
             services.AddTransient<PdfHelper>();
             services.AddTransient<SupplierHelper>();
@@ -141,11 +142,13 @@ namespace RemaSoftware.WebApp
             services.AddTransient<GuestHelper>();
             services.AddTransient<AttendanceHelper>();
             services.AddTransient<EmployeeHelper>();
+            services.AddTransient<PriceHelper>();
             services.AddTransient<OrderValidation>();
             services.AddTransient<ProductValidation>();
             services.AddTransient<OperationValidation>();
             services.AddTransient<StockValidation>();
             services.AddTransient<EmployeeValidation>();
+            services.AddTransient<PriceValidation>();
 
             
             services.AddScoped<RemaSoftware.UtilityServices.Implementation.EmailService>();

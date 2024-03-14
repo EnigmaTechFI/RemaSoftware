@@ -74,7 +74,6 @@ namespace RemaSoftware.WebApp.Helper
             if(validation != "")
                 throw new Exception(validation);
             return _productService.AddProduct(model.Product);
-
         }
 
         public List<Product> GetAllProducts()

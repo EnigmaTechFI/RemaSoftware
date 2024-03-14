@@ -112,6 +112,12 @@
                     <span>Operazioni</span>
                 </a>
             </li>
+            <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Price" ? "active" : "")">
+                <a class="nav-link" asp-action="PriceList" asp-controller="Price">
+                    <i class="fas fa-tag"></i>
+                    <span>Prezzi</span>
+                </a>
+            </li>
         }
         @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente) || User.IsInRole(Roles.COQ) || User.IsInRole((Roles.Cliente)))
         {

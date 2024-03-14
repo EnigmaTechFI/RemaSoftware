@@ -1,0 +1,125 @@
+@model RemaSoftware.WebApp.Models.PriceViewModel.PriceViewModel
+
+@{
+    ViewData["Title"] = "Prezzo";
+}
+
+<link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
+
+<h4 class="m-0 font-weight-bold text-primary mb-3">Informazioni prezzo</h4>
+<div class="row mb-5" style="height: 150px;">
+    <div class="col-xl-3 col-md-3">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Descrizione</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Price.Description</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-info fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-3">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Prezzo</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Price.PriceVal</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-eur fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-3">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Codice prodotto</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Price.Product.SKU</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-barcode fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-3">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Operazione</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Price.Operation.Name</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-barcode fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row mb-5" style="height: 150px;">
+    <div class="col-xl-4 col-md-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Data di creazione</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Price.CreationDate</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-hashtag fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4 col-md-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Note</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Price.Note</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-hashtag fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4 col-md-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Codice BC</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Price.CodeBC</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-hashtag fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

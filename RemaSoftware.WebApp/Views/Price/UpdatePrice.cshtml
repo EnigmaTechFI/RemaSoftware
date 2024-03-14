@@ -1,0 +1,92 @@
+﻿@model RemaSoftware.WebApp.Models.PriceViewModel.NewPriceViewModel
+
+@{
+    ViewData["Title"] = "Modifica Prezzo";
+}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Modifica Prezzo</h1>
+</div>
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Nuovo Prezzo</h6>
+    </div>
+    <div class="card-body">
+        <form method="post" class="needs-validation">
+            @Html.HiddenFor(model => model.Price.PriceID)
+            @Html.HiddenFor(model => model.Price.OperationID)
+            @Html.HiddenFor(model => model.Price.ProductID)
+            <div class="form-row">
+                <div class="col-md-6 mb-3">
+                    <label for="validationTooltip01">Descrizione*</label>
+                    <input asp-for="Price.Description" type="text" class="form-control" id="validationTooltip01" placeholder="Nome" required>
+                    <span asp-validation-for="Price.Description" class="text-danger"></span>
+                    <div class="valid-tooltip">
+                        Looks good!
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="validationTooltip01">Prezzo*</label>
+                    <div class="form-group">
+                        <div class="input-group-append">
+                            <input min="0" for="validationTooltip01" asp-for="PriceVal" type="text" class="form-control" id="priceUnit" placeholder="Prezzo" required>
+                            <span class="input-group-text">€</span>
+                        </div>
+                    </div>
+                    <span asp-validation-for="Price.PriceVal" class="text-danger"></span>
+                    <div class="valid-tooltip">
+                        Looks good!
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-6 mb-3">
+                    <label >Note</label>
+                    <textarea asp-for="Price.Note" class="form-control" id="desc" rows="3"></textarea>
+                    <span asp-validation-for="Price.Note" class="text-danger"></span>
+                    <div class="valid-tooltip">
+                        Looks good!
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="validationTooltip04">Codice BC</label>
+                    <input asp-for="Price.CodeBC" type="text" class="form-control" id="validationTooltip04">
+                    <span asp-validation-for="Price.CodeBC" class="text-danger"></span>
+                    <div class="valid-tooltip">
+                        Looks good!
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-primary" type="submit" onclick="clickEvent()">Aggiungi</button>
+        </form>
+    </div>
+</div>
+
+<div class="loader-cont">
+    <div class="spinner-grow" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+
+<script>
+
+    var clicked = false;
+
+    function clickEvent() {
+    $(".loader-cont").show()
+    if(!clicked)
+    {
+        clicked = true;
+        setTimeout(function(){
+            clicked = false;
+        }, 1500);
+    }
+    }
+    
+    $('#priceUnit').keypress(function (e) {
+        if (e.which == 46) {
+            e.preventDefault();
+        }
+    });
+</script>
+

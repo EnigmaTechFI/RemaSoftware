@@ -12,6 +12,7 @@ namespace RemaSoftware.Domain.Data
         public DbSet<Client> Clients { get; set; }
         public DbSet<UserClient> UserClients { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<Price> Prices { get; set; }
         public DbSet<Ddt_In> Ddts_In { get; set; }
         public DbSet<Ddt_Out> Ddts_Out { get; set; }
         public DbSet<Ddt_Association> Ddt_Associations { get; set; }
@@ -41,6 +42,7 @@ namespace RemaSoftware.Domain.Data
             modelBuilder.Entity<Ddt_Supplier>().HasKey(a => a.Ddt_Supplier_ID);
             modelBuilder.Entity<Ddt_Association>().HasKey(s => s.ID );
             modelBuilder.Entity<Ddt_In>().Property(x => x.Price_Uni).HasPrecision(16, 3);
+            modelBuilder.Entity<Price>().Property(x => x.PriceVal).HasPrecision(16, 3);
             modelBuilder.Entity<Ddt_In>().Property(x => x.PendingPrice).HasPrecision(16, 3);
             modelBuilder.Entity<Ddt_Association>().HasOne(a => a.Ddt_In).WithMany(a => a.Ddt_Associations).HasForeignKey(s => s.Ddt_In_ID).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<Ddt_Association>().HasOne(a => a.Ddt_Out).WithMany(a => a.Ddt_Associations).HasForeignKey(s => s.Ddt_Out_ID).OnDelete(DeleteBehavior.NoAction);

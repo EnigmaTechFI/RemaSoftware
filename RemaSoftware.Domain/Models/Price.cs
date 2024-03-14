@@ -7,7 +7,6 @@ namespace RemaSoftware.Domain.Models
         public int PriceID { get; set; }
         
         public int ProductID {get; set; }
-        
         public Product Product { get; set; }
 
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]
@@ -18,11 +17,8 @@ namespace RemaSoftware.Domain.Models
         public string Note { get; set; }
         
         public DateTime CreationDate { get; set; }
-        
         public decimal PriceVal { get; set; }
-        
         public int OperationID {get; set; }
-        
         public Operation Operation{ get; set; }
 
     }
