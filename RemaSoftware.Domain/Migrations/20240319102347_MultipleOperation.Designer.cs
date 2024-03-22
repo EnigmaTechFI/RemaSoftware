@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RemaSoftware.Domain.Data;
 
@@ -11,9 +12,10 @@ using RemaSoftware.Domain.Data;
 namespace RemaSoftware.Domain.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240319102347_MultipleOperation")]
+    partial class MultipleOperation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -800,12 +802,7 @@ namespace RemaSoftware.Domain.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int?>("PriceID")
-                        .HasColumnType("int");
-
                     b.HasKey("OperationID");
-
-                    b.HasIndex("PriceID");
 
                     b.ToTable("Operations");
                 });
@@ -890,6 +887,9 @@ namespace RemaSoftware.Domain.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("Operation_ID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Id")
                         .HasColumnType("int");
 
                     b.Property<int?>("OperationID")
@@ -1315,13 +1315,6 @@ namespace RemaSoftware.Domain.Migrations
                     b.Navigation("Ddt_Supplier");
                 });
 
-            modelBuilder.Entity("RemaSoftware.Domain.Models.Operation", b =>
-                {
-                    b.HasOne("RemaSoftware.Domain.Models.Price", null)
-                        .WithMany("Price_Operation")
-                        .HasForeignKey("PriceID");
-                });
-
             modelBuilder.Entity("RemaSoftware.Domain.Models.OperationTimeline", b =>
                 {
                     b.HasOne("RemaSoftware.Domain.Models.BatchOperation", "BatchOperation")
@@ -1359,7 +1352,7 @@ namespace RemaSoftware.Domain.Migrations
                         .HasForeignKey("OperationID");
 
                     b.HasOne("RemaSoftware.Domain.Models.Price", "Price")
-                        .WithMany()
+                        .WithMany("Price_Operation")
                         .HasForeignKey("PriceID");
 
                     b.Navigation("Operation");

@@ -47,20 +47,25 @@ namespace RemaSoftware.WebApp.Helper
         
         public Task<Price> NewPrice(NewPriceViewModel model)
         {
-            var price = _priceService.GetAllPrices();
+            var prices = _priceService.GetAllPrices();
 
-            var existingPrice = price.FirstOrDefault(p => p.OperationID == model.Price.OperationID && p.ProductID == model.Price.ProductID);
+            var modelOperationIDs = model.Price.Price_Operation.Select(po => po.OperationID);
+
+            var existingPrice = prices.FirstOrDefault(p =>
+                p.Price_Operation.Any(po => modelOperationIDs.Contains(po.OperationID)) &&
+                p.ProductID == model.Price.ProductID);
+            
             if (existingPrice != null)
             {
                 throw new Exception("Prezzo già registrato.");
             }
             
+            model.Price.PriceVal = Decimal.Parse(model.PriceVal, new CultureInfo("it-IT")); 
+            model.Price.CreationDate = DateTime.Now;
+            
             var validation = _priceValidation.ValidatePrice(model.Price);
             if(validation != "")
                 throw new Exception(validation);
-
-            model.Price.PriceVal = Decimal.Parse(model.PriceVal, new CultureInfo("it-IT")); 
-            model.Price.CreationDate = DateTime.Now;
             
             return Task.FromResult(_priceService.NewPrice(model.Price));
         }

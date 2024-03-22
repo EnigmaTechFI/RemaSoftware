@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
@@ -7,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using RemaSoftware.WebApp.Helper;
 using Microsoft.Extensions.Configuration;
 using RemaSoftware.Domain.Constants;
-using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
 using RemaSoftware.WebApp.Models.PriceViewModel;
 
@@ -54,6 +55,14 @@ namespace RemaSoftware.WebApp.Controllers
         {
             try
             {
+                model.Operations = _operationService.GetAllOperations();
+                
+                List<int> selectedOperationIDs = model.SelectedOperationIDs.Split(',')
+                    .Select(int.Parse)
+                    .ToList();
+
+                model.Price.Price_Operation = model.Operations.Where(op => selectedOperationIDs.Contains(op.OperationID)).ToList();
+                
                 var price = await _priceHelper.NewPrice(model);
                 _notyfToastService.Success("Prezzo aggiunto correttamente");
                 return RedirectToAction("PriceList", "Price");

@@ -31,12 +31,18 @@ namespace RemaSoftware.Domain.Services.Impl;
             
             newInDateTime = new DateTime(attendance.DateIn.Date.Year, attendance.DateIn.Date.Month, attendance.DateIn.Date.Day, newInDateTime.Hour == 0 ? attendance.DateIn.Hour : newInDateTime.Hour, newInDateTime.Minute == 0 ? attendance.DateIn.Minute : newInDateTime.Minute, newInDateTime.Second);
             
-            newOutDateTime = new DateTime(attendance.DateIn.Year, attendance.DateIn.Month, attendance.DateIn.Day, (int)(newOutDateTime.Hour == 0 ? attendance.DateOut?.Hour : newOutDateTime.Hour), (int)(newOutDateTime.Minute == 0 ? attendance.DateOut?.Minute : newOutDateTime.Minute), newOutDateTime.Second);
-                
+            if (newOutDateTime.Date != DateTime.MinValue){
+                newOutDateTime = new DateTime(attendance.DateIn.Year, attendance.DateIn.Month, attendance.DateIn.Day, (int)(newOutDateTime.Hour), (int)(newOutDateTime.Minute), newOutDateTime.Second);
+            }
+            else
+            {
+                newOutDateTime = new DateTime(attendance.DateOut.Value.Year, attendance.DateOut.Value.Month, attendance.DateOut.Value.Day, attendance.DateOut.Value.Hour, attendance.DateOut.Value.Minute, newOutDateTime.Second);
+            }
+            
             if (attendance != null)
             {
                 
-                if (newInDateTime.Date == newOutDateTime.Date && newOutDateTime.TimeOfDay < newInDateTime.TimeOfDay)
+                if (newInDateTime.Date == newOutDateTime.Date && newOutDateTime.TimeOfDay < newInDateTime.TimeOfDay && newOutDateTime.Date != DateTime.MinValue)
                 {
                     newOutDateTime = newOutDateTime.AddDays(1);
                 }

@@ -18,8 +18,6 @@ namespace RemaSoftware.Domain.Models
         
         public DateTime CreationDate { get; set; }
         public decimal PriceVal { get; set; }
-        public int OperationID {get; set; }
-        public Operation Operation{ get; set; }
-
+        public virtual List<Operation> Price_Operation { get; set; }
     }
 }

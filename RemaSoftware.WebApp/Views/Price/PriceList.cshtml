@@ -31,7 +31,11 @@
                     <tr id="price-@price.PriceID">
                         <td>@price.Description</td>
                         <td>@price.Product.SKU</td>
-                        <td>@price.Operation.Name</td>
+                        <td>@foreach (var operation in price.Price_Operation)
+                            {
+                                operation.Name.ToString();
+                            }
+                        </td>
                         <td>@price.PriceVal</td>
                         <td class="text-center">
                             <a style="text-decoration: none" asp-action="UpdatePrice" asp-controller="Price" asp-route-priceId="@price.PriceID">
