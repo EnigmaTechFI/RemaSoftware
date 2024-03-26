@@ -45,86 +45,14 @@
                         @Html.DropDownListFor(model => model.Price.ProductID, new SelectList(Model.Products, "ProductID", "SKU"), "-- Seleziona Prodotto --", new { @class = "form-control" })
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>Seleziona Operazioni*</label>
-                            <select id="operationSelect" class="form-control" multiple="multiple">
-                                @foreach (var operation in Model.Operations)
-                                {
-                                    <option value="@operation.OperationID">@operation.Name</option>
-                                }
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>Operazioni Selezionate</label>
-                            <select id="selectedOperations" class="form-control" multiple="multiple">
-                            </select>
-                        </div>
+                <div class="col-md-6 mb-3">
+                    <label for="validationTooltip04">Codice BC</label>
+                    <input asp-for="Price.CodeBC" type="text" class="form-control" id="validationTooltip04">
+                    <span asp-validation-for="Price.CodeBC" class="text-danger"></span>
+                    <div class="valid-tooltip">
+                        Looks good!
                     </div>
                 </div>
-
-                <script>
-                   document.addEventListener("DOMContentLoaded", function () {
-                       var operationSelect = document.getElementById("operationSelect");
-                       var selectedOperations = document.getElementById("selectedOperations");
-                       var selectedOperationIDsInput = document.getElementById("SelectedOperationIDs");
-                       
-                       operationSelect.addEventListener("click", function (event) {
-                           var clickedOption = event.target;
-                           if (clickedOption.tagName === "OPTION") {
-                               var optionAlreadySelected = Array.from(selectedOperations.options).find(function (option) {
-                                   return option.value === clickedOption.value;
-                               });
-                   
-                               if (clickedOption.selected && !optionAlreadySelected) {
-                                   var clonedOption = clickedOption.cloneNode(true);
-                                   selectedOperations.appendChild(clonedOption);
-                               } else if (!clickedOption.selected && optionAlreadySelected) {
-                                   selectedOperations.removeChild(optionAlreadySelected);
-                               }
-                               
-                               updateSelectedOperationIDs();
-                           }
-                       });
-                   
-                       selectedOperations.addEventListener("click", function (event) {
-                           var clickedOption = event.target;
-                           if (clickedOption.tagName === "OPTION") {
-                               var optionToDeselect = Array.from(operationSelect.options).find(function (option) {
-                                   return option.value === clickedOption.value;
-                               });
-                   
-                               if (optionToDeselect) {
-                                   optionToDeselect.selected = false;
-                               }
-                               selectedOperations.removeChild(clickedOption);
-                               
-                               updateSelectedOperationIDs();
-                           }
-                       });
-                   
-                        function updateSelectedOperationIDs() {
-                            var selectedIDs = Array.from(selectedOperations.options).map(function(option) {
-                                return option.value;
-                            });
-                            document.getElementById("SelectedOperationIDs").value = JSON.stringify(selectedIDs);
-                            var t = JSON.stringify(selectedIDs);
-                                                       
-                           var selectedOperationIDs = selectedIDs;
-                           
-                           // Converti l'array in una stringa separata da virgole
-                           var selectedOperationIDsString = selectedOperationIDs.join(',');
-                           
-                           // Imposta il valore dell'input nascosto con la stringa dei ID delle operazioni selezionate
-                           selectedOperationIDsInput.value = selectedOperationIDsString;
-                        }
-                   });
-               </script>
-
-
             </div>
             <div class="form-row">
                 <div class="col-md-6 mb-3">
@@ -135,15 +63,85 @@
                         Looks good!
                     </div>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label for="validationTooltip04">Codice BC</label>
-                    <input asp-for="Price.CodeBC" type="text" class="form-control" id="validationTooltip04">
-                    <span asp-validation-for="Price.CodeBC" class="text-danger"></span>
-                    <div class="valid-tooltip">
-                        Looks good!
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Seleziona Operazioni*</label>
+                        <select id="operationSelect" class="form-control" multiple="multiple">
+                            @foreach (var operation in Model.Operations)
+                            {
+                                if (operation.Name != "Controllo Qualità" && operation.Name != "Extra")
+                                {
+                                    <option value="@operation.OperationID">@operation.Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Operazioni Selezionate</label>
+                        <select id="selectedOperations" class="form-control" multiple="multiple">
+                        </select>
                     </div>
                 </div>
             </div>
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    var operationSelect = document.getElementById("operationSelect");
+                    var selectedOperations = document.getElementById("selectedOperations");
+                    var selectedOperationIDsInput = document.getElementById("SelectedOperationIDs");
+                    
+                    operationSelect.addEventListener("click", function (event) {
+                        var clickedOption = event.target;
+                        if (clickedOption.tagName === "OPTION") {
+                            var optionAlreadySelected = Array.from(selectedOperations.options).find(function (option) {
+                                return option.value === clickedOption.value;
+                            });
+                
+                            if (clickedOption.selected && !optionAlreadySelected) {
+                                var clonedOption = clickedOption.cloneNode(true);
+                                selectedOperations.appendChild(clonedOption);
+                            } else if (!clickedOption.selected && optionAlreadySelected) {
+                                selectedOperations.removeChild(optionAlreadySelected);
+                            }
+                            
+                            updateSelectedOperationIDs();
+                        }
+                    });
+                
+                    selectedOperations.addEventListener("click", function (event) {
+                        var clickedOption = event.target;
+                        if (clickedOption.tagName === "OPTION") {
+                            var optionToDeselect = Array.from(operationSelect.options).find(function (option) {
+                                return option.value === clickedOption.value;
+                            });
+                
+                            if (optionToDeselect) {
+                                optionToDeselect.selected = false;
+                            }
+                            selectedOperations.removeChild(clickedOption);
+                            
+                            updateSelectedOperationIDs();
+                        }
+                    });
+                
+                     function updateSelectedOperationIDs() {
+                         var selectedIDs = Array.from(selectedOperations.options).map(function(option) {
+                             return option.value;
+                         });
+                         document.getElementById("SelectedOperationIDs").value = JSON.stringify(selectedIDs);
+                         var t = JSON.stringify(selectedIDs);
+                                                    
+                        var selectedOperationIDs = selectedIDs;
+                        
+                        // Converti l'array in una stringa separata da virgole
+                        var selectedOperationIDsString = selectedOperationIDs.join(',');
+                        
+                        // Imposta il valore dell'input nascosto con la stringa dei ID delle operazioni selezionate
+                        selectedOperationIDsInput.value = selectedOperationIDsString;
+                     }
+                });
+            </script>
             <button class="btn btn-primary" type="submit" onclick="clickEvent()">Aggiungi</button>
         </form>
     </div>

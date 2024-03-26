@@ -45,8 +45,8 @@ namespace RemaSoftware.WebApp.Controllers
         {
             var vm = new NewPriceViewModel
             {
-                Products = _productHelper.GetAllProducts(),
-                Operations = _operationService.GetAllOperations()
+                Products = _productHelper.GetAllProducts().OrderBy(r => r.SKU).ToList(),
+                Operations = _operationService.GetAllOperations().OrderBy(t => t.Name.ToString()).ToList()
             };
 
             return View(vm);
