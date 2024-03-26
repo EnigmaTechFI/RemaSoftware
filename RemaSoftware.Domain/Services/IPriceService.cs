@@ -9,6 +9,9 @@ namespace RemaSoftware.Domain.Services
         public Price NewPrice(Price price);
         
         public Price GetPriceById(int Id);
+        
+        public Price GetPriceAndPriceOperation(int Id);
+
         public string DeletePrice(Price price);
         
         public Price UpdatePrice(Price price);

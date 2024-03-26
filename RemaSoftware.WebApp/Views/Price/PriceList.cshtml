@@ -20,7 +20,7 @@
                     <tr>
                         <th>Nome</th>
                         <th>Prodotto</th>
-                        <th>Operazione</th>
+                        <th>Operazioni associate</th>
                         <th>Prezzo</th>
                         <th>Azioni</th>
                     </tr>
@@ -31,9 +31,10 @@
                     <tr id="price-@price.PriceID">
                         <td>@price.Description</td>
                         <td>@price.Product.SKU</td>
-                        <td>@foreach (var operation in price.Price_Operation)
+                        <td>
+                            @foreach (var operation in price.PriceOperation)
                             {
-                                operation.Name.ToString();
+                                <span>@operation.Operation.Name</span><br/>
                             }
                         </td>
                         <td>@price.PriceVal</td>

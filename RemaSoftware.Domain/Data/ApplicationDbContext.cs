@@ -31,14 +31,14 @@ namespace RemaSoftware.Domain.Data
         public DbSet<Employee> Employees {get; set; }
         public DbSet<Attendance> Attendances {get; set; }
         
-        public DbSet<Price_Operation> PriceOperations {get; set; }
+        public DbSet<PriceOperation> PriceOperations {get; set; }
 
 
         #region Required
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UserClient>().HasKey(a => new { a.MyUserID, a.ClientID });
-            modelBuilder.Entity<Price_Operation>().HasKey(a => new { a.Price_ID, a.Operation_ID });
+            modelBuilder.Entity<PriceOperation>().HasKey(a => new { PriceID = a.PriceID, OperationID = a.OperationID });
             modelBuilder.Entity<Ddt_In>().HasKey(a => a.Ddt_In_ID);
             modelBuilder.Entity<Ddt_Out>().HasKey(a => a.Ddt_Out_ID);
             modelBuilder.Entity<Ddt_Template>().HasKey(a => a.Ddt_Template_ID);

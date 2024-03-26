@@ -7,8 +7,8 @@
 <link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
 
 <h4 class="m-0 font-weight-bold text-primary mb-3">Informazioni prezzo</h4>
-<div class="row mb-5" style="height: 150px;">
-    <div class="col-xl-3 col-md-3">
+<div class="row mb-3" style="height: 150px;">
+    <div class="col-xl-4 col-md-4">
         <div class="card border-left-primary shadow h-100 py-2">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
@@ -24,7 +24,7 @@
             </div>
         </div>
     </div>
-    <div class="col-xl-3 col-md-3">
+    <div class="col-xl-2 col-md-2">
         <div class="card border-left-primary shadow h-100 py-2">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
@@ -40,48 +40,14 @@
             </div>
         </div>
     </div>
-    <div class="col-xl-3 col-md-3">
+    <div class="col-xl-2 col-md-2">
         <div class="card border-left-primary shadow h-100 py-2">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            Codice prodotto</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Price.Product.SKU</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-barcode fa-2x text-gray-300"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-md-3">
-        <div class="card border-left-primary shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            Operazione</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">Qui le operazioni</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-barcode fa-2x text-gray-300"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row mb-5" style="height: 150px;">
-    <div class="col-xl-4 col-md-4">
-        <div class="card border-left-primary shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            Data di creazione</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Price.CreationDate</div>
+                            Data ultima modifica</div>
+                        <div class="h6 mb-0 font-weight-bold text-gray-800">@Model.Price.CreationDate</div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-hashtag fa-2x text-gray-300"></i>
@@ -90,14 +56,14 @@
             </div>
         </div>
     </div>
-    <div class="col-xl-4 col-md-4">
+    <div class="col-xl-2 col-md-2">
         <div class="card border-left-primary shadow h-100 py-2">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                             Note</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Price.Note</div>
+                        <div class="h6 mb-0 font-weight-bold text-gray-800">@Model.Price.Note</div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-hashtag fa-2x text-gray-300"></i>
@@ -106,7 +72,7 @@
             </div>
         </div>
     </div>
-    <div class="col-xl-4 col-md-4">
+    <div class="col-xl-2 col-md-2">
         <div class="card border-left-primary shadow h-100 py-2">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
@@ -123,3 +89,51 @@
         </div>
     </div>
 </div>
+<div class="row mb-3" style="height: 120px;">
+    <div class="col-xl-12 col-md-12">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Codice prodotto</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Price.Product.SKU</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-barcode fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xl-12 col-md-12">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Operazione
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            @foreach (var operation in @Model.Price.PriceOperation)
+                            {
+                                <span>@operation.Operation.Name</span><br/>
+                            }
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-barcode fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    #wrapper #content-wrapper {
+        overflow-x: visible !important;
+    }
+</style>

@@ -11,7 +11,7 @@ namespace RemaSoftware.WebApp.Validation
 
             if (string.IsNullOrEmpty(price.ProductID.ToString()))
                 throw new Exception("Inserire prodotto.");
-            if (string.IsNullOrEmpty(price.Price_Operation[0]?.ToString()))
+            if (string.IsNullOrEmpty(price.PriceOperation[0]?.ToString()))
                 throw new Exception("Inserire almeno una operazione.");
             if (string.IsNullOrEmpty(price.Description))
                 throw new Exception("Inserire descrizione.");

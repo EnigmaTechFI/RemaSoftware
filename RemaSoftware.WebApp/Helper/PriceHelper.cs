@@ -48,11 +48,11 @@ namespace RemaSoftware.WebApp.Helper
         public Task<Price> NewPrice(NewPriceViewModel model)
         {
             var prices = _priceService.GetAllPrices();
-
-            var modelOperationIDs = model.Price.Price_Operation.Select(po => po.OperationID);
+            
+            var modelOperationIDs = model.Price.PriceOperation.Select(po => po.OperationID);
 
             var existingPrice = prices.FirstOrDefault(p =>
-                p.Price_Operation.Any(po => modelOperationIDs.Contains(po.OperationID)) &&
+                p.PriceOperation.Select(po => po.OperationID).OrderBy(id => id).SequenceEqual(modelOperationIDs.OrderBy(id => id)) &&
                 p.ProductID == model.Price.ProductID);
             
             if (existingPrice != null)
@@ -79,7 +79,7 @@ namespace RemaSoftware.WebApp.Helper
         {
             try
             {
-                var price = _priceService.GetPriceById(Id);
+                var price = _priceService.GetPriceAndPriceOperation(Id);
                 return _priceService.DeletePrice(price);
             }
             catch(Exception e)
@@ -92,9 +92,8 @@ namespace RemaSoftware.WebApp.Helper
         {
             try
             {
-                var validation = _priceValidation.ValidatePrice(model.Price);
-                if(validation != "")
-                    throw new Exception(validation);
+                if(model.Price.PriceVal == null || model.Price.Description == "")
+                    throw new Exception("Impossibile effettuare la modifica");
                 
                 model.Price.PriceVal = Decimal.Parse(model.PriceVal, new CultureInfo("it-IT")); 
                 model.Price.CreationDate = DateTime.Now;
