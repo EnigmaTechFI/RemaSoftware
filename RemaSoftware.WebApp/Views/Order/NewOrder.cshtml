@@ -22,33 +22,37 @@
                     </label>
                 </div>
             </div>
-            @if(Model.Products.Count != 0)
-            {
-                <div class="form-group">
-                    <label for="formGroupExampleInput">Seleziona prodotto</label>
-                    <select asp-for="Ddt_In.ProductID" class="form-control">
-                        @foreach (var item in Model.Products)
-                        {
-                            <option value="@item.ProductID">@item.SKU - @item.Name</option>
-                        }
-                    </select>
+            <div class="row">
+                @if(Model.Products.Count != 0)
+                {
+                    <div class="form-group col-6">
+                        <label for="formGroupExampleInput">Seleziona prodotto</label>
+                        <select asp-for="Ddt_In.ProductID" id="ProductID" class="form-control">
+                            @foreach (var item in Model.Products)
+                            {
+                                <option value="@item.ProductID">@item.SKU - @item.Name</option>
+                            }
+                        </select>
+                    </div>
+                }
+                else
+                {
+                    @Html.HiddenFor(model => model.Ddt_In.ProductID)
+                }
+                <div class="form-group col-6">
+                    <label for="formGroupExampleInput">Codice DDT</label>
+                    <input asp-for="Ddt_In.Code" type="text" class="form-control" id="DDT_cod" placeholder="Codice DDT">
                 </div>
-            }
-            else
-            {
-                @Html.HiddenFor(model => model.Ddt_In.ProductID)
-            }
-            <div class="form-group">
-                <label for="formGroupExampleInput">Codice DDT</label>
-                <input asp-for="Ddt_In.Code" type="text" class="form-control" id="DDT_cod" placeholder="Codice DDT">
             </div>
-            <div class="form-group">
-                <label for="formGroupExampleInput">Numero di pezzi</label>
-                <input min="0" asp-for="Ddt_In.Number_Piece" type="number" class="form-control" id="formGroupExampleInput" placeholder="Numero di pezzi">
-            </div>
-            <div class="form-group">
-                <label for="formGroupExampleInput">Numero di pezzi mancanti</label>
-                <input min="0" asp-for="Ddt_In.NumberMissingPiece" type="number" class="form-control" id="formGroupExampleInput" placeholder="Numero di pezzi">
+            <div class="row">
+                <div class="col-6 form-group">
+                    <label for="formGroupExampleInput">Numero di pezzi</label>
+                    <input min="0" asp-for="Ddt_In.Number_Piece" type="number" class="form-control" id="formGroupExampleInput" placeholder="Numero di pezzi">
+                </div>
+                <div class="col-6 form-group">
+                    <label for="formGroupExampleInput">Numero di pezzi mancanti</label>
+                    <input min="0" asp-for="Ddt_In.NumberMissingPiece" type="number" class="form-control" id="formGroupExampleInput" placeholder="Numero di pezzi">
+                </div>
             </div>
             <div class="form-group">
                 <div class="form-check">
@@ -58,39 +62,36 @@
                     </label>
                 </div>
             </div>
-            <div class="form-group">
-                <label for="validationTooltip04">Prezzo Unitario (IVA Esclusa) *</label>
-                <div class="input-group-append">
-                    <input min="0" asp-for="Price" value="0,000" type="text" class="form-control" id="priceUnit" placeholder="Prezzo Unitario">
-                    <span class="input-group-text">€</span>
+            <div class="row">
+                <div class="col-6 form-group">
+                    <label>Seleziona data di consegna</label>
+                    <div class='input-group date'>
+                        <input placeholder="Seleziona data di consegna" type='text' class="form-control bg-white" id='datetimepicker1' asp-for="Date" />
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-6 form-group">
+                    <label for="formGroupExampleInput">Seleziona priorità</label>
+                    <select asp-for="Ddt_In.Priority" class="form-control">
+                      <option value="0">Minore</option>
+                      <option selected="selected" value="1">Normale</option>
+                      <option value="2">Maggiore</option>
+                      <option value="3">Critica</option>
+                      <option value="4">Bloccante</option>
+                    </select>
                 </div>
             </div>
-            <div class="form-group">
-                <label>Seleziona data di consegna</label>
-                <div class='input-group date'>
-                    <input placeholder="Seleziona data di consegna" type='text' class="form-control bg-white" id='datetimepicker1' asp-for="Date" />
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
+            <div class="row">
+                <div class="col-6 form-group">
+                    <label for="desc">Descrizione</label>
+                    <textarea asp-for="Ddt_In.Description" class="form-control" id="desc" rows="3"></textarea>
                 </div>
-            </div>
-            <div class="form-group">
-                <label for="formGroupExampleInput">Seleziona priorità</label>
-                <select asp-for="Ddt_In.Priority" class="form-control">
-                  <option value="0">Minore</option>
-                  <option selected="selected" value="1">Normale</option>
-                  <option value="2">Maggiore</option>
-                  <option value="3">Critica</option>
-                  <option value="4">Bloccante</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="desc">Descrizione</label>
-                <textarea asp-for="Ddt_In.Description" class="form-control" id="desc" rows="3"></textarea>
-            </div>
-            <div class="form-group">
-                <label for="note">Note</label>
-                <textarea asp-for="Ddt_In.Note" class="form-control" id="note" rows="3"></textarea>
+                <div class="col-6 form-group">
+                    <label for="note">Note</label>
+                    <textarea asp-for="Ddt_In.Note" class="form-control" id="note" rows="3"></textarea>
+                </div>
             </div>
             <div class="form-group">
                 <label>Seleziona operazioni:</label>
@@ -98,6 +99,13 @@
                     model=>model.OperationsSelected,
                     Model.Operations, 
                     new {multiple="multiple", @class=" form-control select2-operations", id="OperationsSelected", name="OperationsSelected[]", style="width:100%;"})
+            </div>
+            <div class="form-group">
+                <label for="validationTooltip04">Prezzo Unitario (IVA Esclusa) *</label>
+                <div class="input-group-append">
+                    <input min="0" asp-for="Price" value="0,000" type="text" class="form-control" id="priceUnit" placeholder="Prezzo Unitario">
+                    <span class="input-group-text">€</span>
+                </div>
             </div>
             
             <div style="width:100px; margin-top:50px;">
@@ -171,6 +179,41 @@
                     }
             }
 
+        });
+    </script>
+    
+    <script>
+        $(document).ready(function () {
+            // Funzione per aggiornare i prezzi quando cambia il prodotto o le operazioni selezionate
+            var selectedPrice = null;
+            function updatePrices() {
+                var productId = $("#ProductID").val();
+                 var operationIds = ($("#OperationsSelected").val() || []).map(function(operation) {
+                        return operation.split('-')[0]; // Prendi solo la parte prima del trattino
+                    });
+                // Pulisci la lista dei prezzi
+                $("#Prices").empty();
+    
+                // Recupera i prezzi associati al prodotto e alle operazioni selezionate
+                 var prices = @Html.Raw(Json.Serialize(Model.Prices));
+    
+                 for (var i = 0; i < prices.length; i++) {
+                     var price = prices[i];
+                     if (price.product.productID.toString() === productId) {
+                         var operationId = price.priceOperation[0].operation.operationID.toString();
+                         if (operationIds.includes(operationId)) {
+                             selectedPrice = price.priceVal;
+                         }
+                     }
+                 }
+                 $("#priceUnit").val(selectedPrice);
+            }
+    
+            $("#ProductID").change(updatePrices);
+    
+            $("#OperationsSelected").change(updatePrices);
+    
+            updatePrices();
         });
     </script>
 }

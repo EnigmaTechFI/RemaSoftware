@@ -30,6 +30,7 @@ namespace RemaSoftware.WebApp.Controllers
         private readonly IOperationService _operationService;
         private readonly IConfiguration _configuration;
         private readonly OrderHelper _orderHelper;
+        private readonly PriceHelper _priceHelper;
         private readonly OrderValidation _orderValidation;
         private readonly IProductService _productService;
         private readonly ISubBatchService _subBatchService;
@@ -37,7 +38,7 @@ namespace RemaSoftware.WebApp.Controllers
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public OrderController(IOrderService orderService, IClientService clientService, IOperationService operationService,
+        public OrderController(IOrderService orderService, IClientService clientService, IOperationService operationService, PriceHelper priceHelper,
             INotyfService notyfService, IConfiguration configuration, OrderHelper orderHelper, OrderValidation orderValidation, IProductService productService, ISubBatchService subBatchService)
         {
             _orderService = orderService;
@@ -46,6 +47,7 @@ namespace RemaSoftware.WebApp.Controllers
             _notyfService = notyfService;
             _configuration = configuration;
             _orderHelper = orderHelper;
+            _priceHelper = priceHelper;
             _orderValidation = orderValidation;
             _productService = productService;
             _subBatchService = subBatchService;
@@ -168,6 +170,9 @@ namespace RemaSoftware.WebApp.Controllers
         public IActionResult NewOrder(int productId)
         {
             var products = productId == 0 ? _productService.GetAllProducts() : new List<Product>();
+            products = products.OrderBy(t => t.SKU).ToList();
+            var prices = _priceHelper.GetAllPrices();
+            
             var vm = new NewOrderViewModel
             {
                 Clients = _clientService.GetAllClients(),
@@ -175,12 +180,13 @@ namespace RemaSoftware.WebApp.Controllers
                 {
                     Text = s.Name,
                     Value = $"{s.OperationID}-{s.Name}"
-                }).ToList(),
+                }).OrderBy(y => y.Text).ToList(),
                 Ddt_In = new Ddt_In()
                 {
                     ProductID = productId,
                 },
-                Products = products
+                Products = products,
+                Prices = prices
             };
             return View(vm);
         }

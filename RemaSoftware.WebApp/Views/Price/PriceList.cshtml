@@ -19,7 +19,9 @@
                 <thead>
                     <tr>
                         <th>Nome</th>
-                        <th>Prodotto</th>
+                        <th>Sku Prodotto</th>
+                        <th>Nome Prodotto</th>
+                        <th>Cliente</th>
                         <th>Operazioni associate</th>
                         <th>Prezzo</th>
                         <th>Azioni</th>
@@ -31,13 +33,15 @@
                     <tr id="price-@price.PriceID">
                         <td>@price.Description</td>
                         <td>@price.Product.SKU</td>
+                        <td>@price.Product.Name</td>
+                        <td>@price.Product.Client.Name</td>
                         <td>
                             @foreach (var operation in price.PriceOperation)
                             {
                                 <span>@operation.Operation.Name</span><br/>
                             }
                         </td>
-                        <td>@price.PriceVal</td>
+                        <td>€ @price.PriceVal</td>
                         <td class="text-center">
                             <a style="text-decoration: none" asp-action="UpdatePrice" asp-controller="Price" asp-route-priceId="@price.PriceID">
                                 <i class="fas fa-pen fa-lg pl-2" title="Modifica prezzo" style="cursor: pointer; color:  #6d767e;"></i>
@@ -105,8 +109,10 @@
                 { "searchable": true, "orderable": true, "targets": 0 },
                 { "searchable": true, "orderable": true, "targets": 1 },
                 { "searchable": true, "orderable": true, "targets": 2 },
-                { "searchable": false, "orderable": true, "targets": 3 },
-                { "searchable": false, "orderable": false, "targets": 4 },
+                { "searchable": true, "orderable": true, "targets": 3 },
+                { "searchable": true, "orderable": true, "targets": 4 },
+                { "searchable": false, "orderable": true, "targets": 5 },
+                { "searchable": false, "orderable": false, "targets": 6 },
               ]
         });
     });

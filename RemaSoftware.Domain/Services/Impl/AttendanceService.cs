@@ -180,7 +180,7 @@ namespace RemaSoftware.Domain.Services.Impl;
 
                         foreach (var attendance in dayAttendances)
                         {
-                            if (attendance.DateOut.HasValue)
+                            if (attendance.DateOut.HasValue && attendance.Type != "StraordinarioSabato")
                             {
                                 TimeSpan duration = attendance.DateOut.Value - attendance.DateIn;
                                 totalDuration += duration;
@@ -343,7 +343,7 @@ namespace RemaSoftware.Domain.Services.Impl;
 
                             foreach (var attendance in dayAttendances)
                             {
-                                if (attendance.DateOut.HasValue)
+                                if (attendance.DateOut.HasValue && attendance.Type != "StraordinarioSabato")
                                 {
                                     TimeSpan duration = attendance.DateOut.Value - attendance.DateIn;
                                     totalDuration += duration;

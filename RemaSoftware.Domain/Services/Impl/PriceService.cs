@@ -17,7 +17,7 @@ namespace RemaSoftware.Domain.Services.Impl
 
         public List<Price> GetAllPrices()
         {
-            return _dbContext.Prices.Include(t => t.Product).Include(o => o.PriceOperation).ThenInclude(p => p.Operation).ToList();
+            return _dbContext.Prices.Include(t => t.Product).ThenInclude(y => y.Client).Include(o => o.PriceOperation).ThenInclude(p => p.Operation).ToList();
         }
         
         public Price NewPrice(Price price)
@@ -30,7 +30,7 @@ namespace RemaSoftware.Domain.Services.Impl
         public Price GetPriceById(int Id)
         {
             return _dbContext.Prices
-                .Include(p => p.Product)
+                .Include(p => p.Product).ThenInclude(y => y.Client)
                 .Include(p => p.PriceOperation).ThenInclude(y => y.Operation)
                 .SingleOrDefault(p => p.PriceID == Id);
         }

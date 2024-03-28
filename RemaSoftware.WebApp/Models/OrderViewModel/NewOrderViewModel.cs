@@ -15,6 +15,8 @@ namespace RemaSoftware.WebApp.Models.OrderViewModel
         public List<SelectListItem> Operations { get; set; }
         public List<string> OperationsSelected { get; set; }
         public List<Product> Products { get; set; }
+        
+        public List<Price> Prices { get; set; }
 
         public NewOrderViewModel()
         {
