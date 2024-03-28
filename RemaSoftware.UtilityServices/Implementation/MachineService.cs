@@ -18,8 +18,8 @@ namespace RemaSoftware.UtilityServices.Implementation
             {
                 // Imposta l'indirizzo del server OPC UA a cui connettersi
                 //var serverUrl = "opc.tcp://192.168.1.250"; //Last option
-                var serverUrl = "opc.tcp://192.168.1.250:4840";
-                //var serverUrl = "opc.tcp://185.230.192.147:4840";
+                //var serverUrl = "opc.tcp://192.168.1.250:4840";
+                var serverUrl = "opc.tcp://185.230.192.147:4840";
                 
                 var applicationConfiguration = new ApplicationConfiguration()
                 {
@@ -31,7 +31,7 @@ namespace RemaSoftware.UtilityServices.Implementation
                 var clientConfiguration = new ClientConfiguration();
                 applicationConfiguration.ClientConfiguration = clientConfiguration;
 
-                var endpointDescription = new ConfiguredEndpoint(null, new EndpointDescription("opc.tcp://185.230.192.147:4840"));
+                var endpointDescription = new ConfiguredEndpoint(null, new EndpointDescription(serverUrl));
                 var session = await Session.Create(
                     applicationConfiguration,
                     endpointDescription,
