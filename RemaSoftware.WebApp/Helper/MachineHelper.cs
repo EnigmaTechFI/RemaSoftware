@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using NLog;
@@ -20,25 +21,45 @@ public class MachineHelper
         _userManager = userManager;
         _machineService = machineService;
     }
-
+    
     public async Task<MachineViewModel> GetMachineViewModelAsync()
     {
-        // Connessione OPC UA e lettura dei valori
-        var machine = await _machineService.ConnectMachine();
+        MachineViewModel machineViewModel = new MachineViewModel();
 
-        // Crea una nuova istanza di MachineViewModel e assegna i valori appropriati
-        var machineViewModel = new MachineViewModel
+        try
         {
-            MachineOn = machine.MachineOn,
-            Brush1_On = machine.Brush1_On,
-            Brush2_On = machine.Brush2_On,
-            Brush3_On = machine.Brush3_On,
-            Brush4_On = machine.Brush4_On,
-            Brush5_On = machine.Brush5_On
-        };
+            var machine = await _machineService.ConnectMachine();
+        
+            if (machine != null)
+            {
+                machineViewModel.MachineOn = machine.MachineOn;
+                machineViewModel.Brush1_On = machine.Brush1_On;
+                machineViewModel.Brush2_On = machine.Brush2_On;
+                machineViewModel.Brush3_On = machine.Brush3_On;
+                machineViewModel.Brush4_On = machine.Brush4_On;
+                machineViewModel.Brush5_On = machine.Brush5_On;
+            }
+            else
+            {
+                machineViewModel.MachineOn = false;
+                machineViewModel.Brush1_On = false;
+                machineViewModel.Brush2_On = false;
+                machineViewModel.Brush3_On = false;
+                machineViewModel.Brush4_On = false;
+                machineViewModel.Brush5_On = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            machineViewModel.MachineOn = false;
+            machineViewModel.Brush1_On = false;
+            machineViewModel.Brush2_On = false;
+            machineViewModel.Brush3_On = false;
+            machineViewModel.Brush4_On = false;
+            machineViewModel.Brush5_On = false;
+        }
 
         return machineViewModel;
     }
-    
     
 }
