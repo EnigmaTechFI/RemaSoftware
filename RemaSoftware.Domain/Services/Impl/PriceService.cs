@@ -20,6 +20,27 @@ namespace RemaSoftware.Domain.Services.Impl
             return _dbContext.Prices.Include(t => t.Product).ThenInclude(y => y.Client).Include(o => o.PriceOperation).ThenInclude(p => p.Operation).ToList();
         }
         
+        public List<Price> GetAllPricesByProductId(int productId)
+        {
+            return _dbContext.Prices
+                .Include(t => t.Product).ThenInclude(y => y.Client)
+                .Include(o => o.PriceOperation).ThenInclude(p => p.Operation)
+                .Where(p => p.Product.ProductID == productId)
+                .ToList();
+        }
+        
+        public List<Price> GetPrice(int productId, List<Operation> operations)
+        {
+
+            var operationIds = operations.Select(op => op.OperationID).ToList();
+    
+            return _dbContext.Prices
+                .Include(t => t.Product).ThenInclude(y => y.Client)
+                .Include(o => o.PriceOperation).ThenInclude(p => p.Operation)
+                .Where(p => p.Product.ProductID == productId && operationIds.All(id => p.PriceOperation.Any(po => po.OperationID == id)))
+                .ToList();
+        }
+        
         public Price NewPrice(Price price)
         {
             _dbContext.Add(price);

@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Data;
@@ -51,6 +52,5 @@ namespace RemaSoftware.Domain.Services.Impl
         {
             return _dbContext.Operations.SingleOrDefault(s => s.Name == name).OperationID;
         }
-
     }
 }

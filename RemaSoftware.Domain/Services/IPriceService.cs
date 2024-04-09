@@ -15,6 +15,8 @@ namespace RemaSoftware.Domain.Services
         public string DeletePrice(Price price);
         
         public Price UpdatePrice(Price price);
-
+        
+        public List<Price> GetAllPricesByProductId(int productId);
+        
     }
 }

@@ -31,11 +31,14 @@ namespace RemaSoftware.WebApp.Controllers
         
         [Authorize(Roles = Roles.Admin)]
         [HttpGet]
-        public async Task<IActionResult> Attendance(int month, int year)
+        public async Task<IActionResult> Attendance(int month, int year, bool NotUpdate)
         {
             try
-            {                 
-                await _attendanceHelper.UpdateAttendance(month, year);
+            {
+                if (!NotUpdate)
+                {
+                    await _attendanceHelper.UpdateAttendance(month, year);
+                }
                 return View(_employeeHelper.GetAttendanceViewModel(month, year));
             }
             catch (Exception e)

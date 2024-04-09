@@ -181,16 +181,25 @@
 
         });
     </script>
-    
+
     <script>
         $(document).ready(function () {
             // Funzione per aggiornare i prezzi quando cambia il prodotto o le operazioni selezionate
             var selectedPrice = null;
             function updatePrices() {
-                var productId = $("#ProductID").val();
-                 var operationIds = ($("#OperationsSelected").val() || []).map(function(operation) {
-                        return operation.split('-')[0]; // Prendi solo la parte prima del trattino
-                    });
+                
+                var productId = "";
+                
+                if (@Model.Ddt_In.ProductID){
+                    productId = @Model.Ddt_In.ProductID.ToString();
+                }else{
+                    productId = $("#ProductID").val();
+                }
+                
+                var operationIds = ($("#OperationsSelected").val() || []).map(function(operation) {
+                    return operation.split('-')[0]; // Prendi solo la parte prima del trattino
+                });
+                
                 // Pulisci la lista dei prezzi
                 $("#Prices").empty();
     
@@ -199,7 +208,7 @@
     
                  for (var i = 0; i < prices.length; i++) {
                      var price = prices[i];
-                     if (price.product.productID.toString() === productId) {
+                     if (price.product.productID.toString() === productId.toString()) {
                          var operationId = price.priceOperation[0].operation.operationID.toString();
                          if (operationIds.includes(operationId)) {
                              selectedPrice = price.priceVal;

@@ -30,11 +30,12 @@ namespace RemaSoftware.WebApp.Helper
         private readonly IAPIFatturaInCloudService _apiFatturaInCloud;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly ISupplierService _supplierService;
+        private readonly IPriceService _priceService;
         private IClientService _clientService;
         private readonly IConfiguration _configuration;
 
         public OrderHelper(IOrderService orderService, IAPIFatturaInCloudService apiFatturaInCloudService,
-            ApplicationDbContext dbContext, IProductService productService, ISubBatchService subBatchService,
+            ApplicationDbContext dbContext, IProductService productService, ISubBatchService subBatchService, IPriceService priceService,
             IOperationService operationService, IEmailService emailService, ProductionHub productionHub, IAPIFatturaInCloudService apiFatturaInCloud, ISupplierService supplierService, IClientService clientService, IConfiguration configuration)
         {
             _orderService = orderService;
@@ -49,6 +50,7 @@ namespace RemaSoftware.WebApp.Helper
             _supplierService = supplierService;
             _clientService = clientService;
             _configuration = configuration;
+            _priceService = priceService;
         }
 
         public Ddt_In GetDdtInById(int id)
@@ -91,13 +93,14 @@ namespace RemaSoftware.WebApp.Helper
         {
             using (var transaction = _dbContext.Database.BeginTransaction())
             {
-                try 
+                try
                 {
                     var newSubbatch = false;
                     var operationsSelected = model.OperationsSelected.Where(w => !w.StartsWith("0"))
                         .Select(s => int.Parse(s.Split('-').First())).ToList();
                     operationsSelected.Add(_operationService.GetOperationIdByName(OtherConstants.EXTRA));
                     operationsSelected.Add(_operationService.GetOperationIdByName(OtherConstants.COQ));
+                    model.Ddt_In.Price_Uni = Convert.ToDecimal(model.Price);
                     var batchOperationList = new List<BatchOperation>();
                     var index = 0;
                     foreach (var operation in operationsSelected)
@@ -194,6 +197,7 @@ namespace RemaSoftware.WebApp.Helper
                         .Select(s => int.Parse(s.Split('-').First())).ToList();
                     operationsSelected.Add(_operationService.GetOperationIdByName(OtherConstants.EXTRA));
                     operationsSelected.Add(_operationService.GetOperationIdByName(OtherConstants.COQ));
+                    model.Ddt_In.Price_Uni = Convert.ToDecimal(model.Price);
                     var batchOperationList = new List<BatchOperation>();
                     var index = 0;
                     foreach (var operation in operationsSelected)
@@ -1333,17 +1337,25 @@ namespace RemaSoftware.WebApp.Helper
         public DuplicateOrderViewModel GetDuplicateOrderViewModelForDuplicate(int id)
         {
             var subBatch = _subBatchService.GetSubBatchById(id);
+            
             var op = new List<string>();
+            var prices = _priceService.GetAllPricesByProductId(subBatch.Ddts_In[0].Product.ProductID);
+            var operationIds = subBatch.Batch.BatchOperations.Where(s => s.Operations.Name != OtherConstants.COQ && s.Operations.Name != OtherConstants.EXTRA).Select(s => s.OperationID).ToList();
+            
             foreach (var item in subBatch.Batch.BatchOperations.Where(s => s.Operations.Name != OtherConstants.COQ && s.Operations.Name != OtherConstants.EXTRA).ToList())
             {
                 op.Add($"{item.OperationID}-{item.Operations.Name}");
             }
+            
+            var filteredPrices = prices.Where(price => operationIds.All(opId => price.PriceOperation.Any(po => po.OperationID == opId))).ToList();
+            
             return new DuplicateOrderViewModel
             {
                 Clients = _clientService.GetAllClients(),
+                Price = filteredPrices[0].PriceVal.ToString(),
                 Ddt_In = new Ddt_In()
                 {
-                    ProductID = subBatch.Ddts_In[0].ProductID,
+                    ProductID = subBatch.Ddts_In[0].ProductID
                 },
                 OperationsSelected = op
             };

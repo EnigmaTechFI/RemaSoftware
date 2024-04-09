@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
@@ -171,7 +170,7 @@ namespace RemaSoftware.WebApp.Controllers
         {
             var products = productId == 0 ? _productService.GetAllProducts() : new List<Product>();
             products = products.OrderBy(t => t.SKU).ToList();
-            var prices = _priceHelper.GetAllPrices();
+            var prices = _priceHelper.GetPrices(productId);
             
             var vm = new NewOrderViewModel
             {

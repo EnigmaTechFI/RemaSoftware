@@ -29,15 +29,22 @@ namespace RemaSoftware.WebApp.Helper
         {
             return new PriceListViewModel
             {
-                Prices = GetAllPrices()
+                Prices = _priceService.GetAllPrices()
             };
         }
         
-        public List<Price> GetAllPrices()
+        public List<Price> GetPrices(int productId)
         {
             try
             {
-                return _priceService.GetAllPrices();
+                if (productId == 0)
+                {
+                    return _priceService.GetAllPrices();
+                }
+                else
+                {
+                    return _priceService.GetAllPricesByProductId(productId);
+                }
             }
             catch (Exception ex)
             {

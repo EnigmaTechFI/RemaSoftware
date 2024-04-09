@@ -57,11 +57,11 @@ public class AttendanceHelper
     
     public async Task UpdateAttendance(int month, int year)
     {
-
+        
         bool AttendanceOk = true;
         var LastAttendance = _attendanceService.GetLastAttendance();
 
-        if (LastAttendance != null && LastAttendance.DateIn.Date == DateTime.Today)
+        if ((LastAttendance != null && LastAttendance.DateIn.Date == DateTime.Today) || DateTime.Today.DayOfWeek == DayOfWeek.Saturday || DateTime.Today.DayOfWeek == DayOfWeek.Sunday)
         {
             AttendanceOk = false;
         }

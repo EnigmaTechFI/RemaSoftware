@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Data;
 using System.Text.Json;
-using Microsoft.Extensions.Logging.Console;
 using RemaSoftware.Domain.Constants;
 
 namespace RemaSoftware.Domain.Services.Impl;
@@ -28,8 +27,13 @@ namespace RemaSoftware.Domain.Services.Impl;
         public void ModifyAttendance(int attendanceId, DateTime newInDateTime, DateTime newOutDateTime, string type)
         {
             var attendance = _dbContext.Attendances.Find(attendanceId);
+
+            if (newInDateTime.DayOfWeek == DayOfWeek.Saturday && type == "StraordinarioOrdinario")
+            {
+                type = "StraordinarioSabato";
+            }
             
-            newInDateTime = new DateTime(attendance.DateIn.Date.Year, attendance.DateIn.Date.Month, attendance.DateIn.Date.Day, newInDateTime.Hour == 0 ? attendance.DateIn.Hour : newInDateTime.Hour, newInDateTime.Minute == 0 ? attendance.DateIn.Minute : newInDateTime.Minute, newInDateTime.Second);
+            newInDateTime = new DateTime(attendance.DateIn.Date.Year, attendance.DateIn.Date.Month, attendance.DateIn.Date.Day, newInDateTime.Hour == 0 ? attendance.DateIn.Hour : newInDateTime.Hour, newInDateTime.Hour == 0 ? attendance.DateIn.Minute : newInDateTime.Minute, newInDateTime.Second);
             
             if (newOutDateTime.Date != DateTime.MinValue){
                 newOutDateTime = new DateTime(attendance.DateIn.Year, attendance.DateIn.Month, attendance.DateIn.Day, (int)(newOutDateTime.Hour), (int)(newOutDateTime.Minute), newOutDateTime.Second);

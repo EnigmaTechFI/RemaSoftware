@@ -453,14 +453,21 @@ namespace RemaSoftware.UtilityServices.Implementation
                 MailMessage mailMessage = new MailMessage();
                 var mailAddressSender = _configuration["EmailConfig:EmailAddress"];
                 mailMessage.From = new MailAddress(mailAddressSender);
+                
+                for (int i = email.Count - 1; i >= 0; i--)
+                {
+                    if (email[i] == "lorenzo.vettori11@gmail.com")
+                    {
+                        email.RemoveAt(i);
+                    }
+                }
+                
                 mailMessage.To.Add(new MailAddress(email[0]));
                 for (int i = 1; i < email.Count; i++)
                 {
-                    if (email[i] != "lorenzo.vettori11@gmail.com")
-                    {
-                        mailMessage.CC.Add(email[i]);
-                    }
+                    mailMessage.CC.Add(email[i]);
                 }
+                
                 mailMessage.Subject = "Resoconto mancate timbrature";
                 mailMessage.IsBodyHtml = true;
                 string FilePath = "wwwroot/MailTemplate/attendance-notify.html";  
