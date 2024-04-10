@@ -1346,9 +1346,16 @@ namespace RemaSoftware.WebApp.Helper
             {
                 op.Add($"{item.OperationID}-{item.Operations.Name}");
             }
-            
-            var filteredPrices = prices.Where(price => operationIds.All(opId => price.PriceOperation.Any(po => po.OperationID == opId))).ToList();
-            
+            var filteredPrices = new List<Price>();
+
+            filteredPrices = prices.Where(price => operationIds.All(opId => price.PriceOperation.Any(po => po.OperationID == opId))).ToList();
+
+            if (filteredPrices == null || filteredPrices.Count == 0)
+            {
+                var priceVal = "0.000";
+                filteredPrices.Add(new Price() { PriceVal = Convert.ToDecimal(priceVal) });
+            }
+
             return new DuplicateOrderViewModel
             {
                 Clients = _clientService.GetAllClients(),

@@ -28,7 +28,7 @@ namespace RemaSoftware.Domain.Services.Impl;
         {
             var attendance = _dbContext.Attendances.Find(attendanceId);
 
-            if (newInDateTime.DayOfWeek == DayOfWeek.Saturday && type == "StraordinarioOrdinario")
+            if (newInDateTime.DayOfWeek == DayOfWeek.Saturday && (type == "StraordinarioOrdinario" || type == "Presenza"))
             {
                 type = "StraordinarioSabato";
             }
