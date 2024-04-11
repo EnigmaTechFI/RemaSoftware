@@ -94,13 +94,20 @@ namespace RemaSoftware.WebApp.Helper
             using (var transaction = _dbContext.Database.BeginTransaction())
             {
                 try
-                {
+                { //TAG1
                     var newSubbatch = false;
                     var operationsSelected = model.OperationsSelected.Where(w => !w.StartsWith("0"))
                         .Select(s => int.Parse(s.Split('-').First())).ToList();
                     operationsSelected.Add(_operationService.GetOperationIdByName(OtherConstants.EXTRA));
                     operationsSelected.Add(_operationService.GetOperationIdByName(OtherConstants.COQ));
-                    model.Ddt_In.Price_Uni = Convert.ToDecimal(model.Price);
+                    if (model.Price.Contains(","))
+                    {
+                        model.Ddt_In.Price_Uni = Convert.ToDecimal(model.Price.Replace(",", "."));
+                    }
+                    else
+                    {
+                        model.Ddt_In.Price_Uni = Convert.ToDecimal(model.Price);
+                    }
                     var batchOperationList = new List<BatchOperation>();
                     var index = 0;
                     foreach (var operation in operationsSelected)
@@ -191,13 +198,20 @@ namespace RemaSoftware.WebApp.Helper
             using (var transaction = _dbContext.Database.BeginTransaction())
             {
                 try
-                {
+                {//TAG1
                     var newSubbatch = false;
                     var operationsSelected = model.OperationsSelected.Where(w => !w.StartsWith("0"))
                         .Select(s => int.Parse(s.Split('-').First())).ToList();
                     operationsSelected.Add(_operationService.GetOperationIdByName(OtherConstants.EXTRA));
                     operationsSelected.Add(_operationService.GetOperationIdByName(OtherConstants.COQ));
-                    model.Ddt_In.Price_Uni = Convert.ToDecimal(model.Price);
+                    if (model.Price.Contains(","))
+                    {
+                        model.Ddt_In.Price_Uni = Convert.ToDecimal(model.Price.Replace(",", "."));
+                    }
+                    else
+                    {
+                        model.Ddt_In.Price_Uni = Convert.ToDecimal(model.Price);
+                    }
                     var batchOperationList = new List<BatchOperation>();
                     var index = 0;
                     foreach (var operation in operationsSelected)
