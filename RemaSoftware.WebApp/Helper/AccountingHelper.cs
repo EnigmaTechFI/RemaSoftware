@@ -154,7 +154,6 @@ namespace RemaSoftware.WebApp.Helper
 
         public PreliminarViewModel GetPreliminarViewModel()
         {
-            var test = _orderService.GetAllBatch();
             return new PreliminarViewModel()
             {
                 Batches = _orderService.GetAllBatch()

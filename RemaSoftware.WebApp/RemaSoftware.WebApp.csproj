@@ -100,6 +100,9 @@
     <Content Update="wwwroot\MailTemplate\mail-no-attendance.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Update="wwwroot\MailTemplate\mail-no-price.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

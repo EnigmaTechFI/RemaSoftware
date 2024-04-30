@@ -16,7 +16,7 @@ namespace RemaSoftware.UtilityServices.Interface
         public void SendEmployeeAttendance(List<Employee> employees, List<string> email);
         public bool SendEmailNoAttendance(Employee employee, string note, List<string> email);
         public bool SendEmailNoAttendanceEmployee(Employee employee, string email);
-
+        public bool SendEmailNoPrice(string product, List<string> operations, string image, List<string> email);
     }
     
 }

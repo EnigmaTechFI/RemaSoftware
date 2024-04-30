@@ -115,7 +115,9 @@
         }
 
         $('#priceUnit').keypress(function (e) {
-            if (e.which == 46) {
+            var currentText = $(this).val();
+            
+            if (e.which == 46 && (currentText.indexOf('.') != -1 || currentText.length === 0)) {
                 e.preventDefault();
             }
         });

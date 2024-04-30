@@ -746,7 +746,14 @@ namespace RemaSoftware.WebApp.Helper
                         }
                     }
                     ddt.NumberMissingPiece = model.Ddt_In.NumberMissingPiece;
-                    ddt.Price_Uni = model.Ddt_In.Price_Uni;
+                    if (model.Price.Contains(","))
+                    {
+                        ddt.Price_Uni = Convert.ToDecimal( model.Price.Replace(",", "."));
+                    }
+                    else
+                    {
+                        ddt.Price_Uni = Convert.ToDecimal( model.Price);
+                    }
                     ddt.Description = model.Ddt_In.Description;
                     ddt.Note = model.Ddt_In.Note;
                     var updatedDDT = _orderService.UpdateDDtIn(ddt);

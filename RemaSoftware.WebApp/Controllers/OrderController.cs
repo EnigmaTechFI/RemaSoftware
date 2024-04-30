@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NLog;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 using RemaSoftware.Domain.Constants;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
@@ -135,7 +136,7 @@ namespace RemaSoftware.WebApp.Controllers
             var ddt = _orderHelper.GetDdtInById(id);
             var vm = new NewOrderViewModel
             {
-                Price = ddt.Price_Uni.ToString("0.00").Replace(".", ","),
+                Price = ddt.Price_Uni.ToString(),
                 Ddt_In = ddt,
             };
             return View(vm);
@@ -489,6 +490,26 @@ namespace RemaSoftware.WebApp.Controllers
                 Logger.Error(e, e.Message);
                 _notyfService.Error(e.Message);
                 return RedirectToAction("OrderSummary");
+            }
+        }
+        
+        [Authorize(Roles = Roles.Admin)]
+        [HttpPost]
+        public void SendNoPrice([FromBody] JObject data)
+        {
+            try
+            {
+                int product = data.Value<int>("product");
+                string operationsSelected = data.Value<string>("operationsSelected");
+                List<string> stringOperationsSelected = operationsSelected.Split(',').Select(s => s.Trim()).ToList();
+                List<string> risultato = stringOperationsSelected.Select(s => s.Substring(s.IndexOf('-') + 1)).ToList();
+                _priceHelper.SendNoPrice(product, risultato);
+                _notyfService.Success("Invio completato.");
+            }
+            catch (Exception e)
+            {
+                _notyfService.Error("Errore durante l'invio della notifica per il Prezzo.");
+                Logger.Error("Errore durante l'invio della notifica per il Prezzo.");
             }
         }
         

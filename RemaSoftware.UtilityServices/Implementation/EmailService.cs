@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Net.Mail;
 using Microsoft.Extensions.Configuration;
 using NLog;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.UtilityServices.Interface;
+using Product = It.FattureInCloud.Sdk.Model.Product;
 
 namespace RemaSoftware.UtilityServices.Implementation
 {
@@ -155,12 +157,12 @@ namespace RemaSoftware.UtilityServices.Implementation
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(ex, "Errore durante l'invio della mail per la comunicazione dell'account.");
+                    Logger.Error(ex, "Errore durante l'invio della mail per la comunicazione riguardo i pezzi.");
                 }
             }
             catch (Exception e)
             {
-                Logger.Error(e, "Errore durante l'invio della mail per la comunicazione dell'account.");
+                Logger.Error(e, "Errore durante l'invio della mail per la comunicazione riguardo i pezzi.");
             }
             return false;
         }
@@ -172,12 +174,18 @@ namespace RemaSoftware.UtilityServices.Implementation
                 MailMessage mailMessage = new MailMessage();
                 var mailAddressSender = _configuration["EmailConfig:EmailAddress"];
                 mailMessage.From = new MailAddress(mailAddressSender);
-                mailMessage.To.Add(new MailAddress(email[0]));
-                for(int i = 1; i< email.Count; i++){
-                    if (email[i] != "lorenzo.vettori11@gmail.com")
+                for (int i = email.Count - 1; i >= 0; i--)
+                {
+                    if (email[i] == "lorenzo.vettori11@gmail.com")
                     {
-                        mailMessage.CC.Add(email[i]);
+                        email.RemoveAt(i);
                     }
+                }
+                
+                mailMessage.To.Add(new MailAddress(email[0]));
+                for (int i = 1; i < email.Count; i++)
+                {
+                    mailMessage.CC.Add(email[i]);
                 }
                 mailMessage.Subject = "Sollecito DDT N° " + ddtCode;
                 mailMessage.IsBodyHtml = true;
@@ -205,12 +213,12 @@ namespace RemaSoftware.UtilityServices.Implementation
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(ex, "Errore durante l'invio della mail per la comunicazione dell'account.");
+                    Logger.Error(ex, "Errore durante l'invio della mail per la comunicazione riguardole ddt.");
                 }
             }
             catch (Exception e)
             {
-                Logger.Error(e, "Errore durante l'invio della mail per la comunicazione dell'account.");
+                Logger.Error(e, "Errore durante l'invio della mail per la comunicazione riguardo le ddt.");
             }
         }
 
@@ -289,12 +297,12 @@ namespace RemaSoftware.UtilityServices.Implementation
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(ex, "Errore durante l'invio della mail per il recupero della password.");
+                    Logger.Error(ex, "Errore durante l'invio della mail per la comunicazione delle timbrature.");
                 }
             }
             catch (Exception e)
             {
-                Logger.Error(e, "Errore durante il processo di invio della mail per il recupero della password.");
+                Logger.Error(e, "Errore durante il processo di invio della mail per la comunicazione delle timbrature.");
             }
             return false;
         }
@@ -306,11 +314,18 @@ namespace RemaSoftware.UtilityServices.Implementation
                 MailMessage mailMessage = new MailMessage();
                 var mailAddressSender = _configuration["EmailConfig:EmailAddress"];
                 mailMessage.From = new MailAddress(mailAddressSender);
-                mailMessage.To.Add(new MailAddress(email[0]));
-                for(int i = 1; i< email.Count; i++){
-                    if (email[i] != "lorenzo.vettori11@gmail.com"){
-                        mailMessage.CC.Add(email[i]);
+                for (int i = email.Count - 1; i >= 0; i--)
+                {
+                    if (email[i] == "lorenzo.vettori11@gmail.com")
+                    {
+                        email.RemoveAt(i);
                     }
+                }
+                
+                mailMessage.To.Add(new MailAddress(email[0]));
+                for (int i = 1; i < email.Count; i++)
+                {
+                    mailMessage.CC.Add(email[i]);
                 }
                 mailMessage.CC.Add(employee.Mail);
                 mailMessage.Subject = "Resoconto mancata timbratura";
@@ -339,12 +354,96 @@ namespace RemaSoftware.UtilityServices.Implementation
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(ex, "Errore durante l'invio della mail per il recupero della password.");
+                    Logger.Error(ex, "Errore durante l'invio della mail per la comunicazione delle timbrature.");
                 }
             }
             catch (Exception e)
             {
-                Logger.Error(e, "Errore durante il processo di invio della mail per il recupero della password.");
+                Logger.Error(e, "Errore durante il processo di invio della mail per la comunicazione delle timbrature.");
+            }
+            return false;
+        }
+        
+        public bool SendEmailNoPrice(string product, List<string> operations, string image, List<string> email)
+        {
+            try
+            {
+                MailMessage mailMessage = new MailMessage();
+                var mailAddressSender = _configuration["EmailConfig:EmailAddress"];
+                mailMessage.From = new MailAddress(mailAddressSender);
+                for (int i = email.Count - 1; i >= 0; i--)
+                {
+                    if (email[i] == "lorenzo.vettori11@gmail.com")
+                    {
+                        email.RemoveAt(i);
+                    }
+                }
+                
+                mailMessage.To.Add(new MailAddress(email[0]));
+                for (int i = 1; i < email.Count; i++)
+                {
+                    mailMessage.CC.Add(email[i]);
+                }
+                mailMessage.Subject = "Promemoria prezzo assente";
+                mailMessage.IsBodyHtml = true;
+                string FilePath = "wwwroot/MailTemplate/mail-no-price.html";  
+                StreamReader str = new StreamReader(FilePath);  
+                string MailText = str.ReadToEnd();
+                str.Close();
+                
+                MailText = MailText.Replace("[product]", product);
+                
+                string operationList = operations[0].ToString();
+                for(int i = 1; i < operations.Count; i++)
+                {
+                    operationList = operationList + "<br/>" + operations[i];
+                }
+                
+                MailText = MailText.Replace("[operation]", operationList);
+                
+                if (!string.IsNullOrEmpty(image))
+                {
+                    try
+                    {
+                        using (WebClient wc = new WebClient())
+                        {
+                            byte[] imageData = wc.DownloadData(image);
+                            string attachmentName = Guid.NewGuid().ToString() + ".png";
+                            Attachment attachment = new Attachment(new MemoryStream(imageData), attachmentName, "image/png");
+                            attachment.ContentDisposition.Inline = true;
+                            attachment.ContentId = attachmentName;
+                            mailMessage.Attachments.Add(attachment);
+                            MailText = MailText.Replace("[image]", $"<img src='cid:{attachment.ContentId}' style='width:300px;'>");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Errore durante il download e l'allegato dell'immagine: " + ex.Message);
+                    }
+                }
+                
+                mailMessage.Body =  MailText;
+                
+                SmtpClient client = new SmtpClient();
+                var mailPwd = _configuration["EmailConfig:Password"];
+                
+                client.Credentials = new System.Net.NetworkCredential(mailAddressSender, mailPwd);
+                client.Host = _configuration["EmailConfig:SmtpServer"];
+                client.Port = int.Parse(_configuration["EmailConfig:Port"]);
+                client.EnableSsl = true;
+                try
+                {
+                    client.Send(mailMessage);
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, "Errore durante l'invio della mail per la comunicazione riguardo al prezzo.");
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Errore durante il processo di invio della mail la comunicazione riguardo al prezzo.");
             }
             return false;
         }
@@ -384,12 +483,12 @@ namespace RemaSoftware.UtilityServices.Implementation
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(ex, "Errore durante l'invio della mail per il recupero della password.");
+                    Logger.Error(ex, "Errore durante l'invio della mail per la comunicazione delle timbrature.");
                 }
             }
             catch (Exception e)
             {
-                Logger.Error(e, "Errore durante il processo di invio della mail per il recupero della password.");
+                Logger.Error(e, "Errore durante il processo di invio della mail per la comunicazione delle timbrature.");
             }
             return false;
         }
@@ -417,8 +516,6 @@ namespace RemaSoftware.UtilityServices.Implementation
                 MailText = MailText.Replace("[supplierName]", supplierName);
                 MailText = MailText.Replace("[sku]", sku);
 
-
-
                 mailMessage.Body = MailText;
 
                 SmtpClient client = new SmtpClient();
@@ -435,12 +532,12 @@ namespace RemaSoftware.UtilityServices.Implementation
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(ex, "Errore durante l'invio della mail per il recupero della password.");
+                    Logger.Error(ex, "Errore durante l'invio della mail per il controllo del magazzino.");
                 }
             }
             catch (Exception e)
             {
-                Logger.Error(e, "Errore durante il processo di invio della mail per il recupero della password.");
+                Logger.Error(e, "Errore durante il processo di invio della mail per il controllo del magazzino.");
             }
 
             return false;

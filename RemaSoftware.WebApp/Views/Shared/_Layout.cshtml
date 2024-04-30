@@ -106,18 +106,6 @@
                     <span>Ordini conclusi</span>
                 </a>
             </li>
-            <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Operation" ? "active" : "")">
-                <a class="nav-link" asp-action="OperationList" asp-controller="Operation">
-                    <i class="fas fa-tools"></i>
-                    <span>Operazioni</span>
-                </a>
-            </li>
-            <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Price" ? "active" : "")">
-                <a class="nav-link" asp-action="PriceList" asp-controller="Price">
-                    <i class="fas fa-tag"></i>
-                    <span>Prezzi</span>
-                </a>
-            </li>
         }
         @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente) || User.IsInRole(Roles.COQ) || User.IsInRole((Roles.Cliente)))
         {
@@ -197,103 +185,126 @@
 
             <!-- Divider -->
             <hr class="sidebar-divider">
-
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Anagrafiche
-            </div>
-            @if (User.IsInRole(Roles.Admin))
-            {
-                <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Employee" ? "active" : "")">
-                    <a class="nav-link" asp-action="EmployeeList" asp-controller="Employee">
-                        <i class="fas fa-fw fa-address-card"></i>
-                        <span>Impiegati</span>
-                    </a>
-                </li>
-            }
-            <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Client" ? "active" : "")">
-            <a class="nav-link" asp-action="ClientList" asp-controller="Client">
-                <i class="fas fa-fw fa-address-card"></i>
-                <span>Clienti</span>
-            </a>
-            </li>
-            <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Supplier" ? "active" : "")">
-                <a class="nav-link" asp-action="List" asp-controller="Supplier">
-                    <i class="fas fa-fw fa-address-card"></i>
-                    <span>Fornitori</span>
+            
+            <div class="sidebar-heading mb-3">
+                <a class="option-collapse" id="registriBtn" data-toggle="collapse" data-target="#collapseRegistri" aria-expanded="false" aria-controls="collapseRegistri">
+                    <span class="mx-1">Registri</span>  <i class="fas fa-chevron-down option-arrow" id="registriArrow" style="transition: transform 0.3s;"></i>
                 </a>
-            </li>
+            </div>
+            
+            <div class="collapse" id="collapseRegistri">
+                <ul class="nav flex-column">
+                    @if (User.IsInRole(Roles.Admin))
+                    {
+                        <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Employee" ? "active" : "")">
+                            <a class="nav-link" asp-action="EmployeeList" asp-controller="Employee">
+                                <i class="fas fa-fw fa-address-card"></i>
+                                <span>Impiegati</span>
+                            </a>
+                        </li>
+                    }
+                    <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Client" ? "active" : "")">
+                        <a class="nav-link" asp-action="ClientList" asp-controller="Client">
+                            <i class="fas fa-fw fa-address-card"></i>
+                            <span>Clienti</span>
+                        </a>
+                    </li>
+                    <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Supplier" ? "active" : "")">
+                        <a class="nav-link" asp-action="List" asp-controller="Supplier">
+                            <i class="fas fa-fw fa-address-card"></i>
+                            <span>Fornitori</span>
+                        </a>
+                    </li>
+                    <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Operation" ? "active" : "")">
+                        <a class="nav-link" asp-action="OperationList" asp-controller="Operation">
+                            <i class="fas fa-tools"></i>
+                            <span>Operazioni</span>
+                        </a>
+                    </li>
+                    <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Price" ? "active" : "")">
+                        <a class="nav-link" asp-action="PriceList" asp-controller="Price">
+                            <i class="fas fa-tag"></i>
+                            <span>Prezzi</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
         }
     
         @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente) || User.IsInRole(Roles.MagazzinoMaterie))
         {
             <!-- Divider -->
             <hr class="sidebar-divider">
-
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Magazzino
+            
+            <div class="sidebar-heading mb-3">
+                <a class="option-collapse" id="giacenzeBtn" data-toggle="collapse" data-target="#collapseGiacenze" aria-expanded="false" aria-controls="collapseGiacenze">
+                    <span class="mx-1">Giacenze</span>  <i class="fas fa-chevron-down option-arrow" id="giacenzeArrow" style="transition: transform 0.3s;"></i>
+                </a>
             </div>
             
-            @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente))
-            {
-                <!-- Nav Item - Tables -->
-                <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Stock" ? "active" : "")">
-                    <a class="nav-link" asp-action="Stock" asp-controller="Stock" asp-route-newProduct="false">
-                        <i class="fas fa-fw fa-warehouse"></i>
-                        <span>Giacenze</span>
-                    </a>
-                </li>
-            }
-            
-            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "RetireProduct" ? "active" : "")">
-                <a class="nav-link" asp-action="RetireProduct" asp-controller="Stock">
-                    <i class="fas fa-fw fa-pallet"></i>
-                    <span>Ritiro Prodotti</span>
-                </a>
-            </li>
+            <div class="collapse" id="collapseGiacenze">
+                <ul class="nav flex-column">
+                    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente))
+                    {
+                        <!-- Nav Item - Tables -->
+                        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Stock" ? "active" : "")">
+                            <a class="nav-link" asp-action="Stock" asp-controller="Stock" asp-route-newProduct="false">
+                                <i class="fas fa-fw fa-warehouse"></i>
+                                <span>Magazzino</span>
+                            </a>
+                        </li>
+                    }
+
+                    <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "RetireProduct" ? "active" : "")">
+                        <a class="nav-link" asp-action="RetireProduct" asp-controller="Stock">
+                            <i class="fas fa-fw fa-pallet"></i>
+                            <span>Ritiro Prodotti</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
             
         }
         @if (User.IsInRole("Admin"))
         {
-            <!-- Divider -->
+            
             <hr class="sidebar-divider">
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Amministrazione
+
+            <div class="sidebar-heading mb-3">
+                <a class="option-collapse" id="analisiBtn" data-toggle="collapse" data-target="#collapseAnalisi" aria-expanded="false" aria-controls="collapseAnalisi">
+                    <span class="mx-1">Gestione</span> <i class="fas fa-chevron-down option-arrow" id="analisiArrow" style="transition: transform 0.3s;"></i>
+                </a>
             </div>
 
-            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Attendance" ? "active" : "")">
-                <a class="nav-link" asp-action="Attendance" asp-controller="Attendance">
-                    <i class="fas fa-fw fa-calculator"></i>
-                    <span>Presenze</span>
-                </a>
-            </li>
+            <div class="collapse" id="collapseAnalisi">
+                <ul class="nav flex-column">
+                    <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Attendance" ? "active" : "")">
+                        <a class="nav-link" asp-action="Attendance" asp-controller="Attendance">
+                            <i class="fas fa-fw fa-calculator"></i>
+                            <span>Presenze</span>
+                        </a>
+                    </li>
+                    <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Accounting" ? "active" : "")">
+                        <a class="nav-link" asp-action="Accounting" asp-controller="Accounting">
+                            <i class="fas fa-fw fa-calculator"></i>
+                            <span>Contabilità</span>
+                        </a>
+                    </li>
+                    <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Preliminar" ? "active" : "")">
+                        <a class="nav-link" asp-action="Preliminar" asp-controller="Accounting">
+                            <i class="fas fa-fw fa-area-chart"></i>
+                            <span>Analisi lotti</span>
+                        </a>
+                    </li>
+                    <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "DDTVariation" ? "active" : "")">
+                        <a class="nav-link" asp-action="DDTVariation" asp-controller="Accounting">
+                            <i class="fas fa-fw fa-handshake-o"></i>
+                            <span>Variazioni DDT</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
 
-            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Accounting" ? "active" : "")">
-                <a class="nav-link" asp-action="Accounting" asp-controller="Accounting">
-                    <i class="fas fa-fw fa-calculator"></i>
-                    <span>Contabilità</span>
-                </a>
-            </li>
-            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Preliminar" ? "active" : "")">
-                <a class="nav-link" asp-action="Preliminar" asp-controller="Accounting">
-                    <i class="fas fa-fw fa-area-chart"></i>
-                    <span>Analisi lotti</span>
-                </a>
-            </li>
-            @*<li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "ProductionAnalysisLive" ? "active" : "")">
-                <a class="nav-link" asp-action="ProductionAnalysisLive" asp-controller="Accounting">
-                    <i class="fas fa-fw fa-industry"></i>
-                    <span>Produzione live</span>
-                </a>
-            </li>*@
-            <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "DDTVariation" ? "active" : "")">
-                <a class="nav-link" asp-action="DDTVariation" asp-controller="Accounting">
-                    <i class="fas fa-fw fa-handshake-o"></i>
-                    <span>Variazioni DDT</span>
-                </a>
-            </li>
         }
         
         @if (User.IsInRole("Impiegato"))
@@ -307,21 +318,26 @@
         }
     
         @if (User.IsInRole("Admin"))
-            {
-                <!-- Divider -->
-                <hr class="sidebar-divider">
-                <!-- Heading -->
-                <div class="sidebar-heading">
-                    Macchinari
-                </div>
-            
-                <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "AutomaticMachine" ? "active" : "")">
-                    <a class="nav-link" asp-action="AutomaticMachine" asp-controller="Machine">
-                        <i class="fas fa-fw fa-industry"></i>
-                        <span>Macchina 4.0</span>
-                    </a>
-                </li>
-            }
+        {
+            <hr class="sidebar-divider">
+           
+            <div class="sidebar-heading mb-3">
+                <a class="option-collapse" id="machineBtn" data-toggle="collapse" data-target="#collapseMachine" aria-expanded="false" aria-controls="collapseMachine">
+                    <span class="mx-1">Macchine</span>  <i class="fas fa-chevron-down option-arrow" id="machineArrow" style="transition: transform 0.3s;"></i>
+                </a>
+            </div>
+
+            <div class="collapse" id="collapseMachine">
+                <ul class="nav flex-column">
+                    <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "AutomaticMachine" ? "active" : "")">
+                        <a class="nav-link" asp-action="AutomaticMachine" asp-controller="Machine">
+                            <i class="fas fa-fw fa-industry"></i>
+                            <span>Macchina 4.0</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        }
 
     <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">
@@ -446,18 +462,86 @@
 <!-- End of Footer -->
 
 <style>
+  .sidebar-heading button:focus {
+      outline: none;
+      box-shadow: none;
+  }
+  
+  .option-collapse{
+    font-size: 0.8rem;
+    color: #E5E5E5 !important; 
+    cursor: pointer;
+  }
+
   @@media only screen and (max-width: 600px) {
-    .mobile-c1 {
-      display: none;
-    }
-    .mobile-c2{
-    display:  block !important;
-    }
-    .mobile-c3{
-    margin-top:  11% !important;
-    }
+      .mobile-c1 {
+          display: none;
+      }
+      .mobile-c2{
+          display:  block !important;
+      }
+      .mobile-c3{
+          margin-top:  11% !important;
+      }
+      .option-collapse{
+          font-size: 0.6rem;
+      }
   }
 </style>
+
+<script>
+    var analisiBtn = document.getElementById("analisiBtn");
+    var analisiArrow = document.getElementById("analisiArrow");
+
+    analisiBtn.addEventListener("click", function() {
+        if (analisiArrow.classList.contains("fa-chevron-right")) {
+            analisiArrow.classList.remove("fa-chevron-right");
+            analisiArrow.classList.add("fa-chevron-down");
+        } else {
+            analisiArrow.classList.remove("fa-chevron-down");
+            analisiArrow.classList.add("fa-chevron-right");
+        }
+    });
+
+    var machineBtn = document.getElementById("machineBtn");
+    var machineArrow = document.getElementById("machineArrow");
+
+    machineBtn.addEventListener("click", function() {
+        if (machineArrow.classList.contains("fa-chevron-right")) {
+            machineArrow.classList.remove("fa-chevron-right");
+            machineArrow.classList.add("fa-chevron-down");
+        } else {
+            machineArrow.classList.remove("fa-chevron-down");
+            machineArrow.classList.add("fa-chevron-right");
+        }
+    });
+
+    var giacenzeBtn = document.getElementById("giacenzeBtn");
+    var giacenzeArrow = document.getElementById("giacenzeArrow");
+
+    giacenzeBtn.addEventListener("click", function() {
+        if (giacenzeArrow.classList.contains("fa-chevron-right")) {
+            giacenzeArrow.classList.remove("fa-chevron-right");
+            giacenzeArrow.classList.add("fa-chevron-down");
+        } else {
+            giacenzeArrow.classList.remove("fa-chevron-down");
+            giacenzeArrow.classList.add("fa-chevron-right");
+        }
+    });
+
+    var registriBtn = document.getElementById("registriBtn");
+    var registriArrow = document.getElementById("registriArrow");
+
+    registriBtn.addEventListener("click", function() {
+        if (registriArrow.classList.contains("fa-chevron-right")) {
+            registriArrow.classList.remove("fa-chevron-right");
+            registriArrow.classList.add("fa-chevron-down");
+        } else {
+            registriArrow.classList.remove("fa-chevron-down");
+            registriArrow.classList.add("fa-chevron-right");
+        }
+    });
+</script>
 
 <script src="~/vendor/jquery/jquery.min.js"></script>
 <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

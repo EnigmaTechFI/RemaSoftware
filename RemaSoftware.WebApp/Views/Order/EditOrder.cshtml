@@ -39,7 +39,7 @@
             <div class="form-group">
                 <label for="validationTooltip04">Prezzo Unitario (IVA Inclusa) *</label>
                 <div class="input-group-append">
-                    <input asp-for="Price" type="text" class="form-control" id="priceUnit" placeholder="Prezzo Unitario">
+                    <input min="0" for="validationTooltip04" asp-for="Price"  value="@Model.Price" type="text" class="form-control" id="priceUnit" placeholder="Prezzo" required>
                     <span class="input-group-text">€</span>
                 </div>
             </div>
@@ -93,7 +93,9 @@
     <script>
 
         $('#priceUnit').keypress(function (e) {
-            if (e.which == 46) {
+            var currentText = $(this).val();
+            
+            if (e.which == 46 && (currentText.indexOf('.') != -1 || currentText.length === 0)) {
                 e.preventDefault();
             }
         });
@@ -110,12 +112,6 @@
             }, 1500);
         }
         }
-
-        $('#priceUnit').keypress(function (e) {
-            if (e.which == 46) {
-                e.preventDefault();
-            }
-        });
         
         $('.select2-operations').select2({
             placeholder: "Seleziona operazioni"
