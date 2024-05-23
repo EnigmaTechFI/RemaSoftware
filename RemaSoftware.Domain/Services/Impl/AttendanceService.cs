@@ -511,6 +511,10 @@ namespace RemaSoftware.Domain.Services.Impl;
                             {
                                 newAttendance.Type = "Presenza";
                             }
+                            else if(employee.TypePosition == TypePosition.Maternità)
+                            {
+                                newAttendance.Type = "Maternita";
+                            }
                             else
                             {
                                 newAttendance.Type = "Permesso";

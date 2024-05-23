@@ -19,5 +19,6 @@ namespace RemaSoftware.Domain.Constants
         public const string InfortunioIniziale = "Infortunio iniziale";
         public const string InfortunioProlungato = "Infortunio prolungato";
         public const string CongedoMatrimoniale = "Congedo matrimoniale";
+        public const string Maternita = "Maternita";
     }
 }

@@ -170,6 +170,5 @@ namespace RemaSoftware.WebApp.Controllers
 
             return Json(totalPrice);
         }
-        
     }
 }

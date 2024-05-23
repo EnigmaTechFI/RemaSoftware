@@ -60,22 +60,23 @@
     </form>
     <div class="card-body" id="contentToPdf">
     <div class="row " style="margin-left: -1.5%; margin-bottom: 1.1% !important;">
-        <div class="ml-5" style="width: 20px; height: 20px; background-color: green; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;"> Presenza</div>
-        <div class="ml-5" style="width: 20px; height: 20px; background-color: #003399; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;"> Straodinario</div>
-        <div class="ml-5" style="width: 20px; height: 20px; background-color: red; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;"> Permesso</div>
-        <div class="ml-5" style="width: 20px; height: 20px; background-color: #ff7f26; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;"> Malattia</div>
-        <div class="ml-5" style="width: 20px; height: 20px; background-color: #36b9cc; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;"> Festivo</div>
-        <div class="ml-5" style="width: 20px; height: 20px; background-color: #f6c23e; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;"> Ferie</div>
-        <div class="ml-5" style="width: 20px; height: 20px; background-color: #9A83BC; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Cassa integrazione</div>
+        <div class="ml-5" style="width: 20px; height: 20px; background-color: green; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Presenza</div>
+        <div class="ml-5" style="width: 20px; height: 20px; background-color: #003399; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Straodinario</div>
+        <div class="ml-5" style="width: 20px; height: 20px; background-color: red; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Permesso</div>
+        <div class="ml-5" style="width: 20px; height: 20px; background-color: #ff7f26; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Malattia</div>
+        <div class="ml-5" style="width: 20px; height: 20px; background-color: #36b9cc; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Festivo</div>
+        <div class="ml-5" style="width: 20px; height: 20px; background-color: #f6c23e; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Ferie</div>
+        <div class="ml-5" style="width: 20px; height: 20px; background-color: #9A83BC; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Cassa int.</div>
         <div class="ml-5" style="width: 20px; height: 20px; background-color: #3a8fbc; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Lavoro durante festivo</div>
     </div>
     <div class="row " style="margin-left: -1.5%; margin-bottom: 1.1% !important;">
-        <div class="ml-5" style="width: 20px; height: 20px; background-color: #0000ff; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Lavoro supplementare</div>
-        <div class="ml-5" style="width: 20px; height: 20px; background-color: #6f00ff; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Maggiorazione notturno</div>
-        <div class="ml-5" style="width: 20px; height: 20px; background-color: #808080; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Permesso per 104</div>
+        <div class="ml-5" style="width: 20px; height: 20px; background-color: #0000ff; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Lavoro suppl.</div>
+        <div class="ml-5" style="width: 20px; height: 20px; background-color: #6f00ff; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Magg. notturno</div>
+        <div class="ml-5" style="width: 20px; height: 20px; background-color: #808080; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Permesso 104</div>
         <div class="ml-5" style="width: 20px; height: 20px; background-color: #ffff66; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Infortunio iniziale</div>
         <div class="ml-5" style="width: 20px; height: 20px; background-color: #ffcc66; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Infortunio prolungato</div>
-        <div class="ml-5" style="width: 20px; height: 20px; background-color: #ffc0cb; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Congedo matrimoniale</div>
+        <div class="ml-5" style="width: 20px; height: 20px; background-color: #ffc0cb; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Congedo matr.</div>
+        <div class="ml-5" style="width: 20px; height: 20px; background-color: #FF748C; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Maternità</div>
     </div>
     <div class="table-responsive">
         <table class="table table-bordered" id="table-stock" width="100%" cellspacing="0">
@@ -123,7 +124,7 @@
                         TimeSpan? totalTimeInfIni = TimeSpan.Zero;
                         TimeSpan? totalTimeInf = TimeSpan.Zero;
                         TimeSpan? totalTimeMatr = TimeSpan.Zero;
-
+                        TimeSpan? totalTimeMater = TimeSpan.Zero;
                         
                         for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, Model.Month); giorno++)
                         {
@@ -859,6 +860,54 @@
                                             }
                                         </div>
 
+
+                                        @* Maternità *@
+                                        @{
+                                            totalTime = TimeSpan.Zero;
+                                            NotNull = false;
+                                            foreach (var presence in attendancesForDay.Where(c => c.Type == "Maternita"))
+                                            {
+                                                    if (presence.DateOut != null)
+                                                {
+                                                    totalTime += presence.DateOut - presence.DateIn;
+                                                    NotNull = true;
+                                                }
+                                            }
+
+                                            if (totalTime == TimeSpan.FromHours(9))
+                                            {
+                                                totalTime = TimeSpan.FromHours(8);
+                                            }
+
+                                            totalTime = (totalTime.Value.Minutes < 50) ? TimeSpan.FromHours(totalTime.Value.Hours) : TimeSpan.FromHours(totalTime.Value.Hours + 1);
+                                            totalTimeMater += totalTime;
+                                            totalTimeDay += totalTime;
+                                        }
+
+                                        @{
+                                            presenzeDivID = "presenze-" + presenza.Key.EmployeeID + "-" + giorno +"-Mater";
+                                        }
+
+                                        @if(NotNull){
+                                            <div style="color: white; background-color: #FF748C; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center; cursor: pointer;" title="Maternità" onclick="togglePresenze('@presenzeDivID')">
+                                                <b style="white-space: nowrap; margin: 0 auto;">
+                                                    @totalTime?.ToString(@"hh")h
+                                                    @totalTime?.ToString(@"mm")m
+                                                </b>
+                                            </div>
+                                        }
+
+                                        <div id="@presenzeDivID" style="display: none;">
+                                            @foreach (var presence in attendancesForDay.Where(c => c.Type == "Maternita"))
+                                            {
+                                            <a style="cursor: pointer;" title="Modifica Entrata/Uscita" data-toggle="modal" data-target="#modify-modal" onclick="SetDataAttendanceId('#modify-modal', @presence.AttendanceID), SetDataAttendanceId('#confirm-del-modal', @presence.AttendanceID)">
+                                                <div style="color: white; background-color: #FF748C; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Maternità">
+                                                    <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                                </div>
+                                            </a>
+                                            }
+                                        </div>
+
                                         @* Calcolo sul permesso rimanente *@
                                         @{
                                             if (totalTimeDay != TimeSpan.Zero)
@@ -989,6 +1038,12 @@
                                     <b style="white-space: nowrap;">@($"{(int)totalTimeMatr?.TotalHours}h {totalTimeMatr?.Minutes}m")</b>
                                 </div>
                             }
+                            @if (totalTimeMater != TimeSpan.Zero)
+                            {
+                                <div class="text-center" style="color: white; background-color: #FF748C; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Maternità">
+                                    <b style="white-space: nowrap;">@($"{(int)totalTimeMater?.TotalHours}h {totalTimeMater?.Minutes}m")</b>
+                                </div>
+                            }
 
                         </td>
                     </tr>
@@ -1048,6 +1103,7 @@
                             <option value="InfortunioIniziale">Infortunio iniziale</option>
                             <option value="InfortunioProlungato">Infortunio prolungato</option>
                             <option value="CongedoMatrimoniale">Congedo matrimoniale</option>
+                            <option value="Maternita">Maternità</option>
                         </select>
                     </div>
                 </div>
@@ -1109,6 +1165,7 @@
                             <option value="InfortunioIniziale">Infortunio iniziale</option>
                             <option value="InfortunioProlungato">Infortunio prolungato</option>
                             <option value="CongedoMatrimoniale">Congedo matrimoniale</option>
+                            <option value="Matewrnita">Maternità</option>
                         </select>
                     </div>
                 </div>
@@ -1282,11 +1339,11 @@ td:first-child {
             // Creazione del PDF utilizzando html2pdf.js
             var element = document.getElementById('contentToPdf');
             var opt = {
-                margin: 2,
+                margin: [10, 10, 10, 10],
                 filename: 'output.pdf',
                 image: { type: 'jpeg', quality: 0.7 },
                 html2canvas: { scale: 1.5, logging: true }, // Usa una scala di 1 (nessuna riduzione) e abilita il logging per debug
-                jsPDF: { unit: 'mm', format: 'a1', orientation: 'landscape' } // Prova un formato di pagina più grande (a3)
+                jsPDF: { unit: 'mm', format: 'a0', orientation: 'landscape' } // Prova un formato di pagina più grande (a3)
             };
     
             html2pdf().from(element).set(opt).outputPdf().then(function (pdfData) {
