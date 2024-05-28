@@ -116,5 +116,10 @@ namespace RemaSoftware.WebApp.Helper
                 Products = GetAllProducts()
             };
         }
+        
+        public Product GetPiecesById(int productId)
+        {
+            return _productService.GetPiecesById(productId);
+        }
     }
 }

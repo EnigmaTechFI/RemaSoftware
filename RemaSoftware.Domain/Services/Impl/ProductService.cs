@@ -73,6 +73,11 @@ namespace RemaSoftware.Domain.Services.Impl
         {
             return _dbContext.Products.Include(s => s.Ddts_In).Where(t => t.ProductID == productId).SingleOrDefault();
         }
+        
+        public Product GetPiecesById(int productId)
+        {
+            return _dbContext.Products.Include(s => s.Ddts_In).ThenInclude(t => t.Ddt_Associations).Where(t => t.ProductID == productId).SingleOrDefault();
+        }
 
     }
 }

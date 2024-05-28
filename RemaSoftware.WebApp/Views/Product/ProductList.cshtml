@@ -1,4 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Newtonsoft.Json
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model RemaSoftware.WebApp.Models.ProductViewModel.ProductListViewModel
 
 @{
@@ -44,10 +46,12 @@
                             <a style="text-decoration: none" asp-action="ViewProduct" asp-controller="Product" asp-route-id="@product.ProductID">
                                 <i class="fas fa-eye fa-lg pl-2" title="Visualizza prodotto" style="cursor: pointer; color:  #6d767e;"></i>
                             </a>
-                            <i class="fas fa-trash fa-lg pl-2 del-product" style="cursor: pointer; color: #6d767e;" id="@product.ProductID" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDataProductId('#confirm-del-modal', @product.ProductID)">
-                                
+                            <i class="fas fa-calculator fa-lg pl-2 view-product" style="cursor: pointer; color: #6d767e;" id="@product.ProductID" title="Uscite prodotto" data-toggle="modal" data-target="#uscite-modal" data-product-id="@product.ProductID">
                             </i>
+                            
+                            <i class="fas fa-trash fa-lg pl-2 del-product" style="cursor: pointer; color: #6d767e;" id="@product.ProductID" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDataProductId('#confirm-del-modal', @product.ProductID)">
 
+                            </i>
                         </td>
                     </tr>
                 }
@@ -75,6 +79,39 @@
     </div>
 </div>
 
+<div class="modal fade" id="uscite-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Uscite giornaliere prodotto</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="table align-items-center table-flush">
+                            <thead class="thead-light">
+                            <tr>
+                                <th scope="col">Giorno</th>
+                                <th scope="col">Uscite</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Chiudi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @section Scripts
 {
@@ -85,7 +122,7 @@
         function SetDataProductId(elementName, productId){
             $(elementName).data("productId", productId );
         }
-    
+        
         $(document).ready( function () {
             table = $('#table-products').DataTable({
                 "language": {
@@ -134,8 +171,61 @@
         }
             
         $(document).on("click", ".del-product", function () {
-                 var productId = $(this).attr('id');
-                 $(".modal-body #modal-addrem-productId").val( parseInt(productId) );
+             var productId = $(this).attr('id');
+             $(".modal-body #modal-addrem-productId").val( parseInt(productId) );
+        });
+
+        $('.view-product').click(function() {
+            var productId = $(this).data('product-id');
+
+            $('#uscite-modal tbody').empty();
+
+            $.ajax({
+                url: '/Product/GetPiecesById',
+                type: 'GET',
+                data: { productId: productId },
+                success: function(data) {
+                    var piecesByDate = {};
+                    var totalPieces = 0;
+
+                    for (var i = 0; i < data.ddts_In.length; i++) {
+                        var ddtAssociations = data.ddts_In[i].ddt_Associations;
+
+                        for (var j = 0; j < ddtAssociations.length; j++) {
+                            var entryDate = new Date(ddtAssociations[j].date).toISOString().split('T')[0];
+
+                            if (piecesByDate[entryDate]) {
+                                piecesByDate[entryDate] += ddtAssociations[j].numberPieces;
+                            } else {
+                                piecesByDate[entryDate] = ddtAssociations[j].numberPieces;
+                            }
+                        }
+                    }
+
+                    var today = new Date().toISOString().split('T')[0];
+                    var dates = [];
+                    for (var i = 1; i <= 6; i++) {
+                        var date = new Date();
+                        date.setDate(date.getDate() - i);
+                        var formattedDate = date.toISOString().split('T')[0];
+                        dates.push(formattedDate); // Inserisci la data all'inizio dell'array
+                    }
+
+                    $('#uscite-modal tbody').append('<tr><th scope="row">Oggi</th><td>' + (piecesByDate[today] || 0) + '</td></tr>');
+                    totalPieces += piecesByDate[today];
+                    dates.forEach(function(date) {
+                        var pieces = piecesByDate[date] || 0;
+                        totalPieces += pieces;
+                        $('#uscite-modal tbody').append('<tr><th scope="row">' + date + '</th><td>' + pieces + '</td></tr>');
+                    });
+                    $('#uscite-modal tbody').append('<tr><th scope="row">Totale</th><td>' + totalPieces + '</td></tr>');
+
+                },
+                error: function() {
+                    alert('Errore durante il recupero delle informazioni del prodotto.');
+                }
             });
+        });
+
     </script>
 }

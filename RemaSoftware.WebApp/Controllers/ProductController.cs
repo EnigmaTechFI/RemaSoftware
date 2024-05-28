@@ -5,8 +5,11 @@ using RemaSoftware.WebApp.Helper;
 using RemaSoftware.WebApp.Models.ProductViewModel;
 using System;
 using System.Threading.Tasks;
+using It.FattureInCloud.Sdk.Model;
 using Microsoft.Extensions.Configuration;
 using RemaSoftware.Domain.Constants;
+using RemaSoftware.Domain.Models;
+using Product = RemaSoftware.Domain.Models.Product;
 
 namespace RemaSoftware.WebApp.Controllers
 {
@@ -106,6 +109,20 @@ namespace RemaSoftware.WebApp.Controllers
                 _notyfToastService.Error(ex.Message);
                 return View(model);
             }
+        }
+        
+        public Product GetPiecesById(int productId)
+        {
+            try
+            {
+                return _productHelper.GetPiecesById(productId);
+            }
+            catch(Exception ex)
+            {
+                _notyfToastService.Error(ex.Message);
+            }
+
+            return null;
         }
     }
 }
