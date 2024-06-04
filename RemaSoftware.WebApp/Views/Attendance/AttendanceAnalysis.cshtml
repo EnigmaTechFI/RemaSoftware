@@ -74,8 +74,8 @@
                     <tr>
                         <td style="width: 180px; cursor: pointer;" onclick="highlightRow(this);">
                             <div style="display: inline-block; white-space: nowrap; box-sizing: border-box; width: 80%; float:  left;">
-                                <div style="white-space: nowrap; font-size:  18px;"><b>@presenza.Key.Name </b></div>
-                                <div style="white-space: nowrap; font-size:  18px;"><b> @presenza.Key.Surname</b> </div>
+                                <div style="white-space: nowrap; font-size:  15px;"><b>@presenza.Key.Name </b></div>
+                                <div style="white-space: nowrap; font-size:  15px;"><b> @presenza.Key.Surname</b> </div>
                             </div>
                         </td>
                         @{
@@ -146,7 +146,7 @@
                                         totalTimePresence += totalTimeDay;
                                         if (totalTimeDay != TimeSpan.Zero)
                                         {
-                                            <div class="text-center" style="color: white; background-color: green; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore presenze mensili">
+                                            <div class="text-center" style="color: white; background-color: green; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore presenze mensili">
                                                 <b style="white-space: nowrap;">@($"{(int)totalTimeDay?.TotalHours}h {totalTimeDay?.Minutes}m")</b>
                                             </div>
                                         }
@@ -176,7 +176,7 @@
                                         totalTimeStraord += totalTimeDay;
                                         if (totalTimeDay != TimeSpan.Zero)
                                         {
-                                            <div class="text-center" style="color: white; background-color: #003399; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore straordinario mensili">
+                                            <div class="text-center" style="color: white; background-color: #003399; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore straordinario mensili">
                                                 <b style="white-space: nowrap;">@($"{(int)totalTimeDay?.TotalHours}h {totalTimeDay?.Minutes}m")</b>
                                             </div>
                                         }
@@ -206,7 +206,7 @@
                                         totalTimePermit += totalTimeDay;
                                         if (totalTimeDay != TimeSpan.Zero)
                                         {
-                                            <div class="text-center" style="color: white; background-color: red; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore permesso mensili">
+                                            <div class="text-center" style="color: white; background-color: red; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore permesso mensili">
                                                 <b style="white-space: nowrap;">@($"{(int)totalTimeDay?.TotalHours}h {totalTimeDay?.Minutes}m")</b>
                                             </div>
                                         }
@@ -236,7 +236,7 @@
                                         totalTimeIllness += totalTimeDay;
                                         if (totalTimeDay != TimeSpan.Zero)
                                         {
-                                            <div class="text-center" style="color: white; background-color: red; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore malattia mensili">
+                                            <div class="text-center" style="color: white; background-color: red; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore malattia mensili">
                                                 <b style="white-space: nowrap;">@($"{(int)totalTimeDay?.TotalHours}h {totalTimeDay?.Minutes}m")</b>
                                             </div>
                                         }
@@ -265,7 +265,7 @@
                                         totalTimeIllness += totalTimeDay;
                                         if (totalTimeDay != TimeSpan.Zero)
                                         {
-                                            <div class="text-center" style="color: white; background-color: #36b9cc; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore festivo mensili">
+                                            <div class="text-center" style="color: white; background-color: #36b9cc; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore festivo mensili">
                                                 <b style="white-space: nowrap;">@($"{(int)totalTimeDay?.TotalHours}h {totalTimeDay?.Minutes}m")</b>
                                             </div>
                                         }
@@ -295,7 +295,7 @@
                                         totalTimeVacation += totalTimeDay;
                                         if (totalTimeDay != TimeSpan.Zero)
                                         {
-                                            <div class="text-center" style="color: white; background-color: #f6c23e; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore ferie mensili">
+                                            <div class="text-center" style="color: white; background-color: #f6c23e; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore ferie mensili">
                                                 <b style="white-space: nowrap;">@($"{(int)totalTimeDay?.TotalHours}h {totalTimeDay?.Minutes}m")</b>
                                             </div>
                                         }
@@ -325,7 +325,7 @@
                                         totalTimeCassa += totalTimeDay;
                                         if (totalTimeDay != TimeSpan.Zero)
                                         {
-                                            <div class="text-center" style="color: white; background-color: #9A83BC; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore cassa integrazione mensili">
+                                            <div class="text-center" style="color: white; background-color: #9A83BC; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore cassa integrazione mensili">
                                                 <b style="white-space: nowrap;">@($"{(int)totalTimeDay?.TotalHours}h {totalTimeDay?.Minutes}m")</b>
                                             </div>
                                         }
@@ -355,7 +355,7 @@
                                         totalTimeCassa += totalTimeDay;
                                         if (totalTimeDay != TimeSpan.Zero)
                                         {
-                                            <div class="text-center" style="color: white; background-color: #9A83BC; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore cassa integrazione mensili">
+                                            <div class="text-center" style="color: white; background-color: #9A83BC; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore cassa integrazione mensili">
                                                 <b style="white-space: nowrap;">@($"{(int)totalTimeDay?.TotalHours}h {totalTimeDay?.Minutes}m")</b>
                                             </div>
                                         }
@@ -385,7 +385,7 @@
                                         totalTimeDuringHoliday += totalTimeDay;
                                         if (totalTimeDay != TimeSpan.Zero)
                                         {
-                                            <div class="text-center" style="color: white; background-color: #3A8FBC; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore lavoro festivo mensili">
+                                            <div class="text-center" style="color: white; background-color: #3A8FBC; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore lavoro festivo mensili">
                                                 <b style="white-space: nowrap;">@($"{(int)totalTimeDay?.TotalHours}h {totalTimeDay?.Minutes}m")</b>
                                             </div>
                                         }
@@ -415,7 +415,7 @@
                                         totalTimeSupp += totalTimeDay;
                                         if (totalTimeDay != TimeSpan.Zero)
                                         {
-                                            <div class="text-center" style="color: white; background-color: #0000FF; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore lavoro supplementare mensili">
+                                            <div class="text-center" style="color: white; background-color: #0000FF; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore lavoro supplementare mensili">
                                                 <b style="white-space: nowrap;">@($"{(int)totalTimeDay?.TotalHours}h {totalTimeDay?.Minutes}m")</b>
                                             </div>
                                         }
@@ -444,7 +444,7 @@
                                         totalTimeMagg += totalTimeDay;
                                         if (totalTimeDay != TimeSpan.Zero)
                                         {
-                                            <div class="text-center" style="color: white; background-color: #6F00FF; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore maggiorazione notturno mensili">
+                                            <div class="text-center" style="color: white; background-color: #6F00FF; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore maggiorazione notturno mensili">
                                                 <b style="white-space: nowrap;">@($"{(int)totalTimeDay?.TotalHours}h {totalTimeDay?.Minutes}m")</b>
                                             </div>
                                         }
@@ -473,7 +473,7 @@
                                         totalTime104 += totalTimeDay;
                                         if (totalTimeDay != TimeSpan.Zero)
                                         {
-                                            <div class="text-center" style="color: white; background-color: #808080; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore permesso 104 mensili">
+                                            <div class="text-center" style="color: white; background-color: #808080; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore permesso 104 mensili">
                                                 <b style="white-space: nowrap;">@($"{(int)totalTimeDay?.TotalHours}h {totalTimeDay?.Minutes}m")</b>
                                             </div>
                                         }
@@ -503,7 +503,7 @@
                                         totalTimeInfIni += totalTimeDay;
                                         if (totalTimeDay != TimeSpan.Zero)
                                         {
-                                            <div class="text-center" style="color: white; background-color: #ffff00; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore permesso infortunio iniziale mensili">
+                                            <div class="text-center" style="color: white; background-color: #ffff00; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore permesso infortunio iniziale mensili">
                                                 <b style="white-space: nowrap;">@($"{(int)totalTimeDay?.TotalHours}h {totalTimeDay?.Minutes}m")</b>
                                             </div>
                                         }
@@ -533,7 +533,7 @@
                                         totalTimeInf += totalTimeDay;
                                         if (totalTimeDay != TimeSpan.Zero)
                                         {
-                                            <div class="text-center" style="color: white; background-color: #e9e935; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore permesso infortunio prolungato mensili">
+                                            <div class="text-center" style="color: white; background-color: #e9e935; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore permesso infortunio prolungato mensili">
                                                 <b style="white-space: nowrap;">@($"{(int)totalTimeDay?.TotalHours}h {totalTimeDay?.Minutes}m")</b>
                                             </div>
                                         }
@@ -563,7 +563,7 @@
                                         totalTimeMatr += totalTimeDay;
                                         if (totalTimeDay != TimeSpan.Zero)
                                         {
-                                            <div class="text-center" style="color: white; background-color: #FFC0CB; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore congedo matrimoniale mensili">
+                                            <div class="text-center" style="color: white; background-color: #FFC0CB; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore congedo matrimoniale mensili">
                                                 <b style="white-space: nowrap;">@($"{(int)totalTimeDay?.TotalHours}h {totalTimeDay?.Minutes}m")</b>
                                             </div>
                                         }
@@ -593,7 +593,7 @@
                                         totalTimeMater += totalTimeDay;
                                         if (totalTimeDay != TimeSpan.Zero)
                                         {
-                                            <div class="text-center" style="color: white; background-color: #FF748C; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore maternità mensili">
+                                            <div class="text-center" style="color: white; background-color: #FF748C; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore maternità mensili">
                                                 <b style="white-space: nowrap;">@($"{(int)totalTimeDay?.TotalHours}h {totalTimeDay?.Minutes}m")</b>
                                             </div>
                                         }
@@ -623,7 +623,7 @@
                                         totalTimeMateFac += totalTimeDay;
                                         if (totalTimeDay != TimeSpan.Zero)
                                         {
-                                            <div class="text-center" style="color: white; background-color: #FF748C; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore maternità facoltativa mensili">
+                                            <div class="text-center" style="color: white; background-color: #FF748C; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore maternità facoltativa mensili">
                                                 <b style="white-space: nowrap;">@($"{(int)totalTimeDay?.TotalHours}h {totalTimeDay?.Minutes}m")</b>
                                             </div>
                                         }
@@ -652,7 +652,7 @@
                                         totalTimePater += totalTimeDay;
                                         if (totalTimeDay != TimeSpan.Zero)
                                         {
-                                            <div class="text-center" style="color: white; background-color: #00B7F3; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore paternità mensili">
+                                            <div class="text-center" style="color: white; background-color: #00B7F3; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore paternità mensili">
                                                 <b style="white-space: nowrap;">@($"{(int)totalTimeDay?.TotalHours}h {totalTimeDay?.Minutes}m")</b>
                                             </div>
                                         }
@@ -663,105 +663,105 @@
                             <td>
                                 @if (totalTimePresence != TimeSpan.Zero)
                                 {
-                                    <div class="text-center" style="color: white; background-color: green; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore lavoro supplementare annuali">
+                                    <div class="text-center" style="color: white; background-color: green; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore lavoro supplementare annuali">
                                         <b style="white-space: nowrap;">@($"{(int)totalTimePresence?.TotalHours}h {totalTimePresence?.Minutes}m")</b>
                                     </div>
                                 }
 
                                 @if (totalTimeStraord != TimeSpan.Zero)
                                 {
-                                    <div class="text-center" style="color: white; background-color: #003399; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore straordinario annuali">
+                                    <div class="text-center" style="color: white; background-color: #003399; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore straordinario annuali">
                                         <b style="white-space: nowrap;">@($"{(int)totalTimeStraord?.TotalHours}h {totalTimeStraord?.Minutes}m")</b>
                                     </div>
                                 }
 
                                 @if (totalTimePermit != TimeSpan.Zero)
                                 {
-                                    <div class="text-center" style="color: white; background-color: red; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore permesso annuali">
+                                    <div class="text-center" style="color: white; background-color: red; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore permesso annuali">
                                         <b style="white-space: nowrap;">@($"{(int)totalTimePermit?.TotalHours}h {totalTimePermit?.Minutes}m")</b>
                                     </div>
                                 }
                                 @if (totalTimeIllness != TimeSpan.Zero)
                                 {
-                                    <div class="text-center" style="color: white; background-color: #FF7F26; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore malattia annuali">
+                                    <div class="text-center" style="color: white; background-color: #FF7F26; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore malattia annuali">
                                         <b style="white-space: nowrap;">@($"{(int)totalTimeIllness?.TotalHours}h {totalTimeIllness?.Minutes}m")</b>
                                     </div>
                                 }
                                 @if (totalTimeHoliday != TimeSpan.Zero)
                                 {
-                                    <div class="text-center" style="color: white; background-color: #36b9cc; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore festivo annuali">
+                                    <div class="text-center" style="color: white; background-color: #36b9cc; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore festivo annuali">
                                         <b style="white-space: nowrap;">@($"{(int)totalTimeHoliday?.TotalHours}h {totalTimeHoliday?.Minutes}m")</b>
                                     </div>
                                 }
                                 @if (totalTimeVacation != TimeSpan.Zero)
                                 {
-                                    <div class="text-center" style="color: white; background-color: #f6c23e; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore festivo annuali">
+                                    <div class="text-center" style="color: white; background-color: #f6c23e; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore festivo annuali">
                                         <b style="white-space: nowrap;">@($"{(int)totalTimeVacation?.TotalHours}h {totalTimeVacation?.Minutes}m")</b>
                                     </div>
                                 }
                                 @if (totalTimeCassa != TimeSpan.Zero)
                                 {
-                                    <div class="text-center" style="color: white; background-color: #9A83BC; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore cassa integrazione annuali">
+                                    <div class="text-center" style="color: white; background-color: #9A83BC; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore cassa integrazione annuali">
                                         <b style="white-space: nowrap;">@($"{(int)totalTimeCassa?.TotalHours}h {totalTimeCassa?.Minutes}m")</b>
                                     </div>
                                 }
                                 @if (totalTimeDuringHoliday != TimeSpan.Zero)
                                 {
-                                    <div class="text-center" style="color: white; background-color: #3A8FBC; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore lavoro festivo annuali">
+                                    <div class="text-center" style="color: white; background-color: #3A8FBC; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore lavoro festivo annuali">
                                         <b style="white-space: nowrap;">@($"{(int)totalTimeDuringHoliday?.TotalHours}h {totalTimeDuringHoliday?.Minutes}m")</b>
                                     </div>
                                 }
                                 @if (totalTimeSupp != TimeSpan.Zero)
                                 {
-                                    <div class="text-center" style="color: white; background-color: #0000FF; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore lavoro supplementare annuali">
+                                    <div class="text-center" style="color: white; background-color: #0000FF; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore lavoro supplementare annuali">
                                         <b style="white-space: nowrap;">@($"{(int)totalTimeSupp?.TotalHours}h {totalTimeSupp?.Minutes}m")</b>
                                     </div>
                                 }
                                 @if (totalTimeMagg != TimeSpan.Zero)
                                 {
-                                    <div class="text-center" style="color: white; background-color: #6F00FF; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore maggiorazione notturno annuali">
+                                    <div class="text-center" style="color: white; background-color: #6F00FF; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore maggiorazione notturno annuali">
                                         <b style="white-space: nowrap;">@($"{(int)totalTimeMagg?.TotalHours}h {totalTimeMagg?.Minutes}m")</b>
                                     </div>
                                 }
                                 @if (totalTime104 != TimeSpan.Zero)
                                 {
-                                    <div class="text-center" style="color: white; background-color: #808080; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore permesso 104 annuali">
+                                    <div class="text-center" style="color: white; background-color: #808080; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore permesso 104 annuali">
                                         <b style="white-space: nowrap;">@($"{(int)totalTime104?.TotalHours}h {totalTime104?.Minutes}m")</b>
                                     </div>
                                 }
                                 @if (totalTimeInfIni != TimeSpan.Zero)
                                 {
-                                    <div class="text-center" style="color: white; background-color: #ffff00; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore permesso infortunio iniziale annuali">
+                                    <div class="text-center" style="color: white; background-color: #ffff00; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore permesso infortunio iniziale annuali">
                                         <b style="white-space: nowrap;">@($"{(int)totalTimeInfIni?.TotalHours}h {totalTimeInfIni?.Minutes}m")</b>
                                     </div>
                                 }
                                 @if (totalTimeInf != TimeSpan.Zero)
                                 {
-                                    <div class="text-center" style="color: white; background-color: #e9e935; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore permesso infortunio prolungato annuali">
+                                    <div class="text-center" style="color: white; background-color: #e9e935; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore permesso infortunio prolungato annuali">
                                         <b style="white-space: nowrap;">@($"{(int)totalTimeInf?.TotalHours}h {totalTimeInf?.Minutes}m")</b>
                                     </div>
                                 }
                                 @if (totalTimeMatr != TimeSpan.Zero)
                                 {
-                                    <div class="text-center" style="color: white; background-color: #FF748C; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore congedo matrimoniale annuali">
+                                    <div class="text-center" style="color: white; background-color: #FF748C; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore congedo matrimoniale annuali">
                                         <b style="white-space: nowrap;">@($"{(int)totalTimeMatr?.TotalHours}h {totalTimeMatr?.Minutes}m")</b>
                                     </div>
                                 }
                                 @if (totalTimeMater != TimeSpan.Zero)
                                 {
-                                    <div class="text-center" style="color: white; background-color: #FFC0CB; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore maternità annuali">
+                                    <div class="text-center" style="color: white; background-color: #FFC0CB; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore maternità annuali">
                                         <b style="white-space: nowrap;">@($"{(int)totalTimeMater?.TotalHours}h {totalTimeMater?.Minutes}m")</b>
                                     </div>
                                 }
                                 @if (totalTimeMateFac != TimeSpan.Zero)
                                 {
-                                    <div class="text-center" style="color: white; background-color: #FF8FA3; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore maternità facoltativa annuali">
+                                    <div class="text-center" style="color: white; background-color: #FF8FA3; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore maternità facoltativa annuali">
                                         <b style="white-space: nowrap;">@($"{(int)totalTimeMateFac?.TotalHours}h {totalTimeMateFac?.Minutes}m")</b>
                                     </div>
                                 }
                                 @if (totalTimePater != TimeSpan.Zero)
                                 {
-                                    <div class="text-center" style="color: white; background-color: #00B7F3; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Ore paternità annuali">
+                                    <div class="text-center" style="color: white; background-color: #00B7F3; border-radius: 10px; padding: 1px 1px 1px 1px; font-size: 14px; margin-bottom: 3px;" title="Ore paternità annuali">
                                         <b style="white-space: nowrap;">@($"{(int)totalTimePater?.TotalHours}h {totalTimePater?.Minutes}m")</b>
                                     </div>
                                 }
@@ -784,7 +784,7 @@ table {
 
 th, td {
   border: 1px solid #ccc;
-  padding: 8px;
+  padding: 5px !important;
 }
 
 th:first-child,
