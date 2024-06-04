@@ -212,11 +212,15 @@
                     }
 
                     $('#uscite-modal tbody').append('<tr><th scope="row">Oggi</th><td>' + (piecesByDate[today] || 0) + '</td></tr>');
-                    totalPieces += piecesByDate[today];
+                    if (!isNaN(piecesByDate[today])) {
+                        totalPieces += piecesByDate[today];
+                    }
                     dates.forEach(function(date) {
                         var pieces = piecesByDate[date] || 0;
-                        totalPieces += pieces;
-                        $('#uscite-modal tbody').append('<tr><th scope="row">' + date + '</th><td>' + pieces + '</td></tr>');
+                        if (!isNaN(pieces)) {
+                            totalPieces += pieces;
+                        }
+                        $('#uscite-modal tbody').append('<tr><th scope="row">' + date.split('-')[2] + '/' + date.split('-')[1] + '</th><td>' + pieces + '</td></tr>');
                     });
                     $('#uscite-modal tbody').append('<tr><th scope="row">Totale</th><td>' + totalPieces + '</td></tr>');
 

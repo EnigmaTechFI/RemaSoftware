@@ -56,10 +56,27 @@ namespace RemaSoftware.Domain.Services.Impl
                 .ToList();
         }
         
+        public List<Attendance> GetAllAttendance(int year)
+        {
+            return _dbContext.Attendances
+                .Include(t => t.Employee)
+                .Where(i => i.DateIn.Year == year)
+                .OrderBy(i => i.EmployeeID)
+                .ThenBy(i => i.DateIn)
+                .ToList();
+        }
+        
         public List<Employee> GetEmployeesWithoutAttendances(int mouth, int year)
         {
             return _dbContext.Employees
                 .Where(e => !_dbContext.Attendances.Any(a => a.EmployeeID == e.EmployeeID && a.DateIn.Month == mouth && a.DateIn.Year == year))
+                .ToList();
+        }
+        
+        public List<Employee> GetEmployeesWithoutAttendances(int year)
+        {
+            return _dbContext.Employees
+                .Where(e => !_dbContext.Attendances.Any(a => a.EmployeeID == e.EmployeeID && a.DateIn.Year == year))
                 .ToList();
         }
         

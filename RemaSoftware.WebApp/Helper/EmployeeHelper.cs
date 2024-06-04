@@ -92,6 +92,22 @@ public class EmployeeHelper
         };
     }
     
+    public AttendanceViewModel GetAttendanceViewModel(int year)
+    {
+        var y = year;
+        if (year == 0)
+        {
+            y = DateTime.Today.Year;
+        }
+
+        return new AttendanceViewModel
+        {
+            Attendances = GetAllAttendance(y),
+            Employees = _employeeService.GetEmployeesWithoutAttendances(y),
+            Year = y
+        };
+    }
+    
     public int GetEmployeeId(string userId)
     {
         List<Employee> employees = _employeeService.GetAllEmployees();
@@ -126,6 +142,11 @@ public class EmployeeHelper
     public List<Attendance> GetAllAttendance(int month, int year)
     {
         return _employeeService.GetAllAttendance(month, year);
+    }
+    
+    public List<Attendance> GetAllAttendance(int year)
+    {
+        return _employeeService.GetAllAttendance(year);
     }
     
     public List<Attendance> GetAllAttendanceEmployee(int month, int year, int employeeId)
