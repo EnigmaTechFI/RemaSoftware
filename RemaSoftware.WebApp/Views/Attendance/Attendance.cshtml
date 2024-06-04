@@ -1009,7 +1009,7 @@
 
                                         @* Calcolo sul permesso rimanente *@
                                         @{
-                                            if (totalTimeDay != TimeSpan.Zero)
+                                            if (totalTimeDay != TimeSpan.Zero && presenza.Key != null && presenza.Key.TypePosition != "Maternità facoltativa")
                                             {
                                                 TimeSpan eightHours = default;
                                                 
