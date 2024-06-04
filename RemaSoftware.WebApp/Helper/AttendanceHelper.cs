@@ -211,6 +211,8 @@ public class AttendanceHelper
                     sp += "6767000000";
                 else if (uniqueTypes[j] == "Maternita")
                     sp += "3110000000";
+                else if (uniqueTypes[j] == "MaternitaFacoltativa")
+                    sp += "6917000000";
                 else if (uniqueTypes[j] == "LavoroFestivo")
                     sp += "3610000000";
                 else if (uniqueTypes[j] == "Supplementare")
@@ -225,6 +227,8 @@ public class AttendanceHelper
                     sp += "3100000000";
                 else if (uniqueTypes[j] == "CongedoMatrimoniale")
                     sp += "3140000000";
+                else if (uniqueTypes[j] == "Paternita")
+                    sp += "6680000000";
                 else
                     sp += "0000000000";
                 
@@ -250,7 +254,7 @@ public class AttendanceHelper
                     }
                     foreach (var attendance_oth in allAttendanceForDay)
                     {
-                        if (attendance_oth.DateIn != null && attendance_oth.DateOut != null  && attendance_oth.Type != "Permesso" && attendance_oth.Type != "Maternita" && attendance_oth.Type != "Presenza" && attendance_oth.Type != "Eliminato" && attendance_oth.Type != "StraordinarioSabato" && attendance_oth.Type != "StraordinarioOrdinario" && attendance_oth.Type != "MaggiorazioneNotturno")
+                        if (attendance_oth.DateIn != null && attendance_oth.DateOut != null  && attendance_oth.Type != "Permesso" && attendance_oth.Type != "Maternita" && attendance_oth.Type != "MaternitaFacoltativa" && attendance_oth.Type != "paternita" && attendance_oth.Type != "CongedoMatrimoniale" && attendance_oth.Type != "Presenza" && attendance_oth.Type != "Eliminato" && attendance_oth.Type != "StraordinarioSabato" && attendance_oth.Type != "StraordinarioOrdinario" && attendance_oth.Type != "MaggiorazioneNotturno")
                         {
                             otherDuration += attendance_oth.DateOut.Value - attendance_oth.DateIn;
                             if (otherDuration.TotalHours > 8 && employee.NumberHour == 40)
@@ -352,7 +356,7 @@ public class AttendanceHelper
                                     var PermissInDay = false;
                                     foreach (var allattendanceForDay in allAttendanceForDay)
                                     {
-                                        if (allattendanceForDay.Type == "Ferie" || allattendanceForDay.Type == "Festivo" || allattendanceForDay.Type == "Malattia" || allattendanceForDay.Type == "CassaIntegrazione" || allattendanceForDay.Type == "Maternita") 
+                                        if (allattendanceForDay.Type == "Ferie" || allattendanceForDay.Type == "Festivo" || allattendanceForDay.Type == "Malattia" || allattendanceForDay.Type == "CassaIntegrazione" || allattendanceForDay.Type == "Maternita" || allattendanceForDay.Type == "MaternitaFacoltativa"  || allattendanceForDay.Type == "Paternita" || allattendanceForDay.Type == "CongedoMatrimoniale") 
                                         {
                                             PresenceInDay = true;
                                         }
@@ -426,12 +430,14 @@ public class AttendanceHelper
                         }
                     }
 
+                    
+                    //Serve per gestire alcuni casi altrimenti mi segnerebbe anche il premesso
                     if (uniqueTypes[j] == "Presenza" && totalDuration.TotalHours > 0)
                     {
                         var OneTime = false;
                         foreach (var allattendanceForDay in allAttendanceForDay)
                         {
-                            if (allattendanceForDay.Type == "Malattia" || allattendanceForDay.Type == "Ferie" || allattendanceForDay.Type == "CassaIntegrazione" || allattendanceForDay.Type == "Maternita")
+                            if (allattendanceForDay.Type == "Malattia" || allattendanceForDay.Type == "Ferie" || allattendanceForDay.Type == "CassaIntegrazione" || allattendanceForDay.Type == "Maternita" || allattendanceForDay.Type == "MaternitaFacoltativa" ||  allattendanceForDay.Type == "Paternita" ||  allattendanceForDay.Type == "CongedoMatrimoniale")
                             {
                                 OneTime = true;
                             }

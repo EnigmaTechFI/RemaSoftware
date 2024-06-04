@@ -1,4 +1,5 @@
-﻿@model RemaSoftware.WebApp.Models.EmployeeViewModel.AttendanceViewModel
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model RemaSoftware.WebApp.Models.EmployeeViewModel.AttendanceViewModel
 
 @{
     ViewData["Title"] = "Gestione Presenze";
@@ -68,15 +69,17 @@
         <div class="ml-5" style="width: 20px; height: 20px; background-color: #f6c23e; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Ferie</div>
         <div class="ml-5" style="width: 20px; height: 20px; background-color: #9A83BC; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Cassa int.</div>
         <div class="ml-5" style="width: 20px; height: 20px; background-color: #3a8fbc; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Lavoro durante festivo</div>
+        <div class="ml-5" style="width: 20px; height: 20px; background-color: #0000ff; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Lavoro suppl.</div>
     </div>
     <div class="row " style="margin-left: -1.5%; margin-bottom: 1.1% !important;">
-        <div class="ml-5" style="width: 20px; height: 20px; background-color: #0000ff; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Lavoro suppl.</div>
         <div class="ml-5" style="width: 20px; height: 20px; background-color: #6f00ff; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Magg. notturno</div>
         <div class="ml-5" style="width: 20px; height: 20px; background-color: #808080; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Permesso 104</div>
         <div class="ml-5" style="width: 20px; height: 20px; background-color: #ffff66; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Infortunio iniziale</div>
         <div class="ml-5" style="width: 20px; height: 20px; background-color: #ffcc66; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Infortunio prolungato</div>
         <div class="ml-5" style="width: 20px; height: 20px; background-color: #ffc0cb; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Congedo matr.</div>
         <div class="ml-5" style="width: 20px; height: 20px; background-color: #FF748C; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Maternità</div>
+        <div class="ml-5" style="width: 20px; height: 20px; background-color: #FF8FA3; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Maternità fac.</div>
+        <div class="ml-5" style="width: 20px; height: 20px; background-color: #00B7F3; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Paternità</div>
     </div>
     <div class="table-responsive">
         <table class="table table-bordered" id="table-stock" width="100%" cellspacing="0">
@@ -125,6 +128,8 @@
                         TimeSpan? totalTimeInf = TimeSpan.Zero;
                         TimeSpan? totalTimeMatr = TimeSpan.Zero;
                         TimeSpan? totalTimeMater = TimeSpan.Zero;
+                        TimeSpan? totalTimePater = TimeSpan.Zero;
+                        TimeSpan? totalTimeMateFac = TimeSpan.Zero;
                         
                         for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, Model.Month); giorno++)
                         {
@@ -900,8 +905,102 @@
                                         <div id="@presenzeDivID" style="display: none;">
                                             @foreach (var presence in attendancesForDay.Where(c => c.Type == "Maternita"))
                                             {
+                                                <a style="cursor: pointer;" title="Modifica Entrata/Uscita" data-toggle="modal" data-target="#modify-modal" onclick="SetDataAttendanceId('#modify-modal', @presence.AttendanceID), SetDataAttendanceId('#confirm-del-modal', @presence.AttendanceID)">
+                                                    <div style="color: white; background-color: #FF748C; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Maternità">
+                                                        <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                                    </div>
+                                                </a>
+                                            }
+                                        </div>
+
+                                        @* Maternità facoltativa*@
+                                        @{
+                                        totalTime = TimeSpan.Zero;
+                                        NotNull = false;
+                                        foreach (var presence in attendancesForDay.Where(c => c.Type == "MaternitaFacoltativa"))
+                                        {
+                                        if (presence.DateOut != null)
+                                        {
+                                        totalTime += presence.DateOut - presence.DateIn;
+                                        NotNull = true;
+                                        }
+                                        }
+
+                                        if (totalTime == TimeSpan.FromHours(9))
+                                        {
+                                        totalTime = TimeSpan.FromHours(8);
+                                        }
+
+                                        totalTime = (totalTime.Value.Minutes < 50) ? TimeSpan.FromHours(totalTime.Value.Hours) : TimeSpan.FromHours(totalTime.Value.Hours + 1);
+                                        totalTimeMateFac += totalTime;
+                                        totalTimeDay += totalTime;
+                                        }
+
+                                        @{
+                                        presenzeDivID = "presenze-" + presenza.Key.EmployeeID + "-" + giorno +"-MateFac";
+                                        }
+
+                                        @if(NotNull){
+                                        <div style="color: white; background-color: #FF8FA3; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center; cursor: pointer;" title="Maternità facoltativa" onclick="togglePresenze('@presenzeDivID')">
+                                            <b style="white-space: nowrap; margin: 0 auto;">
+                                                @totalTime?.ToString(@"hh")h
+                                                @totalTime?.ToString(@"mm")m
+                                            </b>
+                                        </div>
+                                        }
+
+                                        <div id="@presenzeDivID" style="display: none;">
+                                            @foreach (var presence in attendancesForDay.Where(c => c.Type == "MaternitaFacoltativa"))
+                                            {
                                             <a style="cursor: pointer;" title="Modifica Entrata/Uscita" data-toggle="modal" data-target="#modify-modal" onclick="SetDataAttendanceId('#modify-modal', @presence.AttendanceID), SetDataAttendanceId('#confirm-del-modal', @presence.AttendanceID)">
-                                                <div style="color: white; background-color: #FF748C; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Maternità">
+                                                <div style="color: white; background-color: #FF8FA3; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Maternità facoltativa">
+                                                    <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                                </div>
+                                            </a>
+                                            }
+                                        </div>
+
+                                        @* Paternità *@
+                                        @{
+                                        totalTime = TimeSpan.Zero;
+                                        NotNull = false;
+                                        foreach (var presence in attendancesForDay.Where(c => c.Type == "Paternita"))
+                                        {
+                                        if (presence.DateOut != null)
+                                        {
+                                        totalTime += presence.DateOut - presence.DateIn;
+                                        NotNull = true;
+                                        }
+                                        }
+
+                                        if (totalTime == TimeSpan.FromHours(9))
+                                        {
+                                        totalTime = TimeSpan.FromHours(8);
+                                        }
+
+                                        totalTime = (totalTime.Value.Minutes < 50) ? TimeSpan.FromHours(totalTime.Value.Hours) : TimeSpan.FromHours(totalTime.Value.Hours + 1);
+                                        totalTimePater += totalTime;
+                                        totalTimeDay += totalTime;
+                                        }
+
+                                        @{
+                                        presenzeDivID = "presenze-" + presenza.Key.EmployeeID + "-" + giorno +"-Pater";
+                                        }
+
+                                        @if(NotNull){
+                                        <div style="color: white; background-color: #00B7F3; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px; display: flex; align-items: center; cursor: pointer;" title="Paternità" onclick="togglePresenze('@presenzeDivID')">
+                                            <b style="white-space: nowrap; margin: 0 auto;">
+                                                @totalTime?.ToString(@"hh")h
+                                                @totalTime?.ToString(@"mm")m
+                                            </b>
+                                        </div>
+                                        }
+
+                                        <div id="@presenzeDivID" style="display: none;">
+                                            @foreach (var presence in attendancesForDay.Where(c => c.Type == "Paternita"))
+                                            {
+                                            <a style="cursor: pointer;" title="Modifica Entrata/Uscita" data-toggle="modal" data-target="#modify-modal" onclick="SetDataAttendanceId('#modify-modal', @presence.AttendanceID), SetDataAttendanceId('#confirm-del-modal', @presence.AttendanceID)">
+                                                <div style="color: white; background-color: #00B7F3; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Paternità">
                                                     <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
                                                 </div>
                                             </a>
@@ -1044,6 +1143,18 @@
                                     <b style="white-space: nowrap;">@($"{(int)totalTimeMater?.TotalHours}h {totalTimeMater?.Minutes}m")</b>
                                 </div>
                             }
+                            @if (totalTimeMateFac != TimeSpan.Zero)
+                            {
+                            <div class="text-center" style="color: white; background-color: #FF8FA3; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Maternità facoltativa">
+                                <b style="white-space: nowrap;">@($"{(int)totalTimeMateFac?.TotalHours}h {totalTimeMateFac?.Minutes}m")</b>
+                            </div>
+                            }
+                            @if (totalTimePater != TimeSpan.Zero)
+                            {
+                            <div class="text-center" style="color: white; background-color: #00B7F3; border-radius: 10px; padding: 2px 3px 2px 3px; margin-bottom: 3px;" title="Paternità">
+                                <b style="white-space: nowrap;">@($"{(int)totalTimePater?.TotalHours}h {totalTimePater?.Minutes}m")</b>
+                            </div>
+                            }
 
                         </td>
                     </tr>
@@ -1104,6 +1215,8 @@
                             <option value="InfortunioProlungato">Infortunio prolungato</option>
                             <option value="CongedoMatrimoniale">Congedo matrimoniale</option>
                             <option value="Maternita">Maternità</option>
+                            <option value="MaternitaFacoltativa">Maternità facoltativa</option>
+                            <option value="Paternita">Paternità</option>
                         </select>
                     </div>
                 </div>
@@ -1165,7 +1278,9 @@
                             <option value="InfortunioIniziale">Infortunio iniziale</option>
                             <option value="InfortunioProlungato">Infortunio prolungato</option>
                             <option value="CongedoMatrimoniale">Congedo matrimoniale</option>
-                            <option value="Matewrnita">Maternità</option>
+                            <option value="Maternita">Maternità</option>
+                            <option value="MaternitaFacoltativa">Maternità facoltativa</option>
+                            <option value="Paternita">Paternità</option>
                         </select>
                     </div>
                 </div>

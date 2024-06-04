@@ -490,11 +490,27 @@ namespace RemaSoftware.Domain.Services.Impl;
                             DateTime dateOut = date.Date.AddHours(16).AddMinutes(30); // Imposta DateOut a 16:30
                             DateTime dateOutAlternative = date.Date.AddHours(12).AddMinutes(30);
                             DateTime dateOutAlternative1 = date.Date.AddHours(14).AddMinutes(30);
+                            DateTime dateInMatFac = date.Date.AddHours(10).AddMinutes(0);
+                            DateTime dateInMatFac1 = date.Date.AddHours(11).AddMinutes(0);
+                            DateTime dateOutMatFac = date.Date.AddHours(12).AddMinutes(0);
 
                             if (employee.NumberHour == 25)
                                 dateOut = dateOutAlternative;
                             else if (employee.NumberHour == 35)
                                 dateOut = dateOutAlternative1;
+
+                            if (employee.TypePosition == TypePosition.MaternitaFacoltativa)
+                            {
+                                dateOut = dateOutMatFac;
+                                if (dateOut.DayOfWeek == DayOfWeek.Friday)
+                                {
+                                    dateIn = dateInMatFac1;
+                                }
+                                else
+                                {
+                                    dateIn = dateInMatFac;
+                                }
+                            }
                             
                             Attendance newAttendance = new Attendance
                             {
@@ -514,6 +530,10 @@ namespace RemaSoftware.Domain.Services.Impl;
                             else if(employee.TypePosition == TypePosition.Maternità)
                             {
                                 newAttendance.Type = "Maternita";
+                            }
+                            else if(employee.TypePosition == TypePosition.MaternitaFacoltativa)
+                            {
+                                newAttendance.Type = "MaternitaFacoltativa";
                             }
                             else
                             {

@@ -49,6 +49,22 @@ namespace RemaSoftware.WebApp.Controllers
             }
         }
         
+        [Authorize(Roles = Roles.Admin)]
+        [HttpGet]
+        public async Task<IActionResult> AttendanceAnalysis(int year)
+        {
+            try
+            {
+                return View(_employeeHelper.GetAttendanceViewModel(year));
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, e.Message);
+                _notyfService.Error("Errore, impossibile procedere.");
+                return View();
+            }
+        }
+        
         [Authorize(Roles = Roles.Impiegato)]
         [HttpGet]
         public async Task<IActionResult> AttendanceEmployee(int month, int year)
