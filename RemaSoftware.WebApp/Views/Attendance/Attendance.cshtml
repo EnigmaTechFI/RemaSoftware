@@ -1453,11 +1453,11 @@ td:first-child {
     
             var element = document.getElementById('contentToPdf');
              var opt = {
-                 margin: [5, 5, 5, 5],
+                 margin: [2, 2, 2, 2],
                  filename: 'output.pdf',
                  image: { type: 'jpeg', quality: 0.7 },
-                 html2canvas: { scale: 1.5, logging: true },
-                 jsPDF: { unit: 'mm', format: 'a3', orientation: 'landscape' }
+                 html2canvas: { scale: 2, logging: true },
+                 jsPDF: { unit: 'mm', format: 'a2', orientation: 'landscape' }
              };
     
             html2pdf().from(element).set(opt).outputPdf().then(function (pdfData) {
