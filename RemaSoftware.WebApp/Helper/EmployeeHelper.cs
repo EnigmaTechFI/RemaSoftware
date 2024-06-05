@@ -100,12 +100,13 @@ public class EmployeeHelper
             y = DateTime.Today.Year;
         }
 
-        return new AttendanceViewModel
+        var tmp = new AttendanceViewModel
         {
             Attendances = GetAllAttendance(y),
             Employees = _employeeService.GetEmployeesWithoutAttendances(y),
             Year = y
         };
+        return tmp;
     }
     
     public int GetEmployeeId(string userId)

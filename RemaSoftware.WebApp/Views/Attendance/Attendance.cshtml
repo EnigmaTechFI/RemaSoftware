@@ -1457,7 +1457,7 @@ td:first-child {
                  filename: 'output.pdf',
                  image: { type: 'jpeg', quality: 0.7 },
                  html2canvas: { scale: 1.5, logging: true },
-                 jsPDF: { unit: 'mm', format: 'a0', orientation: 'landscape' }
+                 jsPDF: { unit: 'mm', format: 'a3', orientation: 'landscape' }
              };
     
             html2pdf().from(element).set(opt).outputPdf().then(function (pdfData) {
