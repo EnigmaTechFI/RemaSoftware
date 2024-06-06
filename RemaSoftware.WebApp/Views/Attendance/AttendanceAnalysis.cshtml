@@ -1,5 +1,6 @@
 ﻿@using System.Globalization
 @using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Org.BouncyCastle.Asn1.X509
 @model RemaSoftware.WebApp.Models.EmployeeViewModel.AttendanceViewModel
 
 @{
@@ -69,6 +70,21 @@
                     <td><b>Totale annuale</b></td>
                 </tr>
 
+                @{
+                    List<TimeSpan?> listaMediaMes = new List<TimeSpan?>();
+                    for (int i = 0; i < 12; i++)
+                    {
+                        listaMediaMes.Add(TimeSpan.Zero);
+                    }
+                    
+                    List<int> listaEmployee = new List<int>();
+                    for (int i = 0; i < 12; i++)
+                    {
+                        listaEmployee.Add(0);
+                    }
+                    var employeeAnuali = 0;
+                }
+                
                 @foreach (var presenza in Model.Attendances.GroupBy(a => a.Employee))
                 {
                     <tr>
@@ -102,13 +118,14 @@
                                 <td>
                                     @{
                                         @* Presenza *@
+                                        TimeSpan? TmpPermissTotal = TimeSpan.Zero;
                                         TimeSpan? totalTimeDay = TimeSpan.Zero;
 
                                         for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, mese); giorno++)
                                         {
-                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno);
+                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno && a.DateIn.Month == mese);
                                             TimeSpan? partialTimeDay = TimeSpan.Zero;
-
+                                            TimeSpan? TmpPermiss = TimeSpan.Zero;
                                             foreach (var presence in attendancesForDay.Where(c => c.Type == "Presenza"))
                                             {
                                                 if (presence.DateOut != null)
@@ -123,24 +140,26 @@
                                                 partialTimeDay = TimeSpan.FromHours(8);
                                             }
 
-                                            if (presenza.Key.NumberHour == 25)
+                                            if (partialTimeDay >= TimeSpan.FromHours(1))
                                             {
-                                                if (partialTimeDay >= TimeSpan.FromHours(5))
+                                                if (presenza.Key.NumberHour == 25)
                                                 {
                                                     partialTimeDay = TimeSpan.FromHours(5);
+                                                    TmpPermiss = TimeSpan.FromHours(5) - partialTimeDay;
                                                 }
-                                            }
-
-                                            if (presenza.Key.NumberHour == 35)
-                                            {
-                                                if (partialTimeDay >= TimeSpan.FromHours(7))
+                                                else if (presenza.Key.NumberHour == 35)
                                                 {
                                                     partialTimeDay = TimeSpan.FromHours(7);
+                                                    TmpPermiss = TimeSpan.FromHours(7) - partialTimeDay;
+                                                }
+                                                else
+                                                {
+                                                    TmpPermiss = TimeSpan.FromHours(8) - partialTimeDay;
                                                 }
                                             }
 
+                                            TmpPermissTotal += TmpPermiss;
                                             totalTimeDay += partialTimeDay;
-                                            
                                         }
 
                                         totalTimePresence += totalTimeDay;
@@ -149,7 +168,10 @@
                                             <div class="text-center" style="color: white; background-color: green; border-radius: 10px; padding: 1px 2px 1px 2px; text-align: center; font-size: 14px; margin-bottom: 3px;" title="Ore presenze mensili">
                                                 <b style="white-space: nowrap;">@($"{(int)totalTimeDay?.TotalHours}h {totalTimeDay?.Minutes}m")</b>
                                             </div>
+                                            listaEmployee[mese-1]++;
                                         }
+
+                                        listaMediaMes[mese-1] += totalTimeDay;
                                         
                                         
                                         @* Straordinario *@
@@ -157,7 +179,7 @@
 
                                         for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, mese); giorno++)
                                         {
-                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno);
+                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno && a.DateIn.Month == mese);
                                             TimeSpan? partialTimeDay = TimeSpan.Zero;
 
                                             foreach (var presence in attendancesForDay.Where(c => c.Type == "StraordinarioOrdinario" || c.Type == "StraordinarioNotturno"))
@@ -168,7 +190,6 @@
                                                 }
                                             }
                                             partialTimeDay = (partialTimeDay.Value.Minutes < 50) ? TimeSpan.FromHours(partialTimeDay.Value.Hours) : TimeSpan.FromHours(partialTimeDay.Value.Hours + 1);
-
                                             totalTimeDay += partialTimeDay;
                                             
                                         }
@@ -187,7 +208,7 @@
 
                                         for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, mese); giorno++)
                                         {
-                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno);
+                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno && a.DateIn.Month == mese);
                                             TimeSpan? partialTimeDay = TimeSpan.Zero;
 
                                             foreach (var presence in attendancesForDay.Where(c => c.Type == "Permesso"))
@@ -198,11 +219,10 @@
                                                 }
                                             }
                                             partialTimeDay = (partialTimeDay.Value.Minutes < 50) ? TimeSpan.FromHours(partialTimeDay.Value.Hours) : TimeSpan.FromHours(partialTimeDay.Value.Hours + 1);
-
                                             totalTimeDay += partialTimeDay;
-                                            
                                         }
 
+                                        totalTimeDay += TmpPermissTotal;
                                         totalTimePermit += totalTimeDay;
                                         if (totalTimeDay != TimeSpan.Zero)
                                         {
@@ -217,7 +237,7 @@
 
                                         for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, mese); giorno++)
                                         {
-                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno);
+                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno && a.DateIn.Month == mese);
                                             TimeSpan? partialTimeDay = TimeSpan.Zero;
 
                                             foreach (var presence in attendancesForDay.Where(c => c.Type == "Malattia"))
@@ -226,6 +246,10 @@
                                                 {
                                                     partialTimeDay += presence.DateOut - presence.DateIn;
                                                 }
+                                            }
+                                            if (partialTimeDay == TimeSpan.FromHours(9))
+                                            {
+                                                partialTimeDay = TimeSpan.FromHours(8);
                                             }
                                             partialTimeDay = (partialTimeDay.Value.Minutes < 50) ? TimeSpan.FromHours(partialTimeDay.Value.Hours) : TimeSpan.FromHours(partialTimeDay.Value.Hours + 1);
 
@@ -236,7 +260,7 @@
                                         totalTimeIllness += totalTimeDay;
                                         if (totalTimeDay != TimeSpan.Zero)
                                         {
-                                            <div class="text-center" style="color: white; background-color: red; border-radius: 10px; padding: 1px 2px 1px 2px; text-align: center; font-size: 14px; margin-bottom: 3px;" title="Ore malattia mensili">
+                                            <div class="text-center" style="color: white; background-color: #FF7F26; border-radius: 10px; padding: 1px 2px 1px 2px; text-align: center; font-size: 14px; margin-bottom: 3px;" title="Ore malattia mensili">
                                                 <b style="white-space: nowrap;">@($"{(int)totalTimeDay?.TotalHours}h {totalTimeDay?.Minutes}m")</b>
                                             </div>
                                         }
@@ -246,7 +270,7 @@
 
                                         for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, mese); giorno++)
                                         {
-                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno);
+                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno && a.DateIn.Month == mese);
                                             TimeSpan? partialTimeDay = TimeSpan.Zero;
 
                                             foreach (var presence in attendancesForDay.Where(c => c.Type == "Festivo"))
@@ -256,13 +280,17 @@
                                                     partialTimeDay += presence.DateOut - presence.DateIn;
                                                 }
                                             }
+                                            if (partialTimeDay == TimeSpan.FromHours(9))
+                                            {
+                                                partialTimeDay = TimeSpan.FromHours(8);
+                                            }
                                             partialTimeDay = (partialTimeDay.Value.Minutes < 50) ? TimeSpan.FromHours(partialTimeDay.Value.Hours) : TimeSpan.FromHours(partialTimeDay.Value.Hours + 1);
 
                                             totalTimeDay += partialTimeDay;
                                             
                                         }
 
-                                        totalTimeIllness += totalTimeDay;
+                                        totalTimeHoliday += totalTimeDay;
                                         if (totalTimeDay != TimeSpan.Zero)
                                         {
                                             <div class="text-center" style="color: white; background-color: #36b9cc; border-radius: 10px; padding: 1px 2px 1px 2px; text-align: center; font-size: 14px; margin-bottom: 3px;" title="Ore festivo mensili">
@@ -276,7 +304,7 @@
 
                                         for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, mese); giorno++)
                                         {
-                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno);
+                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno && a.DateIn.Month == mese);
                                             TimeSpan? partialTimeDay = TimeSpan.Zero;
 
                                             foreach (var presence in attendancesForDay.Where(c => c.Type == "Ferie"))
@@ -285,6 +313,10 @@
                                                 {
                                                     partialTimeDay += presence.DateOut - presence.DateIn;
                                                 }
+                                            }
+                                            if (partialTimeDay == TimeSpan.FromHours(9))
+                                            {
+                                                partialTimeDay = TimeSpan.FromHours(8);
                                             }
                                             partialTimeDay = (partialTimeDay.Value.Minutes < 50) ? TimeSpan.FromHours(partialTimeDay.Value.Hours) : TimeSpan.FromHours(partialTimeDay.Value.Hours + 1);
 
@@ -306,7 +338,7 @@
 
                                         for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, mese); giorno++)
                                         {
-                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno);
+                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno && a.DateIn.Month == mese);
                                             TimeSpan? partialTimeDay = TimeSpan.Zero;
 
                                             foreach (var presence in attendancesForDay.Where(c => c.Type == "CassaIntegrazione"))
@@ -315,6 +347,10 @@
                                                 {
                                                     partialTimeDay += presence.DateOut - presence.DateIn;
                                                 }
+                                            }
+                                            if (partialTimeDay == TimeSpan.FromHours(9))
+                                            {
+                                                partialTimeDay = TimeSpan.FromHours(8);
                                             }
                                             partialTimeDay = (partialTimeDay.Value.Minutes < 50) ? TimeSpan.FromHours(partialTimeDay.Value.Hours) : TimeSpan.FromHours(partialTimeDay.Value.Hours + 1);
 
@@ -331,42 +367,12 @@
                                         }
                                         
                                         
-                                        @* Cassa Integrazione *@
+                                        @* Lavoro durante festivo *@
                                         totalTimeDay = TimeSpan.Zero;
 
                                         for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, mese); giorno++)
                                         {
-                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno);
-                                            TimeSpan? partialTimeDay = TimeSpan.Zero;
-
-                                            foreach (var presence in attendancesForDay.Where(c => c.Type == "CassaIntegrazione"))
-                                            {
-                                                if (presence.DateOut != null)
-                                                {
-                                                    partialTimeDay += presence.DateOut - presence.DateIn;
-                                                }
-                                            }
-                                            partialTimeDay = (partialTimeDay.Value.Minutes < 50) ? TimeSpan.FromHours(partialTimeDay.Value.Hours) : TimeSpan.FromHours(partialTimeDay.Value.Hours + 1);
-
-                                            totalTimeDay += partialTimeDay;
-                                            
-                                        }
-
-                                        totalTimeCassa += totalTimeDay;
-                                        if (totalTimeDay != TimeSpan.Zero)
-                                        {
-                                            <div class="text-center" style="color: white; background-color: #9A83BC; border-radius: 10px; padding: 1px 2px 1px 2px; text-align: center; font-size: 14px; margin-bottom: 3px;" title="Ore cassa integrazione mensili">
-                                                <b style="white-space: nowrap;">@($"{(int)totalTimeDay?.TotalHours}h {totalTimeDay?.Minutes}m")</b>
-                                            </div>
-                                        }
-                                        
-                                        
-                                        @* Cassa Integrazione *@
-                                        totalTimeDay = TimeSpan.Zero;
-
-                                        for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, mese); giorno++)
-                                        {
-                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno);
+                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno && a.DateIn.Month == mese);
                                             TimeSpan? partialTimeDay = TimeSpan.Zero;
 
                                             foreach (var presence in attendancesForDay.Where(c => c.Type == "LavoroFestivo"))
@@ -375,6 +381,10 @@
                                                 {
                                                     partialTimeDay += presence.DateOut - presence.DateIn;
                                                 }
+                                            }
+                                            if (partialTimeDay == TimeSpan.FromHours(9))
+                                            {
+                                                partialTimeDay = TimeSpan.FromHours(8);
                                             }
                                             partialTimeDay = (partialTimeDay.Value.Minutes < 50) ? TimeSpan.FromHours(partialTimeDay.Value.Hours) : TimeSpan.FromHours(partialTimeDay.Value.Hours + 1);
 
@@ -396,7 +406,7 @@
 
                                         for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, mese); giorno++)
                                         {
-                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno);
+                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno && a.DateIn.Month == mese);
                                             TimeSpan? partialTimeDay = TimeSpan.Zero;
 
                                             foreach (var presence in attendancesForDay.Where(c => c.Type == "Supplementare"))
@@ -425,7 +435,7 @@
 
                                         for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, mese); giorno++)
                                         {
-                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno);
+                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno && a.DateIn.Month == mese);
                                             TimeSpan? partialTimeDay = TimeSpan.Zero;
 
                                             foreach (var presence in attendancesForDay.Where(c => c.Type == "MaggiorazioneNotturno"))
@@ -454,7 +464,7 @@
 
                                         for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, mese); giorno++)
                                         {
-                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno);
+                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno && a.DateIn.Month == mese);
                                             TimeSpan? partialTimeDay = TimeSpan.Zero;
 
                                             foreach (var presence in attendancesForDay.Where(c => c.Type == "Permesso104"))
@@ -463,6 +473,10 @@
                                                 {
                                                     partialTimeDay += presence.DateOut - presence.DateIn;
                                                 }
+                                            }
+                                            if (partialTimeDay == TimeSpan.FromHours(9))
+                                            {
+                                                partialTimeDay = TimeSpan.FromHours(8);
                                             }
                                             partialTimeDay = (partialTimeDay.Value.Minutes < 50) ? TimeSpan.FromHours(partialTimeDay.Value.Hours) : TimeSpan.FromHours(partialTimeDay.Value.Hours + 1);
 
@@ -484,7 +498,7 @@
 
                                         for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, mese); giorno++)
                                         {
-                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno);
+                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno && a.DateIn.Month == mese);
                                             TimeSpan? partialTimeDay = TimeSpan.Zero;
 
                                             foreach (var presence in attendancesForDay.Where(c => c.Type == "InfortunioIniziale"))
@@ -493,6 +507,10 @@
                                                 {
                                                     partialTimeDay += presence.DateOut - presence.DateIn;
                                                 }
+                                            }
+                                            if (partialTimeDay == TimeSpan.FromHours(9))
+                                            {
+                                                partialTimeDay = TimeSpan.FromHours(8);
                                             }
                                             partialTimeDay = (partialTimeDay.Value.Minutes < 50) ? TimeSpan.FromHours(partialTimeDay.Value.Hours) : TimeSpan.FromHours(partialTimeDay.Value.Hours + 1);
 
@@ -514,7 +532,7 @@
 
                                         for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, mese); giorno++)
                                         {
-                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno);
+                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno && a.DateIn.Month == mese);
                                             TimeSpan? partialTimeDay = TimeSpan.Zero;
 
                                             foreach (var presence in attendancesForDay.Where(c => c.Type == "CongedoMatrimoniale"))
@@ -523,6 +541,10 @@
                                                 {
                                                     partialTimeDay += presence.DateOut - presence.DateIn;
                                                 }
+                                            }
+                                            if (partialTimeDay == TimeSpan.FromHours(9))
+                                            {
+                                                partialTimeDay = TimeSpan.FromHours(8);
                                             }
                                             partialTimeDay = (partialTimeDay.Value.Minutes < 50) ? TimeSpan.FromHours(partialTimeDay.Value.Hours) : TimeSpan.FromHours(partialTimeDay.Value.Hours + 1);
 
@@ -539,12 +561,12 @@
                                         }
                                         
                                         
-                                         @* Congedo matrimoniale *@
+                                        @* Congedo matrimoniale *@
                                         totalTimeDay = TimeSpan.Zero;
 
                                         for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, mese); giorno++)
                                         {
-                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno);
+                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno && a.DateIn.Month == mese);
                                             TimeSpan? partialTimeDay = TimeSpan.Zero;
 
                                             foreach (var presence in attendancesForDay.Where(c => c.Type == "InfortunioProlungato"))
@@ -553,6 +575,10 @@
                                                 {
                                                     partialTimeDay += presence.DateOut - presence.DateIn;
                                                 }
+                                            }
+                                            if (partialTimeDay == TimeSpan.FromHours(9))
+                                            {
+                                                partialTimeDay = TimeSpan.FromHours(8);
                                             }
                                             partialTimeDay = (partialTimeDay.Value.Minutes < 50) ? TimeSpan.FromHours(partialTimeDay.Value.Hours) : TimeSpan.FromHours(partialTimeDay.Value.Hours + 1);
 
@@ -574,7 +600,7 @@
 
                                         for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, mese); giorno++)
                                         {
-                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno);
+                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno && a.DateIn.Month == mese);
                                             TimeSpan? partialTimeDay = TimeSpan.Zero;
 
                                             foreach (var presence in attendancesForDay.Where(c => c.Type == "Maternita"))
@@ -583,6 +609,10 @@
                                                 {
                                                     partialTimeDay += presence.DateOut - presence.DateIn;
                                                 }
+                                            }
+                                            if (partialTimeDay == TimeSpan.FromHours(9))
+                                            {
+                                                partialTimeDay = TimeSpan.FromHours(8);
                                             }
                                             partialTimeDay = (partialTimeDay.Value.Minutes < 50) ? TimeSpan.FromHours(partialTimeDay.Value.Hours) : TimeSpan.FromHours(partialTimeDay.Value.Hours + 1);
 
@@ -604,7 +634,7 @@
 
                                         for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, mese); giorno++)
                                         {
-                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno);
+                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno && a.DateIn.Month == mese);
                                             TimeSpan? partialTimeDay = TimeSpan.Zero;
 
                                             foreach (var presence in attendancesForDay.Where(c => c.Type == "MaternitaFacoltativa"))
@@ -613,6 +643,10 @@
                                                 {
                                                     partialTimeDay += presence.DateOut - presence.DateIn;
                                                 }
+                                            }
+                                            if (partialTimeDay == TimeSpan.FromHours(9))
+                                            {
+                                                partialTimeDay = TimeSpan.FromHours(8);
                                             }
                                             partialTimeDay = (partialTimeDay.Value.Minutes < 50) ? TimeSpan.FromHours(partialTimeDay.Value.Hours) : TimeSpan.FromHours(partialTimeDay.Value.Hours + 1);
 
@@ -633,7 +667,7 @@
 
                                         for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, mese); giorno++)
                                         {
-                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno);
+                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno && a.DateIn.Month == mese);
                                             TimeSpan? partialTimeDay = TimeSpan.Zero;
 
                                             foreach (var presence in attendancesForDay.Where(c => c.Type == "Paternita"))
@@ -642,6 +676,10 @@
                                                 {
                                                     partialTimeDay += presence.DateOut - presence.DateIn;
                                                 }
+                                            }
+                                            if (partialTimeDay == TimeSpan.FromHours(9))
+                                            {
+                                                partialTimeDay = TimeSpan.FromHours(8);
                                             }
                                             partialTimeDay = (partialTimeDay.Value.Minutes < 50) ? TimeSpan.FromHours(partialTimeDay.Value.Hours) : TimeSpan.FromHours(partialTimeDay.Value.Hours + 1);
 
@@ -663,9 +701,10 @@
                             <td>
                                 @if (totalTimePresence != TimeSpan.Zero)
                                 {
-                                    <div class="text-center" style="color: white; background-color: green; border-radius: 10px; padding: 1px 2px 1px 2px; text-align: center; font-size: 14px; margin-bottom: 3px;" title="Ore lavoro supplementare annuali">
+                                    <div class="text-center" style="color: white; background-color: green; border-radius: 10px; padding: 1px 2px 1px 2px; text-align: center; font-size: 14px; margin-bottom: 3px;" title="Ore lavoro annuali">
                                         <b style="white-space: nowrap;">@($"{(int)totalTimePresence?.TotalHours}h {totalTimePresence?.Minutes}m")</b>
                                     </div>
+                                    employeeAnuali++;
                                 }
 
                                 @if (totalTimeStraord != TimeSpan.Zero)
@@ -769,6 +808,36 @@
                         }
                     </tr>
                 }
+                <tr>
+                    <td>
+                        <b>Media presenze</b>
+                    </td>
+                    @{
+                        TimeSpan TotalMedia = TimeSpan.Zero;
+                        
+                        for (int mese = 1; mese <= 12; mese++)
+                        {
+                            @if (listaMediaMes[mese-1].Value != TimeSpan.Zero)
+                            {
+                                TotalMedia += listaMediaMes[mese-1].Value;
+                                <td>
+                                    <div class="text-center" style="color: white; background-color: green; border-radius: 10px; padding: 1px 2px 1px 2px; text-align: center; font-size: 14px; margin-bottom: 3px;" title="Ore lavoro medie mensili">
+                                        <b style="white-space: nowrap;">@($"{((int)listaMediaMes[mese-1]?.TotalHours)/listaEmployee[mese-1]}h {listaMediaMes[mese-1]?.Minutes}m")</b>
+                                    </div>
+                                </td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+                        }
+                    }
+                    <td>
+                        <div class="text-center" style="color: white; background-color: green; border-radius: 10px; padding: 1px 2px 1px 2px; text-align: center; font-size: 14px; margin-bottom: 3px;" title="Ore lavoro medie annuali">
+                            <b style="white-space: nowrap;">@($"{((int)TotalMedia.TotalHours)/employeeAnuali}h {TotalMedia.Minutes}m")</b>
+                        </div>
+                    </td>
+                </tr>
             </table>
         </div>
     </div>

@@ -182,8 +182,69 @@
                     <span>DDT emesse</span>
                 </a>
             </li>
+            
+            @if (User.IsInRole("Admin"))
+            {
+                <hr class="sidebar-divider">
 
-            <!-- Divider -->
+                <div class="sidebar-heading mb-3">
+                    <a class="option-collapse" id="gestioneBtn" data-toggle="collapse" data-target="#collapseGestione" aria-expanded="false" aria-controls="collapseGestione">
+                        <span class="mx-1">Gestione</span> <i class="fas fa-chevron-down option-arrow" id="gestioneArrow" style="transition: transform 0.3s;"></i>
+                    </a>
+                </div>
+
+                <div class="collapse" id="collapseGestione">
+                    <ul class="nav flex-column">
+                        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Attendance" ? "active" : "")">
+                            <a class="nav-link" asp-action="Attendance" asp-controller="Attendance">
+                                <i class="fas fa-fw fa-calculator"></i>
+                                <span>Presenze</span>
+                            </a>
+                        </li>
+                        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Accounting" ? "active" : "")">
+                            <a class="nav-link" asp-action="Accounting" asp-controller="Accounting">
+                                <i class="fas fa-fw fa-calculator"></i>
+                                <span>Contabilità</span>
+                            </a>
+                        </li>
+                        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "DDTVariation" ? "active" : "")">
+                            <a class="nav-link" asp-action="DDTVariation" asp-controller="Accounting">
+                                <i class="fas fa-fw fa-handshake-o"></i>
+                                <span>Variazioni DDT</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            }
+
+            @if (User.IsInRole("Admin"))
+            {
+                <hr class="sidebar-divider">
+
+                <div class="sidebar-heading mb-3">
+                    <a class="option-collapse" id="analisiBtn" data-toggle="collapse" data-target="#collapseAnalisi" aria-expanded="false" aria-controls="collapseAnalisi">
+                        <span class="mx-1">Analisi</span> <i class="fas fa-chevron-down option-arrow" id="analisiArrow" style="transition: transform 0.3s;"></i>
+                    </a>
+                </div>
+
+                <div class="collapse" id="collapseAnalisi">
+                    <ul class="nav flex-column">
+                        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Preliminar" ? "active" : "")">
+                            <a class="nav-link" asp-action="Preliminar" asp-controller="Accounting">
+                                <i class="fas fa-fw fa-area-chart"></i>
+                                <span>Analisi lotti</span>
+                            </a>
+                        </li>
+                        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Attensance" ? "active" : "")">
+                            <a class="nav-link" asp-action="AttendanceAnalysis" asp-controller="Attendance">
+                                <i class="fas fa-fw fa-users"></i>
+                                <span>Analisi presenze</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            }
+            
             <hr class="sidebar-divider">
             
             <div class="sidebar-heading mb-3">
@@ -263,72 +324,6 @@
                     </li>
                 </ul>
             </div>
-            
-        }
-        @if (User.IsInRole("Admin"))
-        {
-            
-            <hr class="sidebar-divider">
-
-            <div class="sidebar-heading mb-3">
-                <a class="option-collapse" id="gestioneBtn" data-toggle="collapse" data-target="#collapseGestione" aria-expanded="false" aria-controls="collapseGestione">
-                    <span class="mx-1">Gestione</span> <i class="fas fa-chevron-down option-arrow" id="gestioneArrow" style="transition: transform 0.3s;"></i>
-                </a>
-            </div>
-
-            <div class="collapse" id="collapseGestione">
-                <ul class="nav flex-column">
-                    <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Attendance" ? "active" : "")">
-                        <a class="nav-link" asp-action="Attendance" asp-controller="Attendance">
-                            <i class="fas fa-fw fa-calculator"></i>
-                            <span>Presenze</span>
-                        </a>
-                    </li>
-                    <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Accounting" ? "active" : "")">
-                        <a class="nav-link" asp-action="Accounting" asp-controller="Accounting">
-                            <i class="fas fa-fw fa-calculator"></i>
-                            <span>Contabilità</span>
-                        </a>
-                    </li>
-                    <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "DDTVariation" ? "active" : "")">
-                        <a class="nav-link" asp-action="DDTVariation" asp-controller="Accounting">
-                            <i class="fas fa-fw fa-handshake-o"></i>
-                            <span>Variazioni DDT</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-        }
-
-        @if (User.IsInRole("Admin"))
-        {
-
-        <hr class="sidebar-divider">
-
-        <div class="sidebar-heading mb-3">
-            <a class="option-collapse" id="analisiBtn" data-toggle="collapse" data-target="#collapseAnalisi" aria-expanded="false" aria-controls="collapseAnalisi">
-                <span class="mx-1">Analisi</span> <i class="fas fa-chevron-down option-arrow" id="analisiArrow" style="transition: transform 0.3s;"></i>
-            </a>
-        </div>
-
-        <div class="collapse" id="collapseAnalisi">
-            <ul class="nav flex-column">
-                <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Preliminar" ? "active" : "")">
-                    <a class="nav-link" asp-action="Preliminar" asp-controller="Accounting">
-                        <i class="fas fa-fw fa-area-chart"></i>
-                        <span>Analisi lotti</span>
-                    </a>
-                </li>
-                @*<li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Attensance" ? "active" : "")">
-                    <a class="nav-link" asp-action="AttendanceAnalysis" asp-controller="Attendance">
-                        <i class="fas fa-fw fa-users"></i>
-                        <span>Analisi presenze</span>
-                    </a>
-                </li>*@
-            </ul>
-        </div>
-
         }
         
         @if (User.IsInRole("Impiegato"))
