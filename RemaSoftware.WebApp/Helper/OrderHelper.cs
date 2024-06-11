@@ -373,7 +373,8 @@ namespace RemaSoftware.WebApp.Helper
                     if (dto.LostPieces + dto.WastePieces + dto.OkPieces + dto.ZamaPieces + dto.ResoScarto<= 0)
                         throw new Exception("Nessun pezzo inserito.");
                     
-                    var OtherSubBatch = _subBatchService.GetSubBatchByBatchId(dto.SubBatchId);
+                    //Sezione che controlla se un lotto più vecchio è rimasto aperto precedentemente
+                    /*var OtherSubBatch = _subBatchService.GetSubBatchByBatchId(dto.SubBatchId);
                     int? oldestSubBatchId = null;
                     DateTime oldestDate = DateTime.MaxValue;
 
@@ -398,7 +399,7 @@ namespace RemaSoftware.WebApp.Helper
                     if (oldestSubBatchId != null)
                     {
                         throw new InvalidOperationException("Lotto n. " + oldestSubBatchId + " da chiudere prima.");
-                    }
+                    }*/
                     
                     _orderService.CreateNewLabelOut(new Label()
                     {
