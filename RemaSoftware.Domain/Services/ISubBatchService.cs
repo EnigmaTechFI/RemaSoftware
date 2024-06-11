@@ -21,4 +21,5 @@ public interface ISubBatchService
     public SubBatch GetSubBatchByIdAndClientId(int id, int clientId);
     public List<SubBatch> GetSubBatchesWithExtras();
     public List<Ddt_Supplier> GetSubBatchToSupplier();
+    public List<SubBatch> GetSubBatchByBatchId(int SubBatchId);
 }

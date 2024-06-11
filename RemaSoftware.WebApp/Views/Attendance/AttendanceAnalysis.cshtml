@@ -65,7 +65,7 @@
                     @for (int mese = 1; mese <= 12; mese++)
                     {
                         string nomeMese = new DateTime(Model.Year, mese, 1).ToString("MMMM", new CultureInfo("it-IT"));
-                        <th class="text-center">@nomeMese</th>
+                        <th class="text-center" style="cursor: pointer;" onclick="highlightColumn(this);">@nomeMese</th>
                     }
                     <td><b>Totale annuale</b></td>
                 </tr>
@@ -182,7 +182,7 @@
                                             var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno && a.DateIn.Month == mese);
                                             TimeSpan? partialTimeDay = TimeSpan.Zero;
 
-                                            foreach (var presence in attendancesForDay.Where(c => c.Type == "StraordinarioOrdinario" || c.Type == "StraordinarioNotturno"))
+                                            foreach (var presence in attendancesForDay.Where(c => c.Type == "StraordinarioOrdinario"  || c.Type == "StraordinarioNotturno" || c.Type == "StraordinarioSabato"))
                                             {
                                                 if (presence.DateOut != null)
                                                 {
@@ -887,6 +887,28 @@ td:first-child {
             // Aggiungi la classe "highlighted" alla riga cliccata se non è già evidenziata
             if (!isHighlighted) {
                 row.classList.add('highlighted');
+            }
+        }
+
+        function highlightColumn(cell) {
+            var colIndex = cell.cellIndex; // Ottieni l'indice della colonna cliccata
+            var isHighlighted = cell.classList.contains('highlighted'); // Verifica se la cella è già evidenziata
+
+            // Rimuove la classe "highlighted" da tutte le celle della tabella
+            var cells = document.querySelectorAll('td, th');
+            for (var i = 0; i < cells.length; i++) {
+                cells[i].classList.remove('highlighted');
+            }
+
+            // Se la colonna non era evidenziata, aggiungi la classe "highlighted" a tutte le celle della colonna cliccata
+            if (!isHighlighted) {
+                var rows = document.querySelectorAll('tr');
+                for (var i = 0; i < rows.length; i++) {
+                    var cellInColumn = rows[i].cells[colIndex];
+                    if (cellInColumn) {
+                        cellInColumn.classList.add('highlighted');
+                    }
+                }
             }
         }
     </script>

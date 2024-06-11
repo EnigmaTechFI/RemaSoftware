@@ -90,11 +90,11 @@
                         DateTime dataCorrente = new DateTime(Model.Year, Model.Month, giorno);
                         if (dataCorrente.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
                         {
-                            <th class="text-center" style="background-color: #d3d3d3;">@giorno</th>
+                            <th class="text-center" style="background-color: #d3d3d3; cursor: pointer;" onclick="highlightColumn(this);">@giorno</th>
                         }
                         else
                         {
-                            <th class="text-center">@giorno</th>
+                            <th class="text-center" style="cursor: pointer;" onclick="highlightColumn(this);">@giorno</th>
                         }
                     }
                     <td><b>Totale ore</b></td>
@@ -1505,6 +1505,28 @@ td:first-child {
                     row.classList.add('highlighted');
                 }
             }
+
+        function highlightColumn(cell) {
+            var colIndex = cell.cellIndex; // Ottieni l'indice della colonna cliccata
+            var isHighlighted = cell.classList.contains('highlighted'); // Verifica se la cella è già evidenziata
+
+            // Rimuove la classe "highlighted" da tutte le celle della tabella
+            var cells = document.querySelectorAll('td, th');
+            for (var i = 0; i < cells.length; i++) {
+                cells[i].classList.remove('highlighted');
+            }
+
+            // Se la colonna non era evidenziata, aggiungi la classe "highlighted" a tutte le celle della colonna cliccata
+            if (!isHighlighted) {
+                var rows = document.querySelectorAll('tr');
+                for (var i = 0; i < rows.length; i++) {
+                    var cellInColumn = rows[i].cells[colIndex];
+                    if (cellInColumn) {
+                        cellInColumn.classList.add('highlighted');
+                    }
+                }
+            }
+        }
     </script>
     
     <script>

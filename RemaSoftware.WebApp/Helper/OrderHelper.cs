@@ -372,6 +372,34 @@ namespace RemaSoftware.WebApp.Helper
                         throw new Exception("Il totale dei pezzi inserito è maggiore dei pezzi attualmente in azienda.");
                     if (dto.LostPieces + dto.WastePieces + dto.OkPieces + dto.ZamaPieces + dto.ResoScarto<= 0)
                         throw new Exception("Nessun pezzo inserito.");
+                    
+                    var OtherSubBatch = _subBatchService.GetSubBatchByBatchId(dto.SubBatchId);
+                    int? oldestSubBatchId = null;
+                    DateTime oldestDate = DateTime.MaxValue;
+
+                    foreach (var subbatch in OtherSubBatch)
+                    {
+                        if (subbatch.Status != OrderStatusConstants.STATUS_COMPLETED)
+                        {
+                            foreach (var ddt in subbatch.Ddts_In)
+                            {
+                                if (ddt.Number_Piece_Now > 0 && ddt.DataIn < subBatch.Ddts_In.FirstOrDefault(ddt => ddt.Number_Piece_Now > 0)?.DataIn)
+                                {
+                                    if (ddt.DataIn < oldestDate)
+                                    {
+                                        oldestDate = ddt.DataIn;
+                                        oldestSubBatchId = subbatch.SubBatchID;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    if (oldestSubBatchId != null)
+                    {
+                        throw new InvalidOperationException("Lotto n. " + oldestSubBatchId + " da chiudere prima.");
+                    }
+                    
                     _orderService.CreateNewLabelOut(new Label()
                     {
                         Client = subBatch.Ddts_In[0].Product.Client.Name,

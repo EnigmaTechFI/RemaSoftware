@@ -358,4 +358,17 @@ public class SubBatchService : ISubBatchService
             .Where(s => s.BatchOperation.Operations.Name == OtherConstants.COQ && s.Status == OperationTimelineConstant.STATUS_WORKING)
             .ToList();
     }
+
+    public List<SubBatch> GetSubBatchByBatchId(int SubBatchId)
+    {
+        int batchCode = _dbContext.SubBatches
+            .Where(s => s.SubBatchID == SubBatchId)
+            .Select(s => s.Batch.BatchId)
+            .FirstOrDefault();
+
+        return _dbContext.SubBatches
+            .Include(s => s.Batch).Include(u => u.Ddts_In)
+            .Where(s => s.Batch.BatchId == batchCode && s.SubBatchID != SubBatchId)
+            .ToList();
+    }
 }
