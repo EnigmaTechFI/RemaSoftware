@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using It.FattureInCloud.Sdk.Model;
 using Microsoft.Extensions.Configuration;
 using NLog;
 using QRCoder;
@@ -359,7 +360,7 @@ namespace RemaSoftware.WebApp.Helper
             };
         }
 
-        public int EndOrder(SubBatchToEndDto dto)
+        public int EndOrder(SubBatchToEndDto dto, string userRole)
         {
             using (var transaction = _dbContext.Database.BeginTransaction())
             {
@@ -373,33 +374,35 @@ namespace RemaSoftware.WebApp.Helper
                     if (dto.LostPieces + dto.WastePieces + dto.OkPieces + dto.ZamaPieces + dto.ResoScarto<= 0)
                         throw new Exception("Nessun pezzo inserito.");
                     
-                    //Sezione che controlla se un lotto più vecchio è rimasto aperto precedentemente
-                    /*var OtherSubBatch = _subBatchService.GetSubBatchByBatchId(dto.SubBatchId);
-                    int? oldestSubBatchId = null;
-                    DateTime oldestDate = DateTime.MaxValue;
-
-                    foreach (var subbatch in OtherSubBatch)
+                    if (userRole == "ControlloQualità")
                     {
-                        if (subbatch.Status != OrderStatusConstants.STATUS_COMPLETED)
+                        var OtherSubBatch = _subBatchService.GetSubBatchByBatchId(dto.SubBatchId);
+                        int? oldestSubBatchId = null;
+                        DateTime oldestDate = DateTime.MaxValue;
+
+                        foreach (var subbatch in OtherSubBatch)
                         {
-                            foreach (var ddt in subbatch.Ddts_In)
+                            if (subbatch.Status != OrderStatusConstants.STATUS_COMPLETED)
                             {
-                                if (ddt.Number_Piece_Now > 0 && ddt.DataIn < subBatch.Ddts_In.FirstOrDefault(ddt => ddt.Number_Piece_Now > 0)?.DataIn)
+                                foreach (var ddt in subbatch.Ddts_In)
                                 {
-                                    if (ddt.DataIn < oldestDate)
+                                    if (ddt.Number_Piece_Now > 0 && ddt.DataOut < subBatch.Ddts_In.FirstOrDefault(ddt => ddt.Number_Piece_Now > 0)?.DataOut)
                                     {
-                                        oldestDate = ddt.DataIn;
-                                        oldestSubBatchId = subbatch.SubBatchID;
+                                        if (ddt.DataOut < oldestDate)
+                                        {
+                                            oldestDate = ddt.DataOut;
+                                            oldestSubBatchId = subbatch.SubBatchID;
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
                     
-                    if (oldestSubBatchId != null)
-                    {
-                        throw new InvalidOperationException("Lotto n. " + oldestSubBatchId + " da chiudere prima.");
-                    }*/
+                        if (oldestSubBatchId != null)
+                        {
+                            throw new InvalidOperationException("Lotto n. " + oldestSubBatchId + " da chiudere prima.");
+                        }
+                    }
                     
                     _orderService.CreateNewLabelOut(new Label()
                     {
@@ -913,7 +916,7 @@ namespace RemaSoftware.WebApp.Helper
                 {
                     var ddt = _orderService.GetDdtInById(id);
                     if (ddt == null)
-                        throw new Exception("DDT non torvata. Si prega di riporovare.");
+                        throw new Exception("DDT non trovata. Si prega di riprovare.");
                     if (pieces < 0)
                         throw new Exception("Valore inserito non valido");
                     var diff = pieces - ddt.Number_Piece_Now;
@@ -922,6 +925,28 @@ namespace RemaSoftware.WebApp.Helper
                     ddt.Status = pieces == 0 ? OrderStatusConstants.STATUS_COMPLETED : ddt.Status;
                     _orderService.UpdateDDtIn(ddt);
                     _apiFatturaInCloud.EditDdtInCloud(ddt, ddt.Product.SKU);
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    throw e;
+                }
+            }
+        }
+        
+        public void QuickEdit(int id, DateTime date, int priority)
+        {
+            using (var transaction = _dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    var ddt = _orderService.GetDdtInById(id);
+                    if (ddt == null)
+                        throw new Exception("DDT non trovata. Si prega di riprovare.");
+                    ddt.DataOut = date;
+                    ddt.Priority = priority;
+                    _orderService.UpdateDDtIn(ddt);
                     transaction.Commit();
                 }
                 catch (Exception e)

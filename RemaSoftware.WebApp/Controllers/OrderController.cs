@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Resources;
 using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NLog;
@@ -34,11 +36,12 @@ namespace RemaSoftware.WebApp.Controllers
         private readonly OrderValidation _orderValidation;
         private readonly IProductService _productService;
         private readonly ISubBatchService _subBatchService;
+        private readonly UserManager<MyUser> _userManager;
 
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public OrderController(IOrderService orderService, IClientService clientService, IOperationService operationService, PriceHelper priceHelper,
+        public OrderController(UserManager<MyUser> userManager, IOrderService orderService, IClientService clientService, IOperationService operationService, PriceHelper priceHelper,
             INotyfService notyfService, IConfiguration configuration, OrderHelper orderHelper, OrderValidation orderValidation, IProductService productService, ISubBatchService subBatchService)
         {
             _orderService = orderService;
@@ -51,15 +54,19 @@ namespace RemaSoftware.WebApp.Controllers
             _orderValidation = orderValidation;
             _productService = productService;
             _subBatchService = subBatchService;
+            _userManager = userManager;
         }
 
         [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente +"," +Roles.COQ)]
         [HttpPost]
-        public JsonResult EndOrder([FromBody] SubBatchToEndDto dto)
+        public async Task<JsonResult> EndOrder([FromBody] SubBatchToEndDto dto)
         {
             try
             {
-                return new JsonResult(new { Result = true, Data = _orderHelper.EndOrder(dto), ToastMessage="Ordine concluso correttamente."});
+                var user = await _userManager.GetUserAsync(User);
+                var roles = await _userManager.GetRolesAsync(user);
+                string userRole = roles.FirstOrDefault();
+                return new JsonResult(new { Result = true, Data = _orderHelper.EndOrder(dto, userRole), ToastMessage="Ordine concluso correttamente."});
             }
             catch (Exception e)
             {
@@ -164,6 +171,7 @@ namespace RemaSoftware.WebApp.Controllers
                 return View(NewOrderViewModelThrow(model));
             }
         }
+        
 
         [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpGet]
@@ -368,6 +376,23 @@ namespace RemaSoftware.WebApp.Controllers
             catch (Exception e)
             {
                 return new JsonResult(new { Result = false, Message=e.Message});
+            }
+        }
+        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpGet]
+        public JsonResult QuickEdit(int id, string date, int priority)
+        {
+            try
+            {
+                DateTime parsedDate = DateTime.Parse(date);
+                _orderHelper.QuickEdit(id, parsedDate, priority);
+        
+                return new JsonResult(new { Result = true, Message = "Modifica rapida effettuata correttamente." });
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(new { Result = false, Message = e.Message });
             }
         }
         

@@ -49,7 +49,7 @@
                         <td id="pieces-number-now-@ddt.Ddt_In_ID">@ddt.Number_Piece_ToSupplier</td>
                         <td>&euro;@ddt.Price_Uni.ToString("0.000")</td>
                         <td>@ddt.DataIn.ToString("dd/MM/yy")</td>
-                        <td>@ddt.DataOut.ToString("dd/MM/yy")</td>
+                        <td id="dataend-@ddt.Ddt_In_ID">@ddt.DataOut.ToString("dd/MM/yy")</td>
                         <td class="text-center">
                             @{
                                 if (!string.IsNullOrEmpty(ddt.Status))
@@ -75,6 +75,9 @@
                             </a>
                             <a style="text-decoration: none" asp-controller="Order" asp-action="DuplicateOrder" asp-route-id="@ddt.SubBatchID">
                                 <i class="fas fa-files-o fa-lg pl-2" title="Duplicazione" style="cursor: pointer; color: #6d767e"></i>
+                            </a>
+                            <a style="text-decoration: none" onclick="quickEdit(@ddt.Ddt_In_ID)">
+                                <i class="fas fa-calendar fa-lg pl-2" title="Modifica rapida" style="cursor: pointer; color: #6d767e"></i>
                             </a>
                         </td>
                     </tr>
@@ -127,6 +130,44 @@
         </div>
     </div>
 </div>
+
+
+<div class="modal fade" id="quick-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modifica rapida</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label for="desc">Data di consegna</label>
+                <div class='input-group date'>
+                    <input placeholder="Seleziona data di consegna" type='text' class="form-control bg-white" id='datetimepicker1' />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+            <div class="modal-body">
+                <label for="formGroupExampleInput">Seleziona priorità</label>
+                <select class="form-control" id="priority">
+                    <option value="0">Minore</option>
+                    <option selected="selected" value="1">Normale</option>
+                    <option value="2">Maggiore</option>
+                    <option value="3">Critica</option>
+                    <option value="4">Bloccante</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
+                <button class="btn btn-primary" onclick="ConfirmQuickEdit()">Conferma</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="loader-cont">
     <div class="spinner-grow" role="status">
         <span class="sr-only">Loading...</span>
@@ -144,11 +185,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/js/select2.min.js" integrity="sha512-9p/L4acAjbjIaaGXmZf0Q2bV42HetlCLbv8EP0z3rLbQED2TAFUlDvAezy7kumYqg5T8jHtDdlm1fgIsr5QzKg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.datatables.net/plug-ins/1.10.11/sorting/date-eu.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
     <script>
     let ddtId;
+    let ddtQuickId;
+    
     function setInventaryDdtId(param) {
         ddtId = param
         $("#inventary-modal").modal('toggle');
+    }
+
+    function quickEdit(param) {
+        ddtQuickId = param
+        $("#quick-modal").modal('toggle');
     }
     
     if (@Model.SubBatchId > 0){
@@ -197,13 +248,47 @@
             }
         });
     }
-    
+
+    function ConfirmQuickEdit() {
+        $(".loader-cont").show();
+        var data = document.getElementById("datetimepicker1").value;
+        var priority = document.getElementById("priority").value;
+
+        console.log("Data:", data);
+
+        $.ajax({
+            url: '/Order/QuickEdit',
+            type: 'GET',
+            data: {
+                id: ddtQuickId,
+                date: data,
+                priority: priority
+            },
+            success: function(response) {
+                if (response.result) {
+                    $("#quick-modal").modal('toggle');
+                    var formattedData = data.replace('/20', '/');
+                    document.getElementById('dataend-' + ddtQuickId).innerText = formattedData;
+                    toastNotifySuccess(response.message);
+                } else {
+                    toastNotifyError(response.message);
+                }
+                $(".loader-cont").hide();
+            },
+            error: function(data) {
+                toastNotifyError(data.toastMessage);
+                $(".loader-cont").hide();
+            }
+        });
+    }
+
+
     let enable = true;
 
     function SetDataArticleId(elementName, articleId){
         $(elementName).data("articleId", articleId );
     }
-
+    
     function DeleteStockArticle(){
         $(".loader-cont").show()
         var articleId = $("#confirm-del-modal").data("articleId");
@@ -260,9 +345,23 @@
                 { "searchable": false, "orderable": false, "targets": 12 },
               ]
         });
+        
+    });
 
-        
-        
+    $("#datetimepicker1").flatpickr({
+        dateFormat: "d/m/Y",
+        minDate: "today",
+        locale: {
+            weekdays: {
+                shorthand: ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'],
+                longhand: ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'],
+            },
+            months: {
+                shorthand: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Оtt', 'Nov', 'Dic'],
+                longhand: ['Gennaio', 'Febbraio', 'Мarzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'],
+            }
+        }
+
     });
 
     function formatDate(timestamp){
