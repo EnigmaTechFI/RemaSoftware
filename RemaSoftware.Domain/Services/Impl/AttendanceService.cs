@@ -184,7 +184,7 @@ namespace RemaSoftware.Domain.Services.Impl;
 
                         foreach (var attendance in dayAttendances)
                         {
-                            if (attendance.DateOut.HasValue && attendance.Type != "StraordinarioSabato")
+                            if (attendance.DateOut.HasValue && attendance.Type == "Presenza")
                             {
                                 TimeSpan duration = attendance.DateOut.Value - attendance.DateIn;
                                 totalDuration += duration;
@@ -194,7 +194,7 @@ namespace RemaSoftware.Domain.Services.Impl;
                         TimeSpan threshold;
 
                         if (employee.NumberHour == 25)
-                            threshold = new TimeSpan(5, 50, 0);
+                            threshold = new TimeSpan(5, 25, 0);
                         else if (employee.NumberHour == 35)
                             threshold = new TimeSpan(7, 50, 0);
                         else
@@ -205,25 +205,37 @@ namespace RemaSoftware.Domain.Services.Impl;
                         {
                             TimeSpan exceedingDuration = totalDuration - threshold;
                             int extraHours = (int)exceedingDuration.TotalHours;
-                            
-                            if (exceedingDuration.TotalMinutes > 0)
-                                extraHours += 1;
-                            
-                            if ((int)(exceedingDuration.TotalMinutes % 60) > 50)
-                                extraHours += 1;
+                            int extraMinutes = 0;
+
+                            if (employee.NumberHour == 25)
+                            {
+                                if (exceedingDuration.TotalMinutes > 0)
+                                    extraMinutes += 30;
+                                
+                                if ((int)(exceedingDuration.TotalMinutes % 60) > 25)
+                                    extraMinutes += 30;
+                            }
+                            else
+                            {
+                                if (exceedingDuration.TotalMinutes > 0)
+                                    extraHours += 1;
+                                
+                                if ((int)(exceedingDuration.TotalMinutes % 60) > 50)
+                                    extraHours += 1;
+                            }
                             
                             Attendance strAttendance = new Attendance
                             {
                                 EmployeeID = existingAttendance.EmployeeID,
                             };
                             
-                            if(extraHours >= 1){
+                            if (extraHours >= 1 || extraMinutes > 0){
                                 
-                                if (existingAttendance.DateOut?.AddHours(-extraHours) > existingAttendance.DateIn)
-                                    existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-extraHours);
+                                if (existingAttendance.DateOut?.AddHours(-extraHours).AddMinutes(-extraMinutes) > existingAttendance.DateIn)
+                                    existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-extraHours).AddMinutes(-extraMinutes);
                                 else
                                     existingAttendance.DateOut = existingAttendance.DateIn;
-                                
+
                                 strAttendance.DateIn = existingAttendance.DateOut.Value;
                                 strAttendance.DateOut = dateIn;
                                 
@@ -344,7 +356,7 @@ namespace RemaSoftware.Domain.Services.Impl;
                                 .SingleOrDefault(e => e.EmployeeID == existingAttendance.EmployeeID);
                             
                             TimeSpan totalDuration = TimeSpan.Zero;
-
+                            
                             foreach (var attendance in dayAttendances)
                             {
                                 if (attendance.DateOut.HasValue && attendance.Type != "StraordinarioSabato")
@@ -359,7 +371,7 @@ namespace RemaSoftware.Domain.Services.Impl;
                             if (employee.NumberHour == 25)
                                 threshold = new TimeSpan(5, 50, 0);
                             else if (employee.NumberHour == 35)
-                                threshold = new TimeSpan(7, 50, 0);
+                                threshold = new TimeSpan(7, 25, 0);
                             else
                                 threshold = new TimeSpan(8, 50, 0);
                             
@@ -368,12 +380,24 @@ namespace RemaSoftware.Domain.Services.Impl;
                             {
                                 TimeSpan exceedingDuration = totalDuration - threshold;
                                 int extraHours = (int)exceedingDuration.TotalHours;
+                                int extraMinutes = 0;
+
+                                if (employee.NumberHour == 25)
+                                {
+                                    if (exceedingDuration.TotalMinutes > 0)
+                                        extraMinutes += 30;
                                 
-                                if (exceedingDuration.TotalMinutes > 0)
-                                    extraHours += 1;
+                                    if ((int)(exceedingDuration.TotalMinutes % 60) > 25)
+                                        extraMinutes += 30;
+                                }
+                                else
+                                {
+                                    if (exceedingDuration.TotalMinutes > 0)
+                                        extraHours += 1;
                                 
-                                if ((int)(exceedingDuration.TotalMinutes % 60) > 50)
-                                    extraHours += 1;
+                                    if ((int)(exceedingDuration.TotalMinutes % 60) > 50)
+                                        extraHours += 1;
+                                }
                                 
                                 Attendance strAttendance = new Attendance
                                 {

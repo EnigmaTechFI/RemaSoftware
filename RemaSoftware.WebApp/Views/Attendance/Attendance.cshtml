@@ -603,7 +603,13 @@
                                             {
                                                 totalTime = TimeSpan.FromHours(8);
                                             }
-                                            totalTime = (totalTime.Value.Minutes < 50) ? TimeSpan.FromHours(totalTime.Value.Hours) : TimeSpan.FromHours(totalTime.Value.Hours + 1);
+
+                                            var totalTimeTmp = TimeSpan.Zero;
+                                            
+                                            totalTimeTmp = (totalTime.Value.Minutes < 50) ? TimeSpan.FromHours(totalTime.Value.Hours) : TimeSpan.FromHours(totalTime.Value.Hours + 1);
+                                            totalTimeTmp = (totalTime.Value.Minutes < 30) ? new TimeSpan(totalTime.Value.Hours, 0, 0) : new TimeSpan(totalTime.Value.Hours, 30, 0);
+
+                                            totalTime = totalTimeTmp;
                                             totalTimeSupp += totalTime;
                                             totalTimeDay += totalTime;
                                         }
