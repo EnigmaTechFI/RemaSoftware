@@ -712,7 +712,7 @@ namespace RemaSoftware.WebApp.Helper
                 }
             }
         }
-
+ 
         public DDTEmittedViewModel GetDDTEmittedViewModel()
         {
             var emitted = _orderService.GetDdtOutsByStatus(DDTOutStatus.STATUS_EMITTED);
