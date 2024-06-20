@@ -547,7 +547,7 @@ namespace RemaSoftware.Domain.Services.Impl;
                             {
                                 newAttendance.Type = "Festivo";
                             }
-                            else if(employee.TypeRelationship == TypeRelationship.LavoroAutonomo && employee.TypePosition != TypePosition.Maternità)
+                            else if(employee.TypeRelationship == TypeRelationship.LavoroAutonomo && employee.TypePosition != TypePosition.Maternità && employee.TypePosition != TypePosition.MaternitaFacoltativa)
                             {
                                 newAttendance.Type = "Presenza";
                             }
