@@ -109,6 +109,7 @@ namespace RemaSoftware.WebApp.Controllers
             return View(new OrderSummaryViewModel()
             {
                 Ddt_In = _orderHelper.GetAllDdtInActive_NoPagination(),
+                BasePathImages = $"{_configuration["ApplicationUrl"]}{_configuration["ImagesEndpoint"]}order/",
                 SubBatchId = subBatchId
             });
         }

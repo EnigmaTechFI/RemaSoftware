@@ -12,6 +12,7 @@
     <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
         <h3 class="m-0 font-weight-bold text-primary">Resoconto ordini attivi</h3>
         <div>
+            <button class="btn btn-primary text-white" type="button" onclick="showImages()" style="position:relative; right: 10px;"><i class="fa fa-image" style="position:relative; right: 5px;"></i>Visualizza immagini</button>
             <a class="btn btn-primary text-white" asp-action="NewOrder" asp-controller="Order" type="button">Registra ordine</a>
         </div>
     </div>
@@ -27,10 +28,10 @@
                     <th>Nome Prodotto</th>
                     <th>N° pezzi</th>
                     <th>N° pezzi attuali</th>
-                    <th>N° pezzi da fornitori</th>
                     <th>Prz. Unitario</th>
                     <th>Arrivo ordine</th>
                     <th>Scadenza ordine</th>
+                    <th id="imageId" style="display: none; padding: 35px 30px 15px 10px; position: relative;">Immagini</th>
                     <th>Status</th>
                     <th>Azioni</th>
                 </tr>
@@ -46,10 +47,12 @@
                         <td>@ddt.Product.Name</td>
                         <td id="pieces-number-@ddt.Ddt_In_ID">@ddt.Number_Piece</td>
                         <td id="pieces-number-now-@ddt.Ddt_In_ID">@ddt.Number_Piece_Now</td>
-                        <td id="pieces-number-now-@ddt.Ddt_In_ID">@ddt.Number_Piece_ToSupplier</td>
                         <td>&euro;@ddt.Price_Uni.ToString("0.000")</td>
                         <td>@ddt.DataIn.ToString("dd/MM/yy")</td>
                         <td id="dataend-@ddt.Ddt_In_ID">@ddt.DataOut.ToString("dd/MM/yy")</td>
+                        <td class="classImage" style="display: none; padding:  0px !important;">
+                            <img class="image-class d-none" width="140px;" data-src="@Model.BasePathImages@ddt.Product.FileName"/>
+                        </td>
                         <td class="text-center">
                             @{
                                 if (!string.IsNullOrEmpty(ddt.Status))
@@ -338,9 +341,9 @@
                 { "searchable": false, "orderable": false, "targets": 5 },
                 { "searchable": false, "orderable": false, "targets": 6 },
                 { "searchable": false, "orderable": false, "targets": 7 },
-                { "searchable": false, "orderable": false, "targets": 8 },
+                { "searchable": false, "orderable": true, "targets": 8, "type": "date-eu" },
                 { "searchable": false, "orderable": true, "targets": 9, "type": "date-eu" },
-                { "searchable": false, "orderable": true, "targets": 10, "type": "date-eu" },
+                { "searchable": false, "orderable": false, "targets": 10 },
                 { "searchable": false, "orderable": false, "targets": 11 },
                 { "searchable": false, "orderable": false, "targets": 12 },
               ]
@@ -375,6 +378,32 @@
     function setOrderId(OrderIdToDuplicate) {
         $("#id_ordine").val(OrderIdToDuplicate)
     }
-    
+
+    function showImages() {
+        var elements = document.querySelectorAll('.image-class');
+        var classImages = document.querySelectorAll('.classImage');
+
+        elements.forEach(function(element, index) {
+            var classImage = classImages[index];
+            if (element.classList.contains('d-none')) {
+                classImage.style.display = 'block';
+                element.src = element.getAttribute('data-src');
+                element.classList.remove('d-none');
+            } else {
+                classImage.style.display = 'none';
+                element.classList.add('d-none');
+                element.removeAttribute('src');
+            }
+        });
+
+        if (elements[0].classList.contains('d-none')) {
+            document.getElementById('imageId').style.display = 'none';
+        }else{
+            document.getElementById('imageId').style.display = 'block';
+            document.getElementById('imageId').style.width = '100px';
+        }
+    }
+
+
     </script>
 }
