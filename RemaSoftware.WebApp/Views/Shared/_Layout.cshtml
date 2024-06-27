@@ -305,16 +305,14 @@
             
             <div class="collapse" id="collapseGiacenze">
                 <ul class="nav flex-column">
-                    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente))
-                    {
-                        <!-- Nav Item - Tables -->
-                        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Stock" ? "active" : "")">
-                            <a class="nav-link" asp-action="Stock" asp-controller="Stock" asp-route-newProduct="false">
-                                <i class="fas fa-fw fa-warehouse"></i>
-                                <span>Magazzino</span>
-                            </a>
-                        </li>
-                    }
+                    
+                    <!-- Nav Item - Tables -->
+                    <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Stock" ? "active" : "")">
+                        <a class="nav-link" asp-action="Stock" asp-controller="Stock" asp-route-newProduct="false">
+                            <i class="fas fa-fw fa-warehouse"></i>
+                            <span>Magazzino</span>
+                        </a>
+                    </li>
 
                     <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "RetireProduct" ? "active" : "")">
                         <a class="nav-link" asp-action="RetireProduct" asp-controller="Stock">
