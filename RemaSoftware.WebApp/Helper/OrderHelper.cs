@@ -359,6 +359,11 @@ namespace RemaSoftware.WebApp.Helper
                 Label = _orderService.GetLastLabelOut()
             };
         }
+        
+        public OrderControlViewModel GetOrderControlViewModel()
+        {
+            return new OrderControlViewModel() {};
+        }
 
         public int EndOrder(SubBatchToEndDto dto, string userRole)
         {

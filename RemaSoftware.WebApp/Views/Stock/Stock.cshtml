@@ -115,11 +115,12 @@
     
     function printQRCode(id, name, supplier, sku){
         var printers = dymo.label.framework.getPrinters();
-        if (printers.length == 0){
-          alert("Nessuna stampante trovata.");
-          return
+        if (printers.length == 0 || !printers[0].isConnected){
+            alert("Nessuna stampante trovata.");
+            return
         }
-        var label = dymo.label.framework.openLabelFile("RemaStock.dymo")  
+        var label = dymo.label.framework.openLabelFile("C:\\Program Files (x86)\\DYMO\\DYMO Connect\\RemaStock.dymo");
+
         var etichetta = "PRODOTTO: " + id + "\nSKU: "+ sku 
         label.setObjectText("TextObject",  etichetta);
         label.setObjectText("QRCodeObject", id, "QRCode");

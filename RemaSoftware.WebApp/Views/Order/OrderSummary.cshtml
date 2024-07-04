@@ -256,9 +256,7 @@
         $(".loader-cont").show();
         var data = document.getElementById("datetimepicker1").value;
         var priority = document.getElementById("priority").value;
-
-        console.log("Data:", data);
-
+        
         $.ajax({
             url: '/Order/QuickEdit',
             type: 'GET',

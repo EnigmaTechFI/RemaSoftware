@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Resources;
 using System.Threading.Tasks;
@@ -96,6 +97,14 @@ namespace RemaSoftware.WebApp.Controllers
         {
             return View(_orderHelper.GetQualityControlViewModel());
         }
+        
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [HttpGet]
+        public IActionResult OrderControl()
+        {
+            return View(_orderHelper.GetOrderControlViewModel());
+        }
+        
         [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpGet]
         public IActionResult SubBatchMonitoring(int id, string url = "")
@@ -386,9 +395,9 @@ namespace RemaSoftware.WebApp.Controllers
         {
             try
             {
-                DateTime parsedDate = DateTime.Parse(date);
+                CultureInfo provider = new CultureInfo("it-IT");
+                DateTime parsedDate = DateTime.Parse(date, provider);                
                 _orderHelper.QuickEdit(id, parsedDate, priority);
-        
                 return new JsonResult(new { Result = true, Message = "Modifica rapida effettuata correttamente." });
             }
             catch (Exception e)
@@ -538,7 +547,6 @@ namespace RemaSoftware.WebApp.Controllers
                 Logger.Error("Errore durante l'invio della notifica per il Prezzo.");
             }
         }
-        
         
         [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
         [HttpPost]
