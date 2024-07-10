@@ -66,6 +66,7 @@ namespace RemaSoftware.Domain.Data
                 var addedRole = userManager.AddToRolesAsync(adm2, new [] { Roles.Admin}).Result;
             }
             
+            //Account per il pc del magazzino prodotti
             var dip1 = userManager.FindByEmailAsync("rema.magazzino@gmail.com").Result;
             if (dip1 == null)
             {
@@ -94,6 +95,8 @@ namespace RemaSoftware.Domain.Data
                 var addedRole = userManager.AddToRolesAsync(dip2,new [] { Roles.COQ }).Result;
             }
             
+            
+            //Account per il tablet del magazzino materie prime
             var dip3 = userManager.FindByEmailAsync("iot.rema.pul@gmail.com").Result;
             if (dip3 == null)
             {
@@ -108,6 +111,7 @@ namespace RemaSoftware.Domain.Data
                 var addedRole = userManager.AddToRolesAsync(dip3,new [] { Roles.Magazzino }).Result;
             }
             
+            //Account per il pc del magazzino materie prime
             var dip4 = userManager.FindByEmailAsync("mm.rema.pul@gmail.com").Result;
             if (dip4 == null)
             {
@@ -120,6 +124,21 @@ namespace RemaSoftware.Domain.Data
                 IdentityResult result = userManager.CreateAsync(dip4, "RemaPul2022!").Result;
                 
                 var addedRole = userManager.AddToRolesAsync(dip4,new [] { Roles.MagazzinoMaterie }).Result;
+            }
+            
+            //Account per il pc del magazzino prodotti con funzione di controlloe
+            var dip5 = userManager.FindByEmailAsync("rema.magazzino2@gmail.com").Result;
+            if (dip5 == null)
+            {
+                dip5 = new MyUser
+                {
+                    UserName = "magazzino2",
+                    Email = "rema.magazzino2@gmail.com"
+                };
+
+                IdentityResult result = userManager.CreateAsync(dip5, "RemaPul2024!").Result;
+                
+                var addedRole = userManager.AddToRolesAsync(dip4, new [] { Roles.DipendenteControl }).Result;
             }
             
             

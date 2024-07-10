@@ -417,7 +417,6 @@
         const clonedTable = originalTable.cloneNode(true);
         const columnsToRemove = [7, 11, 12];
 
-        // Rimuovi colonne dall'header
         const headerCells = clonedTable.querySelectorAll('thead tr th');
         columnsToRemove.sort((a, b) => b - a).forEach(index => {
             if (headerCells[index]) {
@@ -425,7 +424,6 @@
             }
         });
 
-        // Rimuovi colonne dai corpi delle righe
         const bodyRows = clonedTable.querySelectorAll('tbody tr');
         bodyRows.forEach(row => {
             const cells = row.querySelectorAll('td');

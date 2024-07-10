@@ -47,6 +47,9 @@
             <div class="col-1 mt-5">
                 <input type="submit" name="submitType" value="Visualizza" class="btn btn-primary text-white" data-not-update="true"/>
             </div>
+            <div class="col-1 mt-5">
+                <input type="submit" name="submitType" value="Aggiorna" class="btn btn-primary text-white" data-not-update="false"/>
+            </div>
             <div class="col-2 mt-5">
                 <input data-toggle="modal" data-target="#new-modal" type="button" value="Aggiungi a tutti" class="btn btn-primary text-white" id="exportBtn" onclick="AllEmployeeAttendanceId('#modify-modal')"/>
             </div>
@@ -1486,7 +1489,6 @@ td:first-child {
                 });
             });
         }
-
         
         function togglePresenze(id) {
             var presenzeDiv = document.getElementById(id);
@@ -1533,15 +1535,22 @@ td:first-child {
     </script>
     
     <script>
-    
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('NotUpdate').value = 'true';
-        });
 
         document.querySelectorAll('input[type="submit"]').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.getElementById('NotUpdate').value = this.getAttribute('data-not-update');
             });
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            let url = new URL(window.location.href);
+
+            let notUpdate = url.searchParams.get("NotUpdate");
+
+            if (notUpdate === 'false') {
+                url.searchParams.set("NotUpdate", "true");
+                window.history.replaceState(null, null, url);
+            }
         });
     </script>
 

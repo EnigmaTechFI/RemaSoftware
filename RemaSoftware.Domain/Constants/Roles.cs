@@ -4,6 +4,7 @@ namespace RemaSoftware.Domain.Constants
     {
         public const string Admin = "Admin";
         public const string Dipendente = "Dipendente";
+        public const string DipendenteControl = "Dipendente con controllo";
         public const string Magazzino = "Magazzino";
         public const string MagazzinoMaterie = "MagazzinoMaterie";
         public const string Cliente = "Cliente";
