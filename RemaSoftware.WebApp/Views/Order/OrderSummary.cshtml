@@ -12,6 +12,7 @@
     <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
         <h3 class="m-0 font-weight-bold text-primary">Resoconto ordini attivi</h3>
         <div>
+            <button class="btn btn-primary text-white" type="button" onclick="printPage()" style="position:relative; right: 20px;"><i class="fa fa-print" style="position:relative; right: 5px;"></i>Stampa pagina</button>
             <button class="btn btn-primary text-white" type="button" onclick="showImages()" style="position:relative; right: 10px;"><i class="fa fa-image" style="position:relative; right: 5px;"></i>Visualizza immagini</button>
             <a class="btn btn-primary text-white" asp-action="NewOrder" asp-controller="Order" type="button">Registra ordine</a>
         </div>
@@ -194,6 +195,7 @@
     <script>
     let ddtId;
     let ddtQuickId;
+    let controlImage = false;
     
     function setInventaryDdtId(param) {
         ddtId = param
@@ -378,21 +380,29 @@
     }
 
     function showImages() {
+
         var elements = document.querySelectorAll('.image-class');
         var classImages = document.querySelectorAll('.classImage');
-
+    
         elements.forEach(function(element, index) {
             var classImage = classImages[index];
-            if (element.classList.contains('d-none')) {
+            classImage.style.display = 'none';
+            element.classList.add('d-none');
+            element.removeAttribute('src');
+        })
+
+        if(controlImage == false){
+            elements.forEach(function(element, index) {
+                var classImage = classImages[index];
                 classImage.style.display = 'block';
                 element.src = element.getAttribute('data-src');
                 element.classList.remove('d-none');
-            } else {
-                classImage.style.display = 'none';
-                element.classList.add('d-none');
-                element.removeAttribute('src');
-            }
-        });
+            });
+            controlImage = true;
+        }else{
+            controlImage = false;
+        }
+        
 
         if (elements[0].classList.contains('d-none')) {
             document.getElementById('imageId').style.display = 'none';
@@ -402,6 +412,46 @@
         }
     }
 
+    async function printPage() {
+        const originalTable = document.getElementById('table-ddt');
+        const clonedTable = originalTable.cloneNode(true);
+        const columnsToRemove = [7, 11, 12];
+
+        // Rimuovi colonne dall'header
+        const headerCells = clonedTable.querySelectorAll('thead tr th');
+        columnsToRemove.sort((a, b) => b - a).forEach(index => {
+            if (headerCells[index]) {
+                headerCells[index].remove();
+            }
+        });
+
+        // Rimuovi colonne dai corpi delle righe
+        const bodyRows = clonedTable.querySelectorAll('tbody tr');
+        bodyRows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            columnsToRemove.forEach(index => {
+                if (cells[index]) {
+                    cells[index].remove();
+                }
+            });
+        });
+
+        const printWindow = window.open('', '_blank');
+        printWindow.document.open();
+        printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Ordini attivi</title>
+                    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+                </head>
+                <body>
+                    ${clonedTable.outerHTML}
+                </body>
+                </html>
+            `);
+        printWindow.document.close();
+        printWindow.print();
+    }
 
     </script>
 }

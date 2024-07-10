@@ -13,6 +13,7 @@
     <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
         <h3 class="m-0 font-weight-bold text-primary">Lista prodotti</h3>
         <div>
+            <button class="btn btn-primary text-white" type="button" onclick="showImages()" style="position:relative; right: 10px;"><i class="fa fa-image" style="position:relative; right: 5px;"></i>Visualizza immagini</button>
             <button class="btn btn-primary" type="button" onclick="location.href='@Url.Action("NewProduct", "Product")'">Nuovo prodotto</button>
         </div>
     </div>
@@ -25,6 +26,7 @@
                         <th>Nome</th>
                         <th>Cliente</th>
                         <th>Pezzi in azienda</th>
+                        <th id="imageId" style="display: none; padding: 35px 30px 15px 10px; position: relative;">Immagini</th>
                         <th>Azioni</th>
                     </tr>
                 </thead>
@@ -36,6 +38,9 @@
                         <td>@product.Name</td>
                         <td>@product.Client.Name</td>
                         <td>@product.Ddts_In.Sum(s=> s.Number_Piece_Now)</td>
+                        <td class="classImage" style="display: none; padding:  0px !important;">
+                            <img class="image-class d-none" width="140px;" data-src="@Model.BasePathImages@product.FileName"/>
+                        </td>
                         <td class="text-center">
                             <a style="text-decoration: none" asp-action="NewOrder" asp-controller="Order" asp-route-productId="@product.ProductID">
                                 <i class="fas fa-file-text fa-lg pl-2" title="Registra commessa" style="cursor: pointer; color:  #6d767e;"></i>
@@ -118,6 +123,8 @@
     <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
     <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
     <script>
+
+        let controlImage = false;
         
         function SetDataProductId(elementName, productId){
             $(elementName).data("productId", productId );
@@ -146,6 +153,7 @@
                     { "searchable": true, "orderable": true, "targets": 2 },
                     { "searchable": false, "orderable": true, "targets": 3 },
                     { "searchable": false, "orderable": false, "targets": 4 },
+                    { "searchable": false, "orderable": false, "targets": 5 },
                   ]
             });
      
@@ -231,5 +239,39 @@
             });
         });
 
+        function showImages() {
+
+            var elements = document.querySelectorAll('.image-class');
+            var classImages = document.querySelectorAll('.classImage');
+
+            elements.forEach(function(element, index) {
+                var classImage = classImages[index];
+                classImage.style.display = 'none';
+                element.classList.add('d-none');
+                element.removeAttribute('src');
+            })
+
+            if(controlImage == false){
+                elements.forEach(function(element, index) {
+                    var classImage = classImages[index];
+                    classImage.style.display = 'block';
+                    element.src = element.getAttribute('data-src');
+                    element.classList.remove('d-none');
+                });
+                controlImage = true;
+            }else{
+                controlImage = false;
+            }
+
+
+            if (elements[0].classList.contains('d-none')) {
+                document.getElementById('imageId').style.display = 'none';
+            }else{
+                document.getElementById('imageId').style.display = 'block';
+                document.getElementById('imageId').style.width = '100px';
+            }
+        }
+
+    
     </script>
 }

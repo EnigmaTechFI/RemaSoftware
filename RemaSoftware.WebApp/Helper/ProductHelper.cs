@@ -113,7 +113,8 @@ namespace RemaSoftware.WebApp.Helper
         {
             return new ProductListViewModel
             {
-                Products = GetAllProducts()
+                Products = GetAllProducts(),
+                BasePathImages = $"{_configuration["ApplicationUrl"]}{_configuration["ImagesEndpoint"]}order/",
             };
         }
         
