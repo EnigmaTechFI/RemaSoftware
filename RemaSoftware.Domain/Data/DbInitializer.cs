@@ -28,7 +28,7 @@ namespace RemaSoftware.Domain.Data
                 });
             }
             _context.SaveChanges();
-            string[] roleNames = { Roles.Admin, Roles.Dipendente, Roles.Cliente, Roles.Machine, Roles.COQ, Roles.Magazzino, Roles.MagazzinoMaterie, Roles.Impiegato};
+            string[] roleNames = { Roles.Admin, Roles.Dipendente, Roles.Cliente, Roles.Machine, Roles.COQ, Roles.Magazzino, Roles.MagazzinoMaterie, Roles.Impiegato, Roles.DipendenteControl};
             IdentityResult roleResult;
 
             foreach (var roleName in roleNames)
@@ -126,7 +126,7 @@ namespace RemaSoftware.Domain.Data
                 var addedRole = userManager.AddToRolesAsync(dip4,new [] { Roles.MagazzinoMaterie }).Result;
             }
             
-            //Account per il pc del magazzino prodotti con funzione di controlloe
+            //Account per il pc del magazzino prodotti con funzione di controllo
             var dip5 = userManager.FindByEmailAsync("rema.magazzino2@gmail.com").Result;
             if (dip5 == null)
             {
@@ -138,7 +138,7 @@ namespace RemaSoftware.Domain.Data
 
                 IdentityResult result = userManager.CreateAsync(dip5, "RemaPul2024!").Result;
                 
-                var addedRole = userManager.AddToRolesAsync(dip4, new [] { Roles.DipendenteControl }).Result;
+                var addedRole = userManager.AddToRolesAsync(dip5, new [] { Roles.DipendenteControl }).Result;
             }
             
             

@@ -388,7 +388,7 @@
 
                 <!-- Topbar Navbar -->
                 <ul class="navbar-nav ml-auto">
-                    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente))
+                    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.DipendenteControl))
                     {
                         <div style="margin-top: 3.6%;" class="mobile-c3 nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "ProductionAnalysisLive" ? "active" : "")">
                             <a class="btn btn-primary text-white" asp-action="ProductionAnalysisLive" asp-controller="Accounting" type="button">
