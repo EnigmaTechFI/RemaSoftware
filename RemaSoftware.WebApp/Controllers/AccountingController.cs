@@ -9,7 +9,8 @@ using RemaSoftware.WebApp.Models.AccountingViewModel;
 
 namespace RemaSoftware.WebApp.Controllers
 {        
-    [Authorize(Roles = Roles.Admin)]
+    [Authorize(Roles = Roles.Admin +"," + Roles.DipendenteControl)]
+
     public class AccountingController : Controller
     {
         private readonly AccountingHelper _accountingHelper;
