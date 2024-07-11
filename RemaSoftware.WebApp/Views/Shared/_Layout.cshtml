@@ -59,7 +59,7 @@
                 </a>
             </li>
         }
-        @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente) || User.IsInRole(Roles.Cliente))
+        @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente) || User.IsInRole(Roles.Cliente) || User.IsInRole(Roles.DipendenteControl))
         {
             <!-- Divider -->
             <hr class="sidebar-divider">
@@ -85,7 +85,7 @@
                 </a>
             </li>
         }
-        @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente))
+        @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente) || User.IsInRole(Roles.DipendenteControl))
         {
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Product" ? "active" : "")">
@@ -107,7 +107,7 @@
                 </a>
             </li>
         }
-        @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente) || User.IsInRole(Roles.COQ) || User.IsInRole((Roles.Cliente)))
+        @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente) || User.IsInRole(Roles.COQ) || User.IsInRole(Roles.Cliente) || User.IsInRole(Roles.DipendenteControl))
         {
             <!-- Divider -->
             <hr class="sidebar-divider">
@@ -117,7 +117,7 @@
                 Produzione
             </div>
         }
-        @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente))
+        @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente) || User.IsInRole(Roles.DipendenteControl))
         {
             <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "BatchInStock" ? "active" : "")">
                     <a class="nav-link" asp-action="BatchInStock" asp-controller="Order">
@@ -159,7 +159,7 @@
                 </a>
             </li>
         }
-        @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente) || User.IsInRole(Roles.COQ))
+        @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente) || User.IsInRole(Roles.COQ) || User.IsInRole(Roles.DipendenteControl))
         {
             <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "QualityControl" ? "active" : "")">
                 <a class="nav-link" asp-action="QualityControl" asp-controller="Order">
@@ -168,7 +168,7 @@
                 </a>
             </li>
         }
-        @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente))
+        @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente) || User.IsInRole(Roles.DipendenteControl))
         {
             <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "BatchInDelivery" ? "active" : "")">
                 <a class="nav-link" asp-action="BatchInDelivery" asp-controller="Order">
@@ -298,7 +298,7 @@
             </div>
         }
     
-        @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente) || User.IsInRole(Roles.MagazzinoMaterie))
+        @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente) || User.IsInRole(Roles.MagazzinoMaterie) || User.IsInRole(Roles.DipendenteControl))
         {
             <!-- Divider -->
             <hr class="sidebar-divider">
@@ -411,7 +411,7 @@
                                 {
                                     <text>(Admin)</text>
                                 }
-                                else if (User.IsInRole(Roles.Dipendente))
+                                else if (User.IsInRole(Roles.Dipendente) || User.IsInRole(Roles.DipendenteControl))
                                 {
                                     <text>(User)</text>
                                 }

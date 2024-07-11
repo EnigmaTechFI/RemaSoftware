@@ -10,7 +10,7 @@ using RemaSoftware.WebApp.Helper;
 
 namespace RemaSoftware.WebApp.Controllers
 {
-    [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+    [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
     public class ClientController : Controller
     {
         private readonly ClientHelper _clientHelper;

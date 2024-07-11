@@ -16,7 +16,7 @@ using RemaSoftware.WebApp.Models.PriceViewModel;
 
 namespace RemaSoftware.WebApp.Controllers
 {
-    [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+    [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
     public class PriceController : Controller
     {
         private readonly PriceHelper _priceHelper;

@@ -8,7 +8,7 @@ using RemaSoftware.WebApp.Helper;
 
 namespace RemaSoftware.WebApp.Controllers;
 
-[Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+[Authorize(Roles = Roles.Admin +"," + Roles.Dipendente +"," + Roles.DipendenteControl)]
 public class SupplierController : Controller
 {
     private readonly SupplierHelper _supplierHelper;

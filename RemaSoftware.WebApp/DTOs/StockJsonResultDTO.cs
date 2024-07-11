@@ -3,7 +3,7 @@ using RemaSoftware.Domain.Constants;
 
 namespace RemaSoftware.WebApp.DTOs;
 
-[Authorize(Roles = Roles.Admin + "," + Roles.Dipendente + "," + Roles.MagazzinoMaterie)]
+[Authorize(Roles = Roles.Admin + "," + Roles.Dipendente + "," + Roles.MagazzinoMaterie + "," + Roles.DipendenteControl)]
 
 public class StockJsonResultDTO : JsonResultBaseDTO
 {

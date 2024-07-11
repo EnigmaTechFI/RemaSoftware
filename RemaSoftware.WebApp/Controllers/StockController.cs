@@ -13,7 +13,7 @@ using RemaSoftware.WebApp.Validation;
 
 namespace RemaSoftware.WebApp.Controllers
 {
-    [Authorize(Roles = Roles.Admin + "," + Roles.Dipendente + "," + Roles.MagazzinoMaterie)]
+    [Authorize(Roles = Roles.Admin + "," + Roles.Dipendente + "," + Roles.MagazzinoMaterie +"," + Roles.DipendenteControl)]
     public class StockController : Controller
     {
         private readonly StockHelper _stockHelper;

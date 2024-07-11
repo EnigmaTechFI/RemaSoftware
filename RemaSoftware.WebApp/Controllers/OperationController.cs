@@ -11,7 +11,7 @@ using RemaSoftware.WebApp.Validation;
 
 namespace RemaSoftware.WebApp.Controllers
 {
-    [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+    [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente +"," + Roles.DipendenteControl)]
     public class OperationController : Controller
     {
         private readonly IOperationService _operationService;

@@ -58,7 +58,7 @@ namespace RemaSoftware.WebApp.Controllers
             _userManager = userManager;
         }
 
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente +"," +Roles.COQ)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl + "," +Roles.COQ) ]
         [HttpPost]
         public async Task<JsonResult> EndOrder([FromBody] SubBatchToEndDto dto)
         {
@@ -75,7 +75,7 @@ namespace RemaSoftware.WebApp.Controllers
             }
         }
         
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente +"," +Roles.COQ)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl + "," +Roles.COQ) ]
         [HttpPost]
         public IActionResult SubBatchAtControl(QualityControlViewModel model)
         {
@@ -91,27 +91,27 @@ namespace RemaSoftware.WebApp.Controllers
             }
             
         }
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente+"," +Roles.COQ)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl + "," +Roles.COQ)]
         [HttpGet]
         public IActionResult QualityControl()
         {
             return View(_orderHelper.GetQualityControlViewModel());
         }
         
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpGet]
         public IActionResult OrderControl()
         {
             return View(_orderHelper.GetOrderControlViewModel());
         }
         
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpGet]
         public IActionResult SubBatchMonitoring(int id, string url = "")
         {
             return View(_orderHelper.GetSubBatchMonitoring(id, url));
         }
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpGet]
         public IActionResult OrderSummary(int subBatchId = 0)
         {
@@ -122,7 +122,7 @@ namespace RemaSoftware.WebApp.Controllers
                 SubBatchId = subBatchId
             });
         }
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpGet]
         public IActionResult OrderSummaryEnded()
         {
@@ -132,7 +132,7 @@ namespace RemaSoftware.WebApp.Controllers
             });
         }
         
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpGet]
         public IActionResult DownloadPdfOrder(int id)
         {
@@ -146,7 +146,7 @@ namespace RemaSoftware.WebApp.Controllers
             return View("../Pdf/SingleOrderSummary", vm);
         }
         
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpGet]
         public IActionResult EditOrder(int id)
         {
@@ -159,7 +159,7 @@ namespace RemaSoftware.WebApp.Controllers
             return View(vm);
         }
         
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpPost]
         public IActionResult EditOrder(NewOrderViewModel model)
         {
@@ -183,7 +183,7 @@ namespace RemaSoftware.WebApp.Controllers
         }
         
 
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpGet]
         public IActionResult NewOrder(int productId)
         {
@@ -227,7 +227,7 @@ namespace RemaSoftware.WebApp.Controllers
 
             return model;
         }
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpPost]
         public IActionResult NewOrder(NewOrderViewModel model)
         {
@@ -250,7 +250,7 @@ namespace RemaSoftware.WebApp.Controllers
                 return View(NewOrderViewModelThrow(model));
             }
         }
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpGet]
         public IActionResult BatchInStock()
         {
@@ -259,7 +259,7 @@ namespace RemaSoftware.WebApp.Controllers
                 SubBatches = _orderHelper.GetSubBatchesStatus(OrderStatusConstants.STATUS_ARRIVED)
             });
         }
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpGet]
         public async Task<IActionResult> EmitDDT(int id)
         {
@@ -274,13 +274,13 @@ namespace RemaSoftware.WebApp.Controllers
             }
             
         }
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpGet]
         public IActionResult DDTEmitted()
         {
             return View(_orderHelper.GetDDTEmittedViewModel());
         }
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpGet]
         public IActionResult BatchInDelivery(string pdfUrl = "empty")
         {
@@ -290,7 +290,7 @@ namespace RemaSoftware.WebApp.Controllers
                 DdtOuts = _orderHelper.GetDdtsInDelivery()
             });
         }
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpGet]
         public JsonResult DeleteDDT(int id)
         {
@@ -304,7 +304,7 @@ namespace RemaSoftware.WebApp.Controllers
             }
         }
 
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpGet]
         public IActionResult BatchInProduction()
         {
@@ -327,7 +327,7 @@ namespace RemaSoftware.WebApp.Controllers
             }
         }
         
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpGet]
         public IActionResult PartialDDT(int id, int clientId)
         {
@@ -343,7 +343,7 @@ namespace RemaSoftware.WebApp.Controllers
             }
         }
         
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpPost]
         public async Task<IActionResult> PartialDDT(PartialDDTViewModel model)
         {
@@ -359,7 +359,7 @@ namespace RemaSoftware.WebApp.Controllers
             }
         }
         
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente+"," + Roles.Magazzino)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl + "," + Roles.Magazzino) ]
         [HttpGet]
         public IActionResult StockSummary()
         {
@@ -374,7 +374,7 @@ namespace RemaSoftware.WebApp.Controllers
             }
         }
         
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpGet]
         public JsonResult StockVariation(int id, int pieces)
         {
@@ -389,7 +389,7 @@ namespace RemaSoftware.WebApp.Controllers
             }
         }
         
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpGet]
         public JsonResult QuickEdit(int id, string date, int priority)
         {
@@ -407,7 +407,7 @@ namespace RemaSoftware.WebApp.Controllers
         }
         
         
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpGet]
         public JsonResult DeleteDdtAssociation(int id)
         {
@@ -422,7 +422,7 @@ namespace RemaSoftware.WebApp.Controllers
             }
         }
         
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpGet]
         public IActionResult BatchToSupplier()
         {
@@ -438,7 +438,7 @@ namespace RemaSoftware.WebApp.Controllers
             
         }
         
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpGet]
         public IActionResult ReloadSubBatchFromSupplier(int id)
         {
@@ -454,7 +454,7 @@ namespace RemaSoftware.WebApp.Controllers
             
         }
         
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpPost]
         public IActionResult ReloadSubBatchFromSupplier(ReloadSubBatchFromSupplierViewModel model)
         {
@@ -472,7 +472,7 @@ namespace RemaSoftware.WebApp.Controllers
             
         }
         
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpGet]
         public IActionResult ExitToSupplier(int id)
         {
@@ -488,7 +488,7 @@ namespace RemaSoftware.WebApp.Controllers
             
         }
         
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpPost]
         public IActionResult ExitToSupplier(ExitToSupplierViewModel model)
         {
@@ -512,7 +512,7 @@ namespace RemaSoftware.WebApp.Controllers
             
         }
         
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpGet]
         public IActionResult DuplicateOrder(int id)
         {
@@ -548,7 +548,7 @@ namespace RemaSoftware.WebApp.Controllers
             }
         }
         
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpPost]
         public IActionResult DuplicateOrder(DuplicateOrderViewModel model)
         {

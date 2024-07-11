@@ -13,7 +13,7 @@ using Product = RemaSoftware.Domain.Models.Product;
 
 namespace RemaSoftware.WebApp.Controllers
 {
-    [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente)]
+    [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente +"," + Roles.DipendenteControl)]
     public class ProductController : Controller
     {
         private readonly ClientHelper _clientHelper;
