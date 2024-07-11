@@ -17,6 +17,7 @@ public class ProductionLiveDto
     public string Client { get; set; }
     public string Operation { get; set; }
     public int Time { get; set; }
+    public int Pieces { get; set; }
     public int SubBatchId { get; set; }
     public int MachineId { get; set; }
 }

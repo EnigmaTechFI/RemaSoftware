@@ -21,7 +21,7 @@ namespace RemaSoftware.WebApp.Controllers
             _notyfService = notyfService;
         }
 
-        [Authorize(Roles = Roles.Admin)]
+        [Authorize(Roles = Roles.Admin +"," + Roles.DipendenteControl)]
         [HttpGet]
         public IActionResult AutomaticMachine()
         {

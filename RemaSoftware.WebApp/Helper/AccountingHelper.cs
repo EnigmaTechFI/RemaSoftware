@@ -55,6 +55,7 @@ namespace RemaSoftware.WebApp.Helper
                     OperationTimelineId = item.OperationTimelineID,
                     MachineId = item.MachineId.Value,
                     Operation = item.BatchOperation.Operations.Name,
+                    Pieces = item.SubBatch.Ddts_In.Sum(s => s.Number_Piece),
                     SubBatchId = item.SubBatchID,
                     Time = (int)(now - item.StartDate).TotalSeconds
                 });
