@@ -448,7 +448,7 @@ namespace RemaSoftware.WebApp.Helper
                         if (item.NumberMissingPiece > 0 && missingPiecesEmitted < item.NumberMissingPiece)
                         {
                             item.Ddt_Associations.Add(new Ddt_Association()
-                            {
+                            { 
                                 Date = now,
                                 Ddt_In_ID = item.Ddt_In_ID,
                                 Ddt_Out_ID = ddt_out_id,
