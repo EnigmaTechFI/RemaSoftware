@@ -1,18 +1,153 @@
-﻿@using RemaSoftware.Domain.Constants
-@using RemaSoftware.WebApp.Models.OrderViewModel
+﻿@using RemaSoftware.WebApp.Models.OrderViewModel
 @model OrderControlViewModel
 
 @{
-    ViewData["Title"] = "Controllo produzione";
+ViewData["Title"] = "Controllo produzione";
 }
 
-<link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis-timeline-graph2d.min.css" rel="stylesheet" type="text/css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis-timeline-graph2d.min.js"></script>
+<!-- Include SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <div class="card shadow mb-4" id="order-summ-content">
     <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
         <h3 class="m-0 font-weight-bold text-primary">Controllo produzione</h3>
+        <div>
+            <p>Manca la possibilità di stampa e di modifica di priorità e data di consegna</p>
+            <a class="btn btn-primary text-white" id="reset">Torna ad oggi</a>
+        </div>
     </div>
     <div class="card-body">
-        
+        <div class="row">
+            <div class="col-12">
+                <p>Qui ci vuole la selezione per cliente, per stato (attivi/in magazzino/entrambi) e di ricerca dell'ordine</p>
+                <a class="btn btn-primary text-white" id="reset">Torna ad oggi</a>
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col-12">
+                <div id="kt_docs_vistimeline_rema"></div>
+            </div>
+        </div>
     </div>
 </div>
+
+<style>
+    .custom-style {
+        background-color: #F9F9F9;
+        border: 2px solid #009EF7;
+        border-radius: 15px !important;
+        color: black;
+        cursor: pointer;
+    }
+</style>
+
+<script>
+    // Inizializza la timeline al caricamento della pagina
+    document.addEventListener("DOMContentLoaded", function() {
+        var now = Date.now();
+
+        // Funzione per creare il contenuto degli item
+        const getContent = (title, img, start, end) => {
+            const item = document.createElement('div');
+            const name = document.createElement('div');
+            const nameClasses = ['fw-bolder', 'mb-2'];
+            name.classList.add(...nameClasses);
+            name.innerHTML = title;
+
+            const image = document.createElement('img');
+            image.setAttribute('src', img);
+            image.style.height = '50px';
+            image.style.borderRadius = '15px';
+
+            const symbol = document.createElement('div');
+            const symbolClasses = ['symbol', 'symbol-circle', 'symbol-30'];
+            symbol.classList.add(...symbolClasses);
+            symbol.appendChild(image);
+
+            item.appendChild(name);
+            item.appendChild(symbol);
+
+            // Aggiungi evento per aprire il popup
+            item.addEventListener('click', () => {
+                openPopup(title, start, end);
+            });
+
+            return item;
+        };
+
+        // Funzione per aprire il popup con SweetAlert2
+        const openPopup = (title, start, end) => {
+            Swal.fire({
+                title: title,
+                html: `
+                    <p><strong>Data di inizio:</strong> ${start.toDateString()}</p>
+                    <p><strong>Data di fine:</strong> <input type="date" id="newEndDate" value="${end.toISOString().slice(0, 10)}"></p>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Salva',
+                cancelButtonText: 'Annulla',
+                preConfirm: () => {
+                    const newEndDate = new Date(document.getElementById('newEndDate').value);
+                    items.update({ id: '01', end: newEndDate }); // Aggiorna l'item con l'id corretto
+                }
+            });
+        };
+
+        // Clicca sul pulsante "Torna ad oggi" per tornare alla data odierna
+        document.getElementById("reset").onclick = function () {
+            timeline.moveTo(new Date());
+        };
+
+        // Configurazione degli item e della timeline con Vis.js
+        var items = new vis.DataSet([
+            {
+                id: '01',
+                group: '01',
+                start: new Date(2024, 6, 23),
+                end: new Date(2024, 6, 26),
+                content: getContent('<b>Task 1<b/>', '/img/login.JPG', new Date(2024, 6, 23), new Date(2024, 6, 26)),
+                className: 'custom-style',
+            },
+            {
+                id: '02',
+                group: '02',
+                start: new Date(2024, 6, 22),
+                end: new Date(2024, 6, 25),
+                content: getContent('<b>Task 2<b/>', '/img/login.JPG', new Date(2024, 6, 22), new Date(2024, 6, 25)),
+                className: 'custom-style',
+            },
+        ]);
+
+        var groups = new vis.DataSet([
+            {
+                id: '01',
+                content: '<b>Group 1</b>'
+            },
+            {
+                id: '02',
+                content: '<b>Group 2</b>'
+            },
+        ]);
+
+        var container = document.getElementById("kt_docs_vistimeline_rema");
+
+        var options = {
+            stack: true,
+            maxHeight: 640,
+            height: 500,
+            horizontalScroll: false,
+            showCurrentTime: true,
+            zoomKey: "ctrlKey",
+            start: Date.now() - 1000 * 60 * 60 * 24 * 3,
+            end: Date.now() + 1000 * 60 * 60 * 24 * 7,
+            orientation: {
+                axis: "both",
+                item: "top",
+            },
+        };
+
+        var timeline = new vis.Timeline(container, items, groups, options);
+    });
+</script>
