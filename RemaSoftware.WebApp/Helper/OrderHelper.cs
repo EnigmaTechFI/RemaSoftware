@@ -737,10 +737,10 @@ namespace RemaSoftware.WebApp.Helper
                             NumberPieces = item.Ddt_Associations.Sum(s => s.NumberPieces),
                             DdtWithPieces = new List<(string, int)>(),
                             Client = firstAssociation.Ddt_In.Product.Client.Name,
-                            Date = item.Date,
+                            Date = item.Date, 
                             Code = item.Code
                         };
-
+ 
                         foreach (var entity in item.Ddt_Associations)
                         {
                             if (entity.Ddt_In != null)
