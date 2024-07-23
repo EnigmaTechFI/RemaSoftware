@@ -22,7 +22,6 @@ ViewData["Title"] = "Controllo produzione";
         <div class="row">
             <div class="col-12">
                 <p>Qui ci vuole la selezione per cliente, per stato (attivi/in magazzino/entrambi) e di ricerca dell'ordine</p>
-                <a class="btn btn-primary text-white" id="reset">Torna ad oggi</a>
             </div>
         </div>
         <div class="row mt-5">
@@ -40,6 +39,10 @@ ViewData["Title"] = "Controllo produzione";
         border-radius: 15px !important;
         color: black;
         cursor: pointer;
+    }
+
+    .custom-swal-cancel-button {
+        background-color: red;
     }
 </style>
 
@@ -82,18 +85,22 @@ ViewData["Title"] = "Controllo produzione";
             Swal.fire({
                 title: title,
                 html: `
-                    <p><strong>Data di inizio:</strong> ${start.toDateString()}</p>
-                    <p><strong>Data di fine:</strong> <input type="date" id="newEndDate" value="${end.toISOString().slice(0, 10)}"></p>
-                `,
+            <p><strong>Data di inizio:</strong> ${start.toDateString()}</p>
+            <p><strong>Data di fine:</strong> <input type="date" id="newEndDate" value="${end.toISOString().slice(0, 10)}"></p>
+        `,
                 showCancelButton: true,
                 confirmButtonText: 'Salva',
                 cancelButtonText: 'Annulla',
+                customClass: {
+                    cancelButton: 'custom-swal-cancel-button' // Applica la classe CSS al bottone "Annulla"
+                },
                 preConfirm: () => {
                     const newEndDate = new Date(document.getElementById('newEndDate').value);
                     items.update({ id: '01', end: newEndDate }); // Aggiorna l'item con l'id corretto
                 }
             });
         };
+
 
         // Clicca sul pulsante "Torna ad oggi" per tornare alla data odierna
         document.getElementById("reset").onclick = function () {

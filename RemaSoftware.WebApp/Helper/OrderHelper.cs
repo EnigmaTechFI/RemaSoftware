@@ -717,34 +717,49 @@ namespace RemaSoftware.WebApp.Helper
                 }
             }
         }
- 
+        
         public DDTEmittedViewModel GetDDTEmittedViewModel()
         {
             var emitted = _orderService.GetDdtOutsByStatus(DDTOutStatus.STATUS_EMITTED);
             var emittedDto = new List<DDTEmittedDto>();
+
             foreach (var item in emitted)
             {
-                var ddt = new DDTEmittedDto()
+                if (item.Ddt_Associations != null && item.Ddt_Associations.Any())
                 {
-                    Id = item.Ddt_Out_ID,
-                    Url = item.Url,
-                    NumberPieces = item.Ddt_Associations.Sum(s => s.NumberPieces),
-                    DdtWithPieces = new List<(string, int)>(),
-                    Client = item.Ddt_Associations[0].Ddt_In.Product.Client.Name,
-                    Date = item.Date,
-                    Code = item.Code
-                };
-                foreach (var entity in item.Ddt_Associations)
-                {
-                    ddt.DdtWithPieces.Add(new (entity.Ddt_In.Code, entity.NumberPieces));
+                    var firstAssociation = item.Ddt_Associations[0];
+                    if (firstAssociation?.Ddt_In?.Product?.Client != null)
+                    {
+                        var ddt = new DDTEmittedDto()
+                        {
+                            Id = item.Ddt_Out_ID,
+                            Url = item.Url,
+                            NumberPieces = item.Ddt_Associations.Sum(s => s.NumberPieces),
+                            DdtWithPieces = new List<(string, int)>(),
+                            Client = firstAssociation.Ddt_In.Product.Client.Name,
+                            Date = item.Date,
+                            Code = item.Code
+                        };
+
+                        foreach (var entity in item.Ddt_Associations)
+                        {
+                            if (entity.Ddt_In != null)
+                            {
+                                ddt.DdtWithPieces.Add(new (entity.Ddt_In.Code, entity.NumberPieces));
+                            }
+                        }
+
+                        emittedDto.Add(ddt);
+                    }
                 }
-                emittedDto.Add(ddt);
             }
+
             return new DDTEmittedViewModel()
             {
                 DdtOuts = emittedDto
             };
         }
+
 
         public int DeleteDDT(int id)
         {
