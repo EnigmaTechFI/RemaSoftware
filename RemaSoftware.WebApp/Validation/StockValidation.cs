@@ -15,8 +15,6 @@ namespace RemaSoftware.WebApp.Validation
                 return"Inserire codice prodotto.";
             if (warehouseStock.WarehouseStock.SupplierID <= 0)
                 return"Inserire fornitore.";
-            if (warehouseStock.WarehouseStock.Price_Uni <= 0)
-                return "Inserire prezzo.";
             if (warehouseStock.WarehouseStock.Reorder_Limit <= 0)
                 return "Inserire limite per il riordino.";
             return "";
@@ -31,8 +29,6 @@ namespace RemaSoftware.WebApp.Validation
                 return "Inserire numero di pezzi del prodotto.";
             if (string.IsNullOrEmpty(warehouseStock.WarehouseStock.Product_Code))
                 return"Inserire codice prodotto.";
-            if (warehouseStock.WarehouseStock.Price_Uni <= 0)
-                return "Inserire prezzo.";
             if (warehouseStock.WarehouseStock.Reorder_Limit <= 0)
                 return "Inserire limite per il riordino.";
             return "";

@@ -20,15 +20,13 @@ namespace RemaSoftware.Domain.Models
         public int SupplierID { get; set; }
         
         public Supplier Supplier { get; set; }
-
-        [Required(ErrorMessage = "Questo campo è obbligatorio!")]
-        public decimal Price_Uni { get; set; }
+        public decimal? Price_Uni { get; set; }
         
         [Required(ErrorMessage = "Questo campo è obbligatorio!")]
         public int Reorder_Limit { get; set; }
 
         public string Measure_Unit { get; set; }
-        public decimal Price_Tot => this.Price_Uni * this.Number_Piece;
+        public decimal? Price_Tot => this.Price_Uni * this.Number_Piece;
 
         public virtual List<Stock_History> Stock_Histories { get; set; }
 

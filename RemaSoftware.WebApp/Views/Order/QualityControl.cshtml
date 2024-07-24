@@ -82,6 +82,7 @@
                 <th scope="col">Persi</th>
                 <th scope="col">Zama scoperto</th>
                 <th scope="col">Reso scarto non lavorato</th>
+                <th scope="col">Riparazione gratuita</th>
                 <th scope="col">Stampa</th>
             </tr>
             </thead>
@@ -97,8 +98,9 @@
                     <td>@item.LostPieces</td>
                     <td>@item.ZamaPieces</td>
                     <td>@item.ResoScarto</td>
+                    <td>@item.RipaGratuita</td>
                     <td>
-                        <a onclick="printOldLabel('@item.SubBatchCode', '@item.OkPieces', '@item.LostPieces', '@item.WastePieces', '@item.ZamaPieces', '@item.ResoScarto', '@item.Client', '@item.SKU')" style="text-decoration: none">
+                        <a onclick="printOldLabel('@item.SubBatchCode', '@item.OkPieces', '@item.LostPieces', '@item.WastePieces', '@item.ZamaPieces', '@item.ResoScarto', '@item.RipaGratuita', '@item.Client', '@item.SKU')" style="text-decoration: none">
                             <i class="fas fa-print fa-lg pl-2" title="Stampa etichetta" style="cursor: pointer; color: #6d767e"></i>
                         </a>
                     </td>
@@ -164,6 +166,11 @@
                     <label for="resoScarto_pieces">N° reso scarto non lavorato:</label>
                     <input min="0" value="0" type="number" class="form-control" id="resoScarto_pieces" placeholder="N° reso scarto non lavorato:">
                 </div>
+
+                <div class="form-group">
+                    <label for="ripaGratuita_pieces">N° riparazione gratuita:</label>
+                    <input min="0" value="0" type="number" class="form-control" id="ripaGratuita_pieces" placeholder="N° riparazione gratuita:">
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
@@ -186,7 +193,7 @@
     <script src="~/js/dymo.connect.framework.js" type="text/javascript" charset="UTF-8"> </script>
 
     <script>
-    function printQRCode(id, ok, persi, scarti, zama, resoscarto){
+    function printQRCode(id, ok, persi, scarti, zama, resoscarto, ripagratuita){
       var printers = dymo.label.framework.getPrinters();
       if (printers.length == 0 || !printers[0].isConnected){
         alert("Nessuna stampante trovata.");
@@ -205,13 +212,15 @@
           etichetta += "\nZAMA: " + zama
       if (parseInt(resoscarto))
           etichetta += "\nRESO SCARTO NON LAVORATO: " + resoscarto
+      if (parseInt(ripagratuita))
+          etichetta += "\nRIPARAZIONE GRATUITA: " + ripagratuita
       label.setObjectText("TextObject",  etichetta);
       label.print(printers[0].name); 
       location.reload()
     } 
     </script>
     <script>
-    function printOldLabel(id, ok, persi, scarti, zama, resoscarto, cliente, product){
+    function printOldLabel(id, ok, persi, scarti, zama, resoscarto, ripagratuita, cliente, product){
       var printers = dymo.label.framework.getPrinters();
       if (printers.length == 0 || !printers[0].isConnected){
         alert("Nessuna stampante trovata.");
@@ -230,6 +239,8 @@
           etichetta += "\nZAMA: " + zama
       if (parseInt(resoscarto))
           etichetta += "\nRESO SCARTO NON LAVORATO: " + resoscarto
+      if (parseInt(ripagratuita))
+          etichetta += "\nRIPARAZIONE GRATUITA: " + ripagratuita
       label.setObjectText("TextObject",  etichetta);
       label.print(printers[0].name); 
       location.reload()
@@ -245,6 +256,8 @@
     let piecesPersi;
     let piecesZama;
     let piecesResoScarto;
+    let piecesRipaGratuita;
+
     let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
     scanner.addListener('scan', function (content) {
     document.getElementById("subBatchId").value = content.slice(4)
@@ -286,6 +299,7 @@
           wastePieces: document.getElementById("waste_pieces").value,
           zamaPieces: document.getElementById("zama_pieces").value,
           ResoScarto: document.getElementById("resoScarto_pieces").value,
+          RipaGratuita: document.getElementById("ripaGratuita_pieces").value,
           operationTimeLineId : operationTimeLineId
       }
     
@@ -299,7 +313,7 @@
               if (response.result) {
                   toastNotifySuccess(response.toastMessage);
                   $('#end-subbatch').modal('hide');
-                  printQRCode(subBatchToEndId, document.getElementById("ok_pieces").value, document.getElementById("lost_pieces").value, document.getElementById("waste_pieces").value, document.getElementById("zama_pieces").value, document.getElementById("resoScarto_pieces").value);
+                  printQRCode(subBatchToEndId, document.getElementById("ok_pieces").value, document.getElementById("lost_pieces").value, document.getElementById("waste_pieces").value, document.getElementById("zama_pieces").value, document.getElementById("resoScarto_pieces").value, document.getElementById("ripaGratuita_pieces").value);
                   $(".loader-cont").hide()
                   location.reload()
                   return

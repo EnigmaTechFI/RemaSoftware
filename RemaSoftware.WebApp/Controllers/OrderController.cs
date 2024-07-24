@@ -256,8 +256,10 @@ namespace RemaSoftware.WebApp.Controllers
         {
             return View(new BatchInStockViewModel()
             {
-                SubBatches = _orderHelper.GetSubBatchesStatus(OrderStatusConstants.STATUS_ARRIVED)
+                SubBatches = _orderHelper.GetSubBatchesStatus(OrderStatusConstants.STATUS_ARRIVED),
+                BasePathImages = $"{_configuration["ApplicationUrl"]}{_configuration["ImagesEndpoint"]}order/",
             });
+            
         }
         [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpGet]

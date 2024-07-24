@@ -7,7 +7,6 @@ namespace RemaSoftware.WebApp.Models.OrderViewModel
     {
         public List<Ddt_In> Ddt_In { get; set; }
         public int SubBatchId { get; set; }
-        
         public string BasePathImages { get; set; }
     }
 }

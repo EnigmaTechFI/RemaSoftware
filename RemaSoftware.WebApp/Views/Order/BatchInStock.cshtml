@@ -8,10 +8,12 @@
 
 <div class="card shadow mb-4" id="order-summ-content">
     <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
-        <h3 class="m-0 font-weight-bold text-primary">Lotti in magazzino</h3>
-        @*<div>
-            <button class="btn btn-primary" type="button" onclick="location.href='@Url.Action("NewProduct", "Product")'">Nuovo prodotto</button>
-        </div>*@
+        <h3 class="m-0 font-weight-bold text-primary">Lotti in magazzino</h3><div>
+            <button class="btn btn-primary text-white" type="button" onclick="showImages()" style="position:relative; right: 20px;"><i class="fa fa-image" style="position:relative; right: 5px;"></i>Visualizza immagini</button>
+            <button class="btn btn-primary text-white" type="button" onclick="printPage()" style="position:relative;"><i class="fa fa-print" style="position:relative; right: 5px;"></i>Stampa pagina</button>
+            @*
+            <button class="btn btn-primary" type="button" onclick="location.href='@Url.Action("NewProduct", "Product")'">Nuovo prodotto</button>*@
+        </div>
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -25,6 +27,7 @@
                     <th>DDT associate</th>
                     <th>Pezzi nel lotto</th>
                     <th>Scadenza ordine</th>
+                    <th id="imageId" style="display: none; padding: 35px 30px 15px 10px; position: relative;">Immagini</th>
                     <th>Azioni</th>
                 </tr>
                 </thead>
@@ -55,6 +58,9 @@
                         }
                         <td>@batch.Ddts_In.Sum(s=> s.Number_Piece)</td>
                         <td>@batch.Ddts_In.OrderBy(s=> s.DataOut).FirstOrDefault().DataOut.ToString("dd/MM/yyyy")</td>
+                        <td class="classImage" style="display: none; padding:  0px !important;">
+                            <img class="image-class d-none" width="140px;" data-src="@Model.BasePathImages@batch.Ddts_In[0].Product.FileName"/>
+                        </td>
                         <td class="text-center">
                             <a onclick="printQRCode('@batch.SubBatchID')" style="text-decoration: none">
                                 <i class="fas fa-print fa-lg pl-2" title="Stampa ordine" style="cursor: pointer; color: #6d767e"></i>
@@ -142,8 +148,10 @@
     </script>
 
     <script>
+
+    let controlImage = false;
+    const batches = @Json.Serialize(Model.SubBatches);
     
-    const batches = @Json.Serialize(Model.SubBatches)
     function showDDT(subbatchId) {
         var batch = batches.filter(obj => {
           return obj.subBatchID === subbatchId
@@ -204,10 +212,82 @@
                 { "searchable": false, "orderable": false, "targets": 5 },
                 { "searchable": false, "orderable": true, "targets": 6 },
                 { "searchable": false, "orderable": false, "targets": 7 },
+                { "searchable": false, "orderable": false, "targets": 8 },
               ]
         });        
         
     });
+
+    function showImages() {
+
+        var elements = document.querySelectorAll('.image-class');
+        var classImages = document.querySelectorAll('.classImage');
+
+        elements.forEach(function(element, index) {
+            var classImage = classImages[index];
+            classImage.style.display = 'none';
+            element.classList.add('d-none');
+            element.removeAttribute('src');
+        })
+
+        if(controlImage == false){
+            elements.forEach(function(element, index) {
+                var classImage = classImages[index];
+                classImage.style.display = 'block';
+                element.src = element.getAttribute('data-src');
+                element.classList.remove('d-none');
+            });
+            controlImage = true;
+        }else{
+            controlImage = false;
+        }
+
+
+        if (elements[0].classList.contains('d-none')) {
+            document.getElementById('imageId').style.display = 'none';
+        }else{
+            document.getElementById('imageId').style.display = 'block';
+            document.getElementById('imageId').style.width = '100px';
+        }
+    }
+
+    async function printPage() {
+        const originalTable = document.getElementById('table-batches');
+        const clonedTable = originalTable.cloneNode(true);
+        const columnsToRemove = [8];
+
+        const headerCells = clonedTable.querySelectorAll('thead tr th');
+        columnsToRemove.sort((a, b) => b - a).forEach(index => {
+            if (headerCells[index]) {
+                headerCells[index].remove();
+            }
+        });
+
+        const bodyRows = clonedTable.querySelectorAll('tbody tr');
+        bodyRows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            columnsToRemove.forEach(index => {
+                if (cells[index]) {
+                    cells[index].remove();
+                }
+            });
+        });
+
+        const printWindow = window.open('', '_blank');
+        printWindow.document.open();
+        printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Ordini attivi</title>
+                    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+                </head>
+                <body>
+                    ${clonedTable.outerHTML}
+                </body>
+                </html>
+            `);
+        printWindow.document.close();
+    }
 
     </script>
 }

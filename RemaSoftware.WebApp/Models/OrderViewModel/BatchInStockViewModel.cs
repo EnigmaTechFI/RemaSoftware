@@ -6,5 +6,7 @@ namespace RemaSoftware.WebApp.Models.OrderViewModel
     public class BatchInStockViewModel
     {
         public List<SubBatch> SubBatches { get; set; }
+        
+        public string BasePathImages { get; set; }
     }
 }

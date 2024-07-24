@@ -8,5 +8,6 @@ public class SubBatchToEndDto
     public int WastePieces { get; set; }
     public int ZamaPieces { get; set; }
     public int ResoScarto { get; set; }
+    public int RipaGratuita { get; set; }
     public int OperationTimeLineId { get; set; }
 }
