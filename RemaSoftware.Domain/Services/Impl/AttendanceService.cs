@@ -140,27 +140,32 @@ namespace RemaSoftware.Domain.Services.Impl;
         {
             for(int i=0; i<userIdList.Count; i++)
             {
-                if (userIdList[i] == "ae3cdeac-75c0-4734-9d53-5cebde5eb08a")
+                if (i == 260)
                 {
-                    var o = 0;
+                    var tmp = 0; 
                 }
-                DateTime userClockDate1 = DateTime.ParseExact(userClockList[i], "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
-
+                
+                var employeeTest = _dbContext.Employees.Include(t => t.Attendances)
+                    .SingleOrDefault(e => e.FluidaId == userIdList[i]);
+                //MODIFICA --> PRENDERE EMPLOYEE CON I RELATIVI ATTENDANCE ALMENO POI SEMPLIFICHIAMO E VELOCIZIAMO LA RICERCA AD OGNI GIRO
+                
+                DateTime userClockDate = DateTime.ParseExact(userClockList[i], "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                
                 // Controlla se esiste un elemento in Attendance con timestart o timeend uguale a userClock.Time
-
-                DateTime userClockDateTime = DateTime.ParseExact(userClockList[i], "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
-
                 bool exists = _dbContext.Attendances
-                    .Any(a => 
-                        ((a.DateIn.Date == userClockDateTime.Date && a.DateIn.TimeOfDay == userClockDateTime.TimeOfDay) || 
-                         (a.DateOut.HasValue && a.DateOut.Value.Date == userClockDateTime.Date && a.DateOut.Value.TimeOfDay >= userClockDateTime.TimeOfDay)) && 
+                    .Any(a => //ricontrollare
+                        ((a.DateIn.Date == userClockDate.Date && a.DateIn.TimeOfDay == userClockDate.TimeOfDay) || 
+                         (a.DateOut.HasValue && a.DateOut.Value.Date == userClockDate.Date && a.DateOut.Value.TimeOfDay >= userClockDate.TimeOfDay)) && 
                         a.Employee.FluidaId == userIdList[i]);
-
+                
+                //Questi due sotto da testare
+                //QUESTO FUNZIONA MA MAGARI SOSTITUIRLO CON QUALCOSA CHE CERCA IN EMPLOYEETEST SOPRA
+                bool exists1 = _dbContext.Attendances.Any(a => (a.DateIn == userClockDate || a.DateOut.HasValue && a.DateOut.Value >= userClockDate) && a.Employee.FluidaId == userIdList[i]);
+                bool exists2 = employeeTest.Attendances.Any(a => (a.DateIn == userClockDate || a.DateOut.HasValue && a.DateOut.Value >= userClockDate) && a.Employee.FluidaId == userIdList[i]);
                 if (!exists)
                 {
                     // Cerca se esiste un elemento in Attendance con timestart non nullo e timeend nullo
-                    var existingAttendance = _dbContext.Attendances
-                        .FirstOrDefault(a => a.DateIn != null && a.DateOut == null && a.Employee.FluidaId == userIdList[i] && a.DateIn.Date == userClockDate1.Date);
+                    var existingAttendance = _dbContext.Attendances.FirstOrDefault(a => a.DateIn != null && a.DateOut == null && a.Employee.FluidaId == userIdList[i] && a.DateIn.Date == userClockDate.Date);
 
                     if (existingAttendance != null)
                     {
@@ -168,7 +173,7 @@ namespace RemaSoftware.Domain.Services.Impl;
                         DateTime dateIn;
                         DateTime.TryParseExact(userClockList[i], dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateIn);
 
-                        //rigistrazione normale timbro 
+                        //registrazione timbro
                         existingAttendance.DateOut = dateIn;
 
                         DateTime? dateOut = existingAttendance.DateOut?.Date;
@@ -231,6 +236,7 @@ namespace RemaSoftware.Domain.Services.Impl;
                             
                             if (extraHours >= 1 || extraMinutes > 0){
                                 
+                                extraMinutes -= 10;
                                 if (existingAttendance.DateOut?.AddHours(-extraHours).AddMinutes(-extraMinutes) > existingAttendance.DateIn)
                                     existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-extraHours).AddMinutes(-extraMinutes);
                                 else
@@ -251,7 +257,7 @@ namespace RemaSoftware.Domain.Services.Impl;
                     else
                     {
                         //Sezione straordinario notturno
-                        var previousDay = userClockDate1.Date.AddDays(-1);
+                        var previousDay = userClockDate.Date.AddDays(-1);
 
                         var existingAttendanceNight = _dbContext.Attendances
                             .FirstOrDefault(a => a.DateIn != null &&
@@ -259,14 +265,14 @@ namespace RemaSoftware.Domain.Services.Impl;
                                                  a.Employee.FluidaId == userIdList[i] &&
                                                  a.DateIn.Date == previousDay);
 
-                        if (existingAttendanceNight != null && existingAttendanceNight.DateOut == null &&  userClockDate1.TimeOfDay >= TimeSpan.FromHours(4) &&  userClockDate1.TimeOfDay <= TimeSpan.FromHours(7.5) &&  existingAttendanceNight.DateIn.TimeOfDay >= TimeSpan.FromHours(20))
+                        if (existingAttendanceNight != null && existingAttendanceNight.DateOut == null &&  userClockDate.TimeOfDay >= TimeSpan.FromHours(4) &&  userClockDate.TimeOfDay <= TimeSpan.FromHours(7.5) &&  existingAttendanceNight.DateIn.TimeOfDay >= TimeSpan.FromHours(20))
                         {
-                            existingAttendanceNight.DateOut = userClockDate1;
+                            existingAttendanceNight.DateOut = userClockDate;
                             
                             Attendance oldAttendance = new Attendance
                             {
-                                DateIn = userClockDate1.Date,
-                                DateOut = userClockDate1.Date,
+                                DateIn = userClockDate.Date,
+                                DateOut = userClockDate.Date,
                                 EmployeeID = existingAttendanceNight.EmployeeID,
                                 Type = "Eliminato"
                             };
@@ -315,27 +321,20 @@ namespace RemaSoftware.Domain.Services.Impl;
             for(int i=0; i<userIdList.Count; i++)
             {
                 if(userIdList[i] == FluidaId){
-                    if (userIdList[i] == "ae3cdeac-75c0-4734-9d53-5cebde5eb08a")
-                    {
-                        var o = 0;
-                    }
-                    DateTime userClockDate1 = DateTime.ParseExact(userClockList[i], "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                    DateTime userClockDate = DateTime.ParseExact(userClockList[i], "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
 
                     // Controlla se esiste un elemento in Attendance con timestart o timeend uguale a userClock.Time
-
-                    DateTime userClockDateTime = DateTime.ParseExact(userClockList[i], "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
-
                     bool exists = _dbContext.Attendances
                         .Any(a => 
-                            ((a.DateIn.Date == userClockDateTime.Date && a.DateIn.TimeOfDay == userClockDateTime.TimeOfDay) || 
-                             (a.DateOut.HasValue && a.DateOut.Value.Date == userClockDateTime.Date && a.DateOut.Value.TimeOfDay >= userClockDateTime.TimeOfDay)) && 
+                            ((a.DateIn.Date == userClockDate.Date && a.DateIn.TimeOfDay == userClockDate.TimeOfDay) || 
+                             (a.DateOut.HasValue && a.DateOut.Value.Date == userClockDate.Date && a.DateOut.Value.TimeOfDay >= userClockDate.TimeOfDay)) && 
                             a.Employee.FluidaId == userIdList[i]);
 
                     if (!exists)
                     {
                         // Cerca se esiste un elemento in Attendance con timestart non nullo e timeend nullo
                         var existingAttendance = _dbContext.Attendances
-                            .FirstOrDefault(a => a.DateIn != null && a.DateOut == null && a.Employee.FluidaId == userIdList[i] && a.DateIn.Date == userClockDate1.Date);
+                            .FirstOrDefault(a => a.DateIn != null && a.DateOut == null && a.Employee.FluidaId == userIdList[i] && a.DateIn.Date == userClockDate.Date);
 
                         if (existingAttendance != null)
                         {
@@ -426,7 +425,7 @@ namespace RemaSoftware.Domain.Services.Impl;
                         else
                         {
                             //Sezione straordinario notturno
-                            var previousDay = userClockDate1.Date.AddDays(-1);
+                            DateTime previousDay = userClockDate.Date.AddDays(-1);
 
                             var existingAttendanceNight = _dbContext.Attendances
                                 .FirstOrDefault(a => a.DateIn != null &&
@@ -434,14 +433,14 @@ namespace RemaSoftware.Domain.Services.Impl;
                                                      a.Employee.FluidaId == userIdList[i] &&
                                                      a.DateIn.Date == previousDay);
 
-                            if (existingAttendanceNight != null && existingAttendanceNight.DateOut == null &&  userClockDate1.TimeOfDay >= TimeSpan.FromHours(4) &&  userClockDate1.TimeOfDay <= TimeSpan.FromHours(7.5) &&  existingAttendanceNight.DateIn.TimeOfDay >= TimeSpan.FromHours(20))
+                            if (existingAttendanceNight != null && existingAttendanceNight.DateOut == null &&  userClockDate.TimeOfDay >= TimeSpan.FromHours(4) &&  userClockDate.TimeOfDay <= TimeSpan.FromHours(7.5) &&  existingAttendanceNight.DateIn.TimeOfDay >= TimeSpan.FromHours(20))
                             {
-                                existingAttendanceNight.DateOut = userClockDate1;
+                                existingAttendanceNight.DateOut = userClockDate;
                                 
                                 Attendance oldAttendance = new Attendance
                                 {
-                                    DateIn = userClockDate1.Date,
-                                    DateOut = userClockDate1.Date,
+                                    DateIn = userClockDate.Date,
+                                    DateOut = userClockDate.Date,
                                     EmployeeID = existingAttendanceNight.EmployeeID,
                                     Type = "Eliminato"
                                 };

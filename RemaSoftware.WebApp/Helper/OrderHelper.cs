@@ -539,7 +539,7 @@ namespace RemaSoftware.WebApp.Helper
                                     NumberPieces = dto.WastePieces,
                                     TypePieces = PiecesType.SCARTI
                                 });
-                                dto.WastePieces = 0;
+                                dto.RipaGratuita = 0;
                             }
                             else if(item.Number_Piece_Now > 0)
                             {
@@ -603,7 +603,7 @@ namespace RemaSoftware.WebApp.Helper
                                     NumberPieces = dto.ResoScarto,
                                     TypePieces = PiecesType.RESOSCARTO
                                 });
-                                dto.WastePieces = 0;
+                                dto.ResoScarto = 0;
                             }
                             else if(item.Number_Piece_Now > 0)
                             {
