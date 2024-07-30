@@ -408,7 +408,7 @@ namespace RemaSoftware.WebApp.Helper
                             throw new InvalidOperationException("Lotto n. " + oldestSubBatchId + " da chiudere prima.");
                         }
                     }
-                    
+                     
                     _orderService.CreateNewLabelOut(new Label()
                     {
                         Client = subBatch.Ddts_In[0].Product.Client.Name,
