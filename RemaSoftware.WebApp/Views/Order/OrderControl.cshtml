@@ -34,15 +34,31 @@ ViewData["Title"] = "Controllo produzione";
 
 <style>
     .custom-style {
-        background-color: #F9F9F9;
-        border: 2px solid #009EF7;
         border-radius: 15px !important;
         color: black;
         cursor: pointer;
     }
 
+    .custom-style-a {
+        background-color: #ff7f7f;
+        border: 2px solid #ff0000;
+    }
+    .custom-style-b {
+        background-color: #ffa67f;
+        border: 2px solid #FF4D00;
+    }
+    .custom-style-d {
+        background-color: #ffe67f;
+        border: 2px solid #FFCD00;
+    }
+
     .custom-swal-cancel-button {
         background-color: red;
+    }
+
+    .vis-item.vis-selected{
+        background-color: #B2FFFF;
+        border: 2px solid #51D1F6;
     }
 </style>
 
@@ -50,17 +66,18 @@ ViewData["Title"] = "Controllo produzione";
     // Inizializza la timeline al caricamento della pagina
     document.addEventListener("DOMContentLoaded", function() {
         var now = Date.now();
-
+        
         // Funzione per creare il contenuto degli item
-        const getContent = (title, img, start, end) => {
+        const getContent = (title1, title2, img, start, end) => {
             const item = document.createElement('div');
             const name = document.createElement('div');
             const nameClasses = ['fw-bolder', 'mb-2'];
             name.classList.add(...nameClasses);
-            name.innerHTML = title;
-
+            name.innerHTML = 'Lotto: ' + title1 + '- DDT :  '+ title2;
+            
+            var TmpImg = basePathImages + img;
             const image = document.createElement('img');
-            image.setAttribute('src', img);
+            image.setAttribute('src', TmpImg);
             image.style.height = '50px';
             image.style.borderRadius = '15px';
 
@@ -74,16 +91,16 @@ ViewData["Title"] = "Controllo produzione";
 
             // Aggiungi evento per aprire il popup
             item.addEventListener('click', () => {
-                openPopup(title, start, end);
+                openPopup(title1, title2, start, end);
             });
 
             return item;
         };
 
         // Funzione per aprire il popup con SweetAlert2
-        const openPopup = (title, start, end) => {
+        const openPopup = (title1, title2, start, end) => {
             Swal.fire({
-                title: title,
+                title: title1 + title2,
                 html: `
             <p><strong>Data di inizio:</strong> ${start.toDateString()}</p>
             <p><strong>Data di fine:</strong> <input type="date" id="newEndDate" value="${end.toISOString().slice(0, 10)}"></p>
@@ -108,7 +125,7 @@ ViewData["Title"] = "Controllo produzione";
         };
 
         // Configurazione degli item e della timeline con Vis.js
-        var items = new vis.DataSet([
+        @*var items = new vis.DataSet([
             {
                 id: '01',
                 group: '01',
@@ -125,7 +142,39 @@ ViewData["Title"] = "Controllo produzione";
                 content: getContent('<b>Task 2<b/>', '/img/login.JPG', new Date(2024, 6, 22), new Date(2024, 6, 25)),
                 className: 'custom-style',
             },
-        ]);
+        ]);*@
+
+        var ddtData = @Html.Raw(Json.Serialize(Model.Ddt_In));
+        var basePathImages = '@Model.BasePathImages';
+
+        // Crea un nuovo DataSet di Vis.js
+        var items = new vis.DataSet([]);
+
+        // Aggiungi i dati al DataSet
+        ddtData.forEach(function(ddt) {
+            var className;
+            switch(ddt.status) {
+                case 'A':
+                    className = 'custom-style-a custom-style';
+                    break;
+                case 'B':
+                    className = 'custom-style-b custom-style';
+                    break;
+                case 'D':
+                    className = 'custom-style-d custom-style';
+                    break;
+                default:
+                    className = 'custom-style'; // Classe di default per stati non gestiti
+            }
+            items.add({
+                id: ddt.Ddt_In_ID, // Usa l'ID del tuo oggetto
+                start: new Date(ddt.dataIn), // Converti dataIn in un oggetto Date
+                end: new Date(ddt.dataOut),
+                content: getContent(ddt.subBatchID, ddt.code, ddt.product.fileName, new Date(ddt.dataIn), new Date(ddt.dataOut)),
+                className: className,
+            });
+        });
+
 
         var groups = new vis.DataSet([
             {
@@ -142,8 +191,8 @@ ViewData["Title"] = "Controllo produzione";
 
         var options = {
             stack: true,
-            maxHeight: 640,
-            height: 500,
+            maxHeight: 800,
+            height: 700,
             horizontalScroll: false,
             showCurrentTime: true,
             zoomKey: "ctrlKey",
@@ -155,6 +204,6 @@ ViewData["Title"] = "Controllo produzione";
             },
         };
 
-        var timeline = new vis.Timeline(container, items, groups, options);
+        var timeline = new vis.Timeline(container, items, options);
     });
 </script>

@@ -102,7 +102,12 @@ namespace RemaSoftware.WebApp.Controllers
         [HttpGet]
         public IActionResult OrderControl()
         {
-            return View(_orderHelper.GetOrderControlViewModel());
+            var tmp = new OrderControlViewModel()
+            {
+                Ddt_In = _orderHelper.GetAllDdtInActive_NoPagination(),
+                BasePathImages = $"{_configuration["ApplicationUrl"]}{_configuration["ImagesEndpoint"]}order/"
+            };
+            return View(tmp);
         }
         
         [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
@@ -111,6 +116,7 @@ namespace RemaSoftware.WebApp.Controllers
         {
             return View(_orderHelper.GetSubBatchMonitoring(id, url));
         }
+        
         [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpGet]
         public IActionResult OrderSummary(int subBatchId = 0)
