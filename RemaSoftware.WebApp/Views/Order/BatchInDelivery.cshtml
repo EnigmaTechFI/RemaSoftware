@@ -34,43 +34,47 @@
                 <tbody>
                 @foreach (var item in Model.DdtOuts)
                 {
-                    <tr style="cursor: pointer;">
-                        <td>@item.Ddt_Associations[0].Ddt_In.Product.Client.Name</td>
-                        @if (@item.Ddt_Associations.Count() > 3)
+                @if (item.Ddt_Associations.Any())
+                {
+                <tr style="cursor: pointer;">
+                    <td>@item.Ddt_Associations[0].Ddt_In.Product.Client.Name</td>
+                    @if (item.Ddt_Associations.Count() > 3)
+                    {
+                    <td onclick="showDDT(@item.Ddt_Out_ID)">
+                        Visualizza DDT associate
+                    </td>
+                    }
+                    else
+                    {
+                    <td>
+                        @foreach (var ddt in item.Ddt_Associations)
                         {
-                            <td onclick="showDDT(@item.Ddt_Out_ID)">
-                                Visualizza DDT associate
-                            </td>
+                        <div>
+                            @ddt.Ddt_In.Code<br>
+                        </div>
                         }
-                        else
-                        {
-                            <td>
-                            @foreach (var ddt in item.Ddt_Associations)
-                            {
-                                <div>
-                                    @ddt.Ddt_In.Code<br>
-                                </div>
-                            }
-                            </td>
-                        }
-                        <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.BUONI).Sum(s=> s.NumberPieces)</td>
-                        <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.SCARTI).Sum(s=> s.NumberPieces)</td>
-                        <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.PERSI).Sum(s=> s.NumberPieces)</td>
-                        <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.MANCANTI).Sum(s=> s.NumberPieces)</td>
-                        <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.ZAMA).Sum(s=> s.NumberPieces)</td>
-                        <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.RESOSCARTO).Sum(s=> s.NumberPieces)</td>
-                        <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.RIPAGRATUITA).Sum(s=> s.NumberPieces)</td>
-                        <td class="text-center">
-                            <a style="text-decoration: none" asp-action="EmitDDT" asp-controller="Order" asp-route-id="@item.Ddt_Out_ID">
-                                <i class="fas fa-truck fa-lg pl-2" style="cursor: pointer; color: #6d767e;" title="Emetti DDT"></i>
-                            </a>
-                            <a style="text-decoration: none" asp-controller="Order" asp-action="PartialDDT" asp-route-id="@item.Ddt_Out_ID" asp-route-clientId="@item.ClientID">
-                                <i class="fas fa-eye fa-lg pl-2" title="Visualizza ddt" style="cursor: pointer; color: #6d767e"></i>
-                            </a>
-                        </td>
-                    </tr>
+                    </td>
+                    }
+                    <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.BUONI).Sum(s => s.NumberPieces)</td>
+                    <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.SCARTI).Sum(s => s.NumberPieces)</td>
+                    <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.PERSI).Sum(s => s.NumberPieces)</td>
+                    <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.MANCANTI).Sum(s => s.NumberPieces)</td>
+                    <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.ZAMA).Sum(s => s.NumberPieces)</td>
+                    <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.RESOSCARTO).Sum(s => s.NumberPieces)</td>
+                    <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.RIPAGRATUITA).Sum(s => s.NumberPieces)</td>
+                    <td class="text-center">
+                        <a style="text-decoration: none" asp-action="EmitDDT" asp-controller="Order" asp-route-id="@item.Ddt_Out_ID">
+                            <i class="fas fa-truck fa-lg pl-2" style="cursor: pointer; color: #6d767e;" title="Emetti DDT"></i>
+                        </a>
+                        <a style="text-decoration: none" asp-controller="Order" asp-action="PartialDDT" asp-route-id="@item.Ddt_Out_ID" asp-route-clientId="@item.ClientID">
+                            <i class="fas fa-eye fa-lg pl-2" title="Visualizza ddt" style="cursor: pointer; color: #6d767e"></i>
+                        </a>
+                    </td>
+                </tr>
+                }
                 }
                 </tbody>
+
             </table>
         </div>
         
