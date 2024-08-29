@@ -23,18 +23,27 @@ namespace RemaSoftware.Domain.Services.Impl;
             _dbContext.SaveChanges();
             return true;
         }
-
+        
+        
         public void ModifyAttendance(int attendanceId, DateTime newInDateTime, DateTime newOutDateTime, string type)
         {
+            
             var attendance = _dbContext.Attendances.Find(attendanceId);
 
-            if (newInDateTime.DayOfWeek == DayOfWeek.Saturday && (type == "StraordinarioOrdinario" || type == "Presenza"))
+            if (attendance == null)
             {
-                type = "StraordinarioSabato";
+                throw new Exception("Errore, presenza non trovata.");
             }
             
             newInDateTime = new DateTime(attendance.DateIn.Date.Year, attendance.DateIn.Date.Month, attendance.DateIn.Date.Day, newInDateTime.Hour == 0 ? attendance.DateIn.Hour : newInDateTime.Hour, newInDateTime.Hour == 0 ? attendance.DateIn.Minute : newInDateTime.Minute, newInDateTime.Second);
             
+            //Mette lo straordinario di sabato in automatico ma potrebbe creare incomprensioni
+            /*if (newInDateTime.DayOfWeek == DayOfWeek.Saturday && (type == "StraordinarioOrdinario" || type == "Presenza"))
+            {
+                type = "StraordinarioSabato";
+            }*/
+            
+            //DA RICONTROLLARE QUESTO IF
             if (newOutDateTime.Date != DateTime.MinValue){
                 newOutDateTime = new DateTime(attendance.DateIn.Year, attendance.DateIn.Month, attendance.DateIn.Day, (int)(newOutDateTime.Hour), (int)(newOutDateTime.Minute), newOutDateTime.Second);
             }
@@ -75,26 +84,29 @@ namespace RemaSoftware.Domain.Services.Impl;
                 _dbContext.SaveChanges();
             }
         }
-
-        public void NewAttendance(int EmployeeId, DateTime newInDateTime, DateTime? newOutDateTime, string type)
+        
+        
+        public void NewAttendance(int employeeId, DateTime newInDateTime, DateTime? newOutDateTime, string type)
         {
-            
-            if (newInDateTime.Date == newOutDateTime?.Date && newOutDateTime?.TimeOfDay < newInDateTime.TimeOfDay)
-            {
-                newOutDateTime = newOutDateTime?.AddDays(1);
-            }
             
             if (newInDateTime == default || newInDateTime.TimeOfDay == TimeSpan.Zero)
                 throw new Exception("Errore, impossibile salvare presenza.");
 
-            Attendance attendance = new Attendance();
-            attendance.DateIn = newInDateTime;
-            attendance.DateOut = newOutDateTime;
-            attendance.EmployeeID = EmployeeId;
-            attendance.Type = type;
+            if (newInDateTime.Date == newOutDateTime?.Date && newOutDateTime?.TimeOfDay < newInDateTime.TimeOfDay)
+            {
+                newOutDateTime = newOutDateTime?.AddDays(1);
+            }
 
+            Attendance attendance = new Attendance
+            {
+                DateIn = newInDateTime,
+                DateOut = newOutDateTime,
+                EmployeeID = employeeId,
+                Type = type
+            };
+            
             bool isDateInAlreadyPresent = _dbContext.Attendances
-                .Where(u => u.EmployeeID == EmployeeId && u.Type != "Eliminato")
+                .Where(u => u.EmployeeID == employeeId && u.Type != "Eliminato")
                 .Any(a => (attendance.DateIn >= a.DateIn && attendance.DateIn < a.DateOut) ||
                           (attendance.DateOut > a.DateIn && attendance.DateOut <= a.DateOut) ||
                           (attendance.DateIn <= a.DateIn && attendance.DateOut >= a.DateOut));
@@ -108,7 +120,6 @@ namespace RemaSoftware.Domain.Services.Impl;
             {
                 throw new Exception("Errore, impossibile salvare presenza.");
             }
-
         }
 
         public List<Attendance> getAttendanceById(int id, int month, int year)
@@ -140,10 +151,6 @@ namespace RemaSoftware.Domain.Services.Impl;
         {
             for(int i=0; i<userIdList.Count; i++)
             {
-                if (i == 260)
-                {
-                    var tmp = 0; 
-                }
                 
                 var employeeTest = _dbContext.Employees.Include(t => t.Attendances)
                     .SingleOrDefault(e => e.FluidaId == userIdList[i]);
