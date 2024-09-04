@@ -37,12 +37,6 @@ namespace RemaSoftware.Domain.Services.Impl;
             
             newInDateTime = new DateTime(attendance.DateIn.Date.Year, attendance.DateIn.Date.Month, attendance.DateIn.Date.Day, newInDateTime.Hour == 0 ? attendance.DateIn.Hour : newInDateTime.Hour, newInDateTime.Hour == 0 ? attendance.DateIn.Minute : newInDateTime.Minute, newInDateTime.Second);
             
-            //Mette lo straordinario di sabato in automatico ma potrebbe creare incomprensioni
-            /*if (newInDateTime.DayOfWeek == DayOfWeek.Saturday && (type == "StraordinarioOrdinario" || type == "Presenza"))
-            {
-                type = "StraordinarioSabato";
-            }*/
-            
             //DA RICONTROLLARE QUESTO IF
             if (newOutDateTime.Date != DateTime.MinValue){
                 newOutDateTime = new DateTime(attendance.DateIn.Year, attendance.DateIn.Month, attendance.DateIn.Day, (int)(newOutDateTime.Hour), (int)(newOutDateTime.Minute), newOutDateTime.Second);

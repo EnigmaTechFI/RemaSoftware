@@ -1,7 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using NLog;
 using RemaSoftware.UtilityServices.Interface;
 using Opc.Ua;
 using Opc.Ua.Client;
@@ -38,7 +36,7 @@ namespace RemaSoftware.UtilityServices.Implementation
                     endpointDescription,
                     true,
                     "Rema",
-                    60000,
+                    3000,
                     new UserIdentity(new AnonymousIdentityToken()),
                     null
                 );

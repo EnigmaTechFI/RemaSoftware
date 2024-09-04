@@ -59,7 +59,6 @@ public class AttendanceHelper
         
         bool AttendanceOk = true;
         var LastAttendance = _attendanceService.GetLastAttendance();
-
         if ((LastAttendance != null && LastAttendance.DateIn.Date == DateTime.Today) || DateTime.Today.DayOfWeek == DayOfWeek.Saturday || DateTime.Today.DayOfWeek == DayOfWeek.Sunday)
         {
             AttendanceOk = false;
@@ -130,7 +129,7 @@ public class AttendanceHelper
             }
         }
 
-        if (AttendanceOk)
+        if (AttendanceOk && DateTime.Now.TimeOfDay > new TimeSpan(7, 30, 0) && DateTime.Now.TimeOfDay < new TimeSpan(10, 0, 0))
         {
             await ControlFirstAttendance();
         }
@@ -181,7 +180,14 @@ public class AttendanceHelper
 
         for (int i = 0; i < Employees.Count; i++)
         {
+            
             var employee = Employees[i];
+
+            if (employee.EmployeeID == 39)
+            {
+                var tmp = 0;
+            }
+            
             List<Attendance> attendance = _attendanceService.getAttendanceById(employee.EmployeeID, month, year);
             List<Attendance> filteredAttendance = attendance.Where(a => a.Type != "Eliminato" && a.Type != "Permesso").ToList();
             List<string> uniqueTypes = filteredAttendance.Select(a => a.Type).Distinct().ToList();
@@ -283,26 +289,26 @@ public class AttendanceHelper
                     {
                         switch (totalDuration)
                         {
-                            case TimeSpan td when td > TimeSpan.FromHours(7) + TimeSpan.FromMinutes(50):
+                            case TimeSpan td when td >= TimeSpan.FromHours(7) + TimeSpan.FromMinutes(50):
                                 sp += "80000";
                                 if (uniqueTypes[j] == "Presenza" && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Sunday && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Saturday)
                                     permiss += "00000";
                                 break;
-                            case TimeSpan td when td > TimeSpan.FromHours(6) + TimeSpan.FromMinutes(50):
+                            case TimeSpan td when td >= TimeSpan.FromHours(6) + TimeSpan.FromMinutes(50):
                                 sp += "70000";
                                 if (uniqueTypes[j] == "Presenza" && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Sunday && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Saturday && employee.NumberHour == 40)
                                     permiss += "10000";
                                 else if (uniqueTypes[j] == "Presenza" && employee.TypePosition == "In servizio"  && employee.NumberHour == 35)
                                     permiss += "00000";
                                 break;
-                            case TimeSpan td when td > TimeSpan.FromHours(5) + TimeSpan.FromMinutes(50):
+                            case TimeSpan td when td >= TimeSpan.FromHours(5) + TimeSpan.FromMinutes(50):
                                 sp += "60000";
                                 if (uniqueTypes[j] == "Presenza" && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Sunday && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Saturday && employee.NumberHour == 40)
                                     permiss += "20000";
                                 else if (uniqueTypes[j] == "Presenza" && employee.TypePosition == "In servizio" && employee.NumberHour == 35)
                                     permiss += "10000";
                                 break;
-                            case TimeSpan td when td > TimeSpan.FromHours(4) + TimeSpan.FromMinutes(50):
+                            case TimeSpan td when td >= TimeSpan.FromHours(4) + TimeSpan.FromMinutes(50):
                                 sp += "50000";
                                 if (uniqueTypes[j] == "Presenza" && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Sunday && attendanceForDay[0].DateIn.DayOfWeek != DayOfWeek.Saturday && employee.NumberHour == 40)
                                     permiss += "30000";
@@ -311,7 +317,7 @@ public class AttendanceHelper
                                 else if (uniqueTypes[j] == "Presenza" && employee.TypePosition == "In servizio" && employee.NumberHour == 35)
                                     permiss += "20000";
                                 break;
-                            case TimeSpan td when td > TimeSpan.FromHours(3) + TimeSpan.FromMinutes(50):
+                            case TimeSpan td when td >= TimeSpan.FromHours(3) + TimeSpan.FromMinutes(50):
                                 if(uniqueTypes[j] == "Supplementare" && employee.NumberHour == 25 && td > TimeSpan.FromHours(4) + TimeSpan.FromMinutes(25))
                                     sp += "45000";
                                 else 
@@ -323,7 +329,7 @@ public class AttendanceHelper
                                 else if (uniqueTypes[j] == "Presenza" && employee.TypePosition == "In servizio" && employee.NumberHour == 35)
                                     permiss += "30000";
                                 break;
-                            case TimeSpan td when td > TimeSpan.FromHours(2) + TimeSpan.FromMinutes(50):
+                            case TimeSpan td when td >= TimeSpan.FromHours(2) + TimeSpan.FromMinutes(50):
                                 if(uniqueTypes[j] == "Supplementare" && employee.NumberHour == 25 && td > TimeSpan.FromHours(3) + TimeSpan.FromMinutes(25))
                                     sp += "35000";
                                 else 
@@ -335,7 +341,7 @@ public class AttendanceHelper
                                 else if (uniqueTypes[j] == "Presenza" && employee.TypePosition == "In servizio" && employee.NumberHour == 35)
                                     permiss += "40000";
                                 break;
-                            case TimeSpan td when td > TimeSpan.FromHours(1) + TimeSpan.FromMinutes(50):
+                            case TimeSpan td when td >= TimeSpan.FromHours(1) + TimeSpan.FromMinutes(50):
                                 if(uniqueTypes[j] == "Supplementare" && employee.NumberHour == 25 && td > TimeSpan.FromHours(2) + TimeSpan.FromMinutes(25))
                                     sp += "25000";
                                 else 
@@ -347,7 +353,7 @@ public class AttendanceHelper
                                 else if (uniqueTypes[j] == "Presenza" && employee.TypePosition == "In servizio" && employee.NumberHour == 35)
                                     permiss += "50000";
                                 break;
-                            case TimeSpan td when td > TimeSpan.FromHours(0) + TimeSpan.FromMinutes(50):
+                            case TimeSpan td when td >= TimeSpan.FromHours(0) + TimeSpan.FromMinutes(50):
                                 if(uniqueTypes[j] == "Supplementare" && employee.NumberHour == 25 && td > TimeSpan.FromHours(1) + TimeSpan.FromMinutes(25))
                                     sp += "15000";
                                 else 
@@ -359,7 +365,7 @@ public class AttendanceHelper
                                 else if (uniqueTypes[j] == "Presenza" && employee.TypePosition == "In servizio" && employee.NumberHour == 35)
                                     permiss += "60000";
                                 break;
-                            case TimeSpan td when td > TimeSpan.FromHours(0) + TimeSpan.FromMinutes(25):
+                            case TimeSpan td when td >= TimeSpan.FromHours(0) + TimeSpan.FromMinutes(25):
                                 if(uniqueTypes[j] == "Supplementare" && employee.NumberHour == 25)
                                     sp += "05000";
                                 break;
@@ -546,7 +552,7 @@ public class AttendanceHelper
                 }
             }
 
-            if (!hasAttendance && DateTime.Now.TimeOfDay > new TimeSpan(7, 30, 0) && DateTime.Now.TimeOfDay < new TimeSpan(12, 0, 0) && employee.TypePosition == TypePosition.InServizio && employee.TypeRelationship == TypeRelationship.LavoroDipendente)
+            if (!hasAttendance && employee.TypePosition == TypePosition.InServizio && employee.TypeRelationship == TypeRelationship.LavoroDipendente)
             {
                 employeesAttendance.Add(employee);
             }

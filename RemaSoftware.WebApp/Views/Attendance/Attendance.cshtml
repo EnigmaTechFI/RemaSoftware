@@ -140,6 +140,8 @@
                             if (dataCorrente.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
                             {
                                 <td style="background-color: #ededed;">
+
+                                    @* Straordinario *@
                                     @{
                                         TimeSpan? totalTime = TimeSpan.Zero;
                                         var NotNull = false;
@@ -185,6 +187,47 @@
                                                     <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
                                                 </div>
                                             </a>
+                                        }
+                                    </div>
+
+                                    @* Lavoro festivo *@
+                                    @{
+                                        totalTime = TimeSpan.Zero;
+                                        NotNull = false;
+                                        foreach (var presence in attendancesForDay.Where(c => c.Type == "LavoroFestivo"))
+                                        {
+                                            if (presence.DateOut != null)
+                                            {
+                                                totalTime += presence.DateOut - presence.DateIn;
+                                            }
+                                            NotNull = true;
+                                        }
+
+                                        totalTime = (totalTime.Value.Minutes < 50) ? TimeSpan.FromHours(totalTime.Value.Hours) : TimeSpan.FromHours(totalTime.Value.Hours + 1);
+                                        totalTimeStraord += totalTime;
+                                    }
+
+                                    @{
+                                        presenzeDivID = "presenze-" + presenza.Key.EmployeeID + "-" + giorno +"-lavholy";
+                                    }
+
+                                    @if(NotNull){
+                                    <div style="color: white; background-color: #3A8FBC; border-radius: 10px; padding: 1px 2px 1px 2px; text-align: center; font-size: 14px; margin-bottom: 3px; display: flex; align-items: center; cursor: pointer;" title="Lavoro durante festivo" onclick="togglePresenze('@presenzeDivID')">
+                                        <b style="white-space: nowrap; margin: 0 auto;">
+                                            @totalTime?.ToString(@"hh")h
+                                            @totalTime?.ToString(@"mm")m
+                                        </b>
+                                    </div>
+                                    }
+
+                                    <div id="@presenzeDivID" style="display: none;">
+                                        @foreach (var presence in attendancesForDay.Where(c => c.Type == "LavoroFestivo"))
+                                        {
+                                        <a style="cursor: pointer;" title="Modifica Entrata/Uscita" data-toggle="modal" data-target="#modify-modal" onclick="SetDataAttendanceId('#modify-modal', @presence.AttendanceID), SetDataAttendanceId('#confirm-del-modal', @presence.AttendanceID)">
+                                            <div style="color: white; background-color: #3A8FBC; border-radius: 10px; padding: 1px 2px 1px 2px; text-align: center; font-size: 14px; margin-bottom: 3px;" title="Lavoro durante festivo">
+                                                <b style="white-space: nowrap;">@(presence.DateIn.ToString(@"HH\:mm"))-@(presence.DateOut?.ToString(@"HH\:mm"))</b>
+                                            </div>
+                                        </a>
                                         }
                                     </div>
                                 </td>
