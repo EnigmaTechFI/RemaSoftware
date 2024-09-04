@@ -182,12 +182,6 @@ public class AttendanceHelper
         {
             
             var employee = Employees[i];
-
-            if (employee.EmployeeID == 39)
-            {
-                var tmp = 0;
-            }
-            
             List<Attendance> attendance = _attendanceService.getAttendanceById(employee.EmployeeID, month, year);
             List<Attendance> filteredAttendance = attendance.Where(a => a.Type != "Eliminato" && a.Type != "Permesso").ToList();
             List<string> uniqueTypes = filteredAttendance.Select(a => a.Type).Distinct().ToList();

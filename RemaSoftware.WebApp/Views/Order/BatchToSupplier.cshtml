@@ -35,7 +35,23 @@
                         <td>@batch.Code</td>
                         <td>@batch.Supplier.Name</td>
                         <td>@batch.DdtSupplierAssociations[0].Ddt_In.Product.SKU</td>
-                        <td onclick="showDDT(@batch.Ddt_Supplier_ID)">Visualizza DDT associate</td>
+                        @if (@batch.DdtSupplierAssociations.Count  > 3)
+                        {
+                        <td onclick="showDDT(@batch.Ddt_Supplier_ID)">
+                            Visualizza DDT associate
+                        </td>
+                        }
+                        else
+                        {
+                        <td>
+                            @foreach (var ddt in batch.DdtSupplierAssociations)
+                            {
+                            <div>
+                                @ddt.Ddt_In.Code<br><br>
+                            </div>
+                            }
+                        </td>
+                        }
                         <td>@batch.Number_Piece</td>
                         <td class="text-center">
                             <a style="text-decoration: none" asp-controller="Order" asp-action="SubBatchMonitoring" asp-route-id="@batch.DdtSupplierAssociations[0].Ddt_In.SubBatchID">
@@ -87,17 +103,17 @@
     
     const ddtassociation = @Json.Serialize(Model.Ddt_Suppliers) 
     function showDDT(ddtSupplierId) {
-            var ddtass = ddtassociation.filter(obj => {
-              return obj.ddt_Supplier_ID === ddtSupplierId
-            })
-            var ddt_list = ""
-            ddtass[0].ddtSupplierAssociations.forEach(function(ddt) {
-                ddt_list += "<strong>Codice: </strong>" + ddt.ddt_In.code + " | <strong>Pezzi: </strong>" + ddt.numberPieces + "<br/>"
-            })
-            $("#ddt_associate").modal('show');
-            document.getElementById("batch_ddt").innerHTML = ddt_list
-            document.getElementById("batchModalHeader").textContent = "DDT associate al lotto";
-        }
+        var ddtass = ddtassociation.filter(obj => {
+          return obj.ddt_Supplier_ID === ddtSupplierId
+        })
+        var ddt_list = ""
+        ddtass[0].ddtSupplierAssociations.forEach(function(ddt) {
+            ddt_list += "<strong>Codice: </strong>" + ddt.ddt_In.code + " | <strong>Pezzi: </strong>" + ddt.numberPieces + "<br/>"
+        })
+        $("#ddt_associate").modal('show');
+        document.getElementById("batch_ddt").innerHTML = ddt_list
+        document.getElementById("batchModalHeader").textContent = "DDT associate al lotto";
+    }
 
     function DeleteStockArticle(){
         var articleId = $("#confirm-del-modal").data("articleId");
