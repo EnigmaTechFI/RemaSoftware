@@ -29,7 +29,9 @@
                     <th>Nome Prodotto</th>
                     <th>N° pezzi</th>
                     <th>N° pezzi attuali</th>
+                    <th>N° pezzi fornitore</th>
                     <th>Prz. Unitario</th>
+                    <th>Operazioni</th>
                     <th>Arrivo ordine</th>
                     <th>Scadenza ordine</th>
                     <th id="imageId" style="display: none; padding: 35px 30px 15px 10px; position: relative;">Immagini</th>
@@ -47,8 +49,35 @@
                         <td>@ddt.Product.SKU</td>
                         <td>@ddt.Product.Name</td>
                         <td id="pieces-number-@ddt.Ddt_In_ID">@ddt.Number_Piece</td>
-                        <td id="pieces-number-now-@ddt.Ddt_In_ID">@ddt.Number_Piece_Now</td>
+                        <td id="pieces-number-now-@ddt.Ddt_In_ID">
+                            @(ddt.Number_Piece_Now + ddt.Number_Piece_ToSupplier)
+                        </td>
+                        <td id="pieces-number-supplier-@ddt.Ddt_In_ID">@ddt.Number_Piece_ToSupplier</td>
                         <td>&euro;@ddt.Price_Uni.ToString("0.000")</td>
+                        @if (@ddt.SubBatch.Batch.BatchOperations.Count > 2)
+                        {
+                            <td onclick="showOperation(@ddt.SubBatchID)" style="cursor: pointer;">
+                                Operazioni associate
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                                @foreach (var operation in ddt.SubBatch.Batch.BatchOperations)
+                                {
+                                    <div>
+                                        @if (operation != null && operation.Operations != null)
+                                        {
+                                            @operation.Operations.Name<br>
+                                        }
+                                        else
+                                        {
+                                            <span>Nessuna operazione disponibile</span>
+                                        }
+                                    </div>
+                                }
+                            </td>
+                        }
                         <td>@ddt.DataIn.ToString("dd/MM/yy")</td>
                         <td id="dataend-@ddt.Ddt_In_ID">@ddt.DataOut.ToString("dd/MM/yy")</td>
                         <td class="classImage" style="display: none; padding:  0px !important;">
@@ -92,6 +121,24 @@
     </div>
 </div>
 
+<div class="modal fade" id="operation_associate" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="operationModalHeader"></h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="batch_operation"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Chiudi</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="modal fade" id="inventary-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -205,6 +252,31 @@
     function quickEdit(param) {
         ddtQuickId = param
         $("#quick-modal").modal('toggle');
+    }
+
+    const operations = @Json.Serialize(Model.Ddt_In.Select(s => new {
+    s.SubBatchID,
+    Operations = s.SubBatch.Batch.BatchOperations
+    .Select(bo => new {
+    bo.Operations.Name,
+    }).ToList()
+    }));
+
+    function showOperation(subbatchId) {
+        var operation = operations.filter(obj => {
+            return obj.subBatchID === Number(subbatchId);
+        });
+
+        if (operation.length > 0) {
+            var operation_list = "";
+            operation[0].operations.forEach(function(op) {
+                operation_list += op.name + "<br/>";
+            });
+
+            $("#operation_associate").modal('show');
+            document.getElementById("batch_operation").innerHTML = operation_list;
+            document.getElementById("operationModalHeader").textContent = "Operazioni associate al lotto #" + subbatchId;
+        }
     }
     
     if (@Model.SubBatchId > 0){

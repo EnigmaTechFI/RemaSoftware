@@ -56,6 +56,10 @@ ViewData["Title"] = "Controllo produzione";
         background-color: red;
     }
 
+    .custom-swal-confirm-button {
+        background-color: #395FCF;
+    }
+
     .vis-item.vis-selected{
         background-color: #B2FFFF;
         border: 2px solid #51D1F6;
@@ -68,17 +72,17 @@ ViewData["Title"] = "Controllo produzione";
         var now = Date.now();
         
         // Funzione per creare il contenuto degli item
-        const getContent = (title1, title2, img, start, end) => {
+        const getContent = (title1, title2, img, start, end, description, price, productName, clientName, priority) => {
             const item = document.createElement('div');
             const name = document.createElement('div');
-            const nameClasses = ['fw-bolder', 'mb-2'];
+            const nameClasses = ['fw-bolder', 'mb-1'];
             name.classList.add(...nameClasses);
-            name.innerHTML = 'Lotto: ' + title1 + '- DDT :  '+ title2;
+            name.innerHTML = 'Lotto: ' + title1 + ' - DDT:  '+ title2;
             
             var TmpImg = basePathImages + img;
             const image = document.createElement('img');
             image.setAttribute('src', TmpImg);
-            image.style.height = '50px';
+            image.style.height = '60px';
             image.style.borderRadius = '15px';
 
             const symbol = document.createElement('div');
@@ -91,35 +95,40 @@ ViewData["Title"] = "Controllo produzione";
 
             // Aggiungi evento per aprire il popup
             item.addEventListener('click', () => {
-                openPopup(title1, title2, start, end);
+                openPopup(title1, title2, img, start, end, description, price, productName, clientName, priority);
             });
 
             return item;
         };
 
         // Funzione per aprire il popup con SweetAlert2
-        const openPopup = (title1, title2, start, end) => {
+        const openPopup = (title1, title2, img, start, end, description, price, productName, clientName, priority) => {
             Swal.fire({
-                title: title1 + title2,
+                title: 'Lotto: ' +title1 + ' - DDT: ' + title2,
                 html: `
-            <p><strong>Data di inizio:</strong> ${start.toDateString()}</p>
-            <p><strong>Data di fine:</strong> <input type="date" id="newEndDate" value="${end.toISOString().slice(0, 10)}"></p>
-        `,
+                <p><strong>Descrizione:</strong> ${description}</p>
+                <p><strong>Prodotto:</strong> ${productName}</p>
+                <p><strong>Cliente:</strong> ${clientName}</p>
+                <p><strong>Pezzi:</strong> ${price}</p>
+                <img src="${img}" height="250px" class="mb-3"/>
+                <p><strong>Data di inizio:</strong> ${start.toDateString()}</p>
+                <p><strong>Data di fine:</strong> <input type="date" id="newEndDate" value="${end.toISOString().slice(0, 10)}"></p>
+                <p><strong>Priorità:</strong> ${priority}</p>
+            `,
                 showCancelButton: true,
-                confirmButtonText: 'Salva',
                 cancelButtonText: 'Annulla',
+                confirmButtonText: 'Salva',
                 customClass: {
-                    cancelButton: 'custom-swal-cancel-button' // Applica la classe CSS al bottone "Annulla"
+                    cancelButton: 'custom-swal-cancel-button',
+                    confirmButton: 'custom-swal-confirm-button'
                 },
                 preConfirm: () => {
                     const newEndDate = new Date(document.getElementById('newEndDate').value);
-                    items.update({ id: '01', end: newEndDate }); // Aggiorna l'item con l'id corretto
+                    items.update({ id: '01', end: newEndDate });
                 }
             });
         };
-
-
-        // Clicca sul pulsante "Torna ad oggi" per tornare alla data odierna
+        
         document.getElementById("reset").onclick = function () {
             timeline.moveTo(new Date());
         };
@@ -166,11 +175,12 @@ ViewData["Title"] = "Controllo produzione";
                 default:
                     className = 'custom-style'; // Classe di default per stati non gestiti
             }
+
             items.add({
-                id: ddt.Ddt_In_ID, // Usa l'ID del tuo oggetto
-                start: new Date(ddt.dataIn), // Converti dataIn in un oggetto Date
+                id: ddt.Ddt_In_ID,
+                start: new Date(ddt.dataIn),
                 end: new Date(ddt.dataOut),
-                content: getContent(ddt.subBatchID, ddt.code, ddt.product.fileName, new Date(ddt.dataIn), new Date(ddt.dataOut)),
+                content: getContent(ddt.subBatchID, ddt.code, ddt.product.fileName, new Date(ddt.dataIn), new Date(ddt.dataOut), ddt.description, ddt.number_Piece, ddt.product.name, ddt.product.client.name, ddt.priority),
                 className: className,
             });
         });

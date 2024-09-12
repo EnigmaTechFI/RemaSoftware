@@ -120,10 +120,8 @@ namespace RemaSoftware.WebApp.Helper
                         });
                     }
 
-                    var batch = _orderService.GetBatchByProductIdAndOperationList(model.Ddt_In.ProductID,
-                        operationsSelected);
-                    model.Ddt_In.FC_Ddt_In_ID = _apiFatturaInCloudService.AddDdtInCloud(model.Ddt_In,
-                        _productService.GetProductById(model.Ddt_In.ProductID).SKU);
+                    var batch = _orderService.GetBatchByProductIdAndOperationList(model.Ddt_In.ProductID, operationsSelected);
+                    model.Ddt_In.FC_Ddt_In_ID = _apiFatturaInCloudService.AddDdtInCloud(model.Ddt_In, _productService.GetProductById(model.Ddt_In.ProductID).SKU);
                     if (batch == null)
                     {
                         var ddtList = new List<Ddt_In>();

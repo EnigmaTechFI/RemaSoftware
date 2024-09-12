@@ -193,16 +193,20 @@ public class SubBatchService : ISubBatchService
             throw new Exception("Errore SQL creazione subBatch.");
         }
     }
-
+    
     public List<SubBatch> GetSubBatchesStatus(string status)
     {
         return _dbContext.SubBatches
             .Where(s => s.Status == status)
+            .Include(s => s.Batch)
+            .ThenInclude(b => b.BatchOperations
+                .Where(bo => bo.Operations.Name != "Controllo qualità" && bo.Operations.Name != "Extra"))
+            .ThenInclude(bo => bo.Operations)
             .Include(s => s.Ddts_In)
-            .ThenInclude(s => s.Product)
-            .ThenInclude(s => s.Client)
+            .ThenInclude(d => d.Product)
+            .ThenInclude(p => p.Client)
             .ToList();
-    } 
+    }
  
     public List<SubBatch> GetSubBatchesStatusForOrderSummary(string status)
     {
@@ -336,7 +340,10 @@ public class SubBatchService : ISubBatchService
             .Include(s => s.Supplier)
             .Include(s => s.DdtSupplierAssociations)
             .ThenInclude(s => s.Ddt_In)
-            .ThenInclude(s => s.SubBatch)
+            .ThenInclude(s => s.SubBatch).ThenInclude(s => s.Batch)
+            .ThenInclude(b => b.BatchOperations
+                .Where(bo => bo.Operations.Name != "Controllo qualità" && bo.Operations.Name != "Extra"))
+            .ThenInclude(bo => bo.Operations)
             .Include(s => s.DdtSupplierAssociations)
             .ThenInclude(s => s.Ddt_In)
             .ThenInclude(s => s.Product)

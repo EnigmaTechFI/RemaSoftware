@@ -24,6 +24,7 @@
                     <th>Codice prodotto</th>
                     <th>DDT associate</th>
                     <th>Pezzi da fornitore</th>
+                    <th>Operazioni</th>
                     <th class="text-center">Azioni</th>
                 </tr>
                 </thead>
@@ -53,6 +54,30 @@
                         </td>
                         }
                         <td>@batch.Number_Piece</td>
+                        @if (@batch.DdtSupplierAssociations[0].Ddt_In.SubBatch.Batch.BatchOperations.Count  > 2)
+                        {
+                        <td onclick="showOperation(@batch.Ddt_Supplier_ID)">
+                            Operazioni associate
+                        </td>
+                        }
+                        else
+                        {
+                        <td>
+                            @foreach (var operation in batch.DdtSupplierAssociations[0].Ddt_In.SubBatch.Batch.BatchOperations)
+                            {
+                            <div>
+                                @if (operation != null && operation.Operations != null)
+                                {
+                                @operation.Operations.Name<br>
+                                }
+                                else
+                                {
+                                <span>Nessuna operazione disponibile</span>
+                                }
+                            </div>
+                            }
+                        </td>
+                        }
                         <td class="text-center">
                             <a style="text-decoration: none" asp-controller="Order" asp-action="SubBatchMonitoring" asp-route-id="@batch.DdtSupplierAssociations[0].Ddt_In.SubBatchID">
                                 <i class="fas fa-eye fa-lg pl-2" title="Visualizza avanzamento" style="cursor: pointer; color: #6d767e"></i>
@@ -94,25 +119,87 @@
     </div>
 </div>
 
+<div class="modal fade" id="operation_associate" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="operationModalHeader"></h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="batch_operation"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Chiudi</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section Scripts
 {
     <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
     <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
     <script>
-    
-    const ddtassociation = @Json.Serialize(Model.Ddt_Suppliers) 
+
+    const ddtassociation = @Json.Serialize(Model.Ddt_Suppliers.Select(s => new {
+        Ddt_Supplier_ID = s.Ddt_Supplier_ID,
+        s.Status,
+        DdtAssociations = s.DdtSupplierAssociations.Select(da => new {
+        da.Ddt_In_ID,
+        da.NumberPieces,
+        da.Ddt_In.Code,
+        ProductName = da.Ddt_In.Product.Name,
+        SubBatchID = da.Ddt_In.SubBatch.SubBatchID,
+        BatchID = da.Ddt_In.SubBatch.Batch.BatchId
+        }).ToList()
+    }));
+
+    const operations = @Json.Serialize(Model.Ddt_Suppliers.Select(s => new {
+        Ddt_Supplier_ID = s.Ddt_Supplier_ID,
+        DdtAssociations = s.DdtSupplierAssociations.Select(da => new {
+            Operations = da.Ddt_In.SubBatch.Batch.BatchOperations.Select(bo => new {
+                OperationName = bo.Operations.Name
+            }).ToList()
+        }).ToList()
+    }));
+
     function showDDT(ddtSupplierId) {
         var ddtass = ddtassociation.filter(obj => {
-          return obj.ddt_Supplier_ID === ddtSupplierId
-        })
-        var ddt_list = ""
-        ddtass[0].ddtSupplierAssociations.forEach(function(ddt) {
-            ddt_list += "<strong>Codice: </strong>" + ddt.ddt_In.code + " | <strong>Pezzi: </strong>" + ddt.numberPieces + "<br/>"
-        })
+            return Number(obj.ddt_Supplier_ID) === Number(ddtSupplierId);
+        });
+
+        var ddt_list = "";
+        if (ddtass.length > 0) {
+            ddtass[0].ddtAssociations.forEach(function(ddt) {
+                ddt_list += "<strong>Codice: </strong>" + ddt.code + " | <strong>Pezzi: </strong>" + ddt.numberPieces + "<br/>";
+            });
+        } else {
+            ddt_list = "<strong>Nessuna DDT associata.</strong>";
+        }
+
         $("#ddt_associate").modal('show');
-        document.getElementById("batch_ddt").innerHTML = ddt_list
+        document.getElementById("batch_ddt").innerHTML = ddt_list;
         document.getElementById("batchModalHeader").textContent = "DDT associate al lotto";
+    }
+
+    function showOperation(ddtSupplierId) {
+        var operation = operations.filter(obj => {
+            return Number(obj.ddt_Supplier_ID) === Number(ddtSupplierId);
+        });
+
+        if (operation.length > 0) {
+            var operation_list = "";
+            operation[0].ddtAssociations[0].operations.forEach(function(op) {
+                operation_list += op.operationName + "<br/>";
+            });
+
+            $("#operation_associate").modal('show');
+            document.getElementById("batch_operation").innerHTML = operation_list;
+            document.getElementById("operationModalHeader").textContent = "Operazioni associate al lotto";
+        }
     }
 
     function DeleteStockArticle(){
@@ -162,8 +249,6 @@
                 { "searchable": false, "orderable": false, "targets": 6 },
               ]
         });
-
-        
         
     });
 

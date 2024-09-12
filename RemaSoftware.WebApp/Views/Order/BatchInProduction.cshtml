@@ -24,6 +24,8 @@
                     <th>DDT associate</th>
                     <th>Pezzi nel lotto</th>
                     <th>Pezzi rimanenti</th>
+                    <th>Pezzi da fornitori</th>
+                    <th>Operazioni</th>
                     <th>Scadenza ordine</th>
                     <th class="text-center">Azioni</th>
                 </tr>
@@ -54,7 +56,32 @@
                             </td>
                         }
                         <td>@batch.Ddts_In.Sum(s=> s.Number_Piece)</td>
-                        <td>@batch.Ddts_In.Sum(s=> s.Number_Piece_Now)</td>
+                        <td>@(batch.Ddts_In.Sum(s=> s.Number_Piece_Now) + batch.Ddts_In.Sum(s=> s.Number_Piece_ToSupplier))</td>
+                        <td>@batch.Ddts_In.Sum(s=> s.Number_Piece_ToSupplier)</td>
+                        @if (@batch.Batch.BatchOperations.Count > 2)
+                        {
+                        <td onclick="showOperation(@batch.SubBatchID)">
+                            Operazioni associate
+                        </td>
+                        }
+                        else
+                        {
+                        <td>
+                            @foreach (var operation in batch.Batch.BatchOperations)
+                            {
+                            <div>
+                                @if (operation != null && operation.Operations != null)
+                                {
+                                @operation.Operations.Name<br>
+                                }
+                                else
+                                {
+                                <span>Nessuna operazione disponibile</span>
+                                }
+                            </div>
+                            }
+                        </td>
+                        }
                         <td>@batch.Ddts_In.OrderBy(s=> s.DataOut).FirstOrDefault().DataOut.ToString("dd/MM/yyyy")</td>
                         <td class="text-center">
                             <a onclick="printQRCode('@batch.SubBatchID')" style="text-decoration: none">
@@ -104,6 +131,25 @@
     </div>
 </div>
 
+<div class="modal fade" id="operation_associate" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="operationModalHeader"></h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="batch_operation"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Chiudi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="confirm-del-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -143,8 +189,25 @@
         } 
     </script>
 
-     <script>
-    const batches = @Json.Serialize(Model.SubBatches)
+    <script>
+    const batches = @Json.Serialize(Model.SubBatches.Select(s => new {
+        s.SubBatchID,
+        s.Status,
+        Ddts_In = s.Ddts_In.Select(d => new {
+        d.Code,
+        ProductName = d.Product.Name,
+        ClientName = d.Product.Client.Name
+        }).ToList()
+    }));
+
+    const operations = @Json.Serialize(Model.SubBatches.Select(s => new {
+        s.SubBatchID,
+        Operations = s.Batch.BatchOperations
+        .Select(bo => new {
+        bo.Operations.Name,
+        }).ToList()
+    }));
+    
     function showDDT(subbatchId) {
         var batch = batches.filter(obj => {
           return obj.subBatchID === subbatchId
@@ -156,6 +219,23 @@
         $("#ddt_associate").modal('show');
         document.getElementById("batch_ddt").innerHTML = ddt_list
         document.getElementById("batchModalHeader").textContent = "DDT associate al lotto #" + subbatchId;
+    }
+
+    function showOperation(subbatchId) {
+        var operation = operations.filter(obj => {
+            return obj.subBatchID === Number(subbatchId);
+        });
+
+        if (operation.length > 0) {
+            var operation_list = "";
+            operation[0].operations.forEach(function(op) {
+                operation_list += op.name + "<br/>";
+            });
+
+            $("#operation_associate").modal('show');
+            document.getElementById("batch_operation").innerHTML = operation_list;
+            document.getElementById("operationModalHeader").textContent = "Operazioni associate al lotto #" + subbatchId;
+        }
     }
 
     function DeleteStockArticle(){

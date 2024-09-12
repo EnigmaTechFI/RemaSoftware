@@ -171,7 +171,9 @@ namespace RemaSoftware.Domain.Services.Impl
                 .ThenInclude(s => s.Client)
                 .Include(b => b.SubBatch)
                 .ThenInclude(s => s.Batch)
-                .ThenInclude(b => b.BatchOperations)
+                .ThenInclude(b => b.BatchOperations
+                .Where(bo => bo.Operations.Name != "Controllo qualità" && bo.Operations.Name != "Extra"))
+                .ThenInclude(b => b.Operations)
                 .Where(s => s.Status == OrderStatusConstants.STATUS_ARRIVED || s.Status == OrderStatusConstants.STATUS_WORKING || s.Status == OrderStatusConstants.STATUS_PARTIALLY_COMPLETED)
                 .ToList();
         }
