@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using NLog;
@@ -11,7 +10,7 @@ using RemaSoftware.WebApp.Models.HomeViewModel;
 
 namespace RemaSoftware.WebApp.Controllers
 {
-    [Authorize(Roles = Roles.Admin)]
+    [Authorize(Roles = Roles.Admin +"," + Roles.DipendenteControl +"," + Roles.Dipendente)]
     public class HomeController : Controller
     {
         private readonly IClientService _clientService;

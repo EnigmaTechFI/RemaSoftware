@@ -192,13 +192,16 @@ namespace RemaSoftware.Domain.Services.Impl
 
         public List<Ddt_In> GetDdtInEnded()
         {
+            DateTime startDate = new DateTime(2024, 1, 1);
+
             return _dbContext.Ddts_In
                 .Include(d => d.Product)
                 .ThenInclude(s => s.Client)
                 .Include(b => b.SubBatch)
                 .ThenInclude(s => s.Batch)
                 .ThenInclude(b => b.BatchOperations)
-                .Where(s => s.Status == OrderStatusConstants.STATUS_COMPLETED || s.Status == OrderStatusConstants.STATUS_DELIVERED)
+                .Where(s => (s.Status == OrderStatusConstants.STATUS_COMPLETED || s.Status == OrderStatusConstants.STATUS_DELIVERED)
+                            && s.DataIn > startDate)
                 .ToList();
         }
 

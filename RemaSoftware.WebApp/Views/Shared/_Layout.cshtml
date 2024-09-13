@@ -32,7 +32,7 @@
             <div class="sidebar-brand-text mx-3 text-white">RE.MA. Software</div>
         </a>
 
-        @if (User.IsInRole(Roles.Admin))
+        @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dipendente) || User.IsInRole(Roles.DipendenteControl))
         {
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
