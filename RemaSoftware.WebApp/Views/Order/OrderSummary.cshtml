@@ -487,42 +487,55 @@
     }
 
     async function printPage() {
-        const originalTable = document.getElementById('table-ddt');
-        const clonedTable = originalTable.cloneNode(true);
-        const columnsToRemove = [7, 12, 13];
+        try {
+            const originalTable = document.getElementById('table-ddt');
+            const clonedTable = originalTable.cloneNode(true);
+            const columnsToRemove = [8, 13, 14];
 
-        const headerCells = clonedTable.querySelectorAll('thead tr th');
-        columnsToRemove.sort((a, b) => b - a).forEach(index => {
-            if (headerCells[index]) {
-                headerCells[index].remove();
-            }
-        });
-
-        const bodyRows = clonedTable.querySelectorAll('tbody tr');
-        bodyRows.forEach(row => {
-            const cells = row.querySelectorAll('td');
-            columnsToRemove.forEach(index => {
-                if (cells[index]) {
-                    cells[index].remove();
+            const headerCells = clonedTable.querySelectorAll('thead tr th');
+            columnsToRemove.sort((a, b) => b - a).forEach(index => {
+                if (headerCells[index]) {
+                    headerCells[index].remove();
                 }
             });
-        });
 
-        const printWindow = window.open('', '_blank');
-        printWindow.document.open();
-        printWindow.document.write(`
-                <html>
-                <head>
-                    <title>Ordini attivi</title>
-                    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-                </head>
-                <body>
-                    ${clonedTable.outerHTML}
-                </body>
-                </html>
-            `);
-        printWindow.document.close();
+            const bodyRows = clonedTable.querySelectorAll('tbody tr');
+            bodyRows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                columnsToRemove.forEach(index => {
+                    if (cells[index]) {
+                        cells[index].remove();
+                    }
+                });
+            });
+
+            const printWindow = window.open('', '_blank');
+            printWindow.document.open();
+            printWindow.document.write(`
+            <html>
+            <head>
+                <title>Ordini attivi</title>
+                <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+            </head>
+            <body>
+                <h3 class="text-center">Resoconto ordini attivi</h3>
+                ${clonedTable.outerHTML} <!-- Inserimento della tabella clonata -->
+            </body>
+            </html>
+        `);
+
+            printWindow.document.close();
+
+            printWindow.onload = function() {
+                printWindow.focus();
+                printWindow.print();
+                printWindow.close();
+            };
+        } catch (error) {
+            console.error('Errore durante il processo di stampa:', error); // Log dell'errore in console
+        }
     }
+
 
     </script>
 }

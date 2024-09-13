@@ -334,7 +334,7 @@
     async function printPage() {
         const originalTable = document.getElementById('table-batches');
         const clonedTable = originalTable.cloneNode(true);
-        const columnsToRemove = [8];
+        const columnsToRemove = [9];
 
         const headerCells = clonedTable.querySelectorAll('thead tr th');
         columnsToRemove.sort((a, b) => b - a).forEach(index => {
