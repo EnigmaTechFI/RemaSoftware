@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -119,7 +120,15 @@ public class AttendanceHelper
                     }
                 }
 
+                Stopwatch stopwatch = new Stopwatch();
+        
+                stopwatch.Start();
+                
                 await _attendanceService.UpdateAttendanceListWithPresence(userIdList, userClockList);
+                
+                stopwatch.Stop();
+                
+                Console.WriteLine("Tempo impiegato: " + stopwatch.Elapsed.TotalMilliseconds + " ms");
 
                 if (month == 0)
                 {

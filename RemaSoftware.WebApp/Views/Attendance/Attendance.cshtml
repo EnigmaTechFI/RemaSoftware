@@ -22,26 +22,26 @@
             <div class="col-2 mt-3 ml-3">
                 <label for="mese">Mese:</label>
                 <select id="mese" name="month" class="form-control">
-                    <option value="01" selected="@(Model.Month == 01)">Gennaio</option>
-                    <option value="02" selected="@(Model.Month == 02)">Febbraio</option>
-                    <option value="03" selected="@(Model.Month == 03)">Marzo</option>
-                    <option value="04" selected="@(Model.Month == 04)">Aprile</option>
-                    <option value="05" selected="@(Model.Month == 05)">Maggio</option>
-                    <option value="06" selected="@(Model.Month == 06)">Giugno</option>
-                    <option value="07" selected="@(Model.Month == 07)">Luglio</option>
-                    <option value="08" selected="@(Model.Month == 08)">Agosto</option>
-                    <option value="09" selected="@(Model.Month == 09)">Settembre</option>
-                    <option value="10" selected="@(Model.Month == 10)">Ottobre</option>
-                    <option value="11" selected="@(Model.Month == 11)">Novembre</option>
-                    <option value="12" selected="@(Model.Month == 12)">Dicembre</option>
+                    <option value="01" selected="@(Model?.Month == 1)">Gennaio</option>
+                    <option value="02" selected="@(Model?.Month == 02)">Febbraio</option>
+                    <option value="03" selected="@(Model?.Month == 03)">Marzo</option>
+                    <option value="04" selected="@(Model?.Month == 04)">Aprile</option>
+                    <option value="05" selected="@(Model?.Month == 05)">Maggio</option>
+                    <option value="06" selected="@(Model?.Month == 06)">Giugno</option>
+                    <option value="07" selected="@(Model?.Month == 07)">Luglio</option>
+                    <option value="08" selected="@(Model?.Month == 08)">Agosto</option>
+                    <option value="09" selected="@(Model?.Month == 09)">Settembre</option>
+                    <option value="10" selected="@(Model?.Month == 10)">Ottobre</option>
+                    <option value="11" selected="@(Model?.Month == 11)">Novembre</option>
+                    <option value="12" selected="@(Model?.Month == 12)">Dicembre</option>
                 </select>
             </div>
             <div class="col-2 mt-3">
                 <label for="anno">Anno:</label>
                 <select id="anno" name="year" class="form-control">
-                    <option value="2023" selected="@(Model.Year == 2023)">2023</option>
-                    <option value="2024" selected="@(Model.Year == 2024)">2024</option>
-                    <option value="2025" selected="@(Model.Year == 2025)">2025</option>
+                    <option value="2023" selected="@(Model?.Year == 2023)">2023</option>
+                    <option value="2024" selected="@(Model?.Year == 2024)">2024</option>
+                    <option value="2025" selected="@(Model?.Year == 2025)">2025</option>
                 </select>
             </div>
             <div class="col-1 mt-5">
@@ -112,7 +112,11 @@
                             <span style="color: green; font-weight: bold; font-size: 30px; line-height: 40px; display: inline-block; text-align: center; width: 100%;">+</span>
                         </button>
                     </td>
-                        @{
+                    @{
+                        if (presenza.Key.AccountId == "094315ef-c0e0-4bea-8fc1-b3fca06e280e")
+                        {
+                            var tmp = 0;
+                        }
                         TimeSpan? totalTimePresence = TimeSpan.Zero;
                         TimeSpan? totalTimeStraord = TimeSpan.Zero;
                         TimeSpan? totalTimePermit = TimeSpan.Zero;
@@ -649,8 +653,11 @@
 
                                             var totalTimeTmp = TimeSpan.Zero;
                                             
-                                            totalTimeTmp = (totalTime.Value.Minutes < 50) ? TimeSpan.FromHours(totalTime.Value.Hours) : TimeSpan.FromHours(totalTime.Value.Hours + 1);
-                                            totalTimeTmp = (totalTime.Value.Minutes < 30) ? new TimeSpan(totalTime.Value.Hours, 0, 0) : new TimeSpan(totalTime.Value.Hours, 30, 0);
+                                            totalTimeTmp = totalTime.Value.Minutes < 25 
+                                                ? new TimeSpan(totalTime.Value.Hours, 0, 0) 
+                                                : totalTime.Value.Minutes < 50 
+                                                    ? new TimeSpan(totalTime.Value.Hours, 30, 0) 
+                                                    : new TimeSpan(totalTime.Value.Hours + 1, 0, 0);
 
                                             totalTime = totalTimeTmp;
                                             totalTimeSupp += totalTime;

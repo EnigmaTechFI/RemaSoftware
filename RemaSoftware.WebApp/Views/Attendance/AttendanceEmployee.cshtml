@@ -619,9 +619,12 @@
                                     }
                                     var totalTimeTmp = TimeSpan.Zero;
 
-                                    totalTimeTmp = (totalTime.Value.Minutes < 50) ? TimeSpan.FromHours(totalTime.Value.Hours) : TimeSpan.FromHours(totalTime.Value.Hours + 1);
-                                    totalTimeTmp = (totalTime.Value.Minutes < 30) ? new TimeSpan(totalTime.Value.Hours, 0, 0) : new TimeSpan(totalTime.Value.Hours, 30, 0);
-
+                                    totalTimeTmp = totalTime.Value.Minutes < 25 
+                                        ? new TimeSpan(totalTime.Value.Hours, 0, 0) 
+                                        : totalTime.Value.Minutes < 50 
+                                            ? new TimeSpan(totalTime.Value.Hours, 30, 0) 
+                                            : new TimeSpan(totalTime.Value.Hours + 1, 0, 0);
+                                   
                                     totalTime = totalTimeTmp;
                                 }
 

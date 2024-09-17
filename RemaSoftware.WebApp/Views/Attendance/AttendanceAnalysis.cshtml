@@ -416,7 +416,12 @@
                                                     partialTimeDay += presence.DateOut - presence.DateIn;
                                                 }
                                             }
-                                            partialTimeDay = (partialTimeDay.Value.Minutes < 50) ? TimeSpan.FromHours(partialTimeDay.Value.Hours) : TimeSpan.FromHours(partialTimeDay.Value.Hours + 1);
+                                            
+                                            partialTimeDay = partialTimeDay.Value.Minutes < 25 
+                                                ? new TimeSpan(partialTimeDay.Value.Hours, 0, 0) 
+                                                : partialTimeDay.Value.Minutes < 50 
+                                                    ? new TimeSpan(partialTimeDay.Value.Hours, 30, 0) 
+                                                    : new TimeSpan(partialTimeDay.Value.Hours + 1, 0, 0);
 
                                             totalTimeDay += partialTimeDay;
                                             
