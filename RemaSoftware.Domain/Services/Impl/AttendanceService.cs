@@ -192,7 +192,7 @@ namespace RemaSoftware.Domain.Services.Impl;
                             TimeSpan threshold;
 
                             if (employee.NumberHour == 25)
-                                threshold = new TimeSpan(5, 25, 0);
+                                threshold = new TimeSpan(5, 20, 0);
                             else if (employee.NumberHour == 35)
                                 threshold = new TimeSpan(7, 50, 0);
                             else
@@ -210,7 +210,7 @@ namespace RemaSoftware.Domain.Services.Impl;
                                     if (exceedingDuration.TotalMinutes > 0)
                                         extraMinutes += 30;
 
-                                    if ((int)(exceedingDuration.TotalMinutes % 60) > 25)
+                                    if ((int)(exceedingDuration.TotalMinutes % 60) > 20)
                                         extraMinutes += 30;
                                 }
                                 else
@@ -229,16 +229,7 @@ namespace RemaSoftware.Domain.Services.Impl;
 
                                 if (extraHours >= 1 || extraMinutes > 0)
                                 {
-                                    if (extraHours >= 1)
-                                    {
-                                        extraMinutes -= 10;
-                                    }
-
-                                    if (extraMinutes > 0)
-                                    {
-                                        extraMinutes -= 5;
-                                    }
-
+                                    extraMinutes -= 10;
                                     if (existingAttendance.DateOut?.AddHours(-extraHours).AddMinutes(-extraMinutes) >
                                         existingAttendance.DateIn)
                                         existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-extraHours)
@@ -319,41 +310,38 @@ namespace RemaSoftware.Domain.Services.Impl;
 
       public async Task UpdateAttendanceListWithPresenceEmployee(List<string> userIdList, List<string> userClockList, string FluidaId)
       {
+          
+          var employees = _dbContext.Employees.Include(e => e.Attendances).ToList();
+          
           for(int i=0; i<userIdList.Count; i++)
           {
-              if(userIdList[i] == FluidaId){
+              var employee = employees.SingleOrDefault(e => e.FluidaId == userIdList[i]);
+              
+              if(employee != null){
                   DateTime userClockDate = DateTime.ParseExact(userClockList[i], "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
 
                   // Controlla se esiste un elemento in Attendance con timestart o timeend uguale a userClock.Time
-                  bool exists = _dbContext.Attendances
-                      .Any(a =>
-                          ((a.DateIn.Date == userClockDate.Date && a.DateIn.TimeOfDay == userClockDate.TimeOfDay) ||
-                           (a.DateOut.HasValue && a.DateOut.Value.Date == userClockDate.Date && a.DateOut.Value.TimeOfDay >= userClockDate.TimeOfDay)) &&
-                          a.Employee.FluidaId == userIdList[i]);
+                  bool exists = employee?.Attendances
+                      .Any(a => ((a.DateIn.Date == userClockDate.Date && a.DateIn.TimeOfDay == userClockDate.TimeOfDay) || 
+                                 (a.DateOut.HasValue && a.DateOut.Value.Date == userClockDate.Date && a.DateOut.Value.TimeOfDay >= userClockDate.TimeOfDay))) ?? false;
 
                   if (!exists)
                   {
-                      // Cerca se esiste un elemento in Attendance con timestart non nullo e timeend nullo
-                      var existingAttendance = _dbContext.Attendances
-                          .FirstOrDefault(a => a.DateIn != null && a.DateOut == null && a.Employee.FluidaId == userIdList[i] && a.DateIn.Date == userClockDate.Date);
-
+                      var existingAttendance = employee?.Attendances.FirstOrDefault(a =>
+                          a.DateIn != null && a.DateOut == null && a.DateIn.Date == userClockDate.Date);
+                      
                       if (existingAttendance != null)
                       {
                           string dateFormat = "MM/dd/yyyy HH:mm:ss";
                           DateTime dateIn;
                           DateTime.TryParseExact(userClockList[i], dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateIn);
 
-                          //rigistrazione normale timbro
+                          //Registrazione normale timbro
                           existingAttendance.DateOut = dateIn;
 
                           DateTime? dateOut = existingAttendance.DateOut?.Date;
-
-                          var dayAttendances = _dbContext.Attendances
-                              .Where(a => dateOut.HasValue && a.DateIn.Date == dateOut.Value && a.EmployeeID == existingAttendance.EmployeeID && a.Type == existingAttendance.Type)
-                              .ToList();
-
-                          var employee = _dbContext.Employees
-                              .SingleOrDefault(e => e.EmployeeID == existingAttendance.EmployeeID);
+                          
+                          var dayAttendances = existingAttendance.Employee.Attendances.Where(a => dateOut.HasValue && a.DateIn.Date == dateOut.Value && a.Type == existingAttendance.Type).ToList();
 
                           TimeSpan totalDuration = TimeSpan.Zero;
 
@@ -369,7 +357,7 @@ namespace RemaSoftware.Domain.Services.Impl;
                           TimeSpan threshold;
 
                           if (employee.NumberHour == 25)
-                              threshold = new TimeSpan(5, 50, 0);
+                              threshold = new TimeSpan(5, 20, 0);
                           else if (employee.NumberHour == 35)
                               threshold = new TimeSpan(7, 25, 0);
                           else
@@ -387,7 +375,7 @@ namespace RemaSoftware.Domain.Services.Impl;
                                   if (exceedingDuration.TotalMinutes > 0)
                                       extraMinutes += 30;
 
-                                  if ((int)(exceedingDuration.TotalMinutes % 60) > 25)
+                                  if ((int)(exceedingDuration.TotalMinutes % 60) > 20)
                                       extraMinutes += 30;
                               }
                               else
@@ -398,16 +386,19 @@ namespace RemaSoftware.Domain.Services.Impl;
                                   if ((int)(exceedingDuration.TotalMinutes % 60) > 50)
                                       extraHours += 1;
                               }
-
+                              
                               Attendance strAttendance = new Attendance
                               {
                                   EmployeeID = existingAttendance.EmployeeID,
                               };
 
-                              if(extraHours >= 1){
-
-                                  if (existingAttendance.DateOut?.AddHours(-extraHours) > existingAttendance.DateIn)
-                                      existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-extraHours);
+                              if (extraHours >= 1 || extraMinutes > 0)
+                              {
+                                  extraMinutes -= 10;
+                                  if (existingAttendance.DateOut?.AddHours(-extraHours).AddMinutes(-extraMinutes) >
+                                      existingAttendance.DateIn)
+                                      existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-extraHours)
+                                          .AddMinutes(-extraMinutes);
                                   else
                                       existingAttendance.DateOut = existingAttendance.DateIn;
 
@@ -427,13 +418,9 @@ namespace RemaSoftware.Domain.Services.Impl;
                       {
                           //Sezione straordinario notturno
                           DateTime previousDay = userClockDate.Date.AddDays(-1);
-
-                          var existingAttendanceNight = _dbContext.Attendances
-                              .FirstOrDefault(a => a.DateIn != null &&
-                                                   a.DateOut == null &&
-                                                   a.Employee.FluidaId == userIdList[i] &&
-                                                   a.DateIn.Date == previousDay);
-
+                          
+                          var existingAttendanceNight = employee.Attendances.FirstOrDefault(a => a.DateIn != null && a.DateOut == null && a.DateIn.Date == previousDay);
+                          
                           if (existingAttendanceNight != null && existingAttendanceNight.DateOut == null &&  userClockDate.TimeOfDay >= TimeSpan.FromHours(4) &&  userClockDate.TimeOfDay <= TimeSpan.FromHours(7.5) &&  existingAttendanceNight.DateIn.TimeOfDay >= TimeSpan.FromHours(20))
                           {
                               existingAttendanceNight.DateOut = userClockDate;
@@ -451,7 +438,6 @@ namespace RemaSoftware.Domain.Services.Impl;
                           else
                           {
                               // Se non esiste un elemento, crea una nuova riga in Attendance
-                              var employee = _dbContext.Employees.FirstOrDefault(e => e.FluidaId == userIdList[i]);
                               if (employee != null)
                               {
                                   string dateFormat = "MM/dd/yyyy HH:mm:ss";
