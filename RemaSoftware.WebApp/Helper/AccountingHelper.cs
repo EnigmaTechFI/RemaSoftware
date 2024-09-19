@@ -243,7 +243,7 @@ namespace RemaSoftware.WebApp.Helper
             var sum = 0;
             foreach (var output in Ddts_In)
             {
-                if (output.DataIn.Month == selectedMonth && selectedMonth != 0 && output.DataIn.Year == selectedYear)
+                if ((output.DataIn.Month == selectedMonth || selectedMonth == 0) && output.DataIn.Year == selectedYear)
                 {
                     sum += output.Number_Piece;
                 }
@@ -258,7 +258,7 @@ namespace RemaSoftware.WebApp.Helper
             decimal sum = 0;
             foreach (var output in Ddts_In)
             {
-                if (output.DataIn.Month == selectedMonth && selectedMonth != 0 && output.DataIn.Year == selectedYear)
+                if ((output.DataIn.Month == selectedMonth || selectedMonth == 0) && output.DataIn.Year == selectedYear)
                 {
                     sum += output.Number_Piece * output.Price_Uni;
                 }

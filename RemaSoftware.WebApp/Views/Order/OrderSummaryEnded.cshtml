@@ -13,9 +13,22 @@
         <h3 class="m-0 font-weight-bold text-primary">Resoconto ordini conclusi</h3>
     </div>
     <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-bordered" id="table-ddt" width="100%" cellspacing="0">
-                <thead>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="year-select">Seleziona l'anno:</label>
+                    <select id="year-select" class="form-control">
+                        <option value="2023">2023</option>
+                        <option value="2024" selected="">2024</option>
+                        <option value="2025">2025</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row px-2">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="table-ddt" width="100%" cellspacing="0">
+                    <thead>
                     <tr>
                         <th>N° Lotto</th>
                         <th>Cliente</th>
@@ -29,50 +42,51 @@
                         <th class="text-center">Status</th>
                         <th class="text-center">Azioni</th>
                     </tr>
-                </thead>
-                <tbody>
-                @foreach (var ddt in Model.Ddt_In)
-                {
-                    <tr id="ddt-@ddt.Ddt_In_ID">
-                        <td>@ddt.SubBatchID</td>
-                        <td>@ddt.Product.Client.Name</td>
-                        <td>@ddt.Code</td>
-                        <td>@ddt.Product.SKU</td>
-                        <td>@ddt.Product.Name</td>
-                        <td>@ddt.Number_Piece</td>
-                        <td>&euro;@ddt.Price_Uni.ToString("0.000")</td>
-                        <td>@ddt.DataIn.ToString("dd/MM/yy")</td>
-                        <td>
-                            @{
-                                var date = "";
-                                if (ddt.DataEnd.HasValue)
-                                {
-                                    date = ddt.DataEnd.Value.ToString("dd/MM/yy");
+                    </thead>
+                    <tbody>
+                    @foreach (var ddt in Model.Ddt_In)
+                    {
+                        <tr id="ddt-@ddt.Ddt_In_ID">
+                            <td>@ddt.SubBatchID</td>
+                            <td>@ddt.Product.Client.Name</td>
+                            <td>@ddt.Code</td>
+                            <td>@ddt.Product.SKU</td>
+                            <td>@ddt.Product.Name</td>
+                            <td>@ddt.Number_Piece</td>
+                            <td>&euro;@ddt.Price_Uni.ToString("0.000")</td>
+                            <td>@ddt.DataIn.ToString("dd/MM/yy")</td>
+                            <td>
+                                @{
+                                    var date = "";
+                                    if (ddt.DataEnd.HasValue)
+                                    {
+                                        date = ddt.DataEnd.Value.ToString("dd/MM/yy");
+                                    }
                                 }
-                            }
-                            @date
-                        </td>
-                        <td class="text-center">
-                            @{
-                                if (!string.IsNullOrEmpty(ddt.Status))
-                                {
-                                    var statusDto = OrderStatusConstants.OrderStatuses[@ddt.Status];
-                                    <i class="fas fa-circle fa-lg" style="color: @statusDto?.StatusCssClass" title="@statusDto?.StatusDescription"></i>
+                                @date
+                            </td>
+                            <td class="text-center">
+                                @{
+                                    if (!string.IsNullOrEmpty(ddt.Status))
+                                    {
+                                        var statusDto = OrderStatusConstants.OrderStatuses[@ddt.Status];
+                                        <i class="fas fa-circle fa-lg" style="color: @statusDto?.StatusCssClass" title="@statusDto?.StatusDescription"></i>
+                                    }
                                 }
-                            }
-                        </td>
-                        <td class="text-center">
-                            <a style="text-decoration: none" asp-controller="Order" asp-action="SubBatchMonitoring" asp-route-id="@ddt.SubBatchID">
-                                <i class="fas fa-eye fa-lg pl-2" title="Visualizza avanzamento" style="cursor: pointer; color: #6d767e"></i>
-                            </a>
-                            <a style="text-decoration: none" asp-controller="Order" asp-action="DuplicateOrder" asp-route-id="@ddt.SubBatchID">
-                                <i class="fas fa-files-o fa-lg pl-2" title="Duplica" style="cursor: pointer; color: #6d767e"></i>
-                            </a>
-                        </td>
-                    </tr>
-                }
-                </tbody>
-            </table>
+                            </td>
+                            <td class="text-center">
+                                <a style="text-decoration: none" asp-controller="Order" asp-action="SubBatchMonitoring" asp-route-id="@ddt.SubBatchID">
+                                    <i class="fas fa-eye fa-lg pl-2" title="Visualizza avanzamento" style="cursor: pointer; color: #6d767e"></i>
+                                </a>
+                                <a style="text-decoration: none" asp-controller="Order" asp-action="DuplicateOrder" asp-route-id="@ddt.SubBatchID">
+                                    <i class="fas fa-files-o fa-lg pl-2" title="Duplica" style="cursor: pointer; color: #6d767e"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -92,6 +106,12 @@
                 <button class="btn btn-danger" onclick="DeleteStockArticle()">Elimina</button>
             </div>
         </div>
+    </div>
+</div>
+
+<div class="loader-cont">
+    <div class="spinner-grow" role="status">
+        <span class="sr-only">Loading...</span>
     </div>
 </div>
 
@@ -140,9 +160,6 @@
                 { "searchable": false, "orderable": false, "targets": 10 },
               ]
         });
-
-        
-        
     });
 
     function formatDate(timestamp){
@@ -157,5 +174,31 @@
         $("#id_ordine").val(OrderIdToDuplicate)
     }
 
+    function setSelectedYearFromUrl() {
+        var urlParams = new URLSearchParams(window.location.search);
+        var year = urlParams.get('year');
+
+        if (year) {
+            var selectElement = document.getElementById('year-select');
+            selectElement.value = year;
+
+            if (!Array.from(selectElement.options).some(option => option.value === year)) {
+                selectElement.value = '2024'; // Imposta il valore predefinito se l'anno non è valido
+            }
+        }
+    }
+        
+    function updateYears() {
+        var selectedYear = document.getElementById("year-select").value;
+
+        var url = "/Order/OrderSummaryEnded?year=" + encodeURIComponent(selectedYear);
+
+        window.location.href = url;
+    }
+
+    window.onload = function() {
+        setSelectedYearFromUrl();
+        document.getElementById("year-select").addEventListener("change", updateYears);
+    };
     </script>
 }

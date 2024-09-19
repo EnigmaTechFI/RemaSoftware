@@ -190,10 +190,8 @@ namespace RemaSoftware.Domain.Services.Impl
                 .ToList();
         }
 
-        public List<Ddt_In> GetDdtInEnded()
+        public List<Ddt_In> GetDdtInEnded(int year)
         {
-            DateTime startDate = new DateTime(2024, 1, 1);
-
             return _dbContext.Ddts_In
                 .Include(d => d.Product)
                 .ThenInclude(s => s.Client)
@@ -201,7 +199,7 @@ namespace RemaSoftware.Domain.Services.Impl
                 .ThenInclude(s => s.Batch)
                 .ThenInclude(b => b.BatchOperations)
                 .Where(s => (s.Status == OrderStatusConstants.STATUS_COMPLETED || s.Status == OrderStatusConstants.STATUS_DELIVERED)
-                            && s.DataIn > startDate)
+                            && s.DataIn.Year == year)
                 .ToList();
         }
 

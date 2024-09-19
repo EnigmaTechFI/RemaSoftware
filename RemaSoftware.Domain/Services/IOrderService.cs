@@ -17,7 +17,7 @@ namespace RemaSoftware.Domain.Services
         List<Ddt_In> GetAllDdtIn();
         List<Ddt_In> GetDdtInActive();
         List<Ddt_In> GetDdtInWorkingByClientId(int Id);
-        List<Ddt_In> GetDdtInEnded();
+        List<Ddt_In> GetDdtInEnded(int year);
         List<Ddt_In> GetDdtInStockByClientId(int Id);
         Ddt_In GetDdtInById(int id);
         List<Ddt_Out> GetDdtOutsByClientIdAndStatus(int id, string status);

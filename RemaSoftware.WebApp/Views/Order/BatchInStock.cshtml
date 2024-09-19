@@ -179,6 +179,7 @@
 {
     <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
     <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.10.11/sorting/date-eu.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
     function printQRCode(id){
@@ -290,7 +291,7 @@
                 { "searchable": false, "orderable": false, "targets": 4 },
                 { "searchable": false, "orderable": false, "targets": 5 },
                 { "searchable": true, "orderable": false, "targets": 6 },
-                { "searchable": false, "orderable": true, "targets": 7 },
+                { "searchable": false, "orderable": true, "targets": 7, "type": "date-eu" },
                 { "searchable": false, "orderable": false, "targets": 8 },
                 { "searchable": false, "orderable": false, "targets": 9 },
               ]

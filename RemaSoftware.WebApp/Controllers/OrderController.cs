@@ -128,13 +128,15 @@ namespace RemaSoftware.WebApp.Controllers
                 SubBatchId = subBatchId
             });
         }
+        
         [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl) ]
         [HttpGet]
-        public IActionResult OrderSummaryEnded()
+        public IActionResult OrderSummaryEnded(int? year)
         {
+            var selectedYear = year ?? 2024;
             return View(new OrderSummaryViewModel()
             {
-                Ddt_In = _orderHelper.GetAllDdtInEnded_NoPagination()
+                Ddt_In = _orderHelper.GetAllDdtInEnded_NoPagination(selectedYear)
             });
         }
         

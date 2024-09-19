@@ -85,9 +85,9 @@ namespace RemaSoftware.WebApp.Helper
             return _orderService.GetDdtInActive();
         }
 
-        public List<Ddt_In> GetAllDdtInEnded_NoPagination()
+        public List<Ddt_In> GetAllDdtInEnded_NoPagination(int year)
         {
-            return _orderService.GetDdtInEnded();
+            return _orderService.GetDdtInEnded(year);
         }
 
         public Ddt_In AddNewDdtIn(NewOrderViewModel model)
@@ -95,7 +95,7 @@ namespace RemaSoftware.WebApp.Helper
             using (var transaction = _dbContext.Database.BeginTransaction())
             {
                 try
-                { //TAG1
+                {
                     var newSubbatch = false;
                     var operationsSelected = model.OperationsSelected.Where(w => !w.StartsWith("0"))
                         .Select(s => int.Parse(s.Split('-').First())).ToList();

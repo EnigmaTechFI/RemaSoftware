@@ -255,11 +255,11 @@
     }
 
     const operations = @Json.Serialize(Model.Ddt_In.Select(s => new {
-    s.SubBatchID,
-    Operations = s.SubBatch.Batch.BatchOperations
-    .Select(bo => new {
-    bo.Operations.Name,
-    }).ToList()
+        s.SubBatchID,
+        Operations = s.SubBatch.Batch.BatchOperations
+        .Select(bo => new {
+        bo.Operations.Name,
+        }).ToList()
     }));
 
     function showOperation(subbatchId) {

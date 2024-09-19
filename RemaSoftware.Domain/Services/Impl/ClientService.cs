@@ -66,6 +66,7 @@ namespace RemaSoftware.Domain.Services.Impl
                 .Include(b => b.SubBatch)
                 .ThenInclude(s => s.Batch)
                 .Where(s => s.Product.ClientID == Id)
+                .OrderBy(s => s.DataIn)
                 .ToList();
         }
     }
