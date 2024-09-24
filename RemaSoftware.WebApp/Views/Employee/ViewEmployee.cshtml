@@ -1,5 +1,4 @@
-﻿@using RemaSoftware.Domain.Constants
-@model RemaSoftware.WebApp.Models.EmployeeViewModel.EmployeeViewModel
+﻿@model RemaSoftware.WebApp.Models.EmployeeViewModel.EmployeeViewModel
 
 @{
     ViewData["Title"] = "Impiegato";
@@ -17,10 +16,9 @@
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            Informazioni generali</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Employee.Mail</div>
-                        <small>Data di nascita: @Model.Employee.BirthDate.ToString("dd/MM/yyyy")</small>
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Informazioni generali</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Employee.Name @Model.Employee.Surname</div>
+                        <small>@(Model.Employee.BirthDate.HasValue ? "Data di nascita: " + Model.Employee.BirthDate.Value.ToString("dd/MM/yyyy") : "")</small>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-user fa-2x text-gray-300"></i>
@@ -52,8 +50,8 @@
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            Codice fiscale</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Employee.TaxID</div>
+                            Mail</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@(Model.Employee.Mail != null ? Model.Employee.Mail : "-")</div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-info fa-2x text-gray-300"></i>
@@ -67,9 +65,9 @@
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            Sesso</div>
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Sesso</div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Employee.Gender</div>
+                        <small>@(Model.Employee.TaxID != null ? "Codice fiscale: " + Model.Employee.TaxID : "")</small>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-user fa-2x text-gray-300"></i>
@@ -80,41 +78,7 @@
     </div>
 </div>
 <div class="row">
-     <div class="col-xl-2 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Luogo di nascita</div>
-                            <div class="h4 mb-0 font-weight-bold text-gray-800">@Model.Employee.BirthPlace</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-barcode fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    <div class="col-xl-2 col-md-6 mb-4">
-        <div class="card border-left-primary shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            Mansione</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Employee.Task</div>
-                        <small>Livello: @Model.Employee.Level</small>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-hashtag fa-2x text-gray-300"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-2 col-md-6 mb-4">
+    <div class="col-xl-6 col-md-6 mb-4">
         <div class="card border-left-primary shadow h-100 py-2">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
@@ -130,7 +94,7 @@
             </div>
         </div>
     </div>
-    <div class="col-xl-2 col-md-6 mb-4">
+    <div class="col-xl-6 col-md-6 mb-4">
         <div class="card border-left-primary shadow h-100 py-2">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
@@ -146,16 +110,56 @@
             </div>
         </div>
     </div>
-    <div class="col-xl-2 col-md-6 mb-4">
+</div>
+<div class="row">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Luogo di nascita:</div>
+                        <div class="h4 mb-0 font-weight-bold text-gray-800">
+                            @(Model.Employee.BirthPlace != null ? Model.Employee.BirthPlace : "-")
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-barcode fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Mansione</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@(Model.Employee.Task != null ? Model.Employee.Task : "-")</div>
+                        <small>
+                            @(Model.Employee.Level != null ? "Livello: " + Model.Employee.Level : "")
+                        </small>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-hashtag fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
         <div class="card border-left-primary shadow h-100 py-2">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            Data inizio rapporto</div>
-                        <div class="h4 mb-0 font-weight-bold text-gray-800">@Model.Employee.StartRelationship.ToString("dd/MM/yyyy")</div>
-                        <small>Data fine: @Model.Employee.EndRelationship.ToString("dd/MM/yyyy")</small>
-
+                            Numero ore di lavoro</div>
+                        <div class="h4 mb-0 font-weight-bold text-gray-800"> @Model.Employee.NumberHour</div>
+                        <small>
+                            @((Model.Employee.StartRelationship.HasValue && Model.Employee.EndRelationship.HasValue)
+                            ? $"Data inizio-fine rapporto: {Model.Employee.StartRelationship.Value.ToString("dd/MM/yyyy")} - {Model.Employee.EndRelationship.Value.ToString("dd/MM/yyyy")}"
+                            : "")
+                        </small>                    
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-info fa-2x text-gray-300"></i>
@@ -164,32 +168,31 @@
             </div>
         </div>
     </div>
-    <div class="col-xl-2 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Straordinari</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                @if (@Model.Employee.Extraordinary)
-                                {
-                                    <p>Permessi</p>
-                                }
-                                else
-                                {
-                                    <p>Negati</p>
-                                }
-                            </div>
-                            <small>Numero ore di lavoro: @Model.Employee.NumberHour</small>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Straordinari</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            @if (@Model.Employee.Extraordinary)
+                            {
+                                <p>Permessi</p>
+                            }
+                            else
+                            {
+                                <p>Negati</p>
+                            }
                         </div>
-                        <div class="col-auto">
-                            <i class="fas fa-info fa-2x text-gray-300"></i>
-                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-info fa-2x text-gray-300"></i>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 </div>
 
 

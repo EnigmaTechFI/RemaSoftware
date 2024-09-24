@@ -182,6 +182,7 @@ public class EmployeeHelper
     
     private void MapEditedEmployee(Employee newEmployee, ref Employee oldEmployee)
     {
+        oldEmployee.Number = newEmployee.Number;
         oldEmployee.Task = newEmployee.Task;
         oldEmployee.Extraordinary = newEmployee.Extraordinary;
         oldEmployee.Level = newEmployee.Level;

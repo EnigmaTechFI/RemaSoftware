@@ -20,34 +20,33 @@
             @Html.HiddenFor(model => model.Employee.TaxID)
             @Html.HiddenFor(model => model.Employee.Name)
             @Html.HiddenFor(model => model.Employee.Surname)
-            @Html.HiddenFor(model => model.Employee.Number)
             @Html.HiddenFor(model => model.Employee.BirthPlace)
             @Html.HiddenFor(model => model.Employee.BirthDate)
 
             <div class="form-row">
                 <div class="col-md-3 mb-4">
+                    <label>Matricola</label>
+                    <input asp-for="Employee.Number" type="text" class="form-control" value="@Model.Employee.Number" required>
+                    <span asp-validation-for="Employee.Number" class="text-danger"></span>
+                </div>
+                <div class="col-md-3 mb-4">
                     <label>Mail</label>
                     <input asp-for="Employee.Mail" type="text" class="form-control" value="@Model.Employee.Mail">
-                    <span asp-validation-for="Employee.Mail" class="text-danger"></span>
                 </div>
                 <div class="col-md-3 mb-4">
                     <label>Mansione</label>
                     <input asp-for="Employee.Task" type="text" class="form-control" value="@Model.Employee.Task">
-                    <span asp-validation-for="Employee.Task" class="text-danger"></span>
                 </div>
                 <div class="col-md-3 mb-4">
                     <label>Livello</label>
                     <input asp-for="Employee.Level" type="text" class="form-control" value="@Model.Employee.Level">
-                    <span asp-validation-for="Employee.Level" class="text-danger"></span>
                 </div>
                 <div class="col-md-3 mb-4">
                     <label>Numero ore di lavoro</label>
                     <input asp-for="Employee.NumberHour" type="text" class="form-control" value="@Model.Employee.NumberHour" required>
                     <span asp-validation-for="Employee.NumberHour" class="text-danger"></span>
                 </div>
-            </div>
-             <div class="form-row">
-                 <div class="col-md-4 mb-4">
+                 <div class="col-md-3 mb-4">
                      <label>Modifica data di inizio rapporto</label>
                      <div class='input-group date'>
                          <input placeholder="Data di inizio rapporto" type='text' class="form-control bg-white" id='datetimepicker1' asp-for="Employee.StartRelationship" />
@@ -56,7 +55,7 @@
                          </span>
                      </div>
                  </div>
-                 <div class="col-md-4 mb-4">
+                 <div class="col-md-3 mb-4">
                      <label>Modifica data di fine rapporto</label>
                      <div class='input-group date'>
                          <input placeholder="Data di fine rapporto" type='text' class="form-control bg-white" id='datetimepicker2' asp-for="Employee.EndRelationship" />
@@ -65,7 +64,7 @@
                          </span>
                      </div>
                  </div>
-                 <div class="col-md-4 mb-4">
+                 <div class="col-md-3 mb-4">
                       <div class="form-check" style="margin-left: 40px; margin-top: 35px;">
                           <input asp-for="Employee.Extraordinary" style="cursor: pointer; width: 22px; height: 22px;" class="form-check-input" type="checkbox" id="flexCheckChecked">
                           <label class="form-check-label" style="cursor: pointer; font-size: 20px; margin-left: 10px;" for="flexCheckChecked">
@@ -73,9 +72,7 @@
                           </label>
                       </div>
                  </div>
-             </div> 
-            <div class="form-row">
-                <div class="col-md-4 mb-3 form-group">
+                <div class="col-md-3 mb-3 form-group">
                     <label for="formGroupExampleInput">Tipo di relazione</label>
                     <select asp-for="@Model.Employee.TypeRelationship" class="form-control">
                         <option selected="selected" value="Nessuna">Nessuna</option>
@@ -83,7 +80,7 @@
                         <option value="@TypeRelationship.LavoroDipendente">Lavoro dipendente</option>
                     </select>
                 </div>
-                <div class="col-md-4 mb-3 form-group">
+                <div class="col-md-3 mb-3 form-group">
                     <label for="formGroupExampleInput">Tipo di posizione</label>
                     <select asp-for="@Model.Employee.TypePosition" class="form-control">
                         <option selected="selected" value="Nessuna">Nessuna</option>
@@ -92,10 +89,9 @@
                         <option value="@TypePosition.MaternitaFacoltativa">Maternità facoltativa</option>
                     </select>
                 </div>
-                 <div class="col-md-4 mb-4">
+                 <div class="col-md-3 mb-4">
                     <label>Codice fluida</label>
                     <input asp-for="Employee.FluidaId" type="text" class="form-control" value="@Model.Employee.FluidaId">
-                    <span asp-validation-for="Employee.FluidaId" class="text-danger"></span>
                 </div>
             </div>
             <button class="btn btn-primary" type="submit" onclick="clickEvent()">Aggiorna</button>

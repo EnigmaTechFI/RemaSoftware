@@ -192,7 +192,7 @@ namespace RemaSoftware.Domain.Services.Impl;
                             TimeSpan threshold;
 
                             if (employee.NumberHour == 25)
-                                threshold = new TimeSpan(5, 20, 0);
+                                threshold = new TimeSpan(5, 30, 0);
                             else if (employee.NumberHour == 35)
                                 threshold = new TimeSpan(7, 50, 0);
                             else
@@ -210,7 +210,7 @@ namespace RemaSoftware.Domain.Services.Impl;
                                     if (exceedingDuration.TotalMinutes > 0)
                                         extraMinutes += 30;
 
-                                    if ((int)(exceedingDuration.TotalMinutes % 60) > 20)
+                                    if ((int)(exceedingDuration.TotalMinutes % 60) > 30)
                                         extraMinutes += 30;
                                 }
                                 else
@@ -229,11 +229,10 @@ namespace RemaSoftware.Domain.Services.Impl;
 
                                 if (extraHours >= 1 || extraMinutes > 0)
                                 {
-                                    extraMinutes -= 10;
-                                    if (existingAttendance.DateOut?.AddHours(-extraHours).AddMinutes(-extraMinutes) >
-                                        existingAttendance.DateIn)
-                                        existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-extraHours)
-                                            .AddMinutes(-extraMinutes);
+                                    if(extraHours >= 1 || (extraMinutes >= 50 && employee.NumberHour == 25))
+                                        extraMinutes -= 10;
+                                    if (existingAttendance.DateOut?.AddHours(-extraHours).AddMinutes(-extraMinutes) > existingAttendance.DateIn)
+                                        existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-extraHours).AddMinutes(-extraMinutes);
                                     else
                                         existingAttendance.DateOut = existingAttendance.DateIn;
 
@@ -357,9 +356,9 @@ namespace RemaSoftware.Domain.Services.Impl;
                           TimeSpan threshold;
 
                           if (employee.NumberHour == 25)
-                              threshold = new TimeSpan(5, 20, 0);
+                              threshold = new TimeSpan(5, 30, 0);
                           else if (employee.NumberHour == 35)
-                              threshold = new TimeSpan(7, 25, 0);
+                              threshold = new TimeSpan(7, 50, 0);
                           else
                               threshold = new TimeSpan(8, 50, 0);
 
@@ -375,7 +374,7 @@ namespace RemaSoftware.Domain.Services.Impl;
                                   if (exceedingDuration.TotalMinutes > 0)
                                       extraMinutes += 30;
 
-                                  if ((int)(exceedingDuration.TotalMinutes % 60) > 20)
+                                  if ((int)(exceedingDuration.TotalMinutes % 60) > 30)
                                       extraMinutes += 30;
                               }
                               else
@@ -394,7 +393,8 @@ namespace RemaSoftware.Domain.Services.Impl;
 
                               if (extraHours >= 1 || extraMinutes > 0)
                               {
-                                  extraMinutes -= 10;
+                                  if(extraHours >= 1 || (extraMinutes >= 50 && employee.NumberHour == 25))
+                                      extraMinutes -= 10;
                                   if (existingAttendance.DateOut?.AddHours(-extraHours).AddMinutes(-extraMinutes) >
                                       existingAttendance.DateIn)
                                       existingAttendance.DateOut = existingAttendance.DateOut?.AddHours(-extraHours)

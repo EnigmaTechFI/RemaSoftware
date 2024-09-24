@@ -22,9 +22,10 @@
                     <th>Matricola</th>
                     <th>Nome</th>
                     <th>Cognome</th>
-                    <th>Data di nascita</th>
                     <th>Sesso</th>
-                    <th>Codice fiscale</th>
+                    <th>Tipo di rapporto</th>
+                    <th>Tipo di posizione</th>
+                    <th>Mail</th>
                     <th>Straordinari</th>
                     <th>Azioni</th>
                 </tr>
@@ -36,11 +37,11 @@
                         <td class="number-@employee.Number">@employee.Number</td>
                         <td class="name-@employee.Name">@employee.Name</td>
                         <td class="surname-@employee.Surname">@employee.Surname</td>
-                        <td class="birth-@employee.BirthDate.ToString("dd/MM/yyyy")">@employee.BirthDate.ToString("dd/MM/yyyy")</td>
                         <td class="gender-@employee.Gender">@employee.Gender</td>
-                        <td class="tax-@employee.TaxID">@employee.TaxID</td>
+                        <td class="gender-@employee.TypeRelationship">@employee.TypeRelationship</td>
+                        <td class="gender-@employee.TypePosition">@employee.TypePosition</td>
+                        <td class="tax-@employee.Mail">@(!string.IsNullOrEmpty(employee.Mail) ? employee.Mail : "-")</td>
                         <td class="tax-@employee.Extraordinary">
-                            
                             @if (@employee.Extraordinary)
                             {
                                 <p>Permessi</p>
@@ -114,8 +115,9 @@
                 { "searchable": false, "orderable": false, "targets": 3 },
                 { "searchable": false, "orderable": false, "targets": 4 },
                 { "searchable": false, "orderable": false, "targets": 5 },
-                { "searchable": false, "orderable": false, "targets": 6 },
+                { "searchable": true, "orderable": false, "targets": 6 },
                 { "searchable": false, "orderable": false, "targets": 7 },
+                { "searchable": false, "orderable": false, "targets": 8 },
               ]
         });
     } );

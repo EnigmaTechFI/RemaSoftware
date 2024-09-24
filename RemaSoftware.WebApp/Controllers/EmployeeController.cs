@@ -50,6 +50,12 @@ namespace RemaSoftware.WebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> NewEmployee(EmployeeViewModel model)
         {
+            DateTime today = DateTime.Now;
+
+            model.Employee.BirthDate = (model.Employee.BirthDate.Value.Date == today.Date) ? (DateTime?)null : model.Employee.BirthDate;
+            model.Employee.StartRelationship = (model.Employee.StartRelationship.Value.Date == today.Date) ? (DateTime?)null : model.Employee.StartRelationship;
+            model.Employee.EndRelationship = (model.Employee.EndRelationship.Value.Date == today.Date) ? (DateTime?)null : model.Employee.EndRelationship;
+            
             try 
             {
                 var validationResult = _employeeValidation.ValidateEmployee(model);
@@ -58,8 +64,11 @@ namespace RemaSoftware.WebApp.Controllers
                     _notyfService.Error(validationResult);
                 } else
                 {
-                    MyUser myUser= await _accountHelper.AddEmployeeAccount(model);
-                    model.Employee.AccountId = myUser.Id;
+                    if (model.Employee.Mail != null)
+                    {
+                        MyUser myUser= await _accountHelper.AddEmployeeAccount(model);
+                        model.Employee.AccountId = myUser.Id;
+                    }
                     await _employeeHelper.NewEmployee(model.Employee);
                     _notyfService.Success("Impiegato aggiunto correttamente.");
                     return RedirectToAction("EmployeeList");

@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
 using RemaSoftware.Domain.Constants;
@@ -23,13 +24,15 @@ public class AttendanceHelper
     private readonly IEmployeeService _employeeService;
     private readonly IEmailService _emailService;
     private readonly UserManager<MyUser> _userManager;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public AttendanceHelper(IAttendanceService attendanceService, UserManager<MyUser> userManager, IEmployeeService employeeService, IEmailService emailService)
+    public AttendanceHelper(IAttendanceService attendanceService, UserManager<MyUser> userManager, IEmployeeService employeeService, IEmailService emailService, IHttpContextAccessor httpContextAccessor)
     {
         _attendanceService = attendanceService;
         _employeeService = employeeService;
         _emailService = emailService;
         _userManager = userManager;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public async Task DeleteAttendance(int attendanceId)
@@ -119,17 +122,9 @@ public class AttendanceHelper
                         }
                     }
                 }
-
-                Stopwatch stopwatch = new Stopwatch();
-        
-                stopwatch.Start();
                 
                 await _attendanceService.UpdateAttendanceListWithPresence(userIdList, userClockList);
                 
-                stopwatch.Stop();
-                
-                Console.WriteLine("Tempo impiegato: " + stopwatch.Elapsed.TotalMilliseconds + " ms");
-
                 if (month == 0)
                 {
                     await _attendanceService.UpdateAttendancePermit();
@@ -138,9 +133,14 @@ public class AttendanceHelper
             }
         }
 
+        var request = _httpContextAccessor.HttpContext?.Request;
+        
         if (AttendanceOk && DateTime.Now.TimeOfDay > new TimeSpan(7, 30, 0) && DateTime.Now.TimeOfDay < new TimeSpan(10, 0, 0))
         {
-            await ControlFirstAttendance();
+            if (request != null && !request.Host.Host.Contains("localhost"))
+            {
+                await ControlFirstAttendance();
+            }
         }
     }
 
@@ -321,7 +321,7 @@ public class AttendanceHelper
                                     permiss += "20000";
                                 break;
                             case TimeSpan td when td >= TimeSpan.FromHours(3) + TimeSpan.FromMinutes(50):
-                                if(uniqueTypes[j] == "Supplementare" && employee.NumberHour == 25 && td >= TimeSpan.FromHours(4) + TimeSpan.FromMinutes(20))
+                                if(uniqueTypes[j] == "Supplementare" && employee.NumberHour == 25 && td >= TimeSpan.FromHours(4) + TimeSpan.FromMinutes(30))
                                     sp += "45000";
                                 else 
                                     sp += "40000";
@@ -333,7 +333,7 @@ public class AttendanceHelper
                                     permiss += "30000";
                                 break;
                             case TimeSpan td when td >= TimeSpan.FromHours(2) + TimeSpan.FromMinutes(50):
-                                if(uniqueTypes[j] == "Supplementare" && employee.NumberHour == 25 && td >= TimeSpan.FromHours(3) + TimeSpan.FromMinutes(20))
+                                if(uniqueTypes[j] == "Supplementare" && employee.NumberHour == 25 && td >= TimeSpan.FromHours(3) + TimeSpan.FromMinutes(30))
                                     sp += "35000";
                                 else 
                                     sp += "30000";
@@ -345,7 +345,7 @@ public class AttendanceHelper
                                     permiss += "40000";
                                 break;
                             case TimeSpan td when td >= TimeSpan.FromHours(1) + TimeSpan.FromMinutes(50):
-                                if(uniqueTypes[j] == "Supplementare" && employee.NumberHour == 25 && td >= TimeSpan.FromHours(2) + TimeSpan.FromMinutes(20))
+                                if(uniqueTypes[j] == "Supplementare" && employee.NumberHour == 25 && td >= TimeSpan.FromHours(2) + TimeSpan.FromMinutes(30))
                                     sp += "25000";
                                 else 
                                     sp += "20000";
@@ -357,7 +357,7 @@ public class AttendanceHelper
                                     permiss += "50000";
                                 break;
                             case TimeSpan td when td >= TimeSpan.FromHours(0) + TimeSpan.FromMinutes(50):
-                                if(uniqueTypes[j] == "Supplementare" && employee.NumberHour == 25 && td >= TimeSpan.FromHours(1) + TimeSpan.FromMinutes(20))
+                                if(uniqueTypes[j] == "Supplementare" && employee.NumberHour == 25 && td >= TimeSpan.FromHours(1) + TimeSpan.FromMinutes(30))
                                     sp += "15000";
                                 else 
                                     sp += "10000";
@@ -368,7 +368,7 @@ public class AttendanceHelper
                                 else if (uniqueTypes[j] == "Presenza" && employee.TypePosition == "In servizio" && employee.NumberHour == 35)
                                     permiss += "60000";
                                 break;
-                            case TimeSpan td when td >= TimeSpan.FromHours(0) + TimeSpan.FromMinutes(20):
+                            case TimeSpan td when td >= TimeSpan.FromHours(0) + TimeSpan.FromMinutes(30):
                                 if(uniqueTypes[j] == "Supplementare" && employee.NumberHour == 25)
                                     sp += "05000";
                                 break;

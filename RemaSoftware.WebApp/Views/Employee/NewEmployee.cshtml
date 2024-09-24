@@ -28,8 +28,7 @@
                 </div>
                 <div class="col-md-3 mb-4">
                     <label>Mail</label>
-                    <input asp-for="Employee.Mail" type="text" class="form-control" placeholder="Mail" required>
-                    <span asp-validation-for="Employee.Mail" class="text-danger"></span>
+                    <input asp-for="Employee.Mail" type="text" class="form-control" placeholder="Mail">
                 </div>
                 <div class="col-md-3 mb-4">
                     <label>Matricola</label>
@@ -50,9 +49,7 @@
                 <div class="col-md-4 mb-4">
                     <label>Luogo di nascita</label>
                     <input asp-for="Employee.BirthPlace" type="text" class="form-control" placeholder="Luogo di nascita">
-                    <span asp-validation-for="Employee.BirthPlace" class="text-danger"></span>
                 </div>
-                
                 <div class="col-md-4 mb-4 form-group">
                     <label for="formGroupExampleInput">Seleziona sesso</label>
                     <select asp-for="Employee.Gender" class="form-control">
@@ -66,18 +63,15 @@
             <div class="form-row">
                 <div class="col-md-4 mb-4">
                     <label>Codice fiscale</label>
-                    <input asp-for="Employee.TaxID" type="text" class="form-control" placeholder="Codice fiscale" required>
-                    <span asp-validation-for="Employee.TaxID" class="text-danger"></span>
+                    <input asp-for="Employee.TaxID" type="text" class="form-control" placeholder="Codice fiscale">
                 </div>
                 <div class="col-md-4 mb-4">
                     <label>Mansione</label>
                     <input asp-for="Employee.Task" type="text" class="form-control" placeholder="Mansione">
-                    <span asp-validation-for="Employee.Task" class="text-danger"></span>
                 </div>
                 <div class="col-md-4 mb-4">
                     <label>Livello</label>
                     <input asp-for="Employee.Level" type="number" class="form-control" placeholder="Livello">
-                    <span asp-validation-for="Employee.Level" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-row">
@@ -101,14 +95,13 @@
                  <div class="col-md-4 mb-4">
                     <label>Codice riconoscimento fluida</label>
                     <input asp-for="Employee.FluidaId" type="text" class="form-control" placeholder="codice fluida">
-                    <span asp-validation-for="Employee.FluidaId" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-row">
                 <div class="col-md-3 mb-4">
                     <label>Seleziona data di inizio rapporto</label>
                     <div class='input-group date'>
-                        <input placeholder="Seleziona data di inizio rapporto" type='text' class="form-control bg-white" id='datetimepicker2' asp-for="Employee.StartRelationship" />
+                        <input placeholder="Seleziona data di inizio rapporto" type='text' class="form-control bg-white" id='datetimepicker2' asp-for="Employee.StartRelationship"/>
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                         </span>
@@ -116,9 +109,9 @@
                 </div>
                 
                 <div class="col-md-3 mb-4">
-                    <label>Seleziona data di fine rapporto (Facoltativo)</label>
+                    <label>Seleziona data di fine rapporto</label>
                     <div class='input-group date'>
-                        <input placeholder="Seleziona data di fine rapporto" type='text' class="form-control bg-white" id='datetimepicker3' asp-for="Employee.EndRelationship" />
+                        <input placeholder="Seleziona data di fine rapporto" type='text' class="form-control bg-white" id='datetimepicker3' asp-for="Employee.EndRelationship"/>
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                         </span>
