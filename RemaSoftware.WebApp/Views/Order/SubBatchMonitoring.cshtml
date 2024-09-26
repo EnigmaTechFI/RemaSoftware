@@ -180,6 +180,7 @@
                     <th>Data scadenza</th>
                     <th>Priorità</th>
                     <th>Sollecito</th>
+                    <th>Descrizione</th>
                     <th>Status</th>
                 </tr>
                 </thead>
@@ -217,6 +218,7 @@
                                 </span>
                             }
                         </td>
+                        <td style="font-size: 14px;">@ddt.Description</td>
                         <td class="text-center">
                             @{
                                 if (!string.IsNullOrEmpty(ddt.Status))
@@ -234,99 +236,106 @@
     </div>
 </div>
 <div class="row">
-<div class="col-md-6 col-12 card shadow mb-4" id="order-summ-content">
-    <div class="d-sm-flex align-items-center justify-content-between card-header py-3 mb-1">
-        <h3 class="m-0 font-weight-bold text-primary">Stato di avanzamento produzione</h3>
-    </div>
-    @{
-        var index = 0;
-        var batchOperation = "C";
-        var batchs = Model.SubBatch.Batch.SubBatches.FirstOrDefault();
-        foreach (var ddt in batchs.Ddts_In)
-        {
-            if (ddt.Status != "C" && ddt.Status != "F")
+    <div class="col-md-6 col-12 card shadow mb-4" id="order-summ-content">
+        <div class="d-sm-flex align-items-center justify-content-between card-header py-3 mb-1">
+            <h3 class="m-0 font-weight-bold text-primary">Stato di avanzamento produzione</h3>
+        </div>
+        @{
+            var index = 0;
+            var batchOperation = "C";
+            var batchs = Model.SubBatch.Batch.SubBatches.FirstOrDefault();
+            foreach (var ddt in batchs.Ddts_In)
             {
-                batchOperation = "A";
+                if (ddt.Status != "C" && ddt.Status != "F")
+                {
+                    batchOperation = "A";
+                }
             }
         }
-    }
-    @foreach (var item in Model.SubBatch.Batch.BatchOperations)
-    {
-        if (item.Operations.Name != OtherConstants.EXTRA || item.OperationTimelines.Count != 0)
+        @foreach (var item in Model.SubBatch.Batch.BatchOperations)
         {
-            index++;
-            <div class="card shadow mb-1">
-                <!-- Card Header - Accordion -->
-                <a href="#collapse-@item.OperationID" class="d-block card-header py-3 collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapse-@item.OperationID">
-                    @{
-                        var operationList = item.OperationTimelines.Where(s => s.BatchOperationID == item.BatchOperationID && s.SubBatchID == Model.SubBatch.SubBatchID).ToList();
-                        var status = "";
-                        var css = "";
-                        if (operationList.Count == 0 && batchOperation != "C")
-                        {
-                            status = "Da effettuare";
-                            css = " badge-danger";
-                        }
-                        else if (operationList.All(s => s.Status == "C") || batchOperation == "C")
-                        {
-                            status = "Conclusa";
-                            css = " badge-success";
-                        }
-                        else
-                        {
-                            status = "In corso";
-                            css = " badge-warning";
-                        }
-                    }
-                    <h6 class="m-0 font-weight-bold text-primary">@index) - @item.Operations.Name.ToUpper() - <small class="badge @css"><i class="fas fa-clock"></i> @status</small></h6>
-                </a>
-                <!-- Card Content - Collapse -->
-                <div class="collapse" id="collapse-@item.OperationID" style="">
-                    <div class="card-body">
+            if (item.Operations.Name != OtherConstants.EXTRA || item.OperationTimelines.Count != 0)
+            {
+                index++;
+                <div class="card shadow mb-1">
+                    <!-- Card Header - Accordion -->
+                    <a href="#collapse-@item.OperationID" class="d-block card-header py-3 collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapse-@item.OperationID">
                         @{
+                            var operationList = item.OperationTimelines.Where(s => s.BatchOperationID == item.BatchOperationID && s.SubBatchID == Model.SubBatch.SubBatchID).ToList();
+                            var status = "";
+                            var css = "";
                             if (operationList.Count == 0 && batchOperation != "C")
                             {
-                                <span><strong>Operazione non iniziata</strong></span>
+                                status = "Da effettuare";
+                                css = " badge-danger";
                             }
-                            else if(operationList.Count != 0)
+                            else if (operationList.All(s => s.Status == "C") || batchOperation == "C")
                             {
-                                foreach (var op in operationList)
+                                status = "Conclusa";
+                                css = " badge-success";
+                            }
+                            else
+                            {
+                                status = "In corso";
+                                css = " badge-warning";
+                            }
+                        }
+                        <h6 class="m-0 font-weight-bold text-primary">@index) - @item.Operations.Name.ToUpper() - <small class="badge @css"><i class="fas fa-clock"></i> @status</small></h6>
+                    </a>
+                    <!-- Card Content - Collapse -->
+                    <div class="collapse" id="collapse-@item.OperationID" style="">
+                        <div class="card-body">
+                            @{
+                                if (operationList.Count == 0 && batchOperation != "C")
                                 {
-                                    var end = op.Status == @OperationTimelineConstant.STATUS_WORKING ? "In corso" : op.EndDate.ToString("dd/MM/yy HH:mm");
-                                    var tot = op.Status == @OperationTimelineConstant.STATUS_WORKING ? (int)(DateTime.Now - op.StartDate).TotalMinutes : (int)(op.EndDate - op.StartDate).TotalMinutes;
-                                    if (op.MachineId != null)
+                                    <span><strong>Operazione non iniziata</strong></span>
+                                }
+                                else if(operationList.Count != 0)
+                                {
+                                    foreach (var op in operationList)
                                     {
-                                        <div><span><strong>Macchinario NR°:</strong> @op.MachineId | <strong>Inizio:</strong> @op.StartDate.ToString("dd/MM/yy HH:mm") | <strong>Fine:</strong> @end</span> | <span id="time-@op.OperationTimelineID"><strong>Tempo:</strong> @tot min</span></div>
-                                    }
-                                    else
-                                    {
-                                        <div><span><strong>Fornitore:</strong> @op.DdtSupplier.Supplier.Name | <strong>Inizio:</strong> @op.StartDate.ToString("dd/MM/yy HH:mm") | <strong>Fine:</strong> @end</span> | <span id="time-@op.OperationTimelineID"><strong>Tempo:</strong> @tot min</span></div>
-                                    }
-                                    var time = (int)(DateTime.Now - op.StartDate).TotalSeconds;
-                                    <script>
+                                        var end = op.Status == @OperationTimelineConstant.STATUS_WORKING ? "In corso" : op.EndDate.ToString("dd/MM/yy HH:mm");
+                                        var tot = op.Status == @OperationTimelineConstant.STATUS_WORKING ? (int)(DateTime.Now - op.StartDate).TotalMinutes : (int)(op.EndDate - op.StartDate).TotalMinutes;
+                                        if (op.MachineId != null)
+                                        {
+                                            <div><span><strong>Macchinario NR°:</strong> @op.MachineId | <strong>Inizio:</strong> @op.StartDate.ToString("dd/MM/yy HH:mm") | <strong>Fine:</strong> @end</span> | <span id="time-@op.OperationTimelineID"><strong>Tempo:</strong> @tot min</span></div>
+                                        }
+                                        else
+                                        {
+                                            <div><span><strong>Fornitore:</strong> @op.DdtSupplier.Supplier.Name | <strong>Inizio:</strong> @op.StartDate.ToString("dd/MM/yy HH:mm") | <strong>Fine:</strong> @end</span> | <span id="time-@op.OperationTimelineID"><strong>Tempo:</strong> @tot min</span></div>
+                                        }
+                                        var time = (int)(DateTime.Now - op.StartDate).TotalSeconds;
+                                        <script>
                                     if('@op.Status' == '@OperationTimelineConstant.STATUS_WORKING'){
                                         getTime('@time', '@op.OperationTimelineID')    
                                     }
                                 </script>
+                                    }
+                                }else
+                                {
+                                    <span><strong>Operazione completata</strong></span>
                                 }
-                            }else
-                            {
-                                <span><strong>Operazione completata</strong></span>
                             }
-                        }
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
+        
         }
+    </div>
+    <div class="col-md-6 col-12 card shadow mb-4" id="order-summ-content">
+        <div style="width:100%; height: 500px !important;" id="planimetry">
         
-    }
-</div>
-<div class="col-md-6 col-12 card shadow mb-4" id="order-summ-content">
-    <div style="width:100%; height: 500px !important;" id="planimetry">
-        
+        </div>
     </div>
 </div>
-</div>
+
+<style>
+    .table td, .table th{
+        padding:  0.5rem !important;
+    }
+</style>
+
 @section Scripts
 {
 
@@ -1053,8 +1062,10 @@
                     { "searchable": false, "orderable": false, "targets": 3 },
                     { "searchable": false, "orderable": true, "targets": 4, "type": "date-eu" },
                     { "searchable": false, "orderable": true, "targets": 5, "type": "date-eu" },
-                    { "searchable": true, "orderable": false, "targets": 6 },
+                    { "searchable": true, "orderable": true, "targets": 6 },
                     { "searchable": false, "orderable": false, "targets": 7 },
+                    { "searchable": true, "orderable": false, "targets": 8 },
+                    { "searchable": false, "orderable": false, "targets": 9 },
                   ]
             });
         });

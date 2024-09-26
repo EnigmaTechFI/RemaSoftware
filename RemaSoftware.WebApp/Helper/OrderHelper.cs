@@ -1196,11 +1196,10 @@ namespace RemaSoftware.WebApp.Helper
             {
                 try
                 {
-                    
                     var ddtSupplier = _orderService.GetDdtSupplierById(model.DDTSupplierId);
-                    if (model.LostPieces + model.WastePieces + model.OkPieces + model.ZamaPieces + model.ResoScarto  > ddtSupplier.Number_Piece)
+                    if (model.LostPieces + model.WastePieces + model.OkPieces + model.ZamaPieces + model.ResoScarto + model.RipaGratuita > ddtSupplier.Number_Piece)
                         throw new Exception("Il totale dei pezzi inserito è maggiore dei pezzi attualmente in azienda.");
-                    if (model.LostPieces + model.WastePieces + model.OkPieces + model.ZamaPieces + model.ResoScarto <= 0)
+                    if (model.LostPieces + model.WastePieces + model.OkPieces + model.ZamaPieces + model.ResoScarto + model.RipaGratuita <= 0)
                         throw new Exception("Nessun pezzo inserito.");
                     ddtSupplier.NumberReInPiece += model.OkPieces;
                     ddtSupplier.NumberLostPiece += model.LostPieces;

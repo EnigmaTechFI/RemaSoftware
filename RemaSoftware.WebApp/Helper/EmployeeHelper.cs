@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
 using RemaSoftware.Domain.Data;
 using RemaSoftware.Domain.Models;
 using RemaSoftware.Domain.Services;
@@ -16,7 +15,6 @@ public class EmployeeHelper
     private readonly IEmployeeService _employeeService;
     private readonly IAttendanceService _attendanceService;
     private readonly AccountHelper _accountHelper;
-    private readonly ApplicationDbContext _dbContext;
 
     public EmployeeHelper(IEmployeeService employeeService, IAttendanceService attendanceService,
         AccountHelper accountHelper, ApplicationDbContext dbContext)
@@ -24,7 +22,6 @@ public class EmployeeHelper
         _employeeService = employeeService;
         _attendanceService = attendanceService;
         _accountHelper = accountHelper;
-        _dbContext = dbContext;
     }
     public EmployeeViewModel NewEmployee()
     {
@@ -193,5 +190,4 @@ public class EmployeeHelper
         oldEmployee.TypeRelationship = newEmployee.TypeRelationship;
         oldEmployee.FluidaId = newEmployee.FluidaId;
     }
-
 }

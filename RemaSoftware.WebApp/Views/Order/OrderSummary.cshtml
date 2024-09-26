@@ -1,4 +1,5 @@
-﻿@using RemaSoftware.Domain.Constants
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using RemaSoftware.Domain.Constants
 @using RemaSoftware.WebApp.Models.OrderViewModel
 @model RemaSoftware.WebApp.Models.OrderViewModel.OrderSummaryViewModel
 
@@ -34,6 +35,7 @@
                     <th>Operazioni</th>
                     <th>Arrivo ordine</th>
                     <th>Scadenza ordine</th>
+                    <th>Descrizione</th>
                     <th id="imageId" style="display: none; padding: 35px 30px 15px 10px; position: relative;">Immagini</th>
                     <th>Status</th>
                     <th>Azioni</th>
@@ -62,7 +64,7 @@
                         }
                         else
                         {
-                            <td>
+                            <td style="font-size:  13px;">
                                 @foreach (var operation in ddt.SubBatch.Batch.BatchOperations)
                                 {
                                     <div>
@@ -80,6 +82,7 @@
                         }
                         <td>@ddt.DataIn.ToString("dd/MM/yy")</td>
                         <td id="dataend-@ddt.Ddt_In_ID">@ddt.DataOut.ToString("dd/MM/yy")</td>
+                        <td id="description-@ddt.Ddt_In_ID" style="font-size: 13px;">@ddt.Description</td>
                         <td class="classImage" style="display: none; padding:  0px !important;">
                             <img class="image-class d-none" width="140px;" data-src="@Model.BasePathImages@ddt.Product.FileName"/>
                         </td>
@@ -227,6 +230,11 @@
 
 @{await Html.RenderPartialAsync("../Order/_CopyOrderModal", new CopyOrderViewModel());}
 
+<style>
+    .table td, .table th{
+        padding:  0.5rem !important;
+    }
+</style>
 @section Scripts
 {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.9/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
@@ -255,12 +263,12 @@
     }
 
     const operations = @Json.Serialize(Model.Ddt_In.Select(s => new {
-        s.SubBatchID,
-        Operations = s.SubBatch.Batch.BatchOperations
-        .Select(bo => new {
-        bo.Operations.Name,
-        }).ToList()
-    }));
+                           s.SubBatchID,
+                           Operations = s.SubBatch.Batch.BatchOperations
+                               .Select(bo => new {
+                                   bo.Operations.Name,
+                               }).ToList()
+                       }));
 
     function showOperation(subbatchId) {
         var operation = operations.filter(obj => {
@@ -418,8 +426,9 @@
                 { "searchable": false, "orderable": true, "targets": 10, "type": "date-eu" },
                 { "searchable": false, "orderable": true, "targets": 11, "type": "date-eu" },
                 { "searchable": false, "orderable": false, "targets": 12 },
-                { "searchable": false, "orderable": false, "targets": 13 },
+                { "searchable": true, "orderable": false, "targets": 13 },
                 { "searchable": false, "orderable": false, "targets": 14 },
+                { "searchable": false, "orderable": false, "targets": 15 },
               ]
         });
         
@@ -490,7 +499,7 @@
         try {
             const originalTable = document.getElementById('table-ddt');
             const clonedTable = originalTable.cloneNode(true);
-            const columnsToRemove = [8, 13, 14];
+            const columnsToRemove = [8, 14, 15];
 
             const headerCells = clonedTable.querySelectorAll('thead tr th');
             columnsToRemove.sort((a, b) => b - a).forEach(index => {
@@ -535,7 +544,5 @@
             console.error('Errore durante il processo di stampa:', error); // Log dell'errore in console
         }
     }
-
-
     </script>
 }
