@@ -4,6 +4,6 @@ namespace RemaSoftware.Domain.Constants
     {
         public const string InServizio = "In servizio";
         public const string Maternità = "Maternità";
-        public const string MaternitaFacoltativa = "Maternita facoltativa";
+        public const string MaternitaFacoltativa = "Maternita facoltativa"; 
     }
 }
