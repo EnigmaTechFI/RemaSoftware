@@ -296,13 +296,12 @@ namespace RemaSoftware.WebApp.Helper
             }
         }
 
-        public void RegisterBatchAtCOQ(int subBatchId)
+        public SubBatch RegisterBatchAtCOQ(int subBatchId)
         {
             var subBatch = new SubBatch();
             try
             {
                 subBatch = _subBatchService.GetSubBatchById(subBatchId);
-                
             }
             catch (Exception e)
             {
@@ -347,6 +346,8 @@ namespace RemaSoftware.WebApp.Helper
                 subBatch.Ddts_In.ForEach(s => s.Status = OrderStatusConstants.STATUS_WORKING);
             }
             _subBatchService.UpdateSubBatch(subBatch);
+            
+            return subBatch;
         }
 
         public QualityControlViewModel GetQualityControlViewModel()
@@ -372,9 +373,9 @@ namespace RemaSoftware.WebApp.Helper
                     if (dto == null)
                         throw new Exception("I dati inseriti non sono corretti.");
                     var subBatch = _subBatchService.GetSubBatchById(dto.SubBatchId);
-                    if (dto.LostPieces + dto.WastePieces + dto.OkPieces + dto.ZamaPieces + dto.ResoScarto + dto.RipaGratuita > subBatch.Ddts_In.Sum(s => s.Number_Piece_Now))
+                    if (dto.LostPieces + dto.WastePieces + dto.OkPieces + dto.ZamaPieces + dto.ResoScarto > subBatch.Ddts_In.Sum(s => s.Number_Piece_Now))
                         throw new Exception("Il totale dei pezzi inserito è maggiore dei pezzi attualmente in azienda.");
-                    if (dto.LostPieces + dto.WastePieces + dto.OkPieces + dto.ZamaPieces + dto.ResoScarto + dto.RipaGratuita <= 0)
+                    if (dto.LostPieces + dto.WastePieces + dto.OkPieces + dto.ZamaPieces + dto.ResoScarto <= 0)
                         throw new Exception("Nessun pezzo inserito.");
                     
                     if (userRole == "ControlloQualità")
@@ -417,8 +418,7 @@ namespace RemaSoftware.WebApp.Helper
                         SubBatchCode = subBatch.SubBatchID,
                         WastePieces = dto.WastePieces,
                         ZamaPieces = dto.ZamaPieces,
-                        ResoScarto = dto.ResoScarto,
-                        RipaGratuita = dto.RipaGratuita
+                        ResoScarto = dto.ResoScarto
                     });
                     var now = DateTime.Now;
                     var ddt_out_id = 0;
@@ -537,7 +537,7 @@ namespace RemaSoftware.WebApp.Helper
                                     NumberPieces = dto.WastePieces,
                                     TypePieces = PiecesType.SCARTI
                                 });
-                                dto.RipaGratuita = 0;
+                                dto.WastePieces = 0;
                             }
                             else if(item.Number_Piece_Now > 0)
                             {
@@ -614,38 +614,6 @@ namespace RemaSoftware.WebApp.Helper
                                     Ddt_Out_ID = ddt_out_id,
                                     NumberPieces = item.Number_Piece_Now,
                                     TypePieces = PiecesType.RESOSCARTO
-                                });
-                                item.Number_Piece_Now = 0;
-                            }
-                        }
-                        
-                        if (dto.RipaGratuita > 0)
-                        {
-                            if (item.Number_Piece_Now >= dto.RipaGratuita)
-                            {
-                                item.Number_Piece_Now -= dto.RipaGratuita;
-                                item.Status = OrderStatusConstants.STATUS_PARTIALLY_COMPLETED;
-                                item.Ddt_Associations.Add(new Ddt_Association()
-                                {
-                                    Date = now,
-                                    Ddt_In_ID = item.Ddt_In_ID,
-                                    Ddt_Out_ID = ddt_out_id,
-                                    NumberPieces = dto.RipaGratuita,
-                                    TypePieces = PiecesType.RIPAGRATUITA
-                                });
-                                dto.WastePieces = 0;
-                            }
-                            else if(item.Number_Piece_Now > 0)
-                            {
-                                dto.RipaGratuita -= item.Number_Piece_Now;
-                                item.Status = OrderStatusConstants.STATUS_COMPLETED;
-                                item.Ddt_Associations.Add(new Ddt_Association()
-                                {
-                                    Date = now,
-                                    Ddt_In_ID = item.Ddt_In_ID,
-                                    Ddt_Out_ID = ddt_out_id,
-                                    NumberPieces = item.Number_Piece_Now,
-                                    TypePieces = PiecesType.RIPAGRATUITA
                                 });
                                 item.Number_Piece_Now = 0;
                             }
@@ -1048,10 +1016,6 @@ namespace RemaSoftware.WebApp.Helper
                             ddtAssociation.Ddt_In.Number_Piece_Now += ddtAssociation.NumberPieces;
                             ddtAssociation.Ddt_In.NumberReturnDiscard -= ddtAssociation.NumberPieces;
                             break;
-                        case PiecesType.RIPAGRATUITA: 
-                            ddtAssociation.Ddt_In.Number_Piece_Now += ddtAssociation.NumberPieces;
-                            ddtAssociation.Ddt_In.NumberFreeRepair -= ddtAssociation.NumberPieces;
-                            break;
                     }
 
                     ddtAssociation.Ddt_In.SubBatch.Status = OrderStatusConstants.STATUS_WORKING;
@@ -1197,17 +1161,16 @@ namespace RemaSoftware.WebApp.Helper
                 try
                 {
                     var ddtSupplier = _orderService.GetDdtSupplierById(model.DDTSupplierId);
-                    if (model.LostPieces + model.WastePieces + model.OkPieces + model.ZamaPieces + model.ResoScarto + model.RipaGratuita > ddtSupplier.Number_Piece)
+                    if (model.LostPieces + model.WastePieces + model.OkPieces + model.ZamaPieces + model.ResoScarto > ddtSupplier.Number_Piece)
                         throw new Exception("Il totale dei pezzi inserito è maggiore dei pezzi attualmente in azienda.");
-                    if (model.LostPieces + model.WastePieces + model.OkPieces + model.ZamaPieces + model.ResoScarto + model.RipaGratuita <= 0)
+                    if (model.LostPieces + model.WastePieces + model.OkPieces + model.ZamaPieces + model.ResoScarto <= 0)
                         throw new Exception("Nessun pezzo inserito.");
                     ddtSupplier.NumberReInPiece += model.OkPieces;
                     ddtSupplier.NumberLostPiece += model.LostPieces;
                     ddtSupplier.NumberWastePiece += model.WastePieces;
                     ddtSupplier.NumberZamaPiece += model.ZamaPieces;
                     ddtSupplier.NumberResoScarto += model.ResoScarto;
-                    ddtSupplier.NumberFreeRepair += model.RipaGratuita;
-                    ddtSupplier.Number_Piece -= (model.OkPieces + model.LostPieces + model.WastePieces + model.ZamaPieces + model.ResoScarto + model.RipaGratuita);
+                    ddtSupplier.Number_Piece -= (model.OkPieces + model.LostPieces + model.WastePieces + model.ZamaPieces + model.ResoScarto);
                     var ddts = new List<Ddt_In>();
                     
                     foreach (var item in ddtSupplier.DdtSupplierAssociations)
@@ -1240,15 +1203,14 @@ namespace RemaSoftware.WebApp.Helper
                     {
                         item.Ddt_Associations ??= new List<Ddt_Association>();
                         
-                        if (item.Number_Piece_ToSupplier >= model.OkPieces + model.WastePieces + model.LostPieces + model.ZamaPieces + model.ResoScarto + model.RipaGratuita)
+                        if (item.Number_Piece_ToSupplier >= model.OkPieces + model.WastePieces + model.LostPieces + model.ZamaPieces + model.ResoScarto)
                         {
                             item.Number_Piece_Now += model.OkPieces;
                             item.NumberLostPiece += model.LostPieces;
                             item.NumberWastePiece += model.WastePieces;
                             item.NumberZama += model.ZamaPieces;
                             item.NumberReturnDiscard += model.ResoScarto;
-                            item.NumberFreeRepair += model.RipaGratuita;
-                            item.Number_Piece_ToSupplier -= model.OkPieces + model.WastePieces + model.LostPieces + model.ZamaPieces + model.ResoScarto + model.RipaGratuita;
+                            item.Number_Piece_ToSupplier -= model.OkPieces + model.WastePieces + model.LostPieces + model.ZamaPieces + model.ResoScarto;
                             if (model.LostPieces > 0)
                             {
                                 item.Ddt_Associations.Add(new Ddt_Association()
@@ -1429,37 +1391,6 @@ namespace RemaSoftware.WebApp.Helper
                                     });
                                 }
                             }
-                            
-                            if (model.RipaGratuita > 0)
-                            {
-                                var ripaGratuita = 0;
-                                if (item.Number_Piece_ToSupplier >= model.RipaGratuita)
-                                {
-                                    ripaGratuita = model.RipaGratuita;
-                                    item.NumberFreeRepair += ripaGratuita;
-                                    item.Number_Piece_ToSupplier -= model.RipaGratuita;
-                                    model.RipaGratuita = 0;
-                                }
-                                else
-                                {
-                                    ripaGratuita = item.Number_Piece_ToSupplier;
-                                    item.NumberFreeRepair += ripaGratuita;
-                                    model.RipaGratuita -= item.Number_Piece_ToSupplier;
-                                    item.Number_Piece_ToSupplier = 0;
-                                }
-
-                                if (ripaGratuita > 0)
-                                {
-                                    item.Ddt_Associations.Add(new Ddt_Association()
-                                    {
-                                        Date = now,
-                                        Ddt_In_ID = item.Ddt_In_ID,
-                                        Ddt_Out_ID = ddt_out_id,
-                                        NumberPieces = ripaGratuita,
-                                        TypePieces = PiecesType.RIPAGRATUITA
-                                    });
-                                }
-                            }
 
                             if (model.OkPieces > 0)
                             {
@@ -1478,7 +1409,7 @@ namespace RemaSoftware.WebApp.Helper
                         }
                     }
 
-                    if (model.OkPieces + model.LostPieces + model.WastePieces + model.ZamaPieces + model.ResoScarto  + model.RipaGratuita > 0)
+                    if (model.OkPieces + model.LostPieces + model.WastePieces + model.ZamaPieces + model.ResoScarto > 0)
                         throw new Exception("Errore di ricarico. Contattare gli sviluppatori.");
                     _orderService.UpdateDDtInRange(ddts);
                     if (ddtSupplier.Number_Piece == 0)

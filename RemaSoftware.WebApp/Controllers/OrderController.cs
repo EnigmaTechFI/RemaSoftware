@@ -75,22 +75,39 @@ namespace RemaSoftware.WebApp.Controllers
             }
         }
         
-        [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl + "," +Roles.COQ) ]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Dipendente + "," + Roles.DipendenteControl + "," + Roles.COQ)]
         [HttpPost]
         public IActionResult SubBatchAtControl(QualityControlViewModel model)
         {
             try
             {
-                _orderHelper.RegisterBatchAtCOQ(model.subBatchId);
-                return RedirectToAction("QualityControl");
+                var subBatch = _orderHelper.RegisterBatchAtCOQ(model.subBatchId);
+
+                return Json(new 
+                { 
+                    success = true, 
+                    subBatch = new 
+                    {
+                        subBatchID = subBatch.SubBatchID,
+                        clientName = subBatch.Ddts_In[0].Product.Client.Name,
+                        remainingPieces = subBatch.Ddts_In.Sum(s => s.Number_Piece_Now),
+                        operationTimelineID = subBatch.OperationTimelines[0].OperationTimelineID,
+                        productSKU = subBatch.Ddts_In[0].Product.SKU
+                    }
+                });
             }
             catch (Exception e)
             {
-                _notyfService.Error(e.Message);
-                return RedirectToAction("QualityControl");
+                if (e.Message == "Lotto già registrato al controllo qualità.")
+                {
+                    var subBatch = _subBatchService.GetSubBatchById(model.subBatchId);
+                    return Json(new { success = false, message = e.Message, subBatch });
+                }
+                return Json(new { success = false, message = e.Message });
             }
-            
         }
+
+
         [Authorize(Roles = Roles.Admin +"," + Roles.Dipendente + "," + Roles.DipendenteControl + "," +Roles.COQ)]
         [HttpGet]
         public IActionResult QualityControl()

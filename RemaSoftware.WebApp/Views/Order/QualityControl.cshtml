@@ -20,7 +20,7 @@
   }
     setTimeout(function() {
       window.location.reload();
-    }, 60000);
+    }, 100000);
 </script>
 <h4 class="m-0 mb-4 font-weight-bold text-primary">Controllo qualità</h4>
 <div class="card shadow mb-4">
@@ -42,7 +42,7 @@
             {
                 if(@item.SubBatch.Ddts_In.Sum(s => s.Number_Piece_Now) != 0){
                     <div class="col-xl-3 col-md-6 mb-4">
-                        <div style="border-right: 0.25rem solid #1cc88a !important;" class="card border-left-success shadow h-100 py-2">
+                        <div style="border-right: 0.25rem solid #1cc88a !important;" class="card border-left-success shadow h-100 py-2" id="card-@item.SubBatchID">
                             <div class="card-body">
                                 <h5 class="text-center font-weight-bold text-black text-uppercase mb-1">Lotto: @item.SubBatchID</h5>
                                 <hr/>
@@ -83,7 +83,6 @@
                 <th scope="col">Persi</th>
                 <th scope="col">Zama scoperto</th>
                 <th scope="col">Reso scarto non lavorato</th>
-                <th scope="col">Riparazione gratuita</th>
                 <th scope="col">Stampa</th>
             </tr>
             </thead>
@@ -99,9 +98,8 @@
                     <td>@item.LostPieces</td>
                     <td>@item.ZamaPieces</td>
                     <td>@item.ResoScarto</td>
-                    <td>@item.RipaGratuita</td>
                     <td>
-                        <a onclick="printOldLabel('@item.SubBatchCode', '@item.OkPieces', '@item.LostPieces', '@item.WastePieces', '@item.ZamaPieces', '@item.ResoScarto', '@item.RipaGratuita', '@item.Client', '@item.SKU')" style="text-decoration: none">
+                        <a onclick="printOldLabel('@item.SubBatchCode', '@item.OkPieces', '@item.LostPieces', '@item.WastePieces', '@item.ZamaPieces', '@item.ResoScarto', '@item.Client', '@item.SKU')" style="text-decoration: none">
                             <i class="fas fa-print fa-lg pl-2" title="Stampa etichetta" style="cursor: pointer; color: #6d767e"></i>
                         </a>
                     </td>
@@ -123,8 +121,8 @@
             </div>
             <form method="post" asp-action="SubBatchAtControl" asp-controller="Order">
                 <div class="modal-body">
-                    <span class="mb-2">Inserisci il codice del lotto oppure avvicina il qr alla fotocamera</span>
-                    <input asp-for="subBatchId" class="mb-2 mt-2 form-control" id="subBatchId" placeholder="Codice lotto">
+                    <span class="mb-2">Inserisci il codice del lotto o avvicina il qr alla fotocamera o scannerizza il qr con il lettore</span>
+                    <input asp-for="subBatchId" class="mb-2 mt-2 form-control" id="subBatchId" placeholder="Codice lotto" value="">
                     <video class="mt-2" width="100%" style="position: relative; border-radius: 5px;" id="preview"></video>
                 </div>
                 <div class="modal-footer">
@@ -175,11 +173,6 @@
                     <label for="resoScarto_pieces">N° reso scarto non lavorato:</label>
                     <input min="0" value="0" type="number" class="form-control" id="resoScarto_pieces" placeholder="N° reso scarto non lavorato:">
                 </div>
-
-                <div class="form-group">
-                    <label for="ripaGratuita_pieces">N° riparazione gratuita:</label>
-                    <input min="0" value="0" type="number" class="form-control" id="ripaGratuita_pieces" placeholder="N° riparazione gratuita:">
-                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
@@ -217,10 +210,86 @@
     <script src="~/js/dymo.connect.framework.js" type="text/javascript" charset="UTF-8"> </script>
 
     <script>
-    function printQRCode(id, ok, persi, scarti, zama, resoscarto, ripagratuita){
+
+        $("form").submit(function (event) {
+            event.preventDefault();
+
+            var subBatchId = $('#subBatchId').val();
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SubBatchAtControl", "Order")',
+                data: { subBatchId: subBatchId },
+                success: function (response) {
+                    var card = $("#card-" + response.subBatch.subBatchID);
+
+                    if (card.length) {
+                        card.removeClass("border-left-success border-left-danger border-left-warning");
+                    }
+
+                    if (response.success) {
+                        if (!card.length) {
+                            card = $(`
+                                    <div class="col-xl-3 col-md-6 mb-4">
+                                        <div class="card shadow h-100 py-2" id="card-${response.subBatch.subBatchID}" style="border: 0.25rem solid #4e73df;">
+                                            <div class="card-body">
+                                                <h5 class="text-center font-weight-bold text-black text-uppercase mb-1">Lotto: ${response.subBatch.subBatchID}</h5>
+                                                <hr/>
+                                                <div>
+                                                    <span><i>- Cliente: </i>${response.subBatch.clientName}</span><br/>
+                                                    <span><i>- Pezzi rimanenti: </i>${response.subBatch.remainingPieces}</span><br/>
+                                                </div>
+                                                <hr/>
+                                                <div class="text-center align-items-center">
+                                                    <a class="text-white btn btn-primary" onclick="setSubBatchId('${response.subBatch.subBatchID}', '${response.subBatch.remainingPieces}', '${response.subBatch.operationTimelineID}', '${response.subBatch.clientName}', '${response.subBatch.productSKU}')" data-toggle="modal" data-target="#end-subbatch">Concludi ordine</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `);
+                            $(".row").append(card);
+                        } else {
+                            card.find('span').eq(0).html(`<i>- Cliente: </i>${response.subBatch.clientName}`);
+                            card.find('span').eq(1).html(`<i>- Pezzi rimanenti: </i>${response.subBatch.remainingPieces}`);
+                        }
+
+                        $('html, body').animate({
+                            scrollTop: card.offset().top
+                        }, 1000, function() {
+                            $('#add-subbatch').modal('hide');
+                        });
+                    } else {
+                        if (response.message === "Lotto già registrato al controllo qualità.") {
+                            if (card.length) {
+                                card.css({
+                                    "border": "0.25rem solid #4e73df",
+                                });
+
+                                $('html, body').animate({
+                                    scrollTop: card.offset().top
+                                }, 1000, function() {
+                                    $('#add-subbatch').modal('hide');
+                                });
+                            }
+                        } else {
+                            toastNotifyError(response.message);
+                        }
+                    }
+                },
+                error: function () {
+                    toastNotifyError("Errore durante la registrazione del lotto.");
+                }
+            });
+        });
+        
+        $('#add-subbatch').on('shown.bs.modal', function () {
+        $('#subBatchId').trigger('focus');
+    });
+        
+    function printQRCode(id, ok, persi, scarti, zama, resoscarto){
       var printers = dymo.label.framework.getPrinters();
       if (printers.length == 0 || !printers[0].isConnected){
-        alert("Nessuna stampante trovata.");
+            toastNotifyError("Nessuna stampante trovata.");
         return
       }
       var label = dymo.label.framework.openLabelFile("C:\\Program Files (x86)\\DYMO\\DYMO Connect\\RemaDDT.dymo");
@@ -236,18 +305,17 @@
           etichetta += "\nZAMA: " + zama
       if (parseInt(resoscarto))
           etichetta += "\nRESO SCARTO NON LAVORATO: " + resoscarto
-      if (parseInt(ripagratuita))
-          etichetta += "\nRIPARAZIONE GRATUITA: " + ripagratuita
       label.setObjectText("TextObject",  etichetta);
       label.print(printers[0].name); 
       location.reload()
     } 
+    
     </script>
     <script>
-    function printOldLabel(id, ok, persi, scarti, zama, resoscarto, ripagratuita, cliente, product){
+    function printOldLabel(id, ok, persi, scarti, zama, resoscarto, cliente, product){
       var printers = dymo.label.framework.getPrinters();
       if (printers.length == 0 || !printers[0].isConnected){
-        alert("Nessuna stampante trovata.");
+          toastNotifyError("Nessuna stampante trovata.");
         return
       }
       var label = dymo.label.framework.openLabelFile("C:\\Program Files (x86)\\DYMO\\DYMO Connect\\RemaDDT.dymo");
@@ -263,8 +331,6 @@
           etichetta += "\nZAMA: " + zama
       if (parseInt(resoscarto))
           etichetta += "\nRESO SCARTO NON LAVORATO: " + resoscarto
-      if (parseInt(ripagratuita))
-          etichetta += "\nRIPARAZIONE GRATUITA: " + ripagratuita
       label.setObjectText("TextObject",  etichetta);
       label.print(printers[0].name); 
       location.reload()
@@ -280,7 +346,6 @@
     let piecesPersi;
     let piecesZama;
     let piecesResoScarto;
-    let piecesRipaGratuita;
 
     let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
     scanner.addListener('scan', function (content) {
@@ -289,7 +354,7 @@
     let camera;
     Instascan.Camera.getCameras().then(function (cameras) {
       if (cameras.length == 0) {
-          alert('Videocamera non rilevata. Provare ad aggiornare la pagina');
+          toastNotifyError("Videocamera non rilevata. Provare ad aggiornare la pagina.");
       }
       else{
           camera = cameras[0]
@@ -326,7 +391,6 @@
           wastePieces: document.getElementById("waste_pieces").value,
           zamaPieces: document.getElementById("zama_pieces").value,
           ResoScarto: document.getElementById("resoScarto_pieces").value,
-          RipaGratuita: document.getElementById("ripaGratuita_pieces").value,
           operationTimeLineId : operationTimeLineId
       }
     
@@ -341,7 +405,7 @@
                   toastNotifySuccess(response.toastMessage);
                   $('#end-subbatch').modal('hide');
                   if (isFlagChecked) {
-                    printQRCode(subBatchToEndId, document.getElementById("ok_pieces").value, document.getElementById("lost_pieces").value, document.getElementById("waste_pieces").value, document.getElementById("zama_pieces").value, document.getElementById("resoScarto_pieces").value, document.getElementById("ripaGratuita_pieces").value);
+                    printQRCode(subBatchToEndId, document.getElementById("ok_pieces").value, document.getElementById("lost_pieces").value, document.getElementById("waste_pieces").value, document.getElementById("zama_pieces").value, document.getElementById("resoScarto_pieces").value);
                   }
                   $(".loader-cont").hide()
                   location.reload()
