@@ -56,9 +56,17 @@
             </div>
             <div class="form-group">
                 <div class="form-check">
-                    <input asp-for="Ddt_In.IsReso" class="form-check-input" type="checkbox" id="gridCheck1">
+                    <input asp-for="Ddt_In.IsReso" class="form-check-input" type="checkbox" id="gridCheck1" onclick="toggleCheckboxes(this, 'gridCheck2')">
                     <label class="form-check-label" for="gridCheck1">
-                        Selezionare se si sta inserendo un reso
+                        Selezionare se si sta inserendo un reso non lavorato
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-check">
+                    <input asp-for="Ddt_In.FreeRepair" class="form-check-input" type="checkbox" id="gridCheck2" onclick="toggleCheckboxes(this, 'gridCheck1')">
+                    <label class="form-check-label" for="gridCheck2">
+                        Selezionare se si sta inserendo una riparazione gratuita
                     </label>
                 </div>
             </div>
@@ -170,6 +178,13 @@
                 setTimeout(function(){
                     clicked = false;
                 }, 1500);
+            }
+        }
+
+        function toggleCheckboxes(currentCheckbox, otherCheckboxId) {
+            const otherCheckbox = document.getElementById(otherCheckboxId);
+            if (currentCheckbox.checked) {
+                otherCheckbox.checked = false;
             }
         }
 

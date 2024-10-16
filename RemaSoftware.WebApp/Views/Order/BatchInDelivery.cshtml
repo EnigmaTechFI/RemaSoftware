@@ -28,7 +28,7 @@
                     <th>N° Mancanti</th>
                     <th>N° Zama scoperto</th>
                     <th>N° Reso scarto non lavorato</th>
-                    <th>N° Riparazione gratuita</th>
+                    <th>N° Reso non lavorato / N° Riparazione gratuita</th>
                     <th class="text-center">Azioni</th>
                 </tr>
                 </thead>
@@ -62,7 +62,7 @@
                     <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.MANCANTI).Sum(s => s.NumberPieces)</td>
                     <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.ZAMA).Sum(s => s.NumberPieces)</td>
                     <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.RESOSCARTO).Sum(s => s.NumberPieces)</td>
-                    <td>@item.Ddt_Associations.Where(s => s.TypePieces == PiecesType.RIPAGRATUITA).Sum(s => s.NumberPieces)</td>
+                    <td>@item.Ddt_Associations.Where(s => s.Ddt_In.IsReso || s.Ddt_In.FreeRepair).Sum(s => s.NumberPieces)</td>
                     <td class="text-center">
                         <a style="text-decoration: none" asp-action="EmitDDT" asp-controller="Order" asp-route-id="@item.Ddt_Out_ID">
                             <i class="fas fa-truck fa-lg pl-2" style="cursor: pointer; color: #6d767e;" title="Emetti DDT"></i>
@@ -156,7 +156,8 @@
                 { "searchable": false, "orderable": true, "targets": 5 },
                 { "searchable": false, "orderable": true, "targets": 6 },
                 { "searchable": false, "orderable": true, "targets": 7 },
-                { "searchable": false, "orderable": false, "targets": 8 },
+                { "searchable": false, "orderable": true, "targets": 8 },
+                { "searchable": false, "orderable": false, "targets": 9 },
               ]
         });
     });

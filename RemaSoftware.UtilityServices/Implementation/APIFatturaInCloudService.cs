@@ -163,9 +163,6 @@ namespace RemaSoftware.UtilityServices.Implementation
                     case PiecesType.RESOSCARTO:
                         description =  "Reso scarto non lavorato\n" + item.Ddt_In.Description;
                         break;
-                    case PiecesType.RIPAGRATUITA:
-                        description =  "Riparazione gratuita\n" + item.Ddt_In.Description;
-                        break;
                 }
 
                 var p = products.SingleOrDefault(s => s.Code == item.Ddt_In.Code && s.Description == description);
