@@ -33,7 +33,7 @@ namespace RemaSoftware.Domain.Services.Impl
             var a = _dbContext.Ddts_In
                 .Include(s => s.SubBatch)
                 .ThenInclude(s => s.Batch)
-                .Where(w => w.DataIn.Month == DateTime.Now.Month && w.IsReso == false)
+                .Where(w => w.DataIn.Month == DateTime.Now.Month && w.IsReso == false && w.FreeRepair == false)
                 .Sum(ord => ord.Price_Uni * ord.Number_Piece);
             return (decimal) a;
         }

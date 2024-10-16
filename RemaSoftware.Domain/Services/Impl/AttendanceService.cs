@@ -509,7 +509,7 @@ namespace RemaSoftware.Domain.Services.Impl;
                           else if (employee.NumberHour == 35)
                               dateOut = dateOutAlternative1;
 
-                          if (employee.TypePosition == TypePosition.MaternitaFacoltativa)
+                          if (employee.TypePosition == TypePosition.MaternitaFacoltativa && employee.NumberHour == 40 )
                           {
                               dateOut = dateOutMatFac;
                               if (dateOut.DayOfWeek == DayOfWeek.Friday)
@@ -543,7 +543,7 @@ namespace RemaSoftware.Domain.Services.Impl;
                           }
                           else if(employee.TypePosition == TypePosition.MaternitaFacoltativa)
                           {
-                              newAttendance.Type = "MaternitaFacoltativa";
+                              newAttendance.Type = "Maternita facoltativa";
                           }
                           else
                           {

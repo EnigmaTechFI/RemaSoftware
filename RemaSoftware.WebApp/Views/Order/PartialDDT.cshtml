@@ -22,7 +22,8 @@
                     <th scope="col">Numero pezzi</th>
                     <th scope="col">Tipo</th>
                     <th scope="col">Descrizione</th>
-                    <th scope="col">N° Reso non lavorato / N° Riparazione gratuita</th>
+                    <th scope="col">N° Reso non lavorato</th>
+                    <th scope="col">N° Riparazione gratuita</th>
                     <th class="text-center" scope="col">Annulla</th>
                 </tr>
                 </thead>
@@ -41,8 +42,11 @@
                         <td>@Model.PartialDdtDtos[i].DdtAssociation.TypePieces</td>
                         <td><p style="margin-top: 3px; font-size: 13px;">@Model.PartialDdtDtos[i].DdtAssociation.Ddt_In.Description</p></td>
                         <td>
-                            @(Model.PartialDdtDtos[i].DdtAssociation.Ddt_In.FreeRepair || Model.PartialDdtDtos[i].DdtAssociation.Ddt_In.IsReso ? "SI" : "NO")
-                        </td>                        
+                            @(Model.PartialDdtDtos[i].DdtAssociation.Ddt_In.IsReso ? "SI" : "NO")
+                        </td>
+                        <td>
+                            @(Model.PartialDdtDtos[i].DdtAssociation.Ddt_In.FreeRepair ? "SI" : "NO")
+                        </td>
                         <td class="text-center"><i class="fas fa-trash fa-lg pl-2 del-stock-article" style="cursor: pointer; color: #6d767e;" title="Elimina" data-toggle="modal" data-target="#confirm-del-modal" onclick="SetDDTAssociationId('@Model.PartialDdtDtos[i].DdtAssociation.ID')"></i></td>
                     </tr>
                 }
