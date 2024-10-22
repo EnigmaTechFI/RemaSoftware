@@ -543,7 +543,7 @@ namespace RemaSoftware.Domain.Services.Impl;
                           }
                           else if(employee.TypePosition == TypePosition.MaternitaFacoltativa)
                           {
-                              newAttendance.Type = "Maternita facoltativa";
+                              newAttendance.Type = "MaternitaFacoltativa";
                           }
                           else
                           {
