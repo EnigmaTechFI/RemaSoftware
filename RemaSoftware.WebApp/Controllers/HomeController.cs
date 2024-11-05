@@ -39,7 +39,8 @@ namespace RemaSoftware.WebApp.Controllers
                 AreaChartData = _dashboardHelper.GetDataForDashboardAreaChart(),
                 OrderNearToDeadline = _orderService.GetOrdersNearToDeadlineTakeTop(5),
                 StockArticleAddRemQty = _dashboardHelper.GetAllWarehouseStocksForDashboard(),
-                BarChartData = _dashboardHelper.GetDataForBarChartDashboard()
+                BarChartData = _dashboardHelper.GetDataForBarChartDashboard(),
+                AreaPiecesChartData = _dashboardHelper.GetDataForDashboardAreaChartPieces(),
             };
             return View(vm);
         }

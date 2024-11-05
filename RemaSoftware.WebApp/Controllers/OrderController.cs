@@ -525,7 +525,7 @@ namespace RemaSoftware.WebApp.Controllers
                 if (validationResult != "")
                 {
                     _notyfService.Error(validationResult);
-                    return RedirectToAction("ExitToSupplier", new{id =model.SubBatch.SubBatchID});
+                    return RedirectToAction("ExitToSupplier", new{id = model.SubBatch.SubBatchID});
                 }
                 var result = _orderHelper.RegisterExitSubBatch(model);
                 return RedirectToAction("SubBatchMonitoring", new { id = model.SubBatch.SubBatchID, url = result});

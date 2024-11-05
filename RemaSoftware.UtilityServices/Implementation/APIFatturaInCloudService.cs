@@ -329,7 +329,7 @@ namespace RemaSoftware.UtilityServices.Implementation
                     Qty = item.NumberPieces,
                     Name = item.Ddt_In.Product.Name,
                     Code = item.Ddt_In.Code,
-                    Description = item.Ddt_In.Description ,
+                    Description = item.Ddt_In.Product.SKU + "\n" + item.Ddt_In.Description ,
                     Stock = false,
                     NetPrice = 0,
                     Vat = new VatType()

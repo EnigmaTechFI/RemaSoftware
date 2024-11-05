@@ -1,7 +1,7 @@
 ﻿@model RemaSoftware.WebApp.Models.EmployeeViewModel.EmployeeListViewModel
 
 @{
-    ViewData["Title"] = "Lista impiegati";
+    ViewData["Title"] = "Lista dipendenti";
 }
 
 <link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css"/>
@@ -9,9 +9,9 @@
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
     <div class="d-sm-flex align-items-center justify-content-between card-header py-3">
-        <h3 class="m-0 font-weight-bold text-primary">Lista impiegati</h3>
+        <h3 class="m-0 font-weight-bold text-primary">Lista dipendenti</h3>
         <div>
-            <button class="btn btn-primary" type="button" onclick="location.href='@Url.Action("NewEmployee", "Employee")'">Aggiungi impiegato</button>
+            <button class="btn btn-primary" type="button" onclick="location.href='@Url.Action("NewEmployee", "Employee")'">Aggiungi dipendente</button>
         </div>
     </div>
     <div class="card-body">
@@ -76,7 +76,7 @@
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
-            <div class="modal-body">Sei sicuro di voler eliminare l'impiegato?</div>
+            <div class="modal-body">Sei sicuro di voler eliminare il dipendente?</div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
                 <button class="btn btn-danger" onclick="DeleteEmployee()">Elimina</button>
@@ -146,7 +146,7 @@
                 }
             },
             error: function (data){
-                toastNotifyError("Errore durante l'eliminazione dell'impiegato.");
+                toastNotifyError("Errore durante l'eliminazione del dipendente.");
             }
         });
     }
@@ -154,6 +154,3 @@
     
     </script>>
 }
-
-
-    
