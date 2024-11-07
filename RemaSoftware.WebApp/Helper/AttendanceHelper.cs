@@ -199,47 +199,47 @@ public class AttendanceHelper
             
             for (int j = 0; j < uniqueTypes.Count(); j++)
             {
-                var sp = "U5176" + mese + anno + employee.Number + "0";
+                var sp = "U5176" + mese + anno + employee.Number;
                 int numberOfDaysInMonth = DateTime.DaysInMonth(year, month);
 
                 if (uniqueTypes[j] == "Presenza")
-                    sp += "3000000000";
+                    sp += "03000000000";
                 else if (uniqueTypes[j] == "Malattia")
-                    sp += "9090000000";
+                    sp += "09090000000";
                 else if (uniqueTypes[j] == "Festivo")
-                    sp += "3010000000";
+                    sp += "03010000000";
                 else if (uniqueTypes[j] == "Ferie")
-                    sp += "3020000000";
+                    sp += "03020000000";
                 else if (uniqueTypes[j] == "StraordinarioNotturno")
-                    sp += "3549020000";
+                    sp += "03549020000";
                 else if (uniqueTypes[j] == "StraordinarioOrdinario")
-                    sp += "3549050000";
+                    sp += "03549050000";
                 else if (uniqueTypes[j] == "StraordinarioSabato")
-                    sp += "3539010000";
+                    sp += "03539010000";
                 else if (uniqueTypes[j] == "CassaIntegrazione")
-                    sp += "6767000000";
+                    sp += "67670000000";
                 else if (uniqueTypes[j] == "Maternita")
-                    sp += "3110000000";
+                    sp += "03110000000";
                 else if (uniqueTypes[j] == "MaternitaFacoltativa")
-                    sp += "6917000000";
+                    sp += "06917000000";
                 else if (uniqueTypes[j] == "LavoroFestivo")
-                    sp += "3610000000";
+                    sp += "03610000000";
                 else if (uniqueTypes[j] == "Supplementare")
-                    sp += "3620000000";
+                    sp += "03620000000";
                 else if (uniqueTypes[j] == "MaggiorazioneNotturno")
-                    sp += "3490000000";
+                    sp += "03490000000";
                 else if (uniqueTypes[j] == "Permesso104")
-                    sp += "7360000000";
+                    sp += "07360000000";
                 else if (uniqueTypes[j] == "InfortunioIniziale")
-                    sp += "3130000000";
+                    sp += "03130000000";
                 else if (uniqueTypes[j] == "InfortunioProlungato")
-                    sp += "3100000000";
+                    sp += "03100000000";
                 else if (uniqueTypes[j] == "CongedoMatrimoniale")
-                    sp += "3140000000";
+                    sp += "03140000000";
                 else if (uniqueTypes[j] == "Paternita")
-                    sp += "6680000000";
+                    sp += "06680000000";
                 else
-                    sp += "0000000000";
+                    sp += "00000000000";
                 
                 
                 for (int u = 1; u <= numberOfDaysInMonth; u++)

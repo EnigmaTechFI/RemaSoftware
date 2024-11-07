@@ -36,6 +36,7 @@
                     <th>Arrivo ordine</th>
                     <th>Scadenza ordine</th>
                     <th>Descrizione</th>
+                    <th>Note</th>
                     <th id="imageId" style="display: none; padding: 35px 30px 15px 10px; position: relative;">Immagini</th>
                     <th>Status</th>
                     <th>Azioni</th>
@@ -45,26 +46,26 @@
                 @foreach (var ddt in Model.Ddt_In)
                 {
                     <tr id="ddt-@ddt.Ddt_In_ID">
-                        <td>@ddt.SubBatchID</td>
-                        <td>@ddt.Product.Client.Name</td>
-                        <td>@ddt.Code</td>
-                        <td>@ddt.Product.SKU</td>
-                        <td>@ddt.Product.Name</td>
-                        <td id="pieces-number-@ddt.Ddt_In_ID">@ddt.Number_Piece</td>
-                        <td id="pieces-number-now-@ddt.Ddt_In_ID">
+                        <td style="font-size: 13px;">@ddt.SubBatchID</td>
+                        <td style="font-size: 13px;">@ddt.Product.Client.Name</td>
+                        <td style="font-size: 13px;">@ddt.Code</td>
+                        <td style="font-size: 13px;">@ddt.Product.SKU</td>
+                        <td style="font-size: 13px;">@ddt.Product.Name</td>
+                        <td id="pieces-number-@ddt.Ddt_In_ID" style="font-size: 13px;">@ddt.Number_Piece</td>
+                        <td id="pieces-number-now-@ddt.Ddt_In_ID" style="font-size: 12px;">
                             @(ddt.Number_Piece_Now + ddt.Number_Piece_ToSupplier)
                         </td>
-                        <td id="pieces-number-supplier-@ddt.Ddt_In_ID">@ddt.Number_Piece_ToSupplier</td>
-                        <td>&euro;@ddt.Price_Uni.ToString("0.000")</td>
+                        <td id="pieces-number-supplier-@ddt.Ddt_In_ID" style="font-size: 12px;">@ddt.Number_Piece_ToSupplier</td>
+                        <td style="font-size: 12px;">&euro;@ddt.Price_Uni.ToString("0.000")</td>
                         @if (@ddt.SubBatch.Batch.BatchOperations.Count > 2)
                         {
-                            <td onclick="showOperation(@ddt.SubBatchID)" style="cursor: pointer;">
+                            <td onclick="showOperation(@ddt.SubBatchID)" style="cursor: pointer; font-size:  12px;">
                                 Operazioni associate
                             </td>
                         }
                         else
                         {
-                            <td style="font-size:  13px;">
+                            <td style="font-size:  12px;">
                                 @foreach (var operation in ddt.SubBatch.Batch.BatchOperations)
                                 {
                                     <div>
@@ -80,9 +81,14 @@
                                 }
                             </td>
                         }
-                        <td>@ddt.DataIn.ToString("dd/MM/yy")</td>
-                        <td id="dataend-@ddt.Ddt_In_ID">@ddt.DataOut.ToString("dd/MM/yy")</td>
-                        <td id="description-@ddt.Ddt_In_ID" style="font-size: 13px;">@ddt.Description</td>
+                        <td style="font-size:  12px;">@ddt.DataIn.ToString("dd/MM/yy")</td>
+                        <td id="dataend-@ddt.Ddt_In_ID" style="font-size:  12px;">@ddt.DataOut.ToString("dd/MM/yy")</td>
+                        <td id="description-@ddt.Ddt_In_ID" style="font-size: 12px;">
+                            @ddt.Description
+                        </td>
+                        <td id="pieces-number-supplier-@ddt.Ddt_In_ID" style="font-size: 12px;">
+                            @ddt.Note
+                        </td>
                         <td class="classImage" style="display: none; padding:  0px !important;">
                             <img class="image-class d-none" width="140px;" data-src="@Model.BasePathImages@ddt.Product.FileName"/>
                         </td>
@@ -425,8 +431,9 @@
                 { "searchable": true, "orderable": false, "targets": 9 },
                 { "searchable": false, "orderable": true, "targets": 10, "type": "date-eu" },
                 { "searchable": false, "orderable": true, "targets": 11, "type": "date-eu" },
-                { "searchable": false, "orderable": false, "targets": 12 },
-                { "searchable": true, "orderable": false, "targets": 13 },
+                { "searchable": true, "orderable": true, "targets": 12 },
+                { "searchable": true, "orderable": true, "targets": 12 },
+                { "searchable": false, "orderable": false, "targets": 13 },
                 { "searchable": false, "orderable": false, "targets": 14 },
                 { "searchable": false, "orderable": false, "targets": 15 },
               ]
@@ -499,7 +506,7 @@
         try {
             const originalTable = document.getElementById('table-ddt');
             const clonedTable = originalTable.cloneNode(true);
-            const columnsToRemove = [8, 14, 15];
+            const columnsToRemove = [8, 15, 16];
 
             const headerCells = clonedTable.querySelectorAll('thead tr th');
             columnsToRemove.sort((a, b) => b - a).forEach(index => {

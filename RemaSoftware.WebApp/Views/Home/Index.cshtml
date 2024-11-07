@@ -211,7 +211,7 @@
                 </div>
             </div>
 
-            <div class="card shadow card-bordered d-none">
+            <div class="card shadow card-bordered">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Panoramica pezzi in uscita</h6>
                 </div>
@@ -489,15 +489,16 @@
         var borderColor = '#e9ecef';
         var colors = ['#007bff', '#17a2b8', '#ffa500', '#ffc107', '#20c997', '#28a745', '#dc3545', '#6f42c1', '#D7ECFB'];
 
-        var buoniData = @Html.Raw(Json.Serialize(Model.AreaPiecesChartData.Select(x => x.Value.Number_Piece)));
-        var persiData = @Html.Raw(Json.Serialize(Model.AreaPiecesChartData.Select(x => -x.Value.NumberLostPiece)));
-        var scartiData = @Html.Raw(Json.Serialize(Model.AreaPiecesChartData.Select(x => -x.Value.NumberWastePiece)));
-        var mancantiData = @Html.Raw(Json.Serialize(Model.AreaPiecesChartData.Select(x => -x.Value.NumberMissingPiece)));
-        var zamaData = @Html.Raw(Json.Serialize(Model.AreaPiecesChartData.Select(x => -x.Value.NumberZama)));
-        var resoScartoData = @Html.Raw(Json.Serialize(Model.AreaPiecesChartData.Select(x => -x.Value.NumberReturnDiscard)));
+        var persiData = @Html.Raw(Json.Serialize(Model.AreaPiecesChartData.Select(x => x.Value.NumberLostPiece)));
+        var scartiData = @Html.Raw(Json.Serialize(Model.AreaPiecesChartData.Select(x => x.Value.NumberWastePiece)));
+        var mancantiData = @Html.Raw(Json.Serialize(Model.AreaPiecesChartData.Select(x => x.Value.NumberMissingPiece)));
+        var zamaData = @Html.Raw(Json.Serialize(Model.AreaPiecesChartData.Select(x => x.Value.NumberZama)));
+        var resoScartoData = @Html.Raw(Json.Serialize(Model.AreaPiecesChartData.Select(x => x.Value.NumberReturnDiscard)));
         var resoData = @Html.Raw(Json.Serialize(Model.AreaPiecesChartData.Select(x => x.Value.NumberResoPiece)));
         var freeRepairData = @Html.Raw(Json.Serialize(Model.AreaPiecesChartData.Select(x => x.Value.NumberFreeRepairPiece)));
-        var totaleData = buoniData.map((v, i) => v + scartiData[i] + persiData[i] + zamaData[i] + resoScartoData[i] + resoData[i] + freeRepairData[i]);
+        var buoniDataTmp = @Html.Raw(Json.Serialize(Model.AreaPiecesChartData.Select(x => x.Value.Number_Piece)));
+        var buoniData = buoniDataTmp.map((v, i) => v - freeRepairData[i] - resoData[i]);
+        var totaleData = buoniData.map((v, i) => v + scartiData[i] + persiData[i] + mancantiData[i] + zamaData[i] + resoScartoData[i] + resoData[i] + freeRepairData[i]);
 
         var maxDataValue = Math.max(...totaleData);
         var calculatedHeight = Math.max(300, Math.min(maxDataValue * 10, 400));

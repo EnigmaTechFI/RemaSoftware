@@ -62,68 +62,72 @@ namespace RemaSoftware.WebApp.Helper
         {
             CultureInfo cultureInfo = new CultureInfo("it-IT");
 
+            // Preleva i pezzi da Ddts_In (solo quelli FreeRepair e Reso)
             var deliveredOrders = _dbContext.Ddts_In
                 .Where(w => w.DataIn.Year == DateTime.Now.Year && w.Status == OrderStatusConstants.STATUS_DELIVERED)
-                .Select(s => new
+                .GroupBy(s => s.DataIn.Month)
+                .Select(g => new
                 {
-                    Month = s.DataIn.ToString("MMMM", cultureInfo),
-                    s.IsReso,
-                    s.FreeRepair,
-                    Number_Piece = s.Number_Piece,
-                    NumberLostPiece = s.NumberLostPiece,
-                    NumberMissingPiece = s.NumberMissingPiece,
-                    NumberWastePiece = s.NumberWastePiece,
-                    NumberZama = s.NumberZama,
-                    NumberReturnDiscard = s.NumberReturnDiscard
+                    Month = g.Key,
+                    ResoPieces = g.Where(x => x.IsReso).Sum(x => x.Number_Piece),
+                    FreeRepairPieces = g.Where(x => x.FreeRepair).Sum(x => x.Number_Piece),
+                    LostPieces = g.Where(x => x.NumberLostPiece > 0).Sum(x => x.NumberLostPiece),
+                    MissingPieces = g.Where(x => x.NumberMissingPiece > 0).Sum(x => x.NumberMissingPiece),
+                    WastePieces = g.Where(x => x.NumberWastePiece > 0).Sum(x => x.NumberWastePiece),
+                    ZamaPieces = g.Where(x => x.NumberZama > 0).Sum(x => x.NumberZama),
+                    ReturnDiscardPieces = g.Where(x => x.NumberReturnDiscard > 0).Sum(x => x.NumberReturnDiscard)
                 })
                 .ToList();
 
-            var allData = deliveredOrders
-                .GroupBy(gb => gb.Month)
-                .Select(s => new ChartDataPiecesObject
+            // Preleva i dati da Ddt_Associations (già aggregato per tipo di pezzo)
+            var associationOrders = _dbContext.Ddt_Associations
+                .Where(da => da.Ddt_In.DataIn.Year == DateTime.Now.Year)
+                .GroupBy(da => new { da.Ddt_In.DataIn.Month, da.TypePieces })
+                .Select(g => new
                 {
-                    Label = s.Key,
+                    g.Key.Month,
+                    g.Key.TypePieces,
+                    TotalPieces = g.Sum(x => x.NumberPieces)
+                })
+                .ToList();
+
+            // Prepara i dati combinati
+            var allData = new List<ChartDataPiecesObject>();
+
+            for (int month = 1; month <= 12; month++)
+            {
+                // Ottieni i dati aggregati da Ddts_In
+                var deliveredData = deliveredOrders.FirstOrDefault(x => x.Month == month);
+
+                // Ottieni i dati aggregati da Ddt_Associations per ciascun tipo
+                var buonPieces = associationOrders.FirstOrDefault(x => x.Month == month && x.TypePieces == PiecesType.BUONI)?.TotalPieces ?? 0;
+                var persiPieces = associationOrders.FirstOrDefault(x => x.Month == month && x.TypePieces == PiecesType.PERSI)?.TotalPieces ?? 0;
+                var mancantiPieces = associationOrders.FirstOrDefault(x => x.Month == month && x.TypePieces == PiecesType.MANCANTI)?.TotalPieces ?? 0;
+                var scartiPieces = associationOrders.FirstOrDefault(x => x.Month == month && x.TypePieces == PiecesType.SCARTI)?.TotalPieces ?? 0;
+                var zamaPieces = associationOrders.FirstOrDefault(x => x.Month == month && x.TypePieces == PiecesType.ZAMA)?.TotalPieces ?? 0;
+                var resoScartoPieces = associationOrders.FirstOrDefault(x => x.Month == month && x.TypePieces == PiecesType.RESOSCARTO)?.TotalPieces ?? 0;
+
+                // Aggiungi i dati nel risultato
+                allData.Add(new ChartDataPiecesObject
+                {
+                    Label = cultureInfo.DateTimeFormat.GetMonthName(month),
                     Value = new PieceData
                     {
-                        Number_Piece = s.Where(x => !x.IsReso && !x.FreeRepair).Sum(sum => sum.Number_Piece),
-                        NumberResoPiece = s.Where(x => x.IsReso).Sum(sum => sum.Number_Piece),
-                        NumberFreeRepairPiece = s.Where(x => x.FreeRepair).Sum(sum => sum.Number_Piece),
-                        NumberLostPiece = s.Sum(sum => sum.NumberLostPiece),
-                        NumberMissingPiece = s.Sum(sum => sum.NumberMissingPiece),
-                        NumberWastePiece = s.Sum(sum => sum.NumberWastePiece),
-                        NumberZama = s.Sum(sum => sum.NumberZama),
-                        NumberReturnDiscard = s.Sum(sum => sum.NumberReturnDiscard)
-                    },
-                })
-                .ToList();
-
-            var allMonths = cultureInfo.DateTimeFormat.MonthNames.Take(12).ToList();
-            foreach (var month in allMonths)
-            {
-                if (!allData.Any(x => x.Label == month))
-                {
-                    allData.Add(new ChartDataPiecesObject
-                    {
-                        Label = month,
-                        Value = new PieceData
-                        {
-                            Number_Piece = 0,
-                            NumberLostPiece = 0,
-                            NumberMissingPiece = 0,
-                            NumberWastePiece = 0,
-                            NumberZama = 0,
-                            NumberReturnDiscard = 0,
-                            NumberResoPiece = 0,
-                            NumberFreeRepairPiece = 0
-                        },
-                    });
-                }
+                        Number_Piece = buonPieces,
+                        NumberResoPiece = deliveredData?.ResoPieces ?? 0,
+                        NumberFreeRepairPiece = deliveredData?.FreeRepairPieces ?? 0,
+                        NumberLostPiece = persiPieces,
+                        NumberMissingPiece = mancantiPieces,
+                        NumberWastePiece = scartiPieces,
+                        NumberZama = zamaPieces,
+                        NumberReturnDiscard = resoScartoPieces
+                    }
+                });
             }
 
-            return allData
-                .OrderBy(ob => DateTime.ParseExact(ob.Label, "MMMM", cultureInfo))
-                .ToList();
+            return allData;
         }
+
         
         private void SetBackgroundColorsForPieChart(ref List<ChartDataObject> chartDataObjects)
         {
