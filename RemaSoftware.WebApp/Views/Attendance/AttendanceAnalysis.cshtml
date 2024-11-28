@@ -50,13 +50,14 @@
         </div>
         <div class="row " style="margin-left: -1.5%; margin-bottom: 1.1% !important;">
             <div class="ml-5" style="width: 20px; height: 20px; background-color: #6f00ff; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Magg. notturno</div>
-            <div class="ml-5" style="width: 20px; height: 20px; background-color: #808080; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Permesso 104</div>
-            <div class="ml-5" style="width: 20px; height: 20px; background-color: #ffff66; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Infortunio iniziale</div>
-            <div class="ml-5" style="width: 20px; height: 20px; background-color: #ffcc66; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Infortunio prolungato</div>
+            <div class="ml-5" style="width: 20px; height: 20px; background-color: #808080; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Perm. 104</div>
+            <div class="ml-5" style="width: 20px; height: 20px; background-color: #ffff66; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Infortunio iniz.</div>
+            <div class="ml-5" style="width: 20px; height: 20px; background-color: #ffcc66; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Infortunio prol.</div>
             <div class="ml-5" style="width: 20px; height: 20px; background-color: #ffc0cb; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Congedo matr.</div>
             <div class="ml-5" style="width: 20px; height: 20px; background-color: #FF748C; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Maternità</div>
             <div class="ml-5" style="width: 20px; height: 20px; background-color: #FF8FA3; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Maternità fac.</div>
             <div class="ml-5" style="width: 20px; height: 20px; background-color: #00B7F3; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Paternità</div>
+            <div class="ml-5" style="width: 20px; height: 20px; background-color: #C6E9F9; border-radius: 5px;"></div><div style="color: black; margin-left: 5px;">Perm. studio</div>
         </div>
         <div class="table-responsive">
             <table class="table table-bordered" id="table-stock" width="100%" cellspacing="0">
@@ -112,6 +113,7 @@
                             TimeSpan? totalTimeMater = TimeSpan.Zero;
                             TimeSpan? totalTimeMateFac = TimeSpan.Zero;
                             TimeSpan? totalTimePater = TimeSpan.Zero;
+                            TimeSpan? totalTimePermStud = TimeSpan.Zero;
 
                             @for (int mese = 1; mese <= 12; mese++)
                             {
@@ -699,6 +701,39 @@
                                                 <b style="white-space: nowrap;">@($"{(int)totalTimeDay?.TotalHours}h {totalTimeDay?.Minutes}m")</b>
                                             </div>
                                         }
+                                        
+                                        @* Permesso studio *@
+                                        totalTimeDay = TimeSpan.Zero;
+
+                                        for (int giorno = 1; giorno <= DateTime.DaysInMonth(Model.Year, mese); giorno++)
+                                        {
+                                            var attendancesForDay = presenza.Where(a => a.DateIn.Day == giorno && a.DateIn.Month == mese);
+                                            TimeSpan? partialTimeDay = TimeSpan.Zero;
+
+                                            foreach (var presence in attendancesForDay.Where(c => c.Type == "PermessoStudio"))
+                                            {
+                                                if (presence.DateOut != null)
+                                                {
+                                                    partialTimeDay += presence.DateOut - presence.DateIn;
+                                                }
+                                            }
+                                            if (partialTimeDay == TimeSpan.FromHours(9))
+                                            {
+                                                partialTimeDay = TimeSpan.FromHours(8);
+                                            }
+                                            partialTimeDay = (partialTimeDay.Value.Minutes < 50) ? TimeSpan.FromHours(partialTimeDay.Value.Hours) : TimeSpan.FromHours(partialTimeDay.Value.Hours + 1);
+
+                                            totalTimeDay += partialTimeDay;
+                                            
+                                        }
+
+                                        totalTimePermStud += totalTimeDay;
+                                        if (totalTimeDay != TimeSpan.Zero)
+                                        {
+                                            <div class="text-center" style="color: white; background-color: #C6E9F9; border-radius: 10px; padding: 1px 2px 1px 2px; text-align: center; font-size: 14px; margin-bottom: 3px;" title="Permesso studio">
+                                                <b style="white-space: nowrap;">@($"{(int)totalTimeDay?.TotalHours}h {totalTimeDay?.Minutes}m")</b>
+                                            </div>
+                                        }
                                     }
                                 </td>
                             }
@@ -807,6 +842,12 @@
                                 {
                                     <div class="text-center" style="color: white; background-color: #00B7F3; border-radius: 10px; padding: 1px 2px 1px 2px; text-align: center; font-size: 14px; margin-bottom: 3px;" title="Ore paternità annuali">
                                         <b style="white-space: nowrap;">@($"{(int)totalTimePater?.TotalHours}h {totalTimePater?.Minutes}m")</b>
+                                    </div>
+                                }
+                                @if (totalTimePermStud != TimeSpan.Zero)
+                                {
+                                    <div class="text-center" style="color: white; background-color: #C6E9F9; border-radius: 10px; padding: 1px 2px 1px 2px; text-align: center; font-size: 14px; margin-bottom: 3px;" title="Permesso studio">
+                                        <b style="white-space: nowrap;">@($"{(int)totalTimePermStud?.TotalHours}h {totalTimePermStud?.Minutes}m")</b>
                                     </div>
                                 }
                             </td>
