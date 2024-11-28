@@ -140,7 +140,7 @@ namespace RemaSoftware.WebApp.Controllers
             catch (Exception e)
             {
                 Logger.Error(e, e.Message);
-                _notyfService.Error("Impossibile modificare il prodotto.");
+                _notyfService.Error("Impossibile modificare il dipendente.");
                 return RedirectToAction("EmployeeList");
             }
         }

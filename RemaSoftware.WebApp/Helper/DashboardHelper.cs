@@ -96,7 +96,6 @@ namespace RemaSoftware.WebApp.Helper
 
             for (int month = 1; month <= 12; month++)
             {
-                // Ottieni i dati aggregati da Ddts_In
                 var deliveredData = deliveredOrders.FirstOrDefault(x => x.Month == month);
 
                 // Ottieni i dati aggregati da Ddt_Associations per ciascun tipo

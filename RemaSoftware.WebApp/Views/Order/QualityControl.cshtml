@@ -213,7 +213,7 @@
 
         $("form").submit(function (event) {
             event.preventDefault();
-
+            
             var subBatchId = $('#subBatchId').val();
 
             $.ajax({
@@ -221,59 +221,65 @@
                 url: '@Url.Action("SubBatchAtControl", "Order")',
                 data: { subBatchId: subBatchId },
                 success: function (response) {
-                    var card = $("#card-" + response.subBatch.subBatchID);
+                    if (response.subBatch && response.subBatch.subBatchID) {
 
-                    if (card.length) {
-                        card.removeClass("border-left-success border-left-danger border-left-warning");
-                    }
+                        var card = $("#card-" + response.subBatch.subBatchID);
 
-                    if (response.success) {
-                        if (!card.length) {
-                            card = $(`
-                                    <div class="col-xl-3 col-md-6 mb-4">
-                                        <div class="card shadow h-100 py-2" id="card-${response.subBatch.subBatchID}" style="border: 0.25rem solid #4e73df;">
-                                            <div class="card-body">
-                                                <h5 class="text-center font-weight-bold text-black text-uppercase mb-1">Lotto: ${response.subBatch.subBatchID}</h5>
-                                                <hr/>
-                                                <div>
-                                                    <span><i>- Cliente: </i>${response.subBatch.clientName}</span><br/>
-                                                    <span><i>- Pezzi rimanenti: </i>${response.subBatch.remainingPieces}</span><br/>
-                                                </div>
-                                                <hr/>
-                                                <div class="text-center align-items-center">
-                                                    <a class="text-white btn btn-primary" onclick="setSubBatchId('${response.subBatch.subBatchID}', '${response.subBatch.remainingPieces}', '${response.subBatch.operationTimelineID}', '${response.subBatch.clientName}', '${response.subBatch.productSKU}')" data-toggle="modal" data-target="#end-subbatch">Concludi ordine</a>
+                        if (card.length) {
+                            card.removeClass("border-left-success border-left-danger border-left-warning");
+                        }
+
+                        if (response.success) {
+                            if (!card.length) {
+                                card = $(`
+                                        <div class="col-xl-3 col-md-6 mb-4">
+                                            <div class="card shadow h-100 py-2" id="card-${response.subBatch.subBatchID}" style="border: 0.25rem solid #4e73df;">
+                                                <div class="card-body">
+                                                    <h5 class="text-center font-weight-bold text-black text-uppercase mb-1">Lotto: ${response.subBatch.subBatchID}</h5>
+                                                    <hr/>
+                                                    <div>
+                                                        <span><i>- Cliente: </i>${response.subBatch.clientName}</span><br/>
+                                                        <span><i>- Pezzi rimanenti: </i>${response.subBatch.remainingPieces}</span><br/>
+                                                    </div>
+                                                    <hr/>
+                                                    <div class="text-center align-items-center">
+                                                        <a class="text-white btn btn-primary" onclick="setSubBatchId('${response.subBatch.subBatchID}', '${response.subBatch.remainingPieces}', '${response.subBatch.operationTimelineID}', '${response.subBatch.clientName}', '${response.subBatch.productSKU}')" data-toggle="modal" data-target="#end-subbatch">Concludi ordine</a>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                `);
-                            $(".row").append(card);
-                        } else {
-                            card.find('span').eq(0).html(`<i>- Cliente: </i>${response.subBatch.clientName}`);
-                            card.find('span').eq(1).html(`<i>- Pezzi rimanenti: </i>${response.subBatch.remainingPieces}`);
-                        }
-
-                        $('html, body').animate({
-                            scrollTop: card.offset().top
-                        }, 1000, function() {
-                            $('#add-subbatch').modal('hide');
-                        });
-                    } else {
-                        if (response.message === "Lotto già registrato al controllo qualità.") {
-                            if (card.length) {
-                                card.css({
-                                    "border": "0.25rem solid #4e73df",
-                                });
-
-                                $('html, body').animate({
-                                    scrollTop: card.offset().top
-                                }, 1000, function() {
-                                    $('#add-subbatch').modal('hide');
-                                });
+                                    `);
+                                $(".row").append(card);
+                            } else {
+                                card.find('span').eq(0).html(`<i>- Cliente: </i>${response.subBatch.clientName}`);
+                                card.find('span').eq(1).html(`<i>- Pezzi rimanenti: </i>${response.subBatch.remainingPieces}`);
                             }
+
+                            $('html, body').animate({
+                                scrollTop: card.offset().top
+                            }, 1000, function() {
+                                $('#add-subbatch').modal('hide');
+                            });
                         } else {
-                            toastNotifyError(response.message);
+                            if (response.message === "Lotto già registrato al controllo qualità.") {
+                                if (card.length) {
+                                    card.css({
+                                        "border": "0.25rem solid #4e73df",
+                                    });
+
+                                    $('html, body').animate({
+                                        scrollTop: card.offset().top
+                                    }, 1000, function() {
+                                        $('#add-subbatch').modal('hide');
+                                    });
+                                }
+                            } else {
+                                toastNotifyError("Errore durante la registrazione del lotto.");
+                            }
                         }
+                    } else {
+                        $('#add-subbatch').modal('hide');
+                        toastNotifyError("Lotto non esistente.");
                     }
                 },
                 error: function () {
